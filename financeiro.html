@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZARA | Financeiro</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ========== RESET E BASE ========== */
         * {
@@ -1161,6 +1162,23 @@
                     </div>
                 </div>
 
+                <!-- GRÁFICO DE EVOLUÇÃO DA BANCA -->
+                <div class="section" style="margin-bottom: 25px;">
+                    <div class="section-header">
+                        <h2>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            Evolução da Banca
+                        </h2>
+                    </div>
+                    <div class="section-content">
+                        <div style="position: relative; height: 280px;">
+                            <canvas id="chartBanca"></canvas>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- SEÇÃO: MOVIMENTAÇÃO DE BANCA -->
                 <div class="section">
                     <div class="section-header">
@@ -1433,7 +1451,27 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // ==========================================
+        // CONFIGURAÇÃO SUPABASE
+        // ==========================================
+        
+        const SUPABASE_URL = 'https://ltwamldgdwqzyssoukzl.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
+        const USER_ID = 'default_user';
+        
+        let supabaseClient = null;
+        let useSupabase = false;
+        
+        try {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            useSupabase = true;
+            console.log('✅ Supabase conectado');
+        } catch (e) {
+            console.log('⚠️ Supabase indisponível, usando localStorage');
+        }
+
         // ==========================================
         // SISTEMA ZARA - MÓDULO APOSTA (ROLETA)
         // ==========================================
@@ -1450,6 +1488,9 @@
             fechamentos: []
         };
 
+        // Variável do gráfico
+        let chartBanca = null;
+
         // ==========================================
         // SISTEMA DE ABAS
         // ==========================================
@@ -1464,6 +1505,11 @@
                 btn.classList.add('active');
                 const tabId = btn.dataset.tab;
                 document.getElementById(`tab-${tabId}`).classList.add('active');
+                
+                // Atualizar gráfico quando mudar para aba de aposta
+                if (tabId === 'aposta') {
+                    setTimeout(() => atualizarGrafico(), 100);
+                }
             });
         });
 
@@ -1525,6 +1571,7 @@
             salvarDados();
             renderizarMovimentacoes();
             atualizarKPIs();
+            atualizarGrafico();
             fecharModal('modalMovimentacao');
             document.getElementById('formMovimentacao').reset();
             mostrarStatus('Movimentação salva', 'success');
@@ -1536,6 +1583,7 @@
             salvarDados();
             renderizarMovimentacoes();
             atualizarKPIs();
+            atualizarGrafico();
             mostrarStatus('Movimentação excluída', 'success');
         }
 
@@ -1610,10 +1658,14 @@
             dadosAposta.sessoes.push(sessao);
             dadosAposta.sessoes.sort((a, b) => new Date(b.data) - new Date(a.data));
             
+            // Verificar fechamento semanal automático
+            verificarFechamentoSemanal();
+            
             salvarDados();
             renderizarSessoes();
             atualizarKPIs();
             atualizarFechamentoSemanal();
+            atualizarGrafico();
             fecharModal('modalSessao');
             document.getElementById('formSessao').reset();
             mostrarStatus('Sessão registrada', 'success');
@@ -1626,6 +1678,7 @@
             renderizarSessoes();
             atualizarKPIs();
             atualizarFechamentoSemanal();
+            atualizarGrafico();
             mostrarStatus('Sessão excluída', 'success');
         }
 
@@ -1760,11 +1813,11 @@
             // Próximo Depósito
             if (dadosAposta.config.proxDepositoData && dadosAposta.config.proxDepositoValor) {
                 const hoje = new Date();
-                const dataDeposito = new Date(dadosAposta.config.proxDepositoData);
+                const dataDeposito = new Date(dadosAposta.config.proxDepositoData + 'T00:00:00');
                 const diffDias = Math.ceil((dataDeposito - hoje) / (1000 * 60 * 60 * 24));
                 
                 document.getElementById('kpiProxDeposito').textContent = formatarMoeda(dadosAposta.config.proxDepositoValor);
-                document.getElementById('kpiProxDepositoData').textContent = diffDias > 0 ? `em ${diffDias} dias` : 'hoje!';
+                document.getElementById('kpiProxDepositoData').textContent = diffDias > 0 ? `em ${diffDias} dias` : (diffDias === 0 ? 'hoje!' : 'atrasado');
             } else {
                 document.getElementById('kpiProxDeposito').textContent = '--';
                 document.getElementById('kpiProxDepositoData').innerHTML = '<a href="#" onclick="abrirModalConfig(); return false;" style="color: #d4af7d;">configurar</a>';
@@ -1786,7 +1839,113 @@
         }
 
         // ==========================================
-        // FECHAMENTO SEMANAL
+        // GRÁFICO DE EVOLUÇÃO DA BANCA
+        // ==========================================
+
+        function atualizarGrafico() {
+            const ctx = document.getElementById('chartBanca');
+            if (!ctx) return;
+
+            // Construir dados cronológicos
+            const eventos = [];
+            
+            // Adicionar movimentações
+            dadosAposta.movimentacoes.forEach(mov => {
+                eventos.push({
+                    data: mov.data,
+                    tipo: mov.tipo,
+                    valor: mov.tipo === 'deposito' ? mov.valor : -mov.valor
+                });
+            });
+            
+            // Adicionar sessões
+            dadosAposta.sessoes.forEach(sessao => {
+                eventos.push({
+                    data: sessao.data,
+                    tipo: 'sessao',
+                    valor: sessao.resultado
+                });
+            });
+            
+            // Ordenar por data
+            eventos.sort((a, b) => new Date(a.data) - new Date(b.data));
+            
+            // Calcular banca acumulada
+            let bancaAcumulada = 0;
+            const labels = ['Início'];
+            const data = [0];
+            
+            eventos.forEach(evento => {
+                bancaAcumulada += evento.valor;
+                labels.push(formatarDataCurta(new Date(evento.data + 'T00:00:00')));
+                data.push(bancaAcumulada);
+            });
+            
+            // Destruir gráfico anterior se existir
+            if (chartBanca) {
+                chartBanca.destroy();
+            }
+            
+            // Criar novo gráfico
+            chartBanca = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Banca',
+                        data: data,
+                        borderColor: '#d4af7d',
+                        backgroundColor: 'rgba(212, 175, 125, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: data.map((val, i) => {
+                            if (i === 0) return '#d4af7d';
+                            return val >= data[i-1] ? '#2ecc71' : '#e74c3c';
+                        }),
+                        pointBorderColor: '#0a0a0a',
+                        pointBorderWidth: 2,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1a1a1a',
+                            titleColor: '#d4af7d',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(212, 175, 125, 0.3)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return formatarMoeda(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.5)', maxRotation: 45 }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.5)',
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==========================================
+        // FECHAMENTO SEMANAL AUTOMÁTICO
         // ==========================================
 
         function getInicioSemana(date = new Date()) {
@@ -1806,6 +1965,55 @@
             return fim;
         }
 
+        function verificarFechamentoSemanal() {
+            const hoje = new Date();
+            const inicioSemanaAtual = getInicioSemana(hoje);
+            
+            // Verificar se existe semana anterior não fechada
+            const semanaAnterior = new Date(inicioSemanaAtual);
+            semanaAnterior.setDate(semanaAnterior.getDate() - 7);
+            
+            const keyAnterior = `${semanaAnterior.getFullYear()}-${String(semanaAnterior.getMonth() + 1).padStart(2, '0')}-${String(semanaAnterior.getDate()).padStart(2, '0')}`;
+            
+            // Verificar se já existe fechamento para esta semana
+            const jaFechada = dadosAposta.fechamentos.some(f => f.semanaKey === keyAnterior);
+            
+            if (!jaFechada) {
+                // Criar fechamento automático
+                const fimSemanaAnterior = getFimSemana(semanaAnterior);
+                
+                const sessoesSemana = dadosAposta.sessoes.filter(s => {
+                    const dataSessao = new Date(s.data + 'T00:00:00');
+                    return dataSessao >= semanaAnterior && dataSessao <= fimSemanaAnterior;
+                });
+                
+                if (sessoesSemana.length > 0) {
+                    const resultado = sessoesSemana.reduce((sum, s) => sum + s.resultado, 0);
+                    const wins = sessoesSemana.filter(s => s.resultado > 0).length;
+                    const losses = sessoesSemana.filter(s => s.resultado < 0).length;
+                    const maiorGain = Math.max(...sessoesSemana.map(s => s.resultado), 0);
+                    const maiorLoss = Math.min(...sessoesSemana.map(s => s.resultado), 0);
+                    
+                    const fechamento = {
+                        id: Date.now(),
+                        semanaKey: keyAnterior,
+                        inicio: semanaAnterior.toISOString().split('T')[0],
+                        fim: fimSemanaAnterior.toISOString().split('T')[0],
+                        totalSessoes: sessoesSemana.length,
+                        wins: wins,
+                        losses: losses,
+                        resultado: resultado,
+                        maiorGain: maiorGain,
+                        maiorLoss: Math.abs(maiorLoss),
+                        fechadoEm: new Date().toISOString()
+                    };
+                    
+                    dadosAposta.fechamentos.push(fechamento);
+                    mostrarStatus('📊 Fechamento semanal automático criado', 'success');
+                }
+            }
+        }
+
         function atualizarFechamentoSemanal() {
             const hoje = new Date();
             const inicioSemana = getInicioSemana(hoje);
@@ -1813,7 +2021,7 @@
 
             // Sessões da semana atual
             const sessoesSemana = dadosAposta.sessoes.filter(s => {
-                const dataSessao = new Date(s.data);
+                const dataSessao = new Date(s.data + 'T00:00:00');
                 return dataSessao >= inicioSemana && dataSessao <= fimSemana;
             });
 
@@ -1842,6 +2050,39 @@
             
             document.getElementById('semanaAtualPerformance').textContent = 
                 `${performance >= 0 ? '+' : ''}${performance.toFixed(1)}%`;
+            
+            // Renderizar histórico de semanas
+            renderizarHistoricoSemanas();
+        }
+
+        function renderizarHistoricoSemanas() {
+            const container = document.getElementById('historicoSemanas');
+            
+            if (dadosAposta.fechamentos.length === 0) {
+                container.innerHTML = '<div class="empty-state" style="padding: 20px;"><p>Nenhum histórico ainda</p></div>';
+                return;
+            }
+            
+            // Ordenar do mais recente para o mais antigo
+            const fechamentosOrdenados = [...dadosAposta.fechamentos].sort((a, b) => 
+                new Date(b.inicio) - new Date(a.inicio)
+            );
+            
+            container.innerHTML = fechamentosOrdenados.slice(0, 10).map(f => `
+                <div class="semana-item">
+                    <div class="semana-header">
+                        <span class="periodo">${formatarDataCurta(new Date(f.inicio + 'T00:00:00'))} - ${formatarDataCurta(new Date(f.fim + 'T00:00:00'))}</span>
+                        <span class="resultado ${f.resultado >= 0 ? 'valor-positivo' : 'valor-negativo'}">
+                            ${f.resultado >= 0 ? '+' : ''}${formatarMoeda(f.resultado)}
+                        </span>
+                    </div>
+                    <div class="semana-stats">
+                        <span>${f.totalSessoes} sessões</span>
+                        <span>${f.wins}V / ${f.losses}L</span>
+                        <span>Maior: +${formatarMoeda(f.maiorGain)}</span>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // ==========================================
@@ -1879,11 +2120,64 @@
         }
 
         // ==========================================
-        // PERSISTÊNCIA (localStorage)
+        // PERSISTÊNCIA (localStorage + Supabase)
         // ==========================================
 
         function salvarDados() {
             localStorage.setItem('zara_aposta_v1', JSON.stringify(dadosAposta));
+            salvarSupabase();
+        }
+
+        async function salvarSupabase() {
+            if (!useSupabase) return;
+            try {
+                const { error } = await supabaseClient.from('aposta').upsert({
+                    id: USER_ID,
+                    user_id: USER_ID,
+                    dados: dadosAposta,
+                    updated_at: new Date().toISOString()
+                });
+                if (error) {
+                    console.error('Erro Supabase:', error);
+                } else {
+                    console.log('✅ Sincronizado com Supabase');
+                }
+            } catch (e) {
+                console.error('Exceção Supabase:', e);
+            }
+        }
+
+        async function carregarSupabase() {
+            if (!useSupabase) return false;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('aposta')
+                    .select('*')
+                    .eq('user_id', USER_ID)
+                    .maybeSingle();
+
+                if (error) {
+                    console.log('Tabela aposta não existe ainda:', error.message);
+                    return false;
+                }
+
+                if (data?.dados) {
+                    dadosAposta = {
+                        config: { bancaReferencia: 0, proxDepositoValor: 0, proxDepositoData: null },
+                        movimentacoes: [],
+                        sessoes: [],
+                        fechamentos: [],
+                        ...data.dados
+                    };
+                    localStorage.setItem('zara_aposta_v1', JSON.stringify(dadosAposta));
+                    console.log('✅ Dados carregados do Supabase');
+                    return true;
+                }
+                return false;
+            } catch (e) {
+                console.error('Exceção:', e);
+                return false;
+            }
         }
 
         function carregarDados() {
@@ -1912,14 +2206,27 @@
         // INICIALIZAÇÃO
         // ==========================================
 
-        function init() {
+        async function init() {
+            // Carregar dados do localStorage primeiro
             carregarDados();
+            
+            // Tentar carregar do Supabase
+            await carregarSupabase();
+            
+            // Verificar fechamento semanal pendente
+            verificarFechamentoSemanal();
+            
+            // Renderizar
             renderizarMovimentacoes();
             renderizarSessoes();
             atualizarKPIs();
             atualizarFechamentoSemanal();
+            
+            // Inicializar gráfico com delay
+            setTimeout(() => atualizarGrafico(), 300);
         }
 
+        // Iniciar aplicação
         init();
     </script>
 </body>
