@@ -198,6 +198,7 @@
     .view-toggle {
         display: flex;
         gap: 10px;
+        margin-left: 20px;
     }
 
     .view-toggle button {
@@ -262,6 +263,7 @@
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 15px;
+        margin-top: 25px;
         margin-bottom: 30px;
     }
 
@@ -3344,24 +3346,24 @@
             <button class="btn-periodo-nav" onclick="navegarPeriodo(-1)" title="Mês anterior">◀</button>
             <button class="btn-periodo-nav" onclick="navegarPeriodo(1)" title="Próximo mês">▶</button>
             <button class="btn-periodo-hoje" onclick="irParaHoje()" title="Ir para mês atual">Hoje</button>
-        </div>
-        <div class="view-toggle">
-            <button class="active" id="btnAtivos">
-                <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>
-                    <rect x="9" y="3" width="6" height="4" rx="2"></rect>
-                    <path d="M9 12l2 2 4-4"></path>
-                </svg>
-                Ativos
-            </button>
-            <button id="btnArquivados">
-                <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 8v13H3V8"></path>
-                    <path d="M1 3h22v5H1z"></path>
-                    <path d="M10 12h4"></path>
-                </svg>
-                Arquivados
-            </button>
+            <div class="view-toggle">
+                <button class="active" id="btnAtivos">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>
+                        <rect x="9" y="3" width="6" height="4" rx="2"></rect>
+                        <path d="M9 12l2 2 4-4"></path>
+                    </svg>
+                    Ativos
+                </button>
+                <button id="btnArquivados">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 8v13H3V8"></path>
+                        <path d="M1 3h22v5H1z"></path>
+                        <path d="M10 12h4"></path>
+                    </svg>
+                    Arquivados
+                </button>
+            </div>
         </div>
     </div>
 
