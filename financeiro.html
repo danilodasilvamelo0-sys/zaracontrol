@@ -2012,10 +2012,13 @@
     // INICIALIZAÇÃO
     // ==========================================
     function init() {
+        console.log('Iniciando aplicação...');
         carregarDados();
+        console.log('Dados carregados:', dados);
         inicializarSeletorPeriodo();
         renderizar();
         carregarSupabase();
+        console.log('Aplicação iniciada!');
     }
 
     function inicializarSeletorPeriodo() {
@@ -2986,6 +2989,7 @@
     // RECEITAS
     function salvarReceita(e) {
         e.preventDefault();
+        console.log('Salvando receita...');
         const receita = {
             id: Date.now(),
             descricao: document.getElementById('receitaDescricao').value,
@@ -2994,7 +2998,9 @@
             categoria: document.getElementById('receitaCategoria').value,
             status: document.getElementById('receitaStatus').value
         };
+        console.log('Receita:', receita);
         dados.receitas.push(receita);
+        console.log('Total receitas:', dados.receitas.length);
         salvarDados();
         renderizar();
         fecharModal('modalReceita');
