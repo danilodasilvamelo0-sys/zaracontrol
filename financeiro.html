@@ -1878,99 +1878,6 @@
     // ==========================================
     // MIGRAÇÃO DE DADOS ANTIGOS
     // ==========================================
-    function migrarDadosAntigos() {
-        const dadosAntigos = localStorage.getItem('financeiro_v5');
-        if (!dadosAntigos) return false;
-        
-        try {
-            const antigo = JSON.parse(dadosAntigos);
-            console.log('🔄 Migrando dados antigos...');
-            
-            // Migrar receitas
-            if (antigo.receitas && antigo.receitas.length > 0) {
-                dados.receitas = antigo.receitas.map(r => ({
-                    ...r,
-                    categoria: r.categoria || 'outros',
-                    status: r.recebido ? 'recebido' : (r.status || 'pendente')
-                }));
-            }
-            
-            // Migrar despesas fixas
-            if (antigo.despesasFixas && antigo.despesasFixas.length > 0) {
-                dados.despesasFixas = antigo.despesasFixas.map(df => ({
-                    ...df,
-                    categoria: df.categoria || 'outros',
-                    ativa: df.ativa !== false
-                }));
-            }
-            
-            // Migrar instâncias de despesas fixas por mês
-            if (antigo.despesasFixasMes) {
-                dados.despesasFixasMes = antigo.despesasFixasMes;
-            }
-            
-            // Migrar despesas variáveis
-            if (antigo.despesasVariaveis && antigo.despesasVariaveis.length > 0) {
-                dados.despesasVariaveis = antigo.despesasVariaveis.map(dv => ({
-                    ...dv,
-                    categoria: dv.categoria || 'outros',
-                    status: dv.pago ? 'pago' : (dv.status || 'pendente'),
-                    parcelas: dv.parcelas || dv.totalParcelas || 1,
-                    pausado: dv.pausado || false
-                }));
-            }
-            
-            // Migrar empréstimos
-            if (antigo.emprestimos && antigo.emprestimos.length > 0) {
-                dados.emprestimos = antigo.emprestimos.map(emp => ({
-                    id: emp.id,
-                    credor: emp.credor || emp.descricao || 'Empréstimo',
-                    valorOriginal: emp.valorTotal || emp.valorOriginal || 0,
-                    totalParcelas: emp.totalParcelas || emp.parcelas || 1,
-                    valorParcela: emp.valorParcela || (emp.valorTotal / emp.totalParcelas) || 0,
-                    diaVencimento: emp.diaVencimento || 10,
-                    parcelasPagas: emp.parcelasPagas || 0
-                }));
-            }
-            
-            // Migrar economias para reservas
-            if (antigo.economias && antigo.economias.length > 0) {
-                dados.reservas = antigo.economias.map(e => ({
-                    id: e.id,
-                    descricao: e.descricao || 'Reserva',
-                    valor: e.valor || 0,
-                    data: e.data || new Date().toISOString().split('T')[0]
-                }));
-            }
-            
-            // Migrar arquivados
-            if (antigo.arquivados) {
-                if (antigo.arquivados.receitas) {
-                    dados.arquivados.receitas = antigo.arquivados.receitas;
-                }
-                if (antigo.arquivados.despesasFixas) {
-                    dados.arquivados.despesasFixas = antigo.arquivados.despesasFixas;
-                }
-                if (antigo.arquivados.despesasVariaveis) {
-                    dados.arquivados.despesasVariaveis = antigo.arquivados.despesasVariaveis;
-                }
-                if (antigo.arquivados.emprestimos) {
-                    dados.arquivados.emprestimos = antigo.arquivados.emprestimos;
-                }
-                if (antigo.arquivados.economias) {
-                    dados.arquivados.reservas = antigo.arquivados.economias;
-                }
-            }
-            
-            console.log('✅ Migração concluída!');
-            mostrarStatus('Dados migrados com sucesso!', 'success');
-            return true;
-        } catch (e) {
-            console.error('Erro na migração:', e);
-            return false;
-        }
-    }
-
     // Categorias com cores
     const CATEGORIAS_CORES = {
         moradia: '#e74c3c',
@@ -2012,13 +1919,10 @@
     // INICIALIZAÇÃO
     // ==========================================
     function init() {
-        console.log('Iniciando aplicação...');
         carregarDados();
-        console.log('Dados carregados:', dados);
         inicializarSeletorPeriodo();
         renderizar();
         carregarSupabase();
-        console.log('Aplicação iniciada!');
     }
 
     function inicializarSeletorPeriodo() {
@@ -2070,28 +1974,6 @@
         renderizar();
     }
 
-    function forcarMigracao() {
-        const dadosAntigos = localStorage.getItem('financeiro_v5');
-        if (!dadosAntigos) {
-            alert('Nenhum dado antigo encontrado na chave "financeiro_v5".\n\nVerifique se você está usando o mesmo navegador onde os dados foram salvos originalmente.');
-            return;
-        }
-        
-        if (confirm('Isso vai importar seus dados antigos.\n\nDados existentes serão substituídos.\n\nContinuar?')) {
-            // Limpar dados atuais
-            dados = JSON.parse(JSON.stringify(dadosVazios));
-            
-            // Forçar migração
-            if (migrarDadosAntigos()) {
-                salvarDados();
-                renderizar();
-                alert('✅ Migração concluída!\n\nSeus dados foram importados com sucesso.');
-            } else {
-                alert('❌ Erro na migração.\n\nVerifique o console para mais detalhes.');
-            }
-        }
-    }
-
     function alternarVisao(visao) {
         visaoAtual = visao;
         document.getElementById('btnAtivos').classList.toggle('active', visao === 'ativos');
@@ -2111,33 +1993,14 @@
         const saved = localStorage.getItem('zara_financeiro_v2');
         if (saved) {
             const dadosSalvos = JSON.parse(saved);
-            // Garantir estrutura completa
             dados = { 
                 ...dadosVazios, 
                 ...dadosSalvos,
                 arquivados: { ...dadosVazios.arquivados, ...(dadosSalvos.arquivados || {}) }
             };
-            
-            // Se dados estão vazios, tentar migrar
-            const temDados = dados.receitas.length > 0 || 
-                             dados.despesasFixas.length > 0 || 
-                             dados.despesasVariaveis.length > 0 ||
-                             dados.emprestimos.length > 0;
-            
-            if (!temDados) {
-                console.log('Dados vazios, tentando migrar...');
-                if (migrarDadosAntigos()) {
-                    salvarDados();
-                }
-            }
-        } else {
-            // Tentar migrar dados antigos
-            if (migrarDadosAntigos()) {
-                salvarDados();
-            }
         }
         
-        // Garantir que despesasFixasMes existe
+        // Garantir estruturas
         if (!dados.despesasFixasMes) dados.despesasFixasMes = {};
         if (!dados.arquivados) dados.arquivados = JSON.parse(JSON.stringify(dadosVazios.arquivados));
         if (!dados.instanciasDespesasFixas) dados.instanciasDespesasFixas = {};
@@ -2989,7 +2852,6 @@
     // RECEITAS
     function salvarReceita(e) {
         e.preventDefault();
-        console.log('Salvando receita...');
         const receita = {
             id: Date.now(),
             descricao: document.getElementById('receitaDescricao').value,
@@ -2998,9 +2860,7 @@
             categoria: document.getElementById('receitaCategoria').value,
             status: document.getElementById('receitaStatus').value
         };
-        console.log('Receita:', receita);
         dados.receitas.push(receita);
-        console.log('Total receitas:', dados.receitas.length);
         salvarDados();
         renderizar();
         fecharModal('modalReceita');
