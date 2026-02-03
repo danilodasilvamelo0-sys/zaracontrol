@@ -1245,6 +1245,7 @@
                 <button class="btn-periodo-nav" onclick="navegarPeriodo(-1)">◀</button>
                 <button class="btn-periodo-nav" onclick="navegarPeriodo(1)">▶</button>
                 <button class="btn-periodo-hoje" onclick="irParaHoje()">Hoje</button>
+                <button class="btn-periodo-hoje" onclick="forcarMigracao()" title="Importar dados antigos" style="background: rgba(46, 204, 113, 0.2); border-color: rgba(46, 204, 113, 0.5);">📥 Migrar</button>
                 <div class="view-toggle">
                     <button class="active" id="btnAtivos" onclick="alternarVisao('ativos')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -2067,6 +2068,28 @@
         renderizar();
     }
 
+    function forcarMigracao() {
+        const dadosAntigos = localStorage.getItem('financeiro_v5');
+        if (!dadosAntigos) {
+            alert('Nenhum dado antigo encontrado na chave "financeiro_v5".\n\nVerifique se você está usando o mesmo navegador onde os dados foram salvos originalmente.');
+            return;
+        }
+        
+        if (confirm('Isso vai importar seus dados antigos.\n\nDados existentes serão substituídos.\n\nContinuar?')) {
+            // Limpar dados atuais
+            dados = JSON.parse(JSON.stringify(dadosVazios));
+            
+            // Forçar migração
+            if (migrarDadosAntigos()) {
+                salvarDados();
+                renderizar();
+                alert('✅ Migração concluída!\n\nSeus dados foram importados com sucesso.');
+            } else {
+                alert('❌ Erro na migração.\n\nVerifique o console para mais detalhes.');
+            }
+        }
+    }
+
     function alternarVisao(visao) {
         visaoAtual = visao;
         document.getElementById('btnAtivos').classList.toggle('active', visao === 'ativos');
@@ -2092,6 +2115,19 @@
                 ...dadosSalvos,
                 arquivados: { ...dadosVazios.arquivados, ...(dadosSalvos.arquivados || {}) }
             };
+            
+            // Se dados estão vazios, tentar migrar
+            const temDados = dados.receitas.length > 0 || 
+                             dados.despesasFixas.length > 0 || 
+                             dados.despesasVariaveis.length > 0 ||
+                             dados.emprestimos.length > 0;
+            
+            if (!temDados) {
+                console.log('Dados vazios, tentando migrar...');
+                if (migrarDadosAntigos()) {
+                    salvarDados();
+                }
+            }
         } else {
             // Tentar migrar dados antigos
             if (migrarDadosAntigos()) {
@@ -2102,6 +2138,7 @@
         // Garantir que despesasFixasMes existe
         if (!dados.despesasFixasMes) dados.despesasFixasMes = {};
         if (!dados.arquivados) dados.arquivados = JSON.parse(JSON.stringify(dadosVazios.arquivados));
+        if (!dados.instanciasDespesasFixas) dados.instanciasDespesasFixas = {};
     }
 
     async function salvarSupabase() {
