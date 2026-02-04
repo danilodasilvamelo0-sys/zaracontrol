@@ -197,19 +197,22 @@
 
     .view-toggle {
         display: flex;
-        gap: 10px;
-        margin-bottom: 10px;
+        gap: 5px;
+        margin-bottom: 0;
     }
 
     .view-toggle button {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
         color: rgba(255, 255, 255, 0.5);
-        padding: 10px 18px;
+        padding: 10px 15px;
         border-radius: 8px;
         cursor: pointer;
-        font-size: 0.9em;
+        font-size: 0.85em;
         transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .view-toggle button:hover {
@@ -2049,94 +2052,288 @@
     .resumo-final-item.pago .valor { color: #e74c3c; }
     .resumo-final-item.economia .valor { color: #3498db; }
 
-    /* ========== BALANÇO GERAL ========== */
-    .balanco-geral {
-        background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%);
+    /* ========== SUGESTÕES DE SABEDORIA FINANCEIRA ========== */
+    .sugestoes-sabedoria {
+        background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
         border: 1px solid rgba(212, 175, 125, 0.25);
         border-radius: 20px;
         padding: 30px;
         margin-top: 30px;
     }
 
-    .balanco-geral h3 {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.4em;
-        color: #d4af7d;
-        margin-bottom: 25px;
+    .sugestoes-header {
         text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .sugestoes-header h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5em;
+        color: #d4af7d;
+        margin-bottom: 8px;
         letter-spacing: 2px;
     }
 
-    .balanco-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 18px;
+    .sugestoes-subtitulo {
+        font-size: 0.85em;
+        color: rgba(255, 255, 255, 0.4);
+        font-style: italic;
+    }
+
+    /* Citação do Dia */
+    .citacao-dia {
+        background: linear-gradient(135deg, rgba(212, 175, 125, 0.15) 0%, rgba(212, 175, 125, 0.05) 100%);
+        border: 1px solid rgba(212, 175, 125, 0.3);
+        border-radius: 15px;
+        padding: 20px 25px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .citacao-icone {
+        font-size: 2em;
+        flex-shrink: 0;
+    }
+
+    .citacao-conteudo {
+        flex: 1;
+    }
+
+    .citacao-texto {
+        font-size: 1.1em;
+        color: #fff;
+        font-style: italic;
+        line-height: 1.5;
+        margin-bottom: 8px;
+    }
+
+    .citacao-fonte {
+        font-size: 0.85em;
+        color: #d4af7d;
+    }
+
+    /* Diagnóstico Financeiro */
+    .diagnostico-container {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 20px;
         margin-bottom: 25px;
     }
 
-    .balanco-item {
-        background: rgba(0, 0, 0, 0.25);
-        border-radius: 12px;
-        padding: 20px;
-        border-left: 3px solid transparent;
+    .diagnostico-container h4 {
+        font-size: 1em;
+        color: #fff;
+        margin-bottom: 15px;
     }
 
-    .balanco-item.alerta { border-left-color: #e74c3c; }
-    .balanco-item.sucesso { border-left-color: #2ecc71; }
-    .balanco-item.info { border-left-color: #3498db; }
+    .diagnostico-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+    }
 
-    .balanco-item h4 {
-        font-size: 0.85em;
+    .diagnostico-item {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 10px;
+        padding: 15px;
+        border-left: 3px solid;
+    }
+
+    .diagnostico-item.otimo { border-left-color: #2ecc71; }
+    .diagnostico-item.bom { border-left-color: #3498db; }
+    .diagnostico-item.atencao { border-left-color: #f39c12; }
+    .diagnostico-item.critico { border-left-color: #e74c3c; }
+
+    .diagnostico-item .titulo {
+        font-size: 0.75em;
         color: rgba(255, 255, 255, 0.5);
         text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 12px;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
     }
 
-    .balanco-item .valor-destaque {
+    .diagnostico-item .valor {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .diagnostico-item.otimo .valor { color: #2ecc71; }
+    .diagnostico-item.bom .valor { color: #3498db; }
+    .diagnostico-item.atencao .valor { color: #f39c12; }
+    .diagnostico-item.critico .valor { color: #e74c3c; }
+
+    .diagnostico-item .descricao {
+        font-size: 0.8em;
+        color: rgba(255, 255, 255, 0.4);
+        margin-top: 3px;
+    }
+
+    /* Sugestões Lista */
+    .sugestoes-lista {
+        margin-bottom: 25px;
+    }
+
+    .sugestao-card {
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 12px;
+        border-left: 4px solid;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .sugestao-card:last-child {
+        margin-bottom: 0;
+    }
+
+    .sugestao-card.divida { border-left-color: #e74c3c; background: rgba(231, 76, 60, 0.05); }
+    .sugestao-card.economia { border-left-color: #2ecc71; background: rgba(46, 204, 113, 0.05); }
+    .sugestao-card.corte { border-left-color: #f39c12; background: rgba(243, 156, 18, 0.05); }
+    .sugestao-card.investimento { border-left-color: #9b59b6; background: rgba(155, 89, 182, 0.05); }
+    .sugestao-card.sabedoria { border-left-color: #d4af7d; background: rgba(212, 175, 125, 0.05); }
+
+    .sugestao-icone {
         font-size: 1.5em;
+        flex-shrink: 0;
+        width: 40px;
+        text-align: center;
+    }
+
+    .sugestao-conteudo {
+        flex: 1;
+    }
+
+    .sugestao-titulo {
+        font-size: 1em;
         font-weight: 600;
         color: #fff;
         margin-bottom: 6px;
     }
 
-    .balanco-item .detalhe {
+    .sugestao-texto {
         font-size: 0.9em;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.5;
+        margin-bottom: 8px;
     }
 
-    .sugestoes-container {
-        background: rgba(212, 175, 125, 0.08);
-        border: 1px solid rgba(212, 175, 125, 0.2);
-        border-radius: 12px;
-        padding: 22px;
+    .sugestao-fonte {
+        font-size: 0.75em;
+        color: rgba(212, 175, 125, 0.8);
+        font-style: italic;
     }
 
-    .sugestoes-container h4 {
-        font-size: 1em;
+    .sugestao-acao {
+        font-size: 0.85em;
         color: #d4af7d;
-        margin-bottom: 18px;
+        font-weight: 500;
+        margin-top: 8px;
+        padding: 8px 12px;
+        background: rgba(212, 175, 125, 0.1);
+        border-radius: 8px;
+        display: inline-block;
     }
 
-    .sugestao-item {
+    /* Plano de Ação */
+    .plano-acao {
+        background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%);
+        border: 1px solid rgba(52, 152, 219, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+    }
+
+    .plano-acao h4 {
+        font-size: 1em;
+        color: #fff;
+        margin-bottom: 15px;
+    }
+
+    .plano-lista {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .plano-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
         background: rgba(0, 0, 0, 0.2);
         border-radius: 10px;
-        padding: 14px 18px;
-        margin-bottom: 12px;
-        font-size: 0.95em;
-        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .plano-numero {
+        width: 28px;
+        height: 28px;
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        border-radius: 50%;
         display: flex;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    .sugestao-item:last-child {
-        margin-bottom: 0;
-    }
-
-    .sugestao-item .icon {
-        font-size: 1.2em;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85em;
+        font-weight: 600;
+        color: #fff;
         flex-shrink: 0;
+    }
+
+    .plano-texto {
+        font-size: 0.9em;
+        color: rgba(255, 255, 255, 0.85);
+        flex: 1;
+    }
+
+    .plano-prioridade {
+        font-size: 0.7em;
+        padding: 4px 10px;
+        border-radius: 10px;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .plano-prioridade.urgente {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+    }
+
+    .plano-prioridade.importante {
+        background: rgba(243, 156, 18, 0.2);
+        color: #f39c12;
+    }
+
+    .plano-prioridade.medio {
+        background: rgba(52, 152, 219, 0.2);
+        color: #3498db;
+    }
+
+    @media (max-width: 768px) {
+        .citacao-dia {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .diagnostico-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .sugestao-card {
+            flex-direction: column;
+        }
+
+        .sugestao-icone {
+            width: auto;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .diagnostico-grid {
+            grid-template-columns: 1fr;
+        }
     }
 
     /* ========== MODAIS ========== */
@@ -3463,341 +3660,6 @@
             background: rgba(241, 196, 15, 0.2);
             color: #f1c40f;
         }
-
-        /* ========== GRÁFICOS E CATEGORIAS ========== */
-        .graficos-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .grafico-card {
-            background: #141414;
-            border: 1px solid rgba(212, 175, 125, 0.15);
-            border-radius: 15px;
-            padding: 20px;
-        }
-
-        .grafico-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1em;
-            color: #d4af7d;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .grafico-wrapper {
-            position: relative;
-            height: 250px;
-        }
-
-        .categorias-lista {
-            margin-top: 15px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .categoria-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .categoria-item:last-child {
-            border-bottom: none;
-        }
-
-        .categoria-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .categoria-emoji {
-            font-size: 1.2em;
-            width: 30px;
-            text-align: center;
-        }
-
-        .categoria-nome {
-            font-size: 0.9em;
-            color: #fff;
-        }
-
-        .categoria-valores {
-            text-align: right;
-        }
-
-        .categoria-valor {
-            font-weight: 600;
-            color: #e74c3c;
-            font-size: 0.95em;
-        }
-
-        .categoria-percent {
-            font-size: 0.75em;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .categoria-barra {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-
-        .categoria-barra-fill {
-            height: 100%;
-            border-radius: 2px;
-            transition: width 0.5s ease;
-        }
-
-        @media (max-width: 900px) {
-            .graficos-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ========== METAS FINANCEIRAS ========== */
-        .metas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .meta-card {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%);
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            border-radius: 15px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .meta-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #3498db, #9b59b6);
-        }
-
-        .meta-card.concluida::before {
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-        }
-
-        .meta-card.atrasada::before {
-            background: linear-gradient(90deg, #e74c3c, #c0392b);
-        }
-
-        .meta-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        .meta-titulo {
-            font-size: 1.05em;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .meta-objetivo {
-            font-size: 0.8em;
-            color: rgba(255, 255, 255, 0.5);
-            margin-top: 3px;
-        }
-
-        .meta-acoes {
-            display: flex;
-            gap: 5px;
-        }
-
-        .meta-valores {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .meta-atual {
-            font-size: 1.4em;
-            font-weight: 600;
-            color: #3498db;
-        }
-
-        .meta-card.concluida .meta-atual {
-            color: #2ecc71;
-        }
-
-        .meta-alvo {
-            font-size: 1em;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .meta-progress {
-            margin-bottom: 12px;
-        }
-
-        .meta-progress-bar {
-            height: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .meta-progress-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease, background 0.3s ease;
-            background: linear-gradient(90deg, #3498db, #2980b9);
-        }
-
-        .meta-progress-fill.medio {
-            background: linear-gradient(90deg, #f39c12, #e67e22);
-        }
-
-        .meta-progress-fill.alto {
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-        }
-
-        .meta-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .meta-percent {
-            font-size: 0.9em;
-            font-weight: 600;
-            color: #3498db;
-        }
-
-        .meta-card.concluida .meta-percent {
-            color: #2ecc71;
-        }
-
-        .meta-prazo {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.8em;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .meta-prazo.urgente {
-            color: #e74c3c;
-        }
-
-        .meta-prazo.atencao {
-            color: #f39c12;
-        }
-
-        .meta-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: 0.7em;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .meta-badge.concluida {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
-        }
-
-        .meta-badge.atrasada {
-            background: rgba(231, 76, 60, 0.2);
-            color: #e74c3c;
-        }
-
-        .btn-atualizar-meta {
-            background: rgba(52, 152, 219, 0.15);
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            color: #3498db;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 0.8em;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-atualizar-meta:hover {
-            background: rgba(52, 152, 219, 0.25);
-        }
-
-        /* Form Meta */
-        .form-meta-inline {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr auto;
-            gap: 10px;
-            align-items: end;
-            padding: 15px;
-            background: rgba(52, 152, 219, 0.05);
-            border-radius: 12px;
-            margin-bottom: 15px;
-        }
-
-        .form-meta-inline .form-group {
-            margin: 0;
-        }
-
-        .form-meta-inline label {
-            display: block;
-            font-size: 0.7em;
-            color: rgba(255, 255, 255, 0.5);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-        }
-
-        .form-meta-inline input {
-            width: 100%;
-            padding: 10px 12px;
-            background: #0f0f0f;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 0.9em;
-        }
-
-        .form-meta-inline input:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        @media (max-width: 768px) {
-            .form-meta-inline {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .form-meta-inline .form-group:first-child {
-                grid-column: span 2;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .form-meta-inline {
-                grid-template-columns: 1fr;
-            }
-            
-            .form-meta-inline .form-group:first-child {
-                grid-column: span 1;
-            }
-        }
     </style>
 </head>
 <body>
@@ -3943,24 +3805,24 @@
             <button class="btn-periodo-nav" onclick="navegarPeriodo(-1)" title="Mês anterior">◀</button>
             <button class="btn-periodo-nav" onclick="navegarPeriodo(1)" title="Próximo mês">▶</button>
             <button class="btn-periodo-hoje" onclick="irParaHoje()" title="Ir para mês atual">Hoje</button>
-        </div>
-        <div class="view-toggle">
-            <button class="active" id="btnAtivos">
-                <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>
-                    <rect x="9" y="3" width="6" height="4" rx="2"></rect>
-                    <path d="M9 12l2 2 4-4"></path>
-                </svg>
-                Ativos
-            </button>
-            <button id="btnArquivados">
-                <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 8v13H3V8"></path>
-                    <path d="M1 3h22v5H1z"></path>
-                    <path d="M10 12h4"></path>
-                </svg>
-                Arquivados
-            </button>
+            <div class="view-toggle">
+                <button class="active" id="btnAtivos">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>
+                        <rect x="9" y="3" width="6" height="4" rx="2"></rect>
+                        <path d="M9 12l2 2 4-4"></path>
+                    </svg>
+                    Ativos
+                </button>
+                <button id="btnArquivados">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 8v13H3V8"></path>
+                        <path d="M1 3h22v5H1z"></path>
+                        <path d="M10 12h4"></path>
+                    </svg>
+                    Arquivados
+                </button>
+            </div>
         </div>
     </div>
 
@@ -4198,74 +4060,41 @@
         </div>
     </div>
 
-    <!-- GRÁFICOS E CATEGORIAS -->
-    <div class="graficos-container">
-        <!-- Gráfico de Pizza - Despesas por Categoria -->
-        <div class="grafico-card">
-            <h3>📊 Despesas por Categoria</h3>
-            <div class="grafico-wrapper">
-                <canvas id="chartCategorias"></canvas>
-            </div>
-            <div class="categorias-lista" id="categoriasLista">
-                <!-- Lista será preenchida dinamicamente -->
+    <!-- SUGESTÕES DE SABEDORIA FINANCEIRA -->
+    <div class="sugestoes-sabedoria">
+        <div class="sugestoes-header">
+            <h3>📜 Sabedoria Financeira</h3>
+            <p class="sugestoes-subtitulo">Baseado em "O Homem Mais Rico da Babilônia" e Provérbios de Salomão</p>
+        </div>
+        
+        <!-- Citação do Dia -->
+        <div class="citacao-dia" id="citacaoDia">
+            <div class="citacao-icone">💡</div>
+            <div class="citacao-conteudo">
+                <p class="citacao-texto" id="citacaoTexto">"Parte de tudo que você ganha é sua para guardar."</p>
+                <span class="citacao-fonte" id="citacaoFonte">— O Homem Mais Rico da Babilônia</span>
             </div>
         </div>
 
-        <!-- Gráfico de Barras - Evolução -->
-        <div class="grafico-card">
-            <h3>📈 Evolução Mensal (6 meses)</h3>
-            <div class="grafico-wrapper">
-                <canvas id="chartEvolucao"></canvas>
+        <!-- Diagnóstico Financeiro -->
+        <div class="diagnostico-container" id="diagnosticoContainer">
+            <h4>🔍 Diagnóstico da Sua Situação</h4>
+            <div class="diagnostico-grid" id="diagnosticoGrid">
+                <!-- Preenchido via JS -->
             </div>
         </div>
-    </div>
 
-    <!-- METAS FINANCEIRAS -->
-    <div class="section" id="sectionMetas">
-        <div class="section-header">
-            <h2>🎯 Metas Financeiras</h2>
-            <button class="btn-add-section" id="btnAddMeta" title="Adicionar meta">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-            </button>
+        <!-- Sugestões Personalizadas -->
+        <div class="sugestoes-lista" id="sugestoesLista">
+            <!-- Preenchido via JS -->
         </div>
-        <div class="section-content">
-            <div id="formMeta" class="form-container"></div>
-            <div class="metas-grid" id="metasGrid">
-                <!-- Metas serão inseridas dinamicamente -->
-            </div>
-            <div id="emptyMetas" class="empty-state">Nenhuma meta cadastrada</div>
-        </div>
-    </div>
 
-    <!-- RESUMO GERAL ACUMULADO -->
-    <div class="resumo-final">
-        <h3>RESUMO GERAL ACUMULADO</h3>
-        <div class="resumo-final-grid">
-            <div class="resumo-final-item recebido">
-                <label>Total Recebido</label>
-                <div class="valor" id="totalRecebidoFinal">R$ 0,00</div>
+        <!-- Plano de Ação -->
+        <div class="plano-acao" id="planoAcao">
+            <h4>📋 Seu Plano de Ação</h4>
+            <div class="plano-lista" id="planoLista">
+                <!-- Preenchido via JS -->
             </div>
-            <div class="resumo-final-item pago">
-                <label>Total Pago</label>
-                <div class="valor" id="totalPagoFinal">R$ 0,00</div>
-            </div>
-            <div class="resumo-final-item economia">
-                <label>Total Economizado</label>
-                <div class="valor" id="totalEconomiaFinal">R$ 0,00</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- BALANÇO GERAL INTELIGENTE -->
-    <div class="balanco-geral">
-        <h3>BALANÇO GERAL</h3>
-        <div class="balanco-grid" id="balancoGrid"></div>
-        <div class="sugestoes-container">
-            <h4>Sugestões Inteligentes</h4>
-            <div id="sugestoesContainer"></div>
         </div>
     </div>
 
@@ -8406,395 +8235,295 @@
         }).join('');
     }
 
+
     // ==========================================
-    // GRÁFICOS E CATEGORIAS
+    // SUGESTÕES DE SABEDORIA FINANCEIRA
     // ==========================================
 
-    let chartCategorias = null;
-    let chartEvolucao = null;
+    // Citações dos Livros
+    const CITACOES = [
+        // O Homem Mais Rico da Babilônia
+        { texto: "Parte de tudo que você ganha é sua para guardar. Pague-se primeiro.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "A riqueza cresce rapidamente quando você faz economias regulares.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "O ouro foge do homem que o investe em negócios que não conhece.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "A sorte favorece aqueles que se esforçam.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "Não confie na própria sabedoria para proteger seu tesouro.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "Guarde pelo menos 10% de tudo que ganhar.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "Faça seu ouro trabalhar para você.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "A ação leva ao sucesso. A procrastinação leva ao fracasso.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        // Provérbios de Salomão
+        { texto: "Os planos bem elaborados levam à fartura; já o apressado sempre acaba na miséria.", fonte: "Provérbios 21:5", livro: "salomao" },
+        { texto: "Quem ama o prazer acabará na pobreza; quem ama o vinho e o luxo jamais será rico.", fonte: "Provérbios 21:17", livro: "salomao" },
+        { texto: "Na casa do sábio há provisões e azeite; mas o tolo devora tudo que possui.", fonte: "Provérbios 21:20", livro: "salomao" },
+        { texto: "O rico domina sobre os pobres; quem toma emprestado é servo de quem empresta.", fonte: "Provérbios 22:7", livro: "salomao" },
+        { texto: "Quem observa o vento não plantará, e quem olha para as nuvens não colherá.", fonte: "Eclesiastes 11:4", livro: "salomao" },
+        { texto: "Ensina a criança no caminho em que deve andar, e ainda quando for velho não se desviará dele.", fonte: "Provérbios 22:6", livro: "salomao" },
+        { texto: "O preguiçoso deseja e nada consegue, mas os desejos do diligente são plenamente satisfeitos.", fonte: "Provérbios 13:4", livro: "salomao" },
+        { texto: "Riquezas obtidas com língua mentirosa são vapor fugaz, armadilha mortal.", fonte: "Provérbios 21:6", livro: "salomao" }
+    ];
 
-    const CATEGORIAS_CONFIG = {
-        'Moradia': { emoji: '🏠', cor: '#3498db' },
-        'Transporte': { emoji: '🚗', cor: '#e74c3c' },
-        'Alimentação': { emoji: '🍔', cor: '#f39c12' },
-        'Saúde': { emoji: '💊', cor: '#2ecc71' },
-        'Educação': { emoji: '📚', cor: '#9b59b6' },
-        'Lazer': { emoji: '🎮', cor: '#1abc9c' },
-        'Vestuário': { emoji: '👕', cor: '#e67e22' },
-        'Assinaturas': { emoji: '📺', cor: '#34495e' },
-        'Contas': { emoji: '💡', cor: '#f1c40f' },
-        'Cartão': { emoji: '💳', cor: '#c0392b' },
-        'Empréstimo': { emoji: '🏦', cor: '#8e44ad' },
-        'Investimento': { emoji: '📈', cor: '#27ae60' },
-        'Outros': { emoji: '📦', cor: '#95a5a6' }
-    };
-
-    function atualizarGraficoCategorias() {
-        const ctx = document.getElementById('chartCategorias');
-        if (!ctx) return;
-
+    function atualizarSugestoesSabedoria() {
+        // Coletar dados financeiros
+        const receitasMes = filtrarPorMes(financeiro.receitas);
         const fixasMes = getDespesasFixasMes();
         const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis).filter(d => !d.pausado);
-        const todasDespesas = [...fixasMes, ...variaveisMes];
-
-        // Agrupar por categoria
-        const porCategoria = {};
-        todasDespesas.forEach(d => {
-            const cat = d.categoria || 'Outros';
-            if (!porCategoria[cat]) porCategoria[cat] = 0;
-            porCategoria[cat] += d.valor;
-        });
-
-        const categorias = Object.keys(porCategoria).sort((a, b) => porCategoria[b] - porCategoria[a]);
-        const valores = categorias.map(c => porCategoria[c]);
-        const total = valores.reduce((s, v) => s + v, 0);
-        const cores = categorias.map(c => CATEGORIAS_CONFIG[c]?.cor || '#95a5a6');
-
-        if (chartCategorias) chartCategorias.destroy();
-
-        chartCategorias = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: categorias,
-                datasets: [{
-                    data: valores,
-                    backgroundColor: cores,
-                    borderColor: '#0a0a0a',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#1a1a1a',
-                        titleColor: '#d4af7d',
-                        bodyColor: '#fff',
-                        callbacks: {
-                            label: function(context) {
-                                const valor = context.parsed;
-                                const percent = ((valor / total) * 100).toFixed(1);
-                                return `${formatarMoeda(valor)} (${percent}%)`;
-                            }
-                        }
-                    }
-                },
-                cutout: '60%'
-            }
-        });
-
-        // Atualizar lista de categorias
-        const lista = document.getElementById('categoriasLista');
-        if (lista) {
-            lista.innerHTML = categorias.map(cat => {
-                const valor = porCategoria[cat];
-                const percent = total > 0 ? ((valor / total) * 100).toFixed(1) : 0;
-                const config = CATEGORIAS_CONFIG[cat] || { emoji: '📦', cor: '#95a5a6' };
-                return `
-                    <div class="categoria-item">
-                        <div class="categoria-info">
-                            <span class="categoria-emoji">${config.emoji}</span>
-                            <span class="categoria-nome">${cat}</span>
-                        </div>
-                        <div class="categoria-valores">
-                            <div class="categoria-valor">${formatarMoeda(valor)}</div>
-                            <div class="categoria-percent">${percent}%</div>
-                        </div>
-                    </div>
-                    <div class="categoria-barra">
-                        <div class="categoria-barra-fill" style="width: ${percent}%; background: ${config.cor};"></div>
-                    </div>
-                `;
-            }).join('');
-        }
-    }
-
-    function atualizarGraficoEvolucao() {
-        const ctx = document.getElementById('chartEvolucao');
-        if (!ctx) return;
-
-        // Últimos 6 meses
-        const meses = [];
-        const receitas = [];
-        const despesas = [];
         
-        const hoje = new Date();
-        for (let i = 5; i >= 0; i--) {
-            const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-            const mesKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-            const mesNome = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
-            
-            meses.push(mesNome);
-            
-            // Receitas do mês
-            const receitasMes = financeiro.receitas.filter(r => r.data && r.data.startsWith(mesKey));
-            receitas.push(receitasMes.reduce((s, r) => s + r.valor, 0));
-            
-            // Despesas do mês (fixas + variáveis)
-            const fixas = financeiro.despesasFixasMes[mesKey] || [];
-            const variaveis = financeiro.despesasVariaveis.filter(d => d.data && d.data.startsWith(mesKey) && !d.pausado);
-            despesas.push(fixas.reduce((s, d) => s + d.valor, 0) + variaveis.reduce((s, d) => s + d.valor, 0));
-        }
+        const totalReceita = receitasMes.reduce((s, r) => s + r.valor, 0);
+        const totalDespesasFixas = fixasMes.reduce((s, d) => s + d.valor, 0);
+        const totalDespesasVariaveis = variaveisMes.reduce((s, d) => s + d.valor, 0);
+        const totalDespesas = totalDespesasFixas + totalDespesasVariaveis;
+        const totalEconomias = financeiro.economias.reduce((s, e) => s + e.saldo, 0);
+        const totalEmprestimos = financeiro.emprestimos.filter(e => !e.quitado).reduce((s, e) => s + e.saldoDevedor, 0);
+        
+        const percentComprometido = totalReceita > 0 ? (totalDespesas / totalReceita) * 100 : 0;
+        const percentEconomia = totalReceita > 0 ? (totalEconomias / totalReceita) * 100 : 0;
+        const saldoLivre = totalReceita - totalDespesas;
 
-        if (chartEvolucao) chartEvolucao.destroy();
+        // Atualizar citação do dia (baseada no dia do mês)
+        const indiceCitacao = new Date().getDate() % CITACOES.length;
+        const citacao = CITACOES[indiceCitacao];
+        document.getElementById('citacaoTexto').textContent = `"${citacao.texto}"`;
+        document.getElementById('citacaoFonte').textContent = `— ${citacao.fonte}`;
 
-        chartEvolucao = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: meses,
-                datasets: [
-                    {
-                        label: 'Receitas',
-                        data: receitas,
-                        backgroundColor: 'rgba(46, 204, 113, 0.7)',
-                        borderColor: '#2ecc71',
-                        borderWidth: 1,
-                        borderRadius: 5
-                    },
-                    {
-                        label: 'Despesas',
-                        data: despesas,
-                        backgroundColor: 'rgba(231, 76, 60, 0.7)',
-                        borderColor: '#e74c3c',
-                        borderWidth: 1,
-                        borderRadius: 5
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: { color: 'rgba(255,255,255,0.6)', font: { size: 11 } }
-                    },
-                    tooltip: {
-                        backgroundColor: '#1a1a1a',
-                        titleColor: '#d4af7d',
-                        bodyColor: '#fff',
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.dataset.label}: ${formatarMoeda(context.parsed.y)}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { color: 'rgba(255,255,255,0.05)' },
-                        ticks: { color: 'rgba(255,255,255,0.5)' }
-                    },
-                    y: {
-                        grid: { color: 'rgba(255,255,255,0.05)' },
-                        ticks: {
-                            color: 'rgba(255,255,255,0.5)',
-                            callback: function(value) { return 'R$ ' + (value/1000).toFixed(0) + 'k'; }
-                        }
-                    }
-                }
-            }
-        });
+        // Atualizar diagnóstico
+        atualizarDiagnostico(totalReceita, totalDespesas, totalEconomias, totalEmprestimos, percentComprometido, saldoLivre);
+
+        // Gerar sugestões personalizadas
+        gerarSugestoes(totalReceita, totalDespesas, totalEconomias, totalEmprestimos, percentComprometido, saldoLivre, fixasMes, variaveisMes);
+
+        // Gerar plano de ação
+        gerarPlanoAcao(totalEmprestimos, percentComprometido, totalEconomias, totalReceita, saldoLivre);
     }
 
-    // ==========================================
-    // METAS FINANCEIRAS
-    // ==========================================
+    function atualizarDiagnostico(totalReceita, totalDespesas, totalEconomias, totalEmprestimos, percentComprometido, saldoLivre) {
+        const grid = document.getElementById('diagnosticoGrid');
+        
+        // Determinar classes de status
+        let statusComprometido = 'otimo';
+        if (percentComprometido > 80) statusComprometido = 'critico';
+        else if (percentComprometido > 60) statusComprometido = 'atencao';
+        else if (percentComprometido > 40) statusComprometido = 'bom';
 
-    // Garantir estrutura de metas
-    if (!financeiro.metas) financeiro.metas = [];
+        let statusDivida = 'otimo';
+        const relacaoDivida = totalReceita > 0 ? (totalEmprestimos / totalReceita) * 100 : 0;
+        if (relacaoDivida > 50) statusDivida = 'critico';
+        else if (relacaoDivida > 30) statusDivida = 'atencao';
+        else if (relacaoDivida > 0) statusDivida = 'bom';
 
-    function mostrarFormMeta() {
-        const container = document.getElementById('formMeta');
-        container.innerHTML = `
-            <div class="form-meta-inline">
-                <div class="form-group">
-                    <label>Nome da Meta</label>
-                    <input type="text" id="metaNome" placeholder="Ex: Viagem, Carro novo..." required>
-                </div>
-                <div class="form-group">
-                    <label>Valor Objetivo</label>
-                    <input type="number" id="metaObjetivo" step="0.01" min="1" placeholder="0,00" required>
-                </div>
-                <div class="form-group">
-                    <label>Valor Atual</label>
-                    <input type="number" id="metaAtual" step="0.01" min="0" placeholder="0,00" value="0">
-                </div>
-                <div class="form-group">
-                    <label>Prazo</label>
-                    <input type="date" id="metaPrazo" required>
-                </div>
-                <div class="form-group" style="display: flex; gap: 5px; align-items: end;">
-                    <button type="button" class="btn-salvar" onclick="salvarMeta()">Salvar</button>
-                    <button type="button" class="btn-cancelar" onclick="esconderFormMeta()">✕</button>
-                </div>
+        let statusEconomia = 'critico';
+        const mesesReserva = totalDespesas > 0 ? totalEconomias / totalDespesas : 0;
+        if (mesesReserva >= 6) statusEconomia = 'otimo';
+        else if (mesesReserva >= 3) statusEconomia = 'bom';
+        else if (mesesReserva >= 1) statusEconomia = 'atencao';
+
+        let statusSaldo = saldoLivre >= 0 ? 'otimo' : 'critico';
+        if (saldoLivre > 0 && saldoLivre < totalReceita * 0.1) statusSaldo = 'atencao';
+
+        grid.innerHTML = `
+            <div class="diagnostico-item ${statusComprometido}">
+                <div class="titulo">Comprometimento</div>
+                <div class="valor">${percentComprometido.toFixed(0)}%</div>
+                <div class="descricao">${percentComprometido <= 60 ? 'Saudável' : percentComprometido <= 80 ? 'Atenção' : 'Crítico'}</div>
+            </div>
+            <div class="diagnostico-item ${statusDivida}">
+                <div class="titulo">Dívidas</div>
+                <div class="valor">${formatarMoeda(totalEmprestimos)}</div>
+                <div class="descricao">${totalEmprestimos === 0 ? 'Livre de dívidas!' : relacaoDivida.toFixed(0) + '% da renda'}</div>
+            </div>
+            <div class="diagnostico-item ${statusEconomia}">
+                <div class="titulo">Reserva</div>
+                <div class="valor">${mesesReserva.toFixed(1)} meses</div>
+                <div class="descricao">${mesesReserva >= 6 ? 'Excelente!' : mesesReserva >= 3 ? 'Bom' : 'Insuficiente'}</div>
+            </div>
+            <div class="diagnostico-item ${statusSaldo}">
+                <div class="titulo">Saldo Mensal</div>
+                <div class="valor">${formatarMoeda(saldoLivre)}</div>
+                <div class="descricao">${saldoLivre >= 0 ? 'Positivo' : 'Negativo - Déficit!'}</div>
             </div>
         `;
-        container.style.display = 'block';
     }
 
-    function esconderFormMeta() {
-        const container = document.getElementById('formMeta');
-        container.innerHTML = '';
-        container.style.display = 'none';
-    }
+    function gerarSugestoes(totalReceita, totalDespesas, totalEconomias, totalEmprestimos, percentComprometido, saldoLivre, fixasMes, variaveisMes) {
+        const lista = document.getElementById('sugestoesLista');
+        let sugestoes = [];
 
-    function salvarMeta() {
-        const nome = document.getElementById('metaNome').value.trim();
-        const objetivo = parseFloat(document.getElementById('metaObjetivo').value) || 0;
-        const atual = parseFloat(document.getElementById('metaAtual').value) || 0;
-        const prazo = document.getElementById('metaPrazo').value;
-
-        if (!nome || objetivo <= 0 || !prazo) {
-            return alert('Preencha todos os campos obrigatórios!');
+        // 1. Se tem dívidas - prioridade máxima
+        if (totalEmprestimos > 0) {
+            const emprestimosAtivos = financeiro.emprestimos.filter(e => !e.quitado).sort((a, b) => b.taxaJuros - a.taxaJuros);
+            if (emprestimosAtivos.length > 0) {
+                const maiorJuros = emprestimosAtivos[0];
+                sugestoes.push({
+                    tipo: 'divida',
+                    icone: '⚔️',
+                    titulo: 'Quite Suas Dívidas - Método Avalanche',
+                    texto: `Você tem ${emprestimosAtivos.length} dívida${emprestimosAtivos.length > 1 ? 's' : ''} ativa${emprestimosAtivos.length > 1 ? 's' : ''}. Foque primeiro em "${maiorJuros.descricao}" que tem a maior taxa de juros. Cada real pago aqui evita mais juros compostos.`,
+                    fonte: '"O rico domina sobre os pobres; quem toma emprestado é servo de quem empresta." — Provérbios 22:7',
+                    acao: `Pague pelo menos ${formatarMoeda(maiorJuros.saldoDevedor * 0.1)} extra este mês`
+                });
+            }
         }
 
-        financeiro.metas.push({
-            id: gerarId(),
-            nome,
-            objetivo,
-            atual,
-            prazo,
-            criadaEm: new Date().toISOString()
-        });
-
-        salvarDados();
-        esconderFormMeta();
-        renderizarMetas();
-        mostrarStatus('Meta criada!', 'success');
-    }
-
-    function renderizarMetas() {
-        const grid = document.getElementById('metasGrid');
-        const empty = document.getElementById('emptyMetas');
-
-        if (!financeiro.metas || financeiro.metas.length === 0) {
-            grid.innerHTML = '';
-            empty.style.display = 'block';
-            return;
+        // 2. Se não guarda 10% - regra de ouro da Babilônia
+        const percentPoupado = totalReceita > 0 ? ((totalReceita - totalDespesas) / totalReceita) * 100 : 0;
+        if (percentPoupado < 10 && totalReceita > 0) {
+            const meta10 = totalReceita * 0.1;
+            const faltante = meta10 - (totalReceita - totalDespesas);
+            sugestoes.push({
+                tipo: 'economia',
+                icone: '🏺',
+                titulo: 'A Lei dos 10% - Pague-se Primeiro',
+                texto: `Você está guardando apenas ${percentPoupado.toFixed(1)}% da sua renda. A primeira lei da riqueza é: "Parte de tudo que você ganha é sua para guardar". Separe ${formatarMoeda(meta10)} ANTES de pagar qualquer conta.`,
+                fonte: '"Guarde pelo menos 10% de tudo que ganhar." — O Homem Mais Rico da Babilônia',
+                acao: `Crie uma reserva automática de ${formatarMoeda(meta10)}`
+            });
         }
 
-        empty.style.display = 'none';
-        const hoje = new Date();
-
-        grid.innerHTML = financeiro.metas.map(m => {
-            const percent = m.objetivo > 0 ? Math.min((m.atual / m.objetivo) * 100, 100) : 0;
-            const prazoDate = new Date(m.prazo + 'T00:00:00');
-            const diasRestantes = Math.ceil((prazoDate - hoje) / (1000 * 60 * 60 * 24));
+        // 3. Se comprometimento alto - identificar ruídos
+        if (percentComprometido > 60) {
+            // Identificar despesas "ruído" (lazer, assinaturas, etc.)
+            const todasDespesas = [...fixasMes, ...variaveisMes];
+            const ruidos = todasDespesas.filter(d => 
+                ['Lazer', 'Assinaturas', 'Delivery', 'Streaming', 'Jogos', 'Outros'].includes(d.categoria)
+            );
+            const totalRuido = ruidos.reduce((s, d) => s + d.valor, 0);
             
-            let statusClasse = '';
-            let badge = '';
-            let prazoClasse = '';
-            let progressClasse = '';
-            
-            if (percent >= 100) {
-                statusClasse = 'concluida';
-                badge = '<span class="meta-badge concluida">✓ Concluída</span>';
-                progressClasse = 'alto';
-            } else if (diasRestantes < 0) {
-                statusClasse = 'atrasada';
-                badge = '<span class="meta-badge atrasada">Atrasada</span>';
-                prazoClasse = 'urgente';
-            } else if (diasRestantes <= 30) {
-                prazoClasse = 'atencao';
+            if (totalRuido > 0) {
+                sugestoes.push({
+                    tipo: 'corte',
+                    icone: '✂️',
+                    titulo: 'Elimine os Ruídos Financeiros',
+                    texto: `Você gasta ${formatarMoeda(totalRuido)} em despesas não essenciais (${ruidos.length} item${ruidos.length > 1 ? 'ns' : ''}). Pergunte-se: "Isso me aproxima ou me afasta da riqueza?" Cortar 50% disso já liberaria ${formatarMoeda(totalRuido * 0.5)}/mês.`,
+                    fonte: '"Quem ama o prazer acabará na pobreza; quem ama o vinho e o luxo jamais será rico." — Provérbios 21:17',
+                    acao: `Cancele ou pause ${ruidos.length > 1 ? 'pelo menos 1 assinatura' : 'esta despesa'} hoje`
+                });
             }
-            
-            if (percent >= 70) progressClasse = 'alto';
-            else if (percent >= 40) progressClasse = 'medio';
+        }
 
-            let prazoTexto = '';
-            if (diasRestantes < 0) {
-                prazoTexto = `${Math.abs(diasRestantes)} dia${Math.abs(diasRestantes) !== 1 ? 's' : ''} atrasado`;
-            } else if (diasRestantes === 0) {
-                prazoTexto = 'Vence hoje!';
-            } else {
-                prazoTexto = `${diasRestantes} dia${diasRestantes !== 1 ? 's' : ''} restante${diasRestantes !== 1 ? 's' : ''}`;
-            }
+        // 4. Se saldo negativo
+        if (saldoLivre < 0) {
+            sugestoes.push({
+                tipo: 'divida',
+                icone: '🚨',
+                titulo: 'Emergência: Você Gasta Mais do que Ganha',
+                texto: `Seu saldo está negativo em ${formatarMoeda(Math.abs(saldoLivre))}. Isso significa que você está se endividando todo mês. É preciso ação IMEDIATA: corte despesas ou aumente a renda.`,
+                fonte: '"Os planos bem elaborados levam à fartura; já o apressado sempre acaba na miséria." — Provérbios 21:5',
+                acao: 'Liste 3 despesas para cortar HOJE'
+            });
+        }
 
-            return `
-                <div class="meta-card ${statusClasse}">
-                    ${badge}
-                    <div class="meta-header">
-                        <div>
-                            <div class="meta-titulo">${m.nome}</div>
-                            <div class="meta-objetivo">Meta: ${formatarMoeda(m.objetivo)}</div>
-                        </div>
-                        <div class="meta-acoes">
-                            <button class="action-btn btn-edit" onclick="atualizarValorMeta(${m.id})" title="Atualizar valor">
-                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                            </button>
-                            <button class="action-btn btn-delete" onclick="deletarMeta(${m.id})" title="Excluir">
-                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="meta-valores">
-                        <span class="meta-atual">${formatarMoeda(m.atual)}</span>
-                        <span class="meta-alvo">/ ${formatarMoeda(m.objetivo)}</span>
-                    </div>
-                    <div class="meta-progress">
-                        <div class="meta-progress-bar">
-                            <div class="meta-progress-fill ${progressClasse}" style="width: ${percent}%;"></div>
-                        </div>
-                    </div>
-                    <div class="meta-footer">
-                        <span class="meta-percent">${percent.toFixed(0)}%</span>
-                        <span class="meta-prazo ${prazoClasse}">📅 ${prazoTexto}</span>
-                    </div>
+        // 5. Se reserva insuficiente
+        const mesesReserva = totalDespesas > 0 ? totalEconomias / totalDespesas : 0;
+        if (mesesReserva < 6 && totalEmprestimos === 0) {
+            const metaReserva = totalDespesas * 6;
+            sugestoes.push({
+                tipo: 'economia',
+                icone: '🛡️',
+                titulo: 'Construa Sua Fortaleza Financeira',
+                texto: `Sua reserva cobre apenas ${mesesReserva.toFixed(1)} mês${mesesReserva >= 2 ? 'es' : ''} de despesas. O ideal são 6 meses (${formatarMoeda(metaReserva)}). Esta reserva é sua proteção contra imprevistos.`,
+                fonte: '"Na casa do sábio há provisões e azeite; mas o tolo devora tudo que possui." — Provérbios 21:20',
+                acao: `Aumente sua reserva em ${formatarMoeda(totalDespesas * 0.5)} este mês`
+            });
+        }
+
+        // 6. Se está bem - sugestão de investimento
+        if (percentComprometido <= 50 && totalEmprestimos === 0 && mesesReserva >= 3) {
+            sugestoes.push({
+                tipo: 'investimento',
+                icone: '📈',
+                titulo: 'Faça Seu Dinheiro Trabalhar',
+                texto: `Parabéns! Você está no caminho certo. Agora é hora de fazer seu dinheiro gerar mais dinheiro. Considere investimentos de renda fixa para começar, depois diversifique.`,
+                fonte: '"Faça seu ouro trabalhar para você." — O Homem Mais Rico da Babilônia',
+                acao: 'Pesquise sobre Tesouro Direto ou CDBs'
+            });
+        }
+
+        // 7. Sabedoria geral se não tem sugestões específicas
+        if (sugestoes.length === 0) {
+            sugestoes.push({
+                tipo: 'sabedoria',
+                icone: '👑',
+                titulo: 'Continue no Caminho da Sabedoria',
+                texto: `Suas finanças estão equilibradas. Mantenha a disciplina e lembre-se: a riqueza é construída dia após dia, decisão após decisão. Não se desvie do caminho.`,
+                fonte: '"A ação leva ao sucesso. A procrastinação leva ao fracasso." — O Homem Mais Rico da Babilônia',
+                acao: 'Revise suas metas financeiras mensalmente'
+            });
+        }
+
+        // Renderizar sugestões (máximo 4)
+        lista.innerHTML = sugestoes.slice(0, 4).map(s => `
+            <div class="sugestao-card ${s.tipo}">
+                <div class="sugestao-icone">${s.icone}</div>
+                <div class="sugestao-conteudo">
+                    <div class="sugestao-titulo">${s.titulo}</div>
+                    <div class="sugestao-texto">${s.texto}</div>
+                    <div class="sugestao-fonte">${s.fonte}</div>
+                    <div class="sugestao-acao">💡 ${s.acao}</div>
                 </div>
-            `;
-        }).join('');
+            </div>
+        `).join('');
     }
 
-    function atualizarValorMeta(id) {
-        const meta = financeiro.metas.find(m => m.id === id);
-        if (!meta) return;
+    function gerarPlanoAcao(totalEmprestimos, percentComprometido, totalEconomias, totalReceita, saldoLivre) {
+        const lista = document.getElementById('planoLista');
+        let acoes = [];
 
-        const novoValor = prompt(`Atualizar valor atual de "${meta.nome}":\n\nValor atual: ${formatarMoeda(meta.atual)}\nObjetivo: ${formatarMoeda(meta.objetivo)}`, meta.atual);
-        
-        if (novoValor === null) return;
-        
-        const valor = parseFloat(novoValor);
-        if (isNaN(valor) || valor < 0) {
-            return alert('Valor inválido!');
+        // Prioridade 1: Saldo negativo
+        if (saldoLivre < 0) {
+            acoes.push({ texto: 'URGENTE: Equilibre seu orçamento - você gasta mais do que ganha', prioridade: 'urgente' });
         }
 
-        meta.atual = valor;
-        salvarDados();
-        renderizarMetas();
-        
-        if (valor >= meta.objetivo) {
-            mostrarStatus('🎉 Parabéns! Meta concluída!', 'success');
-        } else {
-            mostrarStatus('Valor atualizado!', 'success');
+        // Prioridade 2: Dívidas
+        if (totalEmprestimos > 0) {
+            acoes.push({ texto: 'Quite suas dívidas começando pela de maior juros (Método Avalanche)', prioridade: 'urgente' });
         }
+
+        // Prioridade 3: Reserva de emergência
+        const mesesReserva = totalReceita > 0 ? totalEconomias / (totalReceita * 0.7) : 0;
+        if (mesesReserva < 3) {
+            acoes.push({ texto: 'Construa uma reserva de emergência de 3-6 meses de despesas', prioridade: totalEmprestimos > 0 ? 'importante' : 'urgente' });
+        }
+
+        // Prioridade 4: Regra dos 10%
+        if (saldoLivre >= 0 && saldoLivre < totalReceita * 0.1) {
+            acoes.push({ texto: 'Guarde pelo menos 10% da sua renda todo mês - pague-se primeiro', prioridade: 'importante' });
+        }
+
+        // Prioridade 5: Reduzir comprometimento
+        if (percentComprometido > 70) {
+            acoes.push({ texto: 'Reduza seu comprometimento de renda para menos de 70%', prioridade: 'importante' });
+        }
+
+        // Prioridade 6: Cortar ruídos
+        if (percentComprometido > 50) {
+            acoes.push({ texto: 'Identifique e elimine gastos supérfluos (assinaturas, delivery, impulsos)', prioridade: 'medio' });
+        }
+
+        // Prioridade 7: Investir
+        if (totalEmprestimos === 0 && mesesReserva >= 3) {
+            acoes.push({ texto: 'Comece a investir - faça seu dinheiro trabalhar para você', prioridade: 'medio' });
+        }
+
+        // Se não tem ações, está tudo bem
+        if (acoes.length === 0) {
+            acoes.push({ texto: 'Continue monitorando suas finanças e mantenha a disciplina', prioridade: 'medio' });
+        }
+
+        lista.innerHTML = acoes.slice(0, 5).map((a, i) => `
+            <div class="plano-item">
+                <div class="plano-numero">${i + 1}</div>
+                <div class="plano-texto">${a.texto}</div>
+                <span class="plano-prioridade ${a.prioridade}">${a.prioridade === 'urgente' ? 'Urgente' : a.prioridade === 'importante' ? 'Importante' : 'Médio'}</span>
+            </div>
+        `).join('');
     }
 
-    function deletarMeta(id) {
-        const meta = financeiro.metas.find(m => m.id === id);
-        if (!meta) return;
 
-        if (!confirm(`Excluir a meta "${meta.nome}"?`)) return;
-
-        financeiro.metas = financeiro.metas.filter(m => m.id !== id);
-        salvarDados();
-        renderizarMetas();
-        mostrarStatus('Meta excluída', 'success');
-    }
-
-    // Event listener para botão de adicionar meta
-    document.getElementById('btnAddMeta')?.addEventListener('click', mostrarFormMeta);
-
-    // Atualizar gráficos e alertas na renderização
+    // Atualizar alertas e sugestões na renderização
     const originalRenderizar = renderizar;
     renderizar = function() {
         originalRenderizar();
         atualizarAlertas();
-        atualizarGraficoCategorias();
-        atualizarGraficoEvolucao();
-        renderizarMetas();
+        atualizarSugestoesSabedoria();
     };
 
     // ==========================================
