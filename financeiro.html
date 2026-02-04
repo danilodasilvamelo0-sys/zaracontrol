@@ -8256,16 +8256,16 @@
 
     function atualizarSugestoesSabedoria() {
         // Coletar dados financeiros
-        const receitasMes = filtrarPorMes(financeiro.receitas);
+        const receitasMes = filtrarPorMes(financeiro.receitas || []);
         const fixasMes = getDespesasFixasMes();
-        const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis).filter(d => !d.pausado);
+        const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis || []).filter(d => !d.pausado);
         
         const totalReceita = receitasMes.reduce((s, r) => s + r.valor, 0);
         const totalDespesasFixas = fixasMes.reduce((s, d) => s + d.valor, 0);
         const totalDespesasVariaveis = variaveisMes.reduce((s, d) => s + d.valor, 0);
         const totalDespesas = totalDespesasFixas + totalDespesasVariaveis;
-        const totalEconomias = financeiro.economias.reduce((s, e) => s + e.saldo, 0);
-        const totalEmprestimos = financeiro.emprestimos.filter(e => !e.quitado).reduce((s, e) => s + e.saldoDevedor, 0);
+        const totalEconomias = (financeiro.economias || []).reduce((s, e) => s + (e.saldo || 0), 0);
+        const totalEmprestimos = (financeiro.emprestimos || []).filter(e => !e.quitado).reduce((s, e) => s + (e.saldoDevedor || 0), 0);
         
         const percentComprometido = totalReceita > 0 ? (totalDespesas / totalReceita) * 100 : 0;
         const percentEconomia = totalReceita > 0 ? (totalEconomias / totalReceita) * 100 : 0;
@@ -8341,16 +8341,16 @@
 
         // 1. Se tem dívidas - prioridade máxima
         if (totalEmprestimos > 0) {
-            const emprestimosAtivos = financeiro.emprestimos.filter(e => !e.quitado).sort((a, b) => b.taxaJuros - a.taxaJuros);
+            const emprestimosAtivos = (financeiro.emprestimos || []).filter(e => !e.quitado).sort((a, b) => (b.taxaJuros || 0) - (a.taxaJuros || 0));
             if (emprestimosAtivos.length > 0) {
                 const maiorJuros = emprestimosAtivos[0];
                 sugestoes.push({
                     tipo: 'divida',
                     icone: '⚔️',
                     titulo: 'Quite Suas Dívidas - Método Avalanche',
-                    texto: `Você tem ${emprestimosAtivos.length} dívida${emprestimosAtivos.length > 1 ? 's' : ''} ativa${emprestimosAtivos.length > 1 ? 's' : ''}. Foque primeiro em "${maiorJuros.descricao}" que tem a maior taxa de juros. Cada real pago aqui evita mais juros compostos.`,
+                    texto: `Você tem ${emprestimosAtivos.length} dívida${emprestimosAtivos.length > 1 ? 's' : ''} ativa${emprestimosAtivos.length > 1 ? 's' : ''}. Foque primeiro em "${maiorJuros.descricao || 'a dívida principal'}" que tem a maior taxa de juros. Cada real pago aqui evita mais juros compostos.`,
                     fonte: '"O rico domina sobre os pobres; quem toma emprestado é servo de quem empresta." — Provérbios 22:7',
-                    acao: `Pague pelo menos ${formatarMoeda(maiorJuros.saldoDevedor * 0.1)} extra este mês`
+                    acao: `Pague pelo menos ${formatarMoeda((maiorJuros.saldoDevedor || 0) * 0.1)} extra este mês`
                 });
             }
         }
