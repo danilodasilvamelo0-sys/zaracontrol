@@ -258,26 +258,32 @@
         border-color: #d4af7d !important;
     }
 
-    /* ========== RESUMO GRID ========== */
-    .resumo-grid {
+    /* ========== DASHBOARD KPIs ========== */
+    .dashboard-kpis {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         gap: 15px;
         margin-top: 25px;
         margin-bottom: 30px;
     }
 
-    .resumo-card {
+    .kpi-card {
         background: #141414;
         border: 1px solid rgba(212, 175, 125, 0.15);
         border-radius: 15px;
-        padding: 22px;
+        padding: 20px 18px;
         text-align: center;
         position: relative;
         overflow: hidden;
+        transition: all 0.3s ease;
     }
 
-    .resumo-card::before {
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .kpi-card::before {
         content: '';
         position: absolute;
         top: 0;
@@ -286,30 +292,159 @@
         height: 3px;
     }
 
-    .resumo-card.recebido::before { background: linear-gradient(90deg, #27ae60, #2ecc71); }
-    .resumo-card.pago::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
-    .resumo-card.despesas-mes::before { background: linear-gradient(90deg, #9b59b6, #8e44ad); }
-    .resumo-card.economia::before { background: linear-gradient(90deg, #3498db, #2980b9); }
+    /* KPI: Receita Total */
+    .kpi-card.receita::before { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+    .kpi-card.receita .kpi-valor { color: #2ecc71; }
+    .kpi-card.receita .kpi-icon { background: rgba(46, 204, 113, 0.15); color: #2ecc71; }
 
-    .resumo-card label {
-        display: block;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.8em;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+    /* KPI: Despesas Totais */
+    .kpi-card.despesas::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+    .kpi-card.despesas .kpi-valor { color: #e74c3c; }
+    .kpi-card.despesas .kpi-icon { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
+
+    /* KPI: Saldo Disponível */
+    .kpi-card.saldo::before { background: linear-gradient(90deg, #d4af7d, #c9a050); }
+    .kpi-card.saldo .kpi-valor { color: #d4af7d; }
+    .kpi-card.saldo .kpi-icon { background: rgba(212, 175, 125, 0.15); color: #d4af7d; }
+    .kpi-card.saldo.negativo::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+    .kpi-card.saldo.negativo .kpi-valor { color: #e74c3c; }
+    .kpi-card.saldo.negativo .kpi-icon { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
+
+    /* KPI: % Comprometido */
+    .kpi-card.comprometido::before { background: linear-gradient(90deg, #3498db, #2980b9); }
+    .kpi-card.comprometido .kpi-valor { color: #3498db; }
+    .kpi-card.comprometido .kpi-icon { background: rgba(52, 152, 219, 0.15); color: #3498db; }
+    .kpi-card.comprometido.atencao::before { background: linear-gradient(90deg, #f39c12, #e67e22); }
+    .kpi-card.comprometido.atencao .kpi-valor { color: #f39c12; }
+    .kpi-card.comprometido.atencao .kpi-icon { background: rgba(243, 156, 18, 0.15); color: #f39c12; }
+    .kpi-card.comprometido.critico::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+    .kpi-card.comprometido.critico .kpi-valor { color: #e74c3c; }
+    .kpi-card.comprometido.critico .kpi-icon { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
+
+    /* KPI: Economizado */
+    .kpi-card.economia::before { background: linear-gradient(90deg, #9b59b6, #8e44ad); }
+    .kpi-card.economia .kpi-valor { color: #9b59b6; }
+    .kpi-card.economia .kpi-icon { background: rgba(155, 89, 182, 0.15); color: #9b59b6; }
+
+    /* KPI: Previsão Fechamento */
+    .kpi-card.previsao::before { background: linear-gradient(90deg, #1abc9c, #16a085); }
+    .kpi-card.previsao .kpi-valor { color: #1abc9c; }
+    .kpi-card.previsao .kpi-icon { background: rgba(26, 188, 156, 0.15); color: #1abc9c; }
+    .kpi-card.previsao.negativo::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+    .kpi-card.previsao.negativo .kpi-valor { color: #e74c3c; }
+    .kpi-card.previsao.negativo .kpi-icon { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
+
+    .kpi-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
         margin-bottom: 12px;
     }
 
-    .resumo-card .valor {
-        font-size: 1.7em;
-        font-weight: 600;
-        color: #fff;
+    .kpi-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .resumo-card.recebido .valor { color: #2ecc71; }
-    .resumo-card.pago .valor { color: #e74c3c; }
-    .resumo-card.despesas-mes .valor { color: #9b59b6; }
-    .resumo-card.economia .valor { color: #3498db; }
+    .kpi-icon svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        fill: none;
+    }
+
+    .kpi-label {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.75em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .kpi-valor {
+        font-size: 1.5em;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 8px;
+    }
+
+    .kpi-detalhe {
+        font-size: 0.7em;
+        color: rgba(255, 255, 255, 0.4);
+        line-height: 1.4;
+    }
+
+    .kpi-detalhe span {
+        display: block;
+    }
+
+    .kpi-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.65em;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 8px;
+    }
+
+    .kpi-badge.saudavel { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+    .kpi-badge.atencao { background: rgba(243, 156, 18, 0.2); color: #f39c12; }
+    .kpi-badge.critico { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+    .kpi-badge.positivo { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+    .kpi-badge.negativo { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+
+    /* Responsivo Dashboard KPIs */
+    @media (max-width: 1200px) {
+        .dashboard-kpis {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-kpis {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .kpi-card {
+            padding: 15px 12px;
+        }
+        
+        .kpi-valor {
+            font-size: 1.2em;
+        }
+        
+        .kpi-icon {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .kpi-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .dashboard-kpis {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .kpi-label {
+            font-size: 0.65em;
+        }
+        
+        .kpi-detalhe {
+            font-size: 0.6em;
+        }
+    }
 
     /* ========== SEÇÕES ========== */
     .section {
@@ -2414,26 +2549,26 @@
             font-size: 0.8em;
         }
         
-        /* Cards de Resumo */
-        .cards-resumo {
+        /* Dashboard KPIs - Mobile */
+        .dashboard-kpis {
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
         
-        .card-resumo {
+        .kpi-card {
             padding: 14px;
         }
         
-        .card-resumo-icon {
-            width: 36px;
-            height: 36px;
+        .kpi-icon {
+            width: 28px;
+            height: 28px;
         }
         
-        .card-resumo-titulo {
+        .kpi-label {
             font-size: 0.65em;
         }
         
-        .card-resumo-valor {
+        .kpi-valor {
             font-size: 1.2em;
         }
         
@@ -3367,23 +3502,91 @@
         </div>
     </div>
 
-    <!-- RESUMO DO MÊS -->
-    <div class="resumo-grid">
-        <div class="resumo-card recebido">
-            <label>Recebido</label>
-            <div class="valor" id="totalRecebido">R$ 0,00</div>
+    <!-- DASHBOARD KPIs -->
+    <div class="dashboard-kpis" id="dashboardKpis">
+        <!-- KPI 1: Receita Total -->
+        <div class="kpi-card receita">
+            <div class="kpi-header">
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+            </div>
+            <div class="kpi-label">Receita Total</div>
+            <div class="kpi-valor" id="kpiReceita">R$ 0,00</div>
+            <div class="kpi-detalhe" id="kpiReceitaDetalhe">
+                <span>Entradas do mês</span>
+            </div>
         </div>
-        <div class="resumo-card pago">
-            <label>Pago</label>
-            <div class="valor" id="totalPago">R$ 0,00</div>
+
+        <!-- KPI 2: Despesas Totais -->
+        <div class="kpi-card despesas">
+            <div class="kpi-header">
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/><path d="M1 10h22"/></svg>
+                </div>
+            </div>
+            <div class="kpi-label">Despesas Totais</div>
+            <div class="kpi-valor" id="kpiDespesas">R$ 0,00</div>
+            <div class="kpi-detalhe" id="kpiDespesasDetalhe">
+                <span>Fixas: R$ 0,00</span>
+                <span>Variáveis: R$ 0,00</span>
+            </div>
         </div>
-        <div class="resumo-card despesas-mes">
-            <label>Despesas do Mês</label>
-            <div class="valor" id="totalDespesasMes">R$ 0,00</div>
+
+        <!-- KPI 3: Saldo Disponível -->
+        <div class="kpi-card saldo" id="kpiSaldoCard">
+            <div class="kpi-header">
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2z"/><path d="M2 9v1c0 1.1.9 2 2 2h1"/></svg>
+                </div>
+            </div>
+            <div class="kpi-label">Saldo Disponível</div>
+            <div class="kpi-valor" id="kpiSaldo">R$ 0,00</div>
+            <div class="kpi-detalhe" id="kpiSaldoDetalhe">
+                <span>Após despesas pagas</span>
+            </div>
         </div>
-        <div class="resumo-card economia">
-            <label>Economizado</label>
-            <div class="valor" id="totalEconomia">R$ 0,00</div>
+
+        <!-- KPI 4: % Comprometido -->
+        <div class="kpi-card comprometido" id="kpiComprometidoCard">
+            <div class="kpi-header">
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+            </div>
+            <div class="kpi-label">% Comprometido</div>
+            <div class="kpi-valor" id="kpiComprometido">0%</div>
+            <div class="kpi-detalhe" id="kpiComprometidoDetalhe">
+                <span id="kpiBadgeComprometido" class="kpi-badge saudavel">Saudável</span>
+            </div>
+        </div>
+
+        <!-- KPI 5: Economizado -->
+        <div class="kpi-card economia">
+            <div class="kpi-header">
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2z"/><path d="M2 9v1c0 1.1.9 2 2 2h1"/><circle cx="9" cy="12" r="1"/></svg>
+                </div>
+            </div>
+            <div class="kpi-label">Economizado</div>
+            <div class="kpi-valor" id="kpiEconomia">R$ 0,00</div>
+            <div class="kpi-detalhe" id="kpiEconomiaDetalhe">
+                <span>Total em reservas</span>
+            </div>
+        </div>
+
+        <!-- KPI 6: Previsão Fechamento -->
+        <div class="kpi-card previsao" id="kpiPrevisaoCard">
+            <div class="kpi-header">
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+            </div>
+            <div class="kpi-label">Previsão Fechamento</div>
+            <div class="kpi-valor" id="kpiPrevisao">R$ 0,00</div>
+            <div class="kpi-detalhe" id="kpiPrevisaoDetalhe">
+                <span>Saldo estimado no fim do mês</span>
+            </div>
         </div>
     </div>
 
@@ -6353,25 +6556,116 @@
 
         // Cálculos do mês (excluindo parcelas pausadas)
         const variaveisAtivas = variaveisMes.filter(d => d.pausado !== true);
-        const totalRecebido = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
-        const totalPagoFixas = fixasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
-        const totalPagoVar = variaveisAtivas.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
-        const totalPago = totalPagoFixas + totalPagoVar;
-        const totalDespesasMes = fixasMes.reduce((s, d) => s + d.valor, 0) + variaveisAtivas.reduce((s, d) => s + d.valor, 0);
         
-        // Total de economias (soma dos saldos de todas as reservas)
-        const totalEconomiaGeral = (financeiro.economias || []).reduce((s, e) => s + (e.saldo !== undefined ? e.saldo : (e.valor || 0)), 0);
+        // === CÁLCULOS PARA OS KPIs ===
+        
+        // KPI 1: Receita Total (entradas do mês - recebidas ou não)
+        const receitaTotalMes = receitasMes.reduce((s, r) => s + r.valor, 0);
+        const receitaRecebida = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
+        const receitaPendente = receitaTotalMes - receitaRecebida;
+        
+        // KPI 2: Despesas Totais (fixas + variáveis)
+        const totalFixasMes = fixasMes.reduce((s, d) => s + d.valor, 0);
+        const totalVariaveisMes = variaveisAtivas.reduce((s, d) => s + d.valor, 0);
+        const despesasTotaisMes = totalFixasMes + totalVariaveisMes;
+        
+        // Para detalhamento: pagas vs pendentes
+        const fixasPagas = fixasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+        const fixasPendentes = totalFixasMes - fixasPagas;
+        const variaveisPagas = variaveisAtivas.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+        const variaveisPendentes = totalVariaveisMes - variaveisPagas;
+        const totalPago = fixasPagas + variaveisPagas;
+        
+        // KPI 3: Saldo Disponível (receita recebida - despesas pagas)
+        const saldoDisponivel = receitaRecebida - totalPago;
+        
+        // KPI 4: % Comprometido (despesas totais / receita total)
+        const percentComprometido = receitaTotalMes > 0 
+            ? Math.round((despesasTotaisMes / receitaTotalMes) * 100) 
+            : 0;
+        
+        // KPI 5: Economizado (total em reservas)
+        const totalEconomizado = (financeiro.economias || []).reduce((s, e) => s + (e.saldo !== undefined ? e.saldo : (e.valor || 0)), 0);
+        
+        // KPI 6: Previsão Fechamento (receita total - despesas totais)
+        const previsaoFechamento = receitaTotalMes - despesasTotaisMes;
+        
+        // === ATUALIZAR DASHBOARD KPIs ===
+        
+        // KPI 1: Receita Total
+        document.getElementById('kpiReceita').textContent = formatarMoeda(receitaTotalMes);
+        const receitaDetalhe = document.getElementById('kpiReceitaDetalhe');
+        if (receitaPendente > 0) {
+            receitaDetalhe.innerHTML = `<span>Recebido: ${formatarMoeda(receitaRecebida)}</span><span>Pendente: ${formatarMoeda(receitaPendente)}</span>`;
+        } else {
+            receitaDetalhe.innerHTML = `<span>✓ Tudo recebido</span>`;
+        }
+        
+        // KPI 2: Despesas Totais
+        document.getElementById('kpiDespesas').textContent = formatarMoeda(despesasTotaisMes);
+        document.getElementById('kpiDespesasDetalhe').innerHTML = `
+            <span>Fixas: ${formatarMoeda(totalFixasMes)}</span>
+            <span>Variáveis: ${formatarMoeda(totalVariaveisMes)}</span>
+        `;
+        
+        // KPI 3: Saldo Disponível
+        const saldoCard = document.getElementById('kpiSaldoCard');
+        document.getElementById('kpiSaldo').textContent = formatarMoeda(saldoDisponivel);
+        const saldoDetalhe = document.getElementById('kpiSaldoDetalhe');
+        if (saldoDisponivel >= 0) {
+            saldoCard.classList.remove('negativo');
+            saldoDetalhe.innerHTML = `<span>Livre para uso</span>`;
+        } else {
+            saldoCard.classList.add('negativo');
+            saldoDetalhe.innerHTML = `<span class="kpi-badge negativo">No vermelho</span>`;
+        }
+        
+        // KPI 4: % Comprometido
+        const comprometidoCard = document.getElementById('kpiComprometidoCard');
+        document.getElementById('kpiComprometido').textContent = `${percentComprometido}%`;
+        const badgeComprometido = document.getElementById('kpiBadgeComprometido');
+        comprometidoCard.classList.remove('atencao', 'critico');
+        
+        if (percentComprometido <= 60) {
+            badgeComprometido.textContent = 'Saudável';
+            badgeComprometido.className = 'kpi-badge saudavel';
+        } else if (percentComprometido <= 80) {
+            badgeComprometido.textContent = 'Atenção';
+            badgeComprometido.className = 'kpi-badge atencao';
+            comprometidoCard.classList.add('atencao');
+        } else {
+            badgeComprometido.textContent = 'Crítico';
+            badgeComprometido.className = 'kpi-badge critico';
+            comprometidoCard.classList.add('critico');
+        }
+        
+        // KPI 5: Economizado
+        document.getElementById('kpiEconomia').textContent = formatarMoeda(totalEconomizado);
+        const numReservas = (financeiro.economias || []).length;
+        document.getElementById('kpiEconomiaDetalhe').innerHTML = `<span>${numReservas} reserva${numReservas !== 1 ? 's' : ''} ativa${numReservas !== 1 ? 's' : ''}</span>`;
+        
+        // KPI 6: Previsão Fechamento
+        const previsaoCard = document.getElementById('kpiPrevisaoCard');
+        document.getElementById('kpiPrevisao').textContent = formatarMoeda(previsaoFechamento);
+        const previsaoDetalhe = document.getElementById('kpiPrevisaoDetalhe');
+        previsaoCard.classList.remove('negativo');
+        
+        const despesasPendentes = fixasPendentes + variaveisPendentes;
+        if (previsaoFechamento >= 0) {
+            if (despesasPendentes > 0) {
+                previsaoDetalhe.innerHTML = `<span>Falta pagar: ${formatarMoeda(despesasPendentes)}</span>`;
+            } else {
+                previsaoDetalhe.innerHTML = `<span class="kpi-badge positivo">Mês fechado</span>`;
+            }
+        } else {
+            previsaoCard.classList.add('negativo');
+            previsaoDetalhe.innerHTML = `<span class="kpi-badge negativo">Déficit previsto</span>`;
+        }
 
-        // Atualizar resumo do mês
-        document.getElementById('totalRecebido').textContent = formatarMoeda(totalRecebido);
-        document.getElementById('totalPago').textContent = formatarMoeda(totalPago);
-        document.getElementById('totalDespesasMes').textContent = formatarMoeda(totalDespesasMes);
-        document.getElementById('totalEconomia').textContent = formatarMoeda(totalEconomiaGeral);
-
-        // Subtotais
-        document.getElementById('subtotalFixas').textContent = `(${formatarMoeda(totalPagoFixas)})`;
-        document.getElementById('subtotalVariaveis').textContent = `(${formatarMoeda(totalPagoVar)})`;
-        document.getElementById('subtotalEconomias').textContent = `(${formatarMoeda(totalEconomiaGeral)})`;
+        // Subtotais (mantém compatibilidade)
+        document.getElementById('subtotalFixas').textContent = `(${formatarMoeda(fixasPagas)})`;
+        document.getElementById('subtotalVariaveis').textContent = `(${formatarMoeda(variaveisPagas)})`;
+        document.getElementById('subtotalEconomias').textContent = `(${formatarMoeda(totalEconomizado)})`;
 
         // Totais gerais acumulados
         const totalRecebidoGeral = financeiro.receitas.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
@@ -6380,7 +6674,7 @@
 
         document.getElementById('totalRecebidoFinal').textContent = formatarMoeda(totalRecebidoGeral);
         document.getElementById('totalPagoFinal').textContent = formatarMoeda(totalPagoGeralFixas + totalPagoGeralVar);
-        document.getElementById('totalEconomiaFinal').textContent = formatarMoeda(totalEconomiaGeral);
+        document.getElementById('totalEconomiaFinal').textContent = formatarMoeda(totalEconomizado);
 
         // === TABELA RECEITAS ===
         const receitasTable = document.getElementById('receitasTable');
