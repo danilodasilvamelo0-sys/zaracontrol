@@ -674,6 +674,22 @@
         background: rgba(192, 57, 43, 0.1);
     }
 
+    /* Botão Encerrar Recorrência */
+    .action-btn.btn-encerrar {
+        color: rgba(230, 126, 34, 0.6);
+    }
+    .action-btn.btn-encerrar:hover {
+        color: #e67e22;
+        background: rgba(230, 126, 34, 0.1);
+    }
+
+    /* Badge de Receita Recorrente */
+    .badge-recorrente {
+        margin-left: 8px;
+        font-size: 0.85em;
+        opacity: 0.8;
+    }
+
     /* Botão Pausar */
     .action-btn.btn-pause {
         color: rgba(241, 196, 15, 0.7);
@@ -4533,6 +4549,8 @@
         despesasVariaveis: [],
         emprestimos: [],
         economias: [],
+        receitasFixas: [], // Modelos de receitas recorrentes
+        receitasMes: {}, // Instâncias de receitas por mês
         arquivados: {
             receitas: [],
             despesasFixas: [],
@@ -4547,6 +4565,8 @@
     // Garantir estrutura completa
     if (!financeiro.arquivados) financeiro.arquivados = JSON.parse(JSON.stringify(dadosVazios.arquivados));
     if (!financeiro.despesasFixasMes) financeiro.despesasFixasMes = {};
+    if (!financeiro.receitasFixas) financeiro.receitasFixas = [];
+    if (!financeiro.receitasMes) financeiro.receitasMes = {};
 
     // Estado da aplicação
     let mesSelecionado = '';
@@ -4817,7 +4837,8 @@
                     { id: 'receitaDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Salário' },
                     { id: 'receitaValor', label: 'Valor', type: 'number', step: '0.01' },
                     { id: 'receitaCategoria', label: 'Categoria', type: 'select', options: ['Salário', 'Freelance', 'Investimentos', 'Outros'] },
-                    { id: 'receitaData', label: 'Data', type: 'date' }
+                    { id: 'receitaDia', label: 'Dia Recebimento', type: 'number', min: 1, max: 31, placeholder: '5' },
+                    { id: 'receitaRecorrente', label: 'Receita Recorrente?', type: 'checkbox' }
                 ]
             },
             despesaFixa: {
@@ -5099,33 +5120,111 @@
     document.getElementById('btnAddEconomia').onclick = () => mostrarForm('economia');
 
     // ==========================================
-    // RECEITAS
+    // RECEITAS (com suporte a recorrentes)
     // ==========================================
     
     function salvarReceita() {
         const desc = document.getElementById('receitaDescricao').value.trim();
         const valor = parseFloat(document.getElementById('receitaValor').value) || 0;
         const cat = document.getElementById('receitaCategoria').value || 'Outros';
-        const data = document.getElementById('receitaData').value;
+        const dia = parseInt(document.getElementById('receitaDia').value) || 5;
+        const recorrente = document.getElementById('receitaRecorrente')?.checked || false;
         
-        if (!desc || !valor || !data) return alert('Preencha todos os campos!');
+        if (!desc || !valor) return alert('Preencha descrição e valor!');
         
-        financeiro.receitas.push({
-            id: gerarId(),
-            descricao: desc,
-            valor: valor,
-            categoria: cat,
-            data: data,
-            recebido: false
-        });
+        if (recorrente) {
+            // Criar receita recorrente (modelo)
+            financeiro.receitasFixas.push({
+                id: gerarId(),
+                descricao: desc,
+                valor: valor,
+                categoria: cat,
+                diaRecebimento: dia,
+                ativa: true,
+                criadoEm: new Date().toISOString()
+            });
+            gerarInstanciasReceitas();
+        } else {
+            // Criar receita única no mês atual
+            const key = getMesAnoKey();
+            if (!financeiro.receitasMes[key]) financeiro.receitasMes[key] = [];
+            financeiro.receitasMes[key].push({
+                id: gerarId(),
+                descricao: desc,
+                valor: valor,
+                categoria: cat,
+                data: getDataRecebimento(dia),
+                recebido: false,
+                recorrente: false
+            });
+        }
         
         salvarDados();
         esconderForm('receita');
         renderizar();
     }
 
+    function getDataRecebimento(dia) {
+        const ano = anoSelecionado;
+        const mes = mesSelecionado;
+        const ultimoDia = new Date(ano, parseInt(mes), 0).getDate();
+        const diaReal = Math.min(dia, ultimoDia);
+        return `${ano}-${mes}-${String(diaReal).padStart(2, '0')}`;
+    }
+
+    function gerarInstanciasReceitas() {
+        const key = getMesAnoKey();
+        if (!financeiro.receitasMes[key]) {
+            financeiro.receitasMes[key] = [];
+        }
+
+        // DATA LIMITE: Só gerar receitas a partir de Janeiro/2026
+        const dataLimite = '2026-01';
+        if (key < dataLimite) {
+            return;
+        }
+
+        // Gerar instâncias para o mês atual
+        financeiro.receitasFixas.filter(rf => rf.ativa).forEach(modelo => {
+            const jaExiste = financeiro.receitasMes[key].some(r => r.modeloId === modelo.id);
+            if (!jaExiste) {
+                financeiro.receitasMes[key].push({
+                    id: gerarId(),
+                    modeloId: modelo.id,
+                    descricao: modelo.descricao,
+                    valor: modelo.valor,
+                    categoria: modelo.categoria,
+                    data: getDataRecebimento(modelo.diaRecebimento),
+                    recebido: false,
+                    recorrente: true
+                });
+            }
+        });
+
+        salvarDados();
+    }
+
+    function getReceitasMes() {
+        const key = getMesAnoKey();
+        // Combina receitas antigas (do array receitas) + novas (do objeto receitasMes)
+        const receitasAntigas = (financeiro.receitas || []).filter(r => r.data?.startsWith(key));
+        const receitasNovas = financeiro.receitasMes[key] || [];
+        return [...receitasAntigas, ...receitasNovas];
+    }
+
     function toggleRecebido(id) {
-        const item = financeiro.receitas.find(r => r.id === id);
+        // Procurar nas receitas antigas
+        let item = financeiro.receitas.find(r => r.id === id);
+        if (item) {
+            item.recebido = !item.recebido;
+            salvarDados();
+            renderizar();
+            return;
+        }
+        
+        // Procurar nas receitas novas (por mês)
+        const key = getMesAnoKey();
+        item = (financeiro.receitasMes[key] || []).find(r => r.id === id);
         if (item) {
             item.recebido = !item.recebido;
             salvarDados();
@@ -5134,17 +5233,102 @@
     }
 
     function deletarReceita(id) {
-        if (!confirm('Excluir esta receita?')) return;
-        financeiro.receitas = financeiro.receitas.filter(r => r.id !== id);
+        // Procurar nas receitas antigas
+        let idx = financeiro.receitas.findIndex(r => r.id === id);
+        if (idx !== -1) {
+            if (!confirm('Excluir esta receita?')) return;
+            financeiro.receitas.splice(idx, 1);
+            salvarDados();
+            renderizar();
+            return;
+        }
+        
+        // Procurar nas receitas do mês
+        const key = getMesAnoKey();
+        const receitasMes = financeiro.receitasMes[key] || [];
+        const receita = receitasMes.find(r => r.id === id);
+        
+        if (receita && receita.recorrente && receita.modeloId) {
+            // É uma receita recorrente - perguntar o que fazer
+            const opcao = confirm(
+                'Esta é uma receita recorrente.\n\n' +
+                'OK = Excluir APENAS esta do mês atual\n' +
+                'Cancelar = Não excluir'
+            );
+            
+            if (opcao) {
+                // Excluir apenas do mês atual
+                financeiro.receitasMes[key] = receitasMes.filter(r => r.id !== id);
+                salvarDados();
+                renderizar();
+            }
+        } else {
+            // Receita única
+            if (!confirm('Excluir esta receita?')) return;
+            financeiro.receitasMes[key] = receitasMes.filter(r => r.id !== id);
+            salvarDados();
+            renderizar();
+        }
+    }
+
+    function encerrarReceitaRecorrente(modeloId) {
+        const modelo = financeiro.receitasFixas.find(rf => rf.id === modeloId);
+        if (!modelo) return;
+
+        if (!confirm(`Encerrar receita recorrente "${modelo.descricao}"?\n\nIsso removerá esta receita dos meses FUTUROS.`)) return;
+
+        // Desativar o modelo
+        modelo.ativa = false;
+
+        // Remover instâncias futuras (meses após o atual)
+        const keyAtual = getMesAnoKey();
+        Object.keys(financeiro.receitasMes).forEach(key => {
+            if (key > keyAtual) {
+                financeiro.receitasMes[key] = (financeiro.receitasMes[key] || []).filter(r => r.modeloId !== modeloId);
+            }
+        });
+
         salvarDados();
         renderizar();
+        mostrarStatus('Receita recorrente encerrada', 'success');
+    }
+
+    function arquivarReceita(id) {
+        // Procurar nas receitas antigas
+        let idx = financeiro.receitas.findIndex(r => r.id === id);
+        if (idx !== -1) {
+            const item = financeiro.receitas.splice(idx, 1)[0];
+            financeiro.arquivados.receitas.push(item);
+            salvarDados();
+            renderizar();
+            return;
+        }
+        
+        // Procurar nas receitas do mês
+        const key = getMesAnoKey();
+        idx = (financeiro.receitasMes[key] || []).findIndex(r => r.id === id);
+        if (idx !== -1) {
+            const item = financeiro.receitasMes[key].splice(idx, 1)[0];
+            financeiro.arquivados.receitas.push(item);
+            salvarDados();
+            renderizar();
+        }
     }
 
     function editarReceita(id) {
-        const item = financeiro.receitas.find(r => r.id === id);
+        // Procurar nas receitas antigas
+        let item = financeiro.receitas.find(r => r.id === id);
+        let isNovoSistema = false;
+        
+        if (!item) {
+            const key = getMesAnoKey();
+            item = (financeiro.receitasMes[key] || []).find(r => r.id === id);
+            isNovoSistema = true;
+        }
         if (!item) return;
 
-        itemEditando = { tipo: 'receita', id: id };
+        itemEditando = { tipo: 'receita', id: id, isNovoSistema: isNovoSistema };
+        
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
             <div class="form-row">
@@ -5177,7 +5361,15 @@
     }
 
     function salvarEdicaoReceita() {
-        const item = financeiro.receitas.find(r => r.id === itemEditando.id);
+        let item = null;
+        
+        if (itemEditando.isNovoSistema) {
+            const key = getMesAnoKey();
+            item = (financeiro.receitasMes[key] || []).find(r => r.id === itemEditando.id);
+        } else {
+            item = financeiro.receitas.find(r => r.id === itemEditando.id);
+        }
+        
         if (item) {
             item.descricao = document.getElementById('editDescricao').value.trim();
             item.valor = parseFloat(document.getElementById('editValor').value) || item.valor;
@@ -5187,18 +5379,6 @@
         }
         fecharModal('modalEditar');
         renderizar();
-    }
-
-    function arquivarReceita(id) {
-        const idx = financeiro.receitas.findIndex(r => r.id === id);
-        if (idx > -1) {
-            const item = financeiro.receitas.splice(idx, 1)[0];
-            item.arquivadoEm = new Date().toISOString();
-            financeiro.arquivados.receitas.push(item);
-            salvarDados();
-            renderizar();
-            mostrarStatus('Item arquivado', 'success');
-        }
     }
 
     // ==========================================
@@ -5237,8 +5417,9 @@
             financeiro.despesasFixasMes[key] = [];
         }
 
-        // Gerar instâncias para o mês atual
+        // Gerar instâncias NOVAS para o mês atual
         financeiro.despesasFixas.filter(df => df.ativa).forEach(modelo => {
+            // Verificar se já existe instância para este modelo neste mês (que não seja atrasada)
             const jaExiste = financeiro.despesasFixasMes[key].some(d => d.modeloId === modelo.id && !d.atrasada);
             if (!jaExiste) {
                 financeiro.despesasFixasMes[key].push({
@@ -5256,43 +5437,54 @@
             }
         });
 
-        // Verificar despesas não pagas do mês anterior e criar instâncias atrasadas
-        const mesAnteriorKey = getMesAnteriorKey();
-        const despesasMesAnterior = financeiro.despesasFixasMes[mesAnteriorKey] || [];
+        // Verificar despesas NÃO PAGAS de meses anteriores e criar instâncias atrasadas
+        const mesesAnteriores = Object.keys(financeiro.despesasFixasMes)
+            .filter(k => k < key)
+            .sort();
 
-        despesasMesAnterior.forEach(despesaAnterior => {
-            if (!despesaAnterior.pago && !despesaAnterior.atrasada) {
-                // Verificar se já não existe uma despesa atrasada para este modelo
-                const jaExisteAtrasada = financeiro.despesasFixasMes[key].some(
-                    d => d.modeloId === despesaAnterior.modeloId && d.atrasada && d.dataOriginal === despesaAnterior.data
-                );
+        mesesAnteriores.forEach(mesAnteriorKey => {
+            const despesasMesAnterior = financeiro.despesasFixasMes[mesAnteriorKey] || [];
 
-                if (!jaExisteAtrasada) {
-                    // Criar instância atrasada no mês atual
-                    financeiro.despesasFixasMes[key].push({
-                        id: gerarId(),
-                        modeloId: despesaAnterior.modeloId,
-                        descricao: despesaAnterior.descricao,
-                        valor: despesaAnterior.valor,
-                        categoria: despesaAnterior.categoria,
-                        data: despesaAnterior.data, // Mantém a data original de vencimento
-                        dataOriginal: despesaAnterior.data,
-                        pago: false,
-                        dataPagamento: null,
-                        comprovante: null,
-                        atrasada: true
-                    });
+            despesasMesAnterior.forEach(despesaAnterior => {
+                // Só arrastar se NÃO foi paga e NÃO é uma despesa já atrasada
+                if (!despesaAnterior.pago && !despesaAnterior.atrasada) {
+                    // Verificar se já não existe uma despesa atrasada para este item específico
+                    const jaExisteAtrasada = financeiro.despesasFixasMes[key].some(
+                        d => d.atrasada && d.idOriginal === despesaAnterior.id
+                    );
+
+                    if (!jaExisteAtrasada) {
+                        // Criar instância atrasada no mês atual
+                        financeiro.despesasFixasMes[key].push({
+                            id: gerarId(),
+                            idOriginal: despesaAnterior.id, // Referência ao ID original
+                            modeloId: despesaAnterior.modeloId,
+                            descricao: despesaAnterior.descricao,
+                            valor: despesaAnterior.valor,
+                            categoria: despesaAnterior.categoria,
+                            data: despesaAnterior.data, // Mantém a data original de vencimento
+                            dataOriginal: despesaAnterior.data,
+                            mesOriginal: mesAnteriorKey,
+                            pago: false,
+                            dataPagamento: null,
+                            comprovante: null,
+                            atrasada: true
+                        });
+                    }
                 }
-            }
+            });
         });
 
         salvarDados();
     }
 
     function getDespesasFixasMes() {
-        const despesas = financeiro.despesasFixasMes[getMesAnoKey()] || [];
-        // Filtrar despesas cujo modelo foi encerrado
+        const key = getMesAnoKey();
+        const despesas = financeiro.despesasFixasMes[key] || [];
+        
+        // Retornar todas as despesas (do mês atual + atrasadas de meses anteriores)
         return despesas.filter(d => {
+            // Verificar se o modelo ainda está ativo
             const modelo = financeiro.despesasFixas.find(df => df.id === d.modeloId);
             return modelo && modelo.ativa !== false;
         });
@@ -5495,6 +5687,28 @@
                 item.pago = true;
                 item.dataPagamento = data;
                 item.comprovante = comprovante;
+
+                // Se é uma despesa atrasada, marcar a original como paga também
+                if (item.atrasada && item.idOriginal && item.mesOriginal) {
+                    const original = financeiro.despesasFixasMes[item.mesOriginal]?.find(d => d.id === item.idOriginal);
+                    if (original) {
+                        original.pago = true;
+                        original.dataPagamento = data;
+                        original.comprovante = comprovante;
+                    }
+                }
+
+                // Remover outras instâncias atrasadas desta mesma despesa em outros meses
+                if (item.atrasada && item.idOriginal) {
+                    Object.keys(financeiro.despesasFixasMes).forEach(mesKey => {
+                        if (mesKey !== itemEditando.key) {
+                            financeiro.despesasFixasMes[mesKey] = (financeiro.despesasFixasMes[mesKey] || []).filter(d => {
+                                // Remover se é atrasada e tem o mesmo idOriginal
+                                return !(d.atrasada && d.idOriginal === item.idOriginal);
+                            });
+                        }
+                    });
+                }
             }
         } else if (itemEditando.tipo === 'despesaVariavel') {
             const item = financeiro.despesasVariaveis.find(d => d.id === itemEditando.id);
@@ -6896,7 +7110,10 @@
             return;
         }
 
-        const receitasMes = filtrarPorMes(financeiro.receitas);
+        // Gerar instâncias de receitas recorrentes
+        gerarInstanciasReceitas();
+
+        const receitasMes = getReceitasMes();
         const fixasMes = getDespesasFixasMes();
         const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis);
         const emprestimosAtivos = financeiro.emprestimos.filter(e => !e.arquivado);
@@ -7021,7 +7238,10 @@
         receitasTable.innerHTML = receitasMes.map(r => `
             <tr class="${r.recebido ? 'done' : ''}">
                 <td><input type="checkbox" class="checkbox-status" ${r.recebido ? 'checked' : ''} onchange="toggleRecebido(${r.id})"></td>
-                <td class="descricao">${r.descricao}</td>
+                <td class="descricao">
+                    ${r.descricao}
+                    ${r.recorrente ? '<span class="badge-recorrente" title="Receita Recorrente">🔄</span>' : ''}
+                </td>
                 <td><span class="categoria">${r.categoria}</span></td>
                 <td>${formatarData(r.data)}</td>
                 <td class="valor-positivo">${formatarMoeda(r.valor)}</td>
@@ -7033,13 +7253,15 @@
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                             </svg>
                         </button>
-                        <button class="action-btn btn-arquivar" onclick="arquivarReceita(${r.id})" title="Arquivar">
+                        ${r.recorrente && r.modeloId ? `
+                        <button class="action-btn btn-encerrar" onclick="encerrarReceitaRecorrente(${r.modeloId})" title="Encerrar Recorrência">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 8v13H3V8"></path>
-                                <path d="M1 3h22v5H1z"></path>
-                                <path d="M10 12h4"></path>
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
                             </svg>
                         </button>
+                        ` : ''}
                         <button class="action-btn btn-delete" onclick="deletarReceita(${r.id})" title="Excluir">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
@@ -7824,6 +8046,56 @@
     // INICIALIZAÇÃO
     // ==========================================
     
+    // Limpar dados antigos de Janeiro 2026 (executar uma vez)
+    // Limpar despesas atrasadas duplicadas (que já foram pagas no mês original)
+    function limparDespesasDuplicadas() {
+        const versaoLimpeza = localStorage.getItem('financeiro_limpeza_v2');
+        if (versaoLimpeza === 'done') return; // Já executou
+        
+        // Para cada mês, remover instâncias atrasadas cujo original já foi pago
+        Object.keys(financeiro.despesasFixasMes || {}).forEach(key => {
+            financeiro.despesasFixasMes[key] = (financeiro.despesasFixasMes[key] || []).filter(d => {
+                // Se não é atrasada, manter
+                if (!d.atrasada) return true;
+                
+                // Se é atrasada, verificar se o original foi pago
+                if (d.idOriginal && d.mesOriginal) {
+                    const mesOriginal = financeiro.despesasFixasMes[d.mesOriginal] || [];
+                    const original = mesOriginal.find(orig => orig.id === d.idOriginal);
+                    
+                    // Se o original foi pago, remover a atrasada
+                    if (original && original.pago) {
+                        return false;
+                    }
+                }
+                
+                // Se é atrasada mas não tem referência ao original, verificar pela data
+                if (d.dataOriginal) {
+                    // Procurar em todos os meses anteriores se existe uma despesa paga com essa data
+                    const mesesAnteriores = Object.keys(financeiro.despesasFixasMes).filter(k => k < key);
+                    for (const mesKey of mesesAnteriores) {
+                        const despesasMes = financeiro.despesasFixasMes[mesKey] || [];
+                        const encontrada = despesasMes.find(orig => 
+                            orig.modeloId === d.modeloId && 
+                            orig.data === d.dataOriginal && 
+                            orig.pago
+                        );
+                        if (encontrada) {
+                            return false; // Remover porque o original já foi pago
+                        }
+                    }
+                }
+                
+                return true; // Manter - é atrasada e não foi paga
+            });
+        });
+        
+        // Salvar e marcar como limpo
+        localStorage.setItem('financeiro_v5', JSON.stringify(financeiro));
+        localStorage.setItem('financeiro_limpeza_v2', 'done');
+        console.log('Despesas duplicadas limpas com sucesso');
+    }
+    
     async function init() {
         // Definir mês e ano atual
         const hoje = new Date();
@@ -7837,6 +8109,9 @@
         
         // Carregar dados do Supabase (prioridade)
         await carregarSupabase();
+        
+        // Limpar despesas duplicadas
+        limparDespesasDuplicadas();
         
         // Gerar instâncias de despesas fixas para o mês
         gerarInstanciasDespesasFixas();
@@ -7964,7 +8239,7 @@
 
     function atualizarSugestoesSabedoria() {
         // Coletar dados financeiros
-        const receitasMes = filtrarPorMes(financeiro.receitas || []);
+        const receitasMes = getReceitasMes();
         const fixasMes = getDespesasFixasMes();
         const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis || []).filter(d => !d.pausado);
         
