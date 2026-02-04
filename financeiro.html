@@ -3842,20 +3842,6 @@
         </div>
     </div>
 
-    <!-- ALERTAS DE VENCIMENTO -->
-    <div class="alertas-container" id="alertasContainer">
-        <div class="alertas-header">
-            <div class="alertas-titulo">
-                <span class="icon-alerta">⚠️</span>
-                Alertas de Vencimento
-            </div>
-            <span class="alertas-badge" id="alertasBadge">0</span>
-        </div>
-        <div class="alertas-lista" id="alertasLista">
-            <!-- Alertas serão inseridos dinamicamente -->
-        </div>
-    </div>
-
     <!-- DASHBOARD KPIs -->
     <div class="dashboard-kpis" id="dashboardKpis">
         <!-- KPI 1: Receita Total -->
@@ -5413,6 +5399,12 @@
     // Gera instâncias mensais das despesas fixas ativas
     function gerarInstanciasDespesasFixas() {
         const key = getMesAnoKey();
+        
+        // SÓ PROCESSAR MESES DE 2026 EM DIANTE
+        if (key < '2026-01') {
+            return;
+        }
+        
         if (!financeiro.despesasFixasMes[key]) {
             financeiro.despesasFixasMes[key] = [];
         }
@@ -5437,12 +5429,11 @@
             }
         });
 
-        // Verificar despesas NÃO PAGAS de meses anteriores e criar instâncias atrasadas
-        const mesesAnteriores = Object.keys(financeiro.despesasFixasMes)
-            .filter(k => k < key)
-            .sort();
-
-        mesesAnteriores.forEach(mesAnteriorKey => {
+        // Verificar despesas NÃO PAGAS APENAS do MÊS ANTERIOR (não de vários meses)
+        const mesAnteriorKey = getMesAnteriorKey();
+        
+        // Só arrastar se o mês anterior também é de 2026
+        if (mesAnteriorKey >= '2026-01') {
             const despesasMesAnterior = financeiro.despesasFixasMes[mesAnteriorKey] || [];
 
             despesasMesAnterior.forEach(despesaAnterior => {
@@ -5457,12 +5448,12 @@
                         // Criar instância atrasada no mês atual
                         financeiro.despesasFixasMes[key].push({
                             id: gerarId(),
-                            idOriginal: despesaAnterior.id, // Referência ao ID original
+                            idOriginal: despesaAnterior.id,
                             modeloId: despesaAnterior.modeloId,
                             descricao: despesaAnterior.descricao,
                             valor: despesaAnterior.valor,
                             categoria: despesaAnterior.categoria,
-                            data: despesaAnterior.data, // Mantém a data original de vencimento
+                            data: despesaAnterior.data,
                             dataOriginal: despesaAnterior.data,
                             mesOriginal: mesAnteriorKey,
                             pago: false,
@@ -5473,7 +5464,7 @@
                     }
                 }
             });
-        });
+        }
 
         salvarDados();
     }
@@ -8046,54 +8037,62 @@
     // INICIALIZAÇÃO
     // ==========================================
     
-    // Limpar dados antigos de Janeiro 2026 (executar uma vez)
-    // Limpar despesas atrasadas duplicadas (que já foram pagas no mês original)
-    function limparDespesasDuplicadas() {
-        const versaoLimpeza = localStorage.getItem('financeiro_limpeza_v2');
+    // Limpar dados antigos (2025) e despesas atrasadas antigas
+    function limparDadosAntigos() {
+        const versaoLimpeza = localStorage.getItem('financeiro_limpeza_v3');
         if (versaoLimpeza === 'done') return; // Já executou
         
-        // Para cada mês, remover instâncias atrasadas cujo original já foi pago
+        const mesAtualKey = getMesAnoKey();
+        const mesAnteriorKey = getMesAnteriorKey();
+        
+        // 1. Remover TODOS os meses de 2025 e anteriores
         Object.keys(financeiro.despesasFixasMes || {}).forEach(key => {
-            financeiro.despesasFixasMes[key] = (financeiro.despesasFixasMes[key] || []).filter(d => {
-                // Se não é atrasada, manter
-                if (!d.atrasada) return true;
-                
-                // Se é atrasada, verificar se o original foi pago
-                if (d.idOriginal && d.mesOriginal) {
-                    const mesOriginal = financeiro.despesasFixasMes[d.mesOriginal] || [];
-                    const original = mesOriginal.find(orig => orig.id === d.idOriginal);
+            if (key < '2026-01') {
+                delete financeiro.despesasFixasMes[key];
+            }
+        });
+        
+        // 2. Para cada mês de 2026, remover despesas atrasadas que NÃO são do mês anterior
+        Object.keys(financeiro.despesasFixasMes || {}).forEach(key => {
+            if (key >= '2026-01') {
+                financeiro.despesasFixasMes[key] = (financeiro.despesasFixasMes[key] || []).filter(d => {
+                    // Se não é atrasada, manter
+                    if (!d.atrasada) return true;
                     
-                    // Se o original foi pago, remover a atrasada
-                    if (original && original.pago) {
-                        return false;
+                    // Se é atrasada, só manter se veio do mês ANTERIOR ao mês atual
+                    // Por exemplo: em Fevereiro (2026-02), só mantém atrasadas de Janeiro (2026-01)
+                    if (d.mesOriginal) {
+                        // Calcular qual seria o mês anterior ao key atual
+                        let [ano, mes] = key.split('-').map(Number);
+                        mes--;
+                        if (mes < 1) { mes = 12; ano--; }
+                        const mesAnteriorDoKey = `${ano}-${String(mes).padStart(2, '0')}`;
+                        
+                        // Só manter se é do mês anterior E esse mês é de 2026
+                        return d.mesOriginal === mesAnteriorDoKey && d.mesOriginal >= '2026-01';
                     }
-                }
-                
-                // Se é atrasada mas não tem referência ao original, verificar pela data
-                if (d.dataOriginal) {
-                    // Procurar em todos os meses anteriores se existe uma despesa paga com essa data
-                    const mesesAnteriores = Object.keys(financeiro.despesasFixasMes).filter(k => k < key);
-                    for (const mesKey of mesesAnteriores) {
-                        const despesasMes = financeiro.despesasFixasMes[mesKey] || [];
-                        const encontrada = despesasMes.find(orig => 
-                            orig.modeloId === d.modeloId && 
-                            orig.data === d.dataOriginal && 
-                            orig.pago
-                        );
-                        if (encontrada) {
-                            return false; // Remover porque o original já foi pago
-                        }
+                    
+                    // Se não tem mesOriginal mas tem dataOriginal, verificar pelo ano
+                    if (d.dataOriginal && d.dataOriginal.startsWith('2025')) {
+                        return false; // Remover se é de 2025
                     }
-                }
-                
-                return true; // Manter - é atrasada e não foi paga
-            });
+                    
+                    return false; // Na dúvida, remover atrasadas sem referência clara
+                });
+            }
+        });
+        
+        // 3. Limpar também receitas de 2025
+        Object.keys(financeiro.receitasMes || {}).forEach(key => {
+            if (key < '2026-01') {
+                delete financeiro.receitasMes[key];
+            }
         });
         
         // Salvar e marcar como limpo
         localStorage.setItem('financeiro_v5', JSON.stringify(financeiro));
-        localStorage.setItem('financeiro_limpeza_v2', 'done');
-        console.log('Despesas duplicadas limpas com sucesso');
+        localStorage.setItem('financeiro_limpeza_v3', 'done');
+        console.log('Dados antigos de 2025 e atrasadas antigas removidos');
     }
     
     async function init() {
@@ -8110,8 +8109,8 @@
         // Carregar dados do Supabase (prioridade)
         await carregarSupabase();
         
-        // Limpar despesas duplicadas
-        limparDespesasDuplicadas();
+        // Limpar dados antigos de 2025 e atrasadas antigas
+        limparDadosAntigos();
         
         // Gerar instâncias de despesas fixas para o mês
         gerarInstanciasDespesasFixas();
@@ -8126,90 +8125,6 @@
     // ==========================================
     // ALERTAS DE VENCIMENTO
     // ==========================================
-
-    function atualizarAlertas() {
-        const container = document.getElementById('alertasContainer');
-        const lista = document.getElementById('alertasLista');
-        const badge = document.getElementById('alertasBadge');
-        
-        const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0);
-        const em7dias = new Date(hoje);
-        em7dias.setDate(em7dias.getDate() + 7);
-        
-        let alertas = [];
-        
-        // Verificar despesas fixas
-        const fixasMes = getDespesasFixasMes();
-        fixasMes.forEach(d => {
-            if (d.pago) return;
-            const venc = new Date(d.data + 'T00:00:00');
-            const diffDias = Math.ceil((venc - hoje) / (1000 * 60 * 60 * 24));
-            
-            if (diffDias < 0) {
-                alertas.push({ tipo: 'atrasado', descricao: d.descricao, valor: d.valor, dias: Math.abs(diffDias), data: d.data, categoria: 'Despesa Fixa' });
-            } else if (diffDias === 0) {
-                alertas.push({ tipo: 'hoje', descricao: d.descricao, valor: d.valor, dias: 0, data: d.data, categoria: 'Despesa Fixa' });
-            } else if (diffDias <= 7) {
-                alertas.push({ tipo: 'proximo', descricao: d.descricao, valor: d.valor, dias: diffDias, data: d.data, categoria: 'Despesa Fixa' });
-            }
-        });
-        
-        // Verificar despesas variáveis
-        const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis).filter(d => !d.pausado);
-        variaveisMes.forEach(d => {
-            if (d.pago) return;
-            const venc = new Date(d.data + 'T00:00:00');
-            const diffDias = Math.ceil((venc - hoje) / (1000 * 60 * 60 * 24));
-            
-            if (diffDias < 0) {
-                alertas.push({ tipo: 'atrasado', descricao: d.descricao, valor: d.valor, dias: Math.abs(diffDias), data: d.data, categoria: d.parcelado ? 'Parcelada' : 'Variável' });
-            } else if (diffDias === 0) {
-                alertas.push({ tipo: 'hoje', descricao: d.descricao, valor: d.valor, dias: 0, data: d.data, categoria: d.parcelado ? 'Parcelada' : 'Variável' });
-            } else if (diffDias <= 7) {
-                alertas.push({ tipo: 'proximo', descricao: d.descricao, valor: d.valor, dias: diffDias, data: d.data, categoria: d.parcelado ? 'Parcelada' : 'Variável' });
-            }
-        });
-        
-        // Ordenar: atrasados primeiro, depois por proximidade
-        alertas.sort((a, b) => {
-            if (a.tipo === 'atrasado' && b.tipo !== 'atrasado') return -1;
-            if (a.tipo !== 'atrasado' && b.tipo === 'atrasado') return 1;
-            if (a.tipo === 'hoje' && b.tipo === 'proximo') return -1;
-            if (a.tipo === 'proximo' && b.tipo === 'hoje') return 1;
-            return a.dias - b.dias;
-        });
-        
-        // Mostrar/ocultar container
-        if (alertas.length === 0) {
-            container.classList.remove('ativo');
-            return;
-        }
-        
-        container.classList.add('ativo');
-        badge.textContent = alertas.length;
-        
-        lista.innerHTML = alertas.map(a => {
-            let statusTexto = '';
-            if (a.tipo === 'atrasado') statusTexto = `${a.dias} dia${a.dias > 1 ? 's' : ''} atrasado`;
-            else if (a.tipo === 'hoje') statusTexto = 'Vence hoje!';
-            else statusTexto = `Vence em ${a.dias} dia${a.dias > 1 ? 's' : ''}`;
-            
-            return `
-                <div class="alerta-item ${a.tipo}">
-                    <div class="alerta-info">
-                        <span class="alerta-descricao">${a.descricao}</span>
-                        <span class="alerta-detalhe">${a.categoria} • ${formatarData(a.data)}</span>
-                    </div>
-                    <div style="text-align: right;">
-                        <div class="alerta-valor">${formatarMoeda(a.valor)}</div>
-                        <span class="alerta-status ${a.tipo}">${statusTexto}</span>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
 
     // ==========================================
     // SUGESTÕES DE SABEDORIA FINANCEIRA
@@ -8482,11 +8397,10 @@
     }
 
 
-    // Atualizar alertas e sugestões na renderização
+    // Atualizar sugestões na renderização
     const originalRenderizar = renderizar;
     renderizar = function() {
         originalRenderizar();
-        atualizarAlertas();
         atualizarSugestoesSabedoria();
     };
 
