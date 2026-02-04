@@ -8260,253 +8260,242 @@
         const fixasMes = getDespesasFixasMes();
         const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis || []).filter(d => !d.pausado);
         
+        // Receitas do mês
         const totalReceita = receitasMes.reduce((s, r) => s + r.valor, 0);
-        const totalDespesasFixas = fixasMes.reduce((s, d) => s + d.valor, 0);
-        const totalDespesasVariaveis = variaveisMes.reduce((s, d) => s + d.valor, 0);
-        const totalDespesas = totalDespesasFixas + totalDespesasVariaveis;
-        const totalEconomias = (financeiro.economias || []).reduce((s, e) => s + (e.saldo || 0), 0);
-        const totalEmprestimos = (financeiro.emprestimos || []).filter(e => !e.quitado).reduce((s, e) => s + (e.saldoDevedor || 0), 0);
+        const receitaRecebida = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
+        const receitaPendente = totalReceita - receitaRecebida;
         
+        // Despesas do mês
+        const totalDespesas = fixasMes.reduce((s, d) => s + d.valor, 0) + variaveisMes.reduce((s, d) => s + d.valor, 0);
+        const despesasPagas = fixasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) + 
+                             variaveisMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+        const despesasPendentes = totalDespesas - despesasPagas;
+        
+        // TODAS as economias
+        const totalEconomias = (financeiro.economias || []).reduce((s, e) => s + (e.saldo || e.valor || 0), 0);
+        
+        // TODAS as dívidas ativas
+        const emprestimosAtivos = (financeiro.emprestimos || []).filter(e => !e.quitado && !e.arquivado);
+        const totalDividas = emprestimosAtivos.reduce((s, e) => s + (e.saldoDevedor || e.valorTotal || 0), 0);
+        
+        // Indicadores
         const percentComprometido = totalReceita > 0 ? (totalDespesas / totalReceita) * 100 : 0;
-        const percentEconomia = totalReceita > 0 ? (totalEconomias / totalReceita) * 100 : 0;
         const saldoLivre = totalReceita - totalDespesas;
+        const mesesReserva = totalDespesas > 0 ? totalEconomias / totalDespesas : 0;
 
-        // Atualizar citação do dia (baseada no dia do mês)
+        // Atualizar citação do dia
         const indiceCitacao = new Date().getDate() % CITACOES.length;
         const citacao = CITACOES[indiceCitacao];
         document.getElementById('citacaoTexto').textContent = `"${citacao.texto}"`;
         document.getElementById('citacaoFonte').textContent = `— ${citacao.fonte}`;
 
         // Atualizar diagnóstico
-        atualizarDiagnostico(totalReceita, totalDespesas, totalEconomias, totalEmprestimos, percentComprometido, saldoLivre);
+        const grid = document.getElementById('diagnosticoGrid');
+        if (grid) {
+            let statusComp = percentComprometido > 80 ? 'critico' : percentComprometido > 60 ? 'atencao' : percentComprometido > 40 ? 'bom' : 'otimo';
+            let statusDiv = totalDividas > totalReceita * 3 ? 'critico' : totalDividas > totalReceita ? 'atencao' : totalDividas > 0 ? 'bom' : 'otimo';
+            let statusRes = mesesReserva >= 6 ? 'otimo' : mesesReserva >= 3 ? 'bom' : mesesReserva >= 1 ? 'atencao' : 'critico';
+            let statusSaldo = saldoLivre < 0 ? 'critico' : saldoLivre < totalReceita * 0.1 ? 'atencao' : 'otimo';
+            let statusRecPend = receitaPendente > 0 ? 'atencao' : 'otimo';
+            let statusDesPend = despesasPendentes > 0 ? 'atencao' : 'otimo';
+
+            grid.innerHTML = `
+                <div class="diagnostico-item ${statusComp}">
+                    <div class="titulo">Comprometimento</div>
+                    <div class="valor">${percentComprometido.toFixed(0)}%</div>
+                    <div class="descricao">${percentComprometido <= 60 ? 'Saudável' : percentComprometido <= 80 ? 'Atenção' : 'Crítico'}</div>
+                </div>
+                <div class="diagnostico-item ${statusDiv}">
+                    <div class="titulo">Dívidas Totais</div>
+                    <div class="valor">${formatarMoeda(totalDividas)}</div>
+                    <div class="descricao">${emprestimosAtivos.length} empréstimo${emprestimosAtivos.length !== 1 ? 's' : ''} ativo${emprestimosAtivos.length !== 1 ? 's' : ''}</div>
+                </div>
+                <div class="diagnostico-item ${statusRes}">
+                    <div class="titulo">Reserva</div>
+                    <div class="valor">${mesesReserva.toFixed(1)} meses</div>
+                    <div class="descricao">${formatarMoeda(totalEconomias)}</div>
+                </div>
+                <div class="diagnostico-item ${statusSaldo}">
+                    <div class="titulo">Saldo Previsto</div>
+                    <div class="valor">${formatarMoeda(saldoLivre)}</div>
+                    <div class="descricao">${saldoLivre >= 0 ? 'Positivo' : 'Déficit!'}</div>
+                </div>
+                <div class="diagnostico-item ${statusRecPend}">
+                    <div class="titulo">Receita Pendente</div>
+                    <div class="valor">${formatarMoeda(receitaPendente)}</div>
+                    <div class="descricao">${receitaPendente > 0 ? 'A receber este mês' : 'Tudo recebido'}</div>
+                </div>
+                <div class="diagnostico-item ${statusDesPend}">
+                    <div class="titulo">Despesas Pendentes</div>
+                    <div class="valor">${formatarMoeda(despesasPendentes)}</div>
+                    <div class="descricao">${despesasPendentes > 0 ? 'A pagar este mês' : 'Tudo pago'}</div>
+                </div>
+            `;
+        }
 
         // Gerar sugestões personalizadas
-        gerarSugestoes(totalReceita, totalDespesas, totalEconomias, totalEmprestimos, percentComprometido, saldoLivre, fixasMes, variaveisMes);
-
-        // Gerar plano de ação
-        gerarPlanoAcao(totalEmprestimos, percentComprometido, totalEconomias, totalReceita, saldoLivre);
-    }
-
-    function atualizarDiagnostico(totalReceita, totalDespesas, totalEconomias, totalEmprestimos, percentComprometido, saldoLivre) {
-        const grid = document.getElementById('diagnosticoGrid');
-        
-        // Determinar classes de status
-        let statusComprometido = 'otimo';
-        if (percentComprometido > 80) statusComprometido = 'critico';
-        else if (percentComprometido > 60) statusComprometido = 'atencao';
-        else if (percentComprometido > 40) statusComprometido = 'bom';
-
-        let statusDivida = 'otimo';
-        const relacaoDivida = totalReceita > 0 ? (totalEmprestimos / totalReceita) * 100 : 0;
-        if (relacaoDivida > 50) statusDivida = 'critico';
-        else if (relacaoDivida > 30) statusDivida = 'atencao';
-        else if (relacaoDivida > 0) statusDivida = 'bom';
-
-        let statusEconomia = 'critico';
-        const mesesReserva = totalDespesas > 0 ? totalEconomias / totalDespesas : 0;
-        if (mesesReserva >= 6) statusEconomia = 'otimo';
-        else if (mesesReserva >= 3) statusEconomia = 'bom';
-        else if (mesesReserva >= 1) statusEconomia = 'atencao';
-
-        let statusSaldo = saldoLivre >= 0 ? 'otimo' : 'critico';
-        if (saldoLivre > 0 && saldoLivre < totalReceita * 0.1) statusSaldo = 'atencao';
-
-        grid.innerHTML = `
-            <div class="diagnostico-item ${statusComprometido}">
-                <div class="titulo">Comprometimento</div>
-                <div class="valor">${percentComprometido.toFixed(0)}%</div>
-                <div class="descricao">${percentComprometido <= 60 ? 'Saudável' : percentComprometido <= 80 ? 'Atenção' : 'Crítico'}</div>
-            </div>
-            <div class="diagnostico-item ${statusDivida}">
-                <div class="titulo">Dívidas</div>
-                <div class="valor">${formatarMoeda(totalEmprestimos)}</div>
-                <div class="descricao">${totalEmprestimos === 0 ? 'Livre de dívidas!' : relacaoDivida.toFixed(0) + '% da renda'}</div>
-            </div>
-            <div class="diagnostico-item ${statusEconomia}">
-                <div class="titulo">Reserva</div>
-                <div class="valor">${mesesReserva.toFixed(1)} meses</div>
-                <div class="descricao">${mesesReserva >= 6 ? 'Excelente!' : mesesReserva >= 3 ? 'Bom' : 'Insuficiente'}</div>
-            </div>
-            <div class="diagnostico-item ${statusSaldo}">
-                <div class="titulo">Saldo Mensal</div>
-                <div class="valor">${formatarMoeda(saldoLivre)}</div>
-                <div class="descricao">${saldoLivre >= 0 ? 'Positivo' : 'Negativo - Déficit!'}</div>
-            </div>
-        `;
-    }
-
-    function gerarSugestoes(totalReceita, totalDespesas, totalEconomias, totalEmprestimos, percentComprometido, saldoLivre, fixasMes, variaveisMes) {
         const lista = document.getElementById('sugestoesLista');
-        let sugestoes = [];
+        if (lista) {
+            let sugestoes = [];
 
-        // 1. Se tem dívidas - prioridade máxima
-        if (totalEmprestimos > 0) {
-            const emprestimosAtivos = (financeiro.emprestimos || []).filter(e => !e.quitado).sort((a, b) => (b.taxaJuros || 0) - (a.taxaJuros || 0));
-            if (emprestimosAtivos.length > 0) {
-                const maiorJuros = emprestimosAtivos[0];
+            // 1. Se tem dívidas - prioridade máxima
+            if (totalDividas > 0 && emprestimosAtivos.length > 0) {
+                const maiorDivida = emprestimosAtivos.sort((a, b) => (b.taxaJuros || 0) - (a.taxaJuros || 0))[0];
                 sugestoes.push({
                     tipo: 'divida',
                     icone: '⚔️',
                     titulo: 'Quite Suas Dívidas - Método Avalanche',
-                    texto: `Você tem ${emprestimosAtivos.length} dívida${emprestimosAtivos.length > 1 ? 's' : ''} ativa${emprestimosAtivos.length > 1 ? 's' : ''}. Foque primeiro em "${maiorJuros.descricao || 'a dívida principal'}" que tem a maior taxa de juros. Cada real pago aqui evita mais juros compostos.`,
+                    texto: `Você tem ${emprestimosAtivos.length} dívida${emprestimosAtivos.length > 1 ? 's' : ''} totalizando ${formatarMoeda(totalDividas)}. Foque em "${maiorDivida.descricao || 'a dívida principal'}" primeiro.`,
                     fonte: '"O rico domina sobre os pobres; quem toma emprestado é servo de quem empresta." — Provérbios 22:7',
-                    acao: `Pague pelo menos ${formatarMoeda((maiorJuros.saldoDevedor || 0) * 0.1)} extra este mês`
+                    acao: `Pague ${formatarMoeda((maiorDivida.saldoDevedor || maiorDivida.valorTotal || 0) * 0.1)} extra este mês`
                 });
             }
-        }
 
-        // 2. Se não guarda 10% - regra de ouro da Babilônia
-        const percentPoupado = totalReceita > 0 ? ((totalReceita - totalDespesas) / totalReceita) * 100 : 0;
-        if (percentPoupado < 10 && totalReceita > 0) {
-            const meta10 = totalReceita * 0.1;
-            const faltante = meta10 - (totalReceita - totalDespesas);
-            sugestoes.push({
-                tipo: 'economia',
-                icone: '🏺',
-                titulo: 'A Lei dos 10% - Pague-se Primeiro',
-                texto: `Você está guardando apenas ${percentPoupado.toFixed(1)}% da sua renda. A primeira lei da riqueza é: "Parte de tudo que você ganha é sua para guardar". Separe ${formatarMoeda(meta10)} ANTES de pagar qualquer conta.`,
-                fonte: '"Guarde pelo menos 10% de tudo que ganhar." — O Homem Mais Rico da Babilônia',
-                acao: `Crie uma reserva automática de ${formatarMoeda(meta10)}`
-            });
-        }
-
-        // 3. Se comprometimento alto - identificar ruídos
-        if (percentComprometido > 60) {
-            // Identificar despesas "ruído" (lazer, assinaturas, etc.)
-            const todasDespesas = [...fixasMes, ...variaveisMes];
-            const ruidos = todasDespesas.filter(d => 
-                ['Lazer', 'Assinaturas', 'Delivery', 'Streaming', 'Jogos', 'Outros'].includes(d.categoria)
-            );
-            const totalRuido = ruidos.reduce((s, d) => s + d.valor, 0);
-            
-            if (totalRuido > 0) {
+            // 2. Se não guarda 10%
+            const percentPoupado = totalReceita > 0 ? ((totalReceita - totalDespesas) / totalReceita) * 100 : 0;
+            if (percentPoupado < 10 && totalReceita > 0) {
                 sugestoes.push({
-                    tipo: 'corte',
-                    icone: '✂️',
-                    titulo: 'Elimine os Ruídos Financeiros',
-                    texto: `Você gasta ${formatarMoeda(totalRuido)} em despesas não essenciais (${ruidos.length} item${ruidos.length > 1 ? 'ns' : ''}). Pergunte-se: "Isso me aproxima ou me afasta da riqueza?" Cortar 50% disso já liberaria ${formatarMoeda(totalRuido * 0.5)}/mês.`,
-                    fonte: '"Quem ama o prazer acabará na pobreza; quem ama o vinho e o luxo jamais será rico." — Provérbios 21:17',
-                    acao: `Cancele ou pause ${ruidos.length > 1 ? 'pelo menos 1 assinatura' : 'esta despesa'} hoje`
+                    tipo: 'economia',
+                    icone: '🏺',
+                    titulo: 'A Lei dos 10% - Pague-se Primeiro',
+                    texto: `Você está guardando apenas ${percentPoupado.toFixed(1)}% da renda. Separe ${formatarMoeda(totalReceita * 0.1)} ANTES de pagar qualquer conta.`,
+                    fonte: '"Guarde pelo menos 10% de tudo que ganhar." — O Homem Mais Rico da Babilônia',
+                    acao: `Crie uma reserva automática de ${formatarMoeda(totalReceita * 0.1)}`
                 });
             }
-        }
 
-        // 4. Se saldo negativo
-        if (saldoLivre < 0) {
-            sugestoes.push({
-                tipo: 'divida',
-                icone: '🚨',
-                titulo: 'Emergência: Você Gasta Mais do que Ganha',
-                texto: `Seu saldo está negativo em ${formatarMoeda(Math.abs(saldoLivre))}. Isso significa que você está se endividando todo mês. É preciso ação IMEDIATA: corte despesas ou aumente a renda.`,
-                fonte: '"Os planos bem elaborados levam à fartura; já o apressado sempre acaba na miséria." — Provérbios 21:5',
-                acao: 'Liste 3 despesas para cortar HOJE'
-            });
-        }
+            // 3. Se comprometimento alto
+            if (percentComprometido > 60) {
+                const todasDespesas = [...fixasMes, ...variaveisMes];
+                const ruidos = todasDespesas.filter(d => ['Lazer', 'Assinaturas', 'Delivery', 'Streaming', 'Jogos', 'Outros'].includes(d.categoria));
+                const totalRuido = ruidos.reduce((s, d) => s + d.valor, 0);
+                
+                if (totalRuido > 0) {
+                    sugestoes.push({
+                        tipo: 'corte',
+                        icone: '✂️',
+                        titulo: 'Elimine os Ruídos Financeiros',
+                        texto: `Você gasta ${formatarMoeda(totalRuido)} em despesas não essenciais. Cortar 50% liberaria ${formatarMoeda(totalRuido * 0.5)}/mês.`,
+                        fonte: '"Quem ama o prazer acabará na pobreza." — Provérbios 21:17',
+                        acao: 'Cancele pelo menos 1 assinatura hoje'
+                    });
+                }
+            }
 
-        // 5. Se reserva insuficiente
-        const mesesReserva = totalDespesas > 0 ? totalEconomias / totalDespesas : 0;
-        if (mesesReserva < 6 && totalEmprestimos === 0) {
-            const metaReserva = totalDespesas * 6;
-            sugestoes.push({
-                tipo: 'economia',
-                icone: '🛡️',
-                titulo: 'Construa Sua Fortaleza Financeira',
-                texto: `Sua reserva cobre apenas ${mesesReserva.toFixed(1)} mês${mesesReserva >= 2 ? 'es' : ''} de despesas. O ideal são 6 meses (${formatarMoeda(metaReserva)}). Esta reserva é sua proteção contra imprevistos.`,
-                fonte: '"Na casa do sábio há provisões e azeite; mas o tolo devora tudo que possui." — Provérbios 21:20',
-                acao: `Aumente sua reserva em ${formatarMoeda(totalDespesas * 0.5)} este mês`
-            });
-        }
+            // 4. Se saldo negativo
+            if (saldoLivre < 0) {
+                sugestoes.push({
+                    tipo: 'divida',
+                    icone: '🚨',
+                    titulo: 'Emergência: Déficit Mensal',
+                    texto: `Seu saldo está negativo em ${formatarMoeda(Math.abs(saldoLivre))}. Você está se endividando todo mês!`,
+                    fonte: '"Os planos bem elaborados levam à fartura; já o apressado sempre acaba na miséria." — Provérbios 21:5',
+                    acao: 'Liste 3 despesas para cortar HOJE'
+                });
+            }
 
-        // 6. Se está bem - sugestão de investimento
-        if (percentComprometido <= 50 && totalEmprestimos === 0 && mesesReserva >= 3) {
-            sugestoes.push({
-                tipo: 'investimento',
-                icone: '📈',
-                titulo: 'Faça Seu Dinheiro Trabalhar',
-                texto: `Parabéns! Você está no caminho certo. Agora é hora de fazer seu dinheiro gerar mais dinheiro. Considere investimentos de renda fixa para começar, depois diversifique.`,
-                fonte: '"Faça seu ouro trabalhar para você." — O Homem Mais Rico da Babilônia',
-                acao: 'Pesquise sobre Tesouro Direto ou CDBs'
-            });
-        }
+            // 5. Se reserva insuficiente
+            if (mesesReserva < 6 && totalDividas === 0) {
+                sugestoes.push({
+                    tipo: 'economia',
+                    icone: '🛡️',
+                    titulo: 'Construa Sua Fortaleza Financeira',
+                    texto: `Sua reserva cobre ${mesesReserva.toFixed(1)} mês${mesesReserva >= 2 ? 'es' : ''}. O ideal são 6 meses (${formatarMoeda(totalDespesas * 6)}).`,
+                    fonte: '"Na casa do sábio há provisões e azeite; mas o tolo devora tudo que possui." — Provérbios 21:20',
+                    acao: `Aumente sua reserva em ${formatarMoeda(totalDespesas * 0.5)} este mês`
+                });
+            }
 
-        // 7. Sabedoria geral se não tem sugestões específicas
-        if (sugestoes.length === 0) {
-            sugestoes.push({
-                tipo: 'sabedoria',
-                icone: '👑',
-                titulo: 'Continue no Caminho da Sabedoria',
-                texto: `Suas finanças estão equilibradas. Mantenha a disciplina e lembre-se: a riqueza é construída dia após dia, decisão após decisão. Não se desvie do caminho.`,
-                fonte: '"A ação leva ao sucesso. A procrastinação leva ao fracasso." — O Homem Mais Rico da Babilônia',
-                acao: 'Revise suas metas financeiras mensalmente'
-            });
-        }
+            // 6. Se está bem
+            if (percentComprometido <= 50 && totalDividas === 0 && mesesReserva >= 3) {
+                sugestoes.push({
+                    tipo: 'investimento',
+                    icone: '📈',
+                    titulo: 'Faça Seu Dinheiro Trabalhar',
+                    texto: 'Parabéns! Você está no caminho certo. Agora faça seu dinheiro gerar mais dinheiro com investimentos.',
+                    fonte: '"Faça seu ouro trabalhar para você." — O Homem Mais Rico da Babilônia',
+                    acao: 'Pesquise sobre Tesouro Direto ou CDBs'
+                });
+            }
 
-        // Renderizar sugestões (máximo 4)
-        lista.innerHTML = sugestoes.slice(0, 4).map(s => `
-            <div class="sugestao-card ${s.tipo}">
-                <div class="sugestao-icone">${s.icone}</div>
-                <div class="sugestao-conteudo">
-                    <div class="sugestao-titulo">${s.titulo}</div>
-                    <div class="sugestao-texto">${s.texto}</div>
-                    <div class="sugestao-fonte">${s.fonte}</div>
-                    <div class="sugestao-acao">💡 ${s.acao}</div>
+            // Se não tem sugestões
+            if (sugestoes.length === 0) {
+                sugestoes.push({
+                    tipo: 'sabedoria',
+                    icone: '👑',
+                    titulo: 'Continue no Caminho da Sabedoria',
+                    texto: 'Suas finanças estão equilibradas. Mantenha a disciplina!',
+                    fonte: '"A ação leva ao sucesso. A procrastinação leva ao fracasso." — O Homem Mais Rico da Babilônia',
+                    acao: 'Revise suas metas financeiras mensalmente'
+                });
+            }
+
+            lista.innerHTML = sugestoes.slice(0, 4).map(s => `
+                <div class="sugestao-card ${s.tipo}">
+                    <div class="sugestao-icone">${s.icone}</div>
+                    <div class="sugestao-conteudo">
+                        <div class="sugestao-titulo">${s.titulo}</div>
+                        <div class="sugestao-texto">${s.texto}</div>
+                        <div class="sugestao-fonte">${s.fonte}</div>
+                        <div class="sugestao-acao">💡 ${s.acao}</div>
+                    </div>
                 </div>
-            </div>
-        `).join('');
-    }
-
-    function gerarPlanoAcao(totalEmprestimos, percentComprometido, totalEconomias, totalReceita, saldoLivre) {
-        const lista = document.getElementById('planoLista');
-        let acoes = [];
-
-        // Prioridade 1: Saldo negativo
-        if (saldoLivre < 0) {
-            acoes.push({ texto: 'URGENTE: Equilibre seu orçamento - você gasta mais do que ganha', prioridade: 'urgente' });
+            `).join('');
         }
 
-        // Prioridade 2: Dívidas
-        if (totalEmprestimos > 0) {
-            acoes.push({ texto: 'Quite suas dívidas começando pela de maior juros (Método Avalanche)', prioridade: 'urgente' });
-        }
+        // Gerar plano de ação
+        const planoLista = document.getElementById('planoLista');
+        if (planoLista) {
+            let acoes = [];
 
-        // Prioridade 3: Reserva de emergência
-        const mesesReserva = totalReceita > 0 ? totalEconomias / (totalReceita * 0.7) : 0;
-        if (mesesReserva < 3) {
-            acoes.push({ texto: 'Construa uma reserva de emergência de 3-6 meses de despesas', prioridade: totalEmprestimos > 0 ? 'importante' : 'urgente' });
-        }
+            if (saldoLivre < 0) {
+                acoes.push({ texto: 'URGENTE: Equilibre seu orçamento - você gasta mais do que ganha', prioridade: 'urgente' });
+            }
 
-        // Prioridade 4: Regra dos 10%
-        if (saldoLivre >= 0 && saldoLivre < totalReceita * 0.1) {
-            acoes.push({ texto: 'Guarde pelo menos 10% da sua renda todo mês - pague-se primeiro', prioridade: 'importante' });
-        }
+            if (totalDividas > 0) {
+                acoes.push({ texto: `Quite suas ${emprestimosAtivos.length} dívida${emprestimosAtivos.length > 1 ? 's' : ''} (${formatarMoeda(totalDividas)}) - comece pela de maior juros`, prioridade: 'urgente' });
+            }
 
-        // Prioridade 5: Reduzir comprometimento
-        if (percentComprometido > 70) {
-            acoes.push({ texto: 'Reduza seu comprometimento de renda para menos de 70%', prioridade: 'importante' });
-        }
+            if (receitaPendente > 0) {
+                acoes.push({ texto: `Cobre as receitas pendentes: ${formatarMoeda(receitaPendente)} a receber`, prioridade: 'importante' });
+            }
 
-        // Prioridade 6: Cortar ruídos
-        if (percentComprometido > 50) {
-            acoes.push({ texto: 'Identifique e elimine gastos supérfluos (assinaturas, delivery, impulsos)', prioridade: 'medio' });
-        }
+            if (despesasPendentes > 0) {
+                acoes.push({ texto: `Pague as despesas pendentes: ${formatarMoeda(despesasPendentes)} a pagar`, prioridade: 'importante' });
+            }
 
-        // Prioridade 7: Investir
-        if (totalEmprestimos === 0 && mesesReserva >= 3) {
-            acoes.push({ texto: 'Comece a investir - faça seu dinheiro trabalhar para você', prioridade: 'medio' });
-        }
+            if (mesesReserva < 3) {
+                acoes.push({ texto: 'Construa uma reserva de emergência de 3-6 meses', prioridade: totalDividas > 0 ? 'importante' : 'urgente' });
+            }
 
-        // Se não tem ações, está tudo bem
-        if (acoes.length === 0) {
-            acoes.push({ texto: 'Continue monitorando suas finanças e mantenha a disciplina', prioridade: 'medio' });
-        }
+            if (saldoLivre >= 0 && saldoLivre < totalReceita * 0.1 && totalReceita > 0) {
+                acoes.push({ texto: 'Guarde pelo menos 10% da sua renda - pague-se primeiro', prioridade: 'importante' });
+            }
 
-        lista.innerHTML = acoes.slice(0, 5).map((a, i) => `
-            <div class="plano-item">
-                <div class="plano-numero">${i + 1}</div>
-                <div class="plano-texto">${a.texto}</div>
-                <span class="plano-prioridade ${a.prioridade}">${a.prioridade === 'urgente' ? 'Urgente' : a.prioridade === 'importante' ? 'Importante' : 'Médio'}</span>
-            </div>
-        `).join('');
+            if (percentComprometido > 70) {
+                acoes.push({ texto: 'Reduza seu comprometimento de renda para menos de 70%', prioridade: 'importante' });
+            }
+
+            if (percentComprometido > 50) {
+                acoes.push({ texto: 'Elimine gastos supérfluos (assinaturas, delivery, impulsos)', prioridade: 'medio' });
+            }
+
+            if (totalDividas === 0 && mesesReserva >= 3) {
+                acoes.push({ texto: 'Comece a investir - faça seu dinheiro trabalhar para você', prioridade: 'medio' });
+            }
+
+            if (acoes.length === 0) {
+                acoes.push({ texto: 'Continue monitorando suas finanças e mantenha a disciplina', prioridade: 'medio' });
+            }
+
+            planoLista.innerHTML = acoes.slice(0, 5).map((a, i) => `
+                <div class="plano-item">
+                    <div class="plano-numero">${i + 1}</div>
+                    <div class="plano-texto">${a.texto}</div>
+                    <span class="plano-prioridade ${a.prioridade}">${a.prioridade === 'urgente' ? 'Urgente' : a.prioridade === 'importante' ? 'Importante' : 'Médio'}</span>
+                </div>
+            `).join('');
+        }
     }
 
 
