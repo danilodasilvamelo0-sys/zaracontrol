@@ -3931,7 +3931,7 @@
     <!-- SEÇÃO: RECEITAS -->
     <div class="section" id="sectionReceitas">
         <div class="section-header">
-            <h2>Receitas</h2>
+            <h2>Receitas <span class="subtotal" id="subtotalReceitas"></span></h2>
             <button class="btn-add-section" id="btnAddReceita" title="Adicionar receita">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -7010,18 +7010,10 @@
         }
 
         // Subtotais (mantém compatibilidade)
+        document.getElementById('subtotalReceitas').textContent = `(${formatarMoeda(receitaRecebida)} de ${formatarMoeda(receitaTotalMes)})`;
         document.getElementById('subtotalFixas').textContent = `(${formatarMoeda(fixasPagas)})`;
         document.getElementById('subtotalVariaveis').textContent = `(${formatarMoeda(variaveisPagas)})`;
         document.getElementById('subtotalEconomias').textContent = `(${formatarMoeda(totalEconomizado)})`;
-
-        // Totais gerais acumulados
-        const totalRecebidoGeral = financeiro.receitas.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
-        const totalPagoGeralFixas = Object.values(financeiro.despesasFixasMes).flat().filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
-        const totalPagoGeralVar = financeiro.despesasVariaveis.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
-
-        document.getElementById('totalRecebidoFinal').textContent = formatarMoeda(totalRecebidoGeral);
-        document.getElementById('totalPagoFinal').textContent = formatarMoeda(totalPagoGeralFixas + totalPagoGeralVar);
-        document.getElementById('totalEconomiaFinal').textContent = formatarMoeda(totalEconomizado);
 
         // === TABELA RECEITAS ===
         const receitasTable = document.getElementById('receitasTable');
