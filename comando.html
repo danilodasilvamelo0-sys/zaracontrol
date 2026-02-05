@@ -41,122 +41,173 @@
         ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0a0a0a}::-webkit-scrollbar-thumb{background:rgba(212,175,125,.3);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(212,175,125,.5)}
         @media(max-width:768px){.header h1{font-size:1.4em;letter-spacing:2px}.identity-card{padding:20px}.identity-text{font-size:1.1em}.provocation-text{font-size:1.2em}.provocation-actions{flex-direction:column}.provocation-actions button{width:100%;justify-content:center}.status-grid{grid-template-columns:1fr 1fr;gap:12px}.status-card{padding:15px}.missions-grid{grid-template-columns:1fr}.tabs-header{gap:5px}.tab-btn{padding:10px 12px;font-size:.75em;flex:1;justify-content:center}.tab-btn span{display:none}.law-week-title{font-size:1.4em}.law-week-actions{flex-direction:column}.law-week-actions button{width:100%}.footer-actions{flex-direction:column;text-align:center}.crimes-cards-grid{grid-template-columns:1fr}.fase-accordion-header{padding:15px}.fase-accordion-title{font-size:.9em}.fase-accordion-num{width:32px;height:32px;font-size:.9em}.fase-crime-item-header{padding:12px}.fase-crime-item-nome{font-size:.85em}.manual-section-content{padding-left:0}.manual-section-header{flex-wrap:wrap}}
         @media(max-width:480px){.status-grid{grid-template-columns:1fr}.weekly-checks{justify-content:space-between}.day-check input[type="checkbox"]{width:28px;height:28px}.crimes-cards-grid{gap:10px}.crime-card-mini{padding:15px}.fase-accordion-subtitle{font-size:.7em}}
-        /* TOJI STYLES */
-        .toji-header{text-align:center;padding:30px 20px;border-bottom:1px solid rgba(212,175,125,.2);margin-bottom:25px}
-        .toji-title{font-family:"Cinzel",serif;font-size:2.5em;color:#d4af7d;letter-spacing:8px;text-transform:uppercase;margin-bottom:5px}
-        .toji-subtitle{font-family:"Cinzel",serif;font-size:1em;color:rgba(212,175,125,.7);letter-spacing:3px;margin-bottom:15px}
-        .toji-frase{font-style:italic;color:rgba(255,255,255,.5);font-size:1em;margin-bottom:25px}
-        .essencia-container{display:flex;flex-direction:column;align-items:center;gap:10px}
-        .essencia-label{font-family:"Cinzel",serif;font-size:.8em;color:rgba(212,175,125,.7);letter-spacing:2px}
-        .radial-progress{position:relative;display:flex;align-items:center;justify-content:center}
-        .radial-value{position:absolute;font-family:"Cinzel",serif;font-size:1.8em;color:#d4af7d}
-        .toji-section{margin-bottom:30px}
-        .toji-section-title{font-family:"Cinzel",serif;font-size:1em;color:#d4af7d;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid rgba(212,175,125,.2);display:flex;align-items:center;gap:10px}
-        .tracos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:15px}
-        .traco-item{background:rgba(0,0,0,.3);border:1px solid rgba(212,175,125,.15);border-radius:8px;padding:18px}
-        .traco-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-        .traco-header svg{width:18px;height:18px;color:#d4af7d}
-        .traco-header h4{font-family:"Cinzel",serif;font-size:.95em;color:#d4af7d}
-        .traco-desc{font-size:.8em;color:rgba(255,255,255,.5);margin-bottom:12px;line-height:1.4}
-        .traco-bar{height:6px;background:rgba(212,175,125,.2);border-radius:3px;overflow:hidden;margin-bottom:10px}
-        .traco-fill{height:100%;background:linear-gradient(90deg,#d4af7d,#d4af7d);border-radius:3px;transition:width .3s}
+        /* TOJI MOBILE */
+        @media(max-width:768px){
+            .toji-status-brutal{padding:15px}
+            .status-row{flex-wrap:wrap;gap:15px;justify-content:center}
+            .status-item{min-width:80px}
+            .status-value{font-size:1.5em}
+            .alvo-container{flex-direction:column;gap:12px}
+            .alvo-label{text-align:center}
+            .alvo-container input{text-align:center;font-size:1em;padding:12px 0}
+            .alvo-btn{width:100%;padding:12px}
+            .tracos-grid{grid-template-columns:1fr}
+            .traco-item{padding:12px}
+            .traco-header h4{font-size:.9em}
+            .traco-percent{font-size:.85em}
+            .bloco-header-toji{padding:12px;flex-wrap:wrap;gap:10px}
+            .bloco-info{flex:1;min-width:0}
+            .bloco-nome{font-size:.85em;white-space:normal;word-wrap:break-word}
+            .bloco-dias{font-size:.7em}
+            .bloco-content-toji{padding:12px}
+            .meta-row-toji{flex-direction:column;gap:8px;padding:10px 0}
+            .meta-nome{font-size:.9em;line-height:1.4;word-wrap:break-word}
+            .meta-dias-row{justify-content:flex-start;gap:6px;flex-wrap:wrap}
+            .dia-check{width:32px;height:32px}
+            .dias-header-row{gap:6px}
+            .dia-header{width:32px;font-size:.7em}
+            .metas-dias-header{flex-direction:column;gap:10px}
+            .meta-nome-header{display:none}
+            .ritual-item-toji{flex-wrap:wrap;gap:8px;padding:12px}
+            .ritual-text-toji{flex:1 1 100%;order:2;font-size:.9em;line-height:1.4}
+            .ritual-check-toji{order:1}
+            .ritual-time-toji{order:3;font-size:.8em}
+            .ritual-actions-toji{order:4;margin-left:auto}
+            .corte-input-toji{flex-direction:column;gap:10px}
+            .corte-input-toji input{font-size:1em;padding:12px 0}
+            .btn-corte{width:100%;padding:12px}
+            .corte-item-toji{padding:10px 0}
+            .corte-text-toji{font-size:.9em;line-height:1.4}
+            .prova-final-toji{padding:15px}
+            .prova-final-toji p{font-size:.85em;line-height:1.5}
+            .prova-btn-toji{width:100%;padding:12px}
+            .toji-section-title{font-size:.8em;letter-spacing:2px}
+            .fase-progress-container{padding:12px}
+            .fase-progress-header{flex-direction:column;gap:5px;text-align:center}
+            .metas-header{flex-direction:column;gap:10px;text-align:center}
+            .btn-add-meta{width:100%}
+        }
+        @media(max-width:380px){
+            .status-item{min-width:70px}
+            .status-value{font-size:1.3em}
+            .status-label{font-size:.65em}
+            .dia-check{width:28px;height:28px}
+            .dia-header{width:28px;font-size:.65em}
+            .bloco-num{width:24px;height:24px;font-size:.8em}
+            .traco-btn{width:28px;height:28px}
+        }
+        /* TOJI STYLES - BRUTALISTA */
+        .toji-status-brutal{background:#0a0a0a;border:1px solid rgba(212,175,125,.3);padding:20px;margin-bottom:25px}
+        .status-row{display:flex;justify-content:space-between;margin-bottom:20px;border-bottom:1px solid rgba(212,175,125,.15);padding-bottom:15px}
+        .status-item{text-align:center}
+        .status-label{display:block;font-size:.7em;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
+        .status-value{font-family:"Cinzel",serif;font-size:1.8em;color:#d4af7d}
+        .status-value.fail{color:#8b0000}
+        .status-value.success{color:#d4af7d}
+        .alvo-container{display:flex;gap:10px;align-items:center}
+        .alvo-label{font-family:"Cinzel",serif;font-size:.9em;color:#d4af7d;letter-spacing:2px}
+        .alvo-container input{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(212,175,125,.3);color:#fff;font-size:1em;padding:8px 0;outline:none}
+        .alvo-container input::placeholder{color:rgba(255,255,255,.2)}
+        .alvo-btn{background:transparent;border:1px solid rgba(212,175,125,.4);color:#d4af7d;padding:8px 20px;font-family:"Cinzel",serif;font-size:.8em;letter-spacing:1px;cursor:pointer;transition:all .2s}
+        .alvo-btn:hover{background:#d4af7d;color:#0a0a0a}
+        .alvo-btn.done{background:#d4af7d;color:#0a0a0a}
+        .toji-section{margin-bottom:25px}
+        .toji-section-title{font-family:"Cinzel",serif;font-size:.85em;color:rgba(212,175,125,.6);letter-spacing:3px;text-transform:uppercase;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid rgba(212,175,125,.1)}
+        .tracos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+        .traco-item{background:transparent;border:1px solid rgba(212,175,125,.1);padding:15px}
+        .traco-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+        .traco-header svg{width:14px;height:14px;color:rgba(212,175,125,.5)}
+        .traco-header h4{font-family:"Cinzel",serif;font-size:.85em;color:rgba(212,175,125,.8);font-weight:normal}
+        .traco-desc{display:none}
+        .traco-bar{height:4px;background:rgba(212,175,125,.1);overflow:hidden;margin-bottom:8px}
+        .traco-fill{height:100%;background:#d4af7d;transition:width .3s}
         .traco-controls{display:flex;justify-content:space-between;align-items:center}
-        .traco-percent{font-family:"Cinzel",serif;color:#d4af7d}
-        .traco-btns{display:flex;gap:6px}
-        .traco-btn{width:28px;height:28px;border:1px solid rgba(212,175,125,.4);background:rgba(212,175,125,.1);color:#d4af7d;border-radius:4px;cursor:pointer;font-weight:bold;transition:all .3s}
-        .traco-btn:hover{background:#d4af7d;color:#fff}
-        .bloco-toji{border:1px solid rgba(212,175,125,.2);border-radius:8px;margin-bottom:12px;overflow:hidden}
-        .bloco-header-toji{background:rgba(212,175,125,.1);padding:15px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-        .bloco-header-toji:hover{background:rgba(212,175,125,.15)}
-        .bloco-info{display:flex;align-items:center;gap:12px}
-        .bloco-num{width:36px;height:36px;background:rgba(212,175,125,.2);border:1px solid #d4af7d;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Cinzel",serif;color:#d4af7d}
-        .bloco-nome{font-family:"Cinzel",serif;color:#d4af7d;letter-spacing:1px}
-        .bloco-dias{font-size:.75em;color:rgba(255,255,255,.4)}
-        .bloco-status-toji{display:flex;align-items:center;gap:10px}
-        .bloco-check-toji{width:22px;height:22px;border:2px solid rgba(212,175,125,.4);border-radius:50%;display:flex;align-items:center;justify-content:center}
+        .traco-percent{font-size:.8em;color:rgba(212,175,125,.6)}
+        .traco-btns{display:flex;gap:5px}
+        .traco-btn{width:24px;height:24px;border:1px solid rgba(212,175,125,.2);background:transparent;color:rgba(212,175,125,.6);font-size:.9em;cursor:pointer;transition:all .2s}
+        .traco-btn:hover{border-color:#d4af7d;color:#d4af7d}
+        .bloco-toji{border:1px solid rgba(212,175,125,.1);margin-bottom:8px;overflow:hidden}
+        .bloco-header-toji{background:transparent;padding:12px 15px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+        .bloco-header-toji:hover{background:rgba(212,175,125,.05)}
+        .bloco-info{display:flex;align-items:center;gap:10px}
+        .bloco-num{width:28px;height:28px;border:1px solid rgba(212,175,125,.3);display:flex;align-items:center;justify-content:center;font-family:"Cinzel",serif;font-size:.9em;color:rgba(212,175,125,.6)}
+        .bloco-nome{font-family:"Cinzel",serif;font-size:.9em;color:rgba(212,175,125,.8)}
+        .bloco-dias{font-size:.7em;color:rgba(255,255,255,.3)}
+        .bloco-status-toji{display:flex;align-items:center;gap:8px}
+        .bloco-check-toji{width:18px;height:18px;border:1px solid rgba(212,175,125,.3);display:flex;align-items:center;justify-content:center}
         .bloco-check-toji.done{background:#d4af7d;border-color:#d4af7d}
-        .bloco-check-toji svg{width:12px;height:12px;color:#fff;opacity:0}
+        .bloco-check-toji svg{width:10px;height:10px;color:#0a0a0a;opacity:0}
         .bloco-check-toji.done svg{opacity:1}
-        .bloco-toggle{color:rgba(255,255,255,.4);transition:transform .3s}
+        .bloco-toggle{color:rgba(255,255,255,.3);transition:transform .2s}
         .bloco-toji.open .bloco-toggle{transform:rotate(180deg)}
-        .bloco-content-toji{display:none;padding:20px;background:rgba(0,0,0,.2)}
+        .bloco-content-toji{display:none;padding:15px;background:rgba(0,0,0,.3)}
         .bloco-toji.open .bloco-content-toji{display:block}
-        .bloco-frase-toji{font-style:italic;color:rgba(212,175,125,.6);margin-bottom:15px;padding-left:12px;border-left:2px solid #d4af7d}
-        .meta-item-toji{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(212,175,125,.1)}
-        .meta-check-toji{width:18px;height:18px;border:2px solid rgba(212,175,125,.4);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .bloco-frase-toji{display:none}
+        .meta-item-toji{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(212,175,125,.05)}
+        .meta-check-toji{width:16px;height:16px;border:1px solid rgba(212,175,125,.3);cursor:pointer;display:flex;align-items:center;justify-content:center}
         .meta-check-toji.checked{background:#d4af7d;border-color:#d4af7d}
-        .meta-check-toji svg{width:12px;height:12px;color:#fff;opacity:0}
+        .meta-check-toji svg{width:10px;height:10px;color:#0a0a0a;opacity:0}
         .meta-check-toji.checked svg{opacity:1}
-        .prova-final-toji{background:rgba(212,175,125,.1);border:1px solid rgba(212,175,125,.3);border-radius:6px;padding:15px;margin-top:15px}
-        .prova-final-toji h5{font-family:"Cinzel",serif;color:#d4af7d;margin-bottom:8px}
-        .prova-final-toji p{color:rgba(255,255,255,.6);font-size:.9em;margin-bottom:12px}
-        .prova-btn-toji{background:transparent;border:1px solid #d4af7d;color:#d4af7d;padding:8px 20px;border-radius:4px;cursor:pointer;font-family:"Cinzel",serif;transition:all .3s}
-        .prova-btn-toji:hover,.prova-btn-toji.done{background:#d4af7d;color:#fff}
-        .ritual-item-toji{display:flex;align-items:center;gap:12px;padding:12px 15px;background:rgba(0,0,0,.2);border:1px solid rgba(212,175,125,.1);border-radius:6px;margin-bottom:8px}
-        .ritual-check-toji{width:22px;height:22px;border:2px solid rgba(212,175,125,.4);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .prova-final-toji{background:transparent;border:1px solid rgba(212,175,125,.2);padding:12px;margin-top:12px}
+        .prova-final-toji h5{font-family:"Cinzel",serif;font-size:.8em;color:rgba(212,175,125,.6);margin-bottom:6px}
+        .prova-final-toji p{color:rgba(255,255,255,.4);font-size:.8em;margin-bottom:10px;line-height:1.5;word-wrap:break-word}
+        .prova-btn-toji{background:transparent;border:1px solid rgba(212,175,125,.3);color:rgba(212,175,125,.6);padding:6px 15px;font-family:"Cinzel",serif;font-size:.75em;cursor:pointer;transition:all .2s}
+        .prova-btn-toji:hover,.prova-btn-toji.done{background:#d4af7d;color:#0a0a0a;border-color:#d4af7d}
+        .ritual-item-toji{display:flex;align-items:center;gap:10px;padding:10px 12px;background:transparent;border:1px solid rgba(212,175,125,.1);margin-bottom:6px;flex-wrap:wrap}
+        .ritual-check-toji{width:20px;height:20px;min-width:20px;border:1px solid rgba(212,175,125,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
         .ritual-check-toji.checked{background:#d4af7d;border-color:#d4af7d}
-        .ritual-check-toji svg{width:12px;height:12px;color:#fff;opacity:0}
+        .ritual-check-toji svg{width:10px;height:10px;color:#0a0a0a;opacity:0}
         .ritual-check-toji.checked svg{opacity:1}
-        .ritual-text-toji{flex:1;color:rgba(255,255,255,.7)}
-        .ritual-progress-toji{text-align:center;margin-top:15px;padding-top:15px;border-top:1px solid rgba(212,175,125,.2);font-family:"Cinzel",serif;color:#d4af7d}
-        .corte-input-toji{display:flex;gap:10px;margin-bottom:20px}
-        .corte-input-toji input{flex:1;background:rgba(0,0,0,.3);border:1px solid rgba(212,175,125,.2);border-radius:4px;padding:12px;color:#e0e0e0}
-        .corte-input-toji input::placeholder{color:rgba(255,255,255,.3)}
-        .btn-corte{background:#d4af7d;border:none;color:#fff;padding:12px 20px;border-radius:4px;cursor:pointer;font-family:"Cinzel",serif;transition:all .3s}
-        .btn-corte:hover{background:#a00000}
-        .corte-item-toji{display:flex;align-items:center;gap:12px;padding:12px 15px;background:rgba(212,175,125,.05);border-left:3px solid #d4af7d;border-radius:0 6px 6px 0;margin-bottom:8px}
-        .corte-icon-toji svg{width:18px;height:18px;color:#d4af7d}
-        .corte-text-toji{color:rgba(255,255,255,.7);flex:1}
-        .corte-data-toji{font-size:.75em;color:rgba(255,255,255,.4)}
-        .rituais-semanais-toji{background:rgba(212,175,125,.08);border:1px solid rgba(212,175,125,.2);border-radius:6px;padding:15px;margin-top:15px}
-        .rituais-semanais-toji h5{font-family:"Cinzel",serif;color:#d4af7d;margin-bottom:12px;font-size:.9em;letter-spacing:1px}
-        .rituais-semanais-toji ul{list-style:none;padding:0;margin:0}
-        .rituais-semanais-toji li{color:rgba(255,255,255,.7);font-size:.85em;padding:8px 12px;background:rgba(0,0,0,.2);border-left:2px solid #d4af7d;margin-bottom:6px;border-radius:0 4px 4px 0}
-        .rituais-semanais-toji li:last-child{margin-bottom:0}
-        .toji-plano-desc{background:rgba(212,175,125,.08);border:1px solid rgba(212,175,125,.2);border-radius:8px;padding:20px;margin-bottom:20px}
-        .toji-plano-desc>p{color:rgba(255,255,255,.7);font-size:.9em;line-height:1.6;margin-bottom:15px}
-        .sistema-progresso-info{background:rgba(0,0,0,.2);border-radius:6px;padding:15px}
-        .sistema-progresso-info strong{color:#d4af7d;font-family:"Cinzel",serif;font-size:.85em;letter-spacing:1px;display:block;margin-bottom:10px}
-        .sistema-progresso-info ul{list-style:none;padding:0;margin:0 0 10px 0}
-        .sistema-progresso-info li{color:rgba(255,255,255,.6);font-size:.8em;padding:5px 0 5px 15px;position:relative}
-        .sistema-progresso-info li::before{content:'•';position:absolute;left:0;color:#d4af7d}
-        .sistema-progresso-info .sem-feedback{color:#d4af7d;font-style:italic;font-size:.85em;margin:0;padding-top:5px;border-top:1px solid rgba(212,175,125,.15)}
-        .selo-predador{display:none;text-align:center;padding:30px;background:linear-gradient(135deg,rgba(212,175,125,.2),rgba(212,175,125,.1));border:2px solid #d4af7d;border-radius:8px;margin-top:25px}
+        .ritual-text-toji{flex:1;min-width:0;color:rgba(255,255,255,.6);font-size:.9em;line-height:1.4;word-wrap:break-word;overflow-wrap:break-word}
+        .ritual-time-toji{font-size:.75em;color:rgba(212,175,125,.4);flex-shrink:0}
+        .ritual-actions-toji{display:flex;gap:4px;flex-shrink:0}
+        .ritual-progress-toji{text-align:right;margin-top:10px;font-size:.8em;color:rgba(212,175,125,.5)}
+        .corte-input-toji{display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap}
+        .corte-input-toji input{flex:1;min-width:0;background:transparent;border:none;border-bottom:1px solid rgba(212,175,125,.2);padding:10px 0;color:#e0e0e0;font-size:.9em}
+        .corte-input-toji input::placeholder{color:rgba(255,255,255,.2)}
+        .btn-corte{background:transparent;border:1px solid rgba(212,175,125,.3);color:#d4af7d;padding:8px 15px;font-family:"Cinzel",serif;font-size:.8em;cursor:pointer;transition:all .2s;flex-shrink:0}
+        .btn-corte:hover{background:#8b0000;border-color:#8b0000;color:#fff}
+        .corte-item-toji{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(212,175,125,.05);flex-wrap:wrap}
+        .corte-icon-toji{flex-shrink:0}
+        .corte-icon-toji svg{width:14px;height:14px;color:rgba(212,175,125,.4)}
+        .corte-text-toji{color:rgba(255,255,255,.5);flex:1;min-width:0;font-size:.85em;word-wrap:break-word;overflow-wrap:break-word;line-height:1.4}
+        .corte-data-toji{font-size:.7em;color:rgba(255,255,255,.3);flex-shrink:0}
+        .rituais-semanais-toji{display:none}
+        .toji-plano-desc{display:none}
+        .sistema-progresso-info{display:none}
+        .selo-predador{display:none;text-align:center;padding:20px;border:1px solid #d4af7d;margin-top:20px}
         .selo-predador.visivel{display:block}
-        .selo-predador svg{width:60px;height:60px;color:#d4af7d;margin-bottom:15px}
-        .selo-predador h2{font-family:"Cinzel",serif;font-size:1.8em;color:#d4af7d;letter-spacing:4px;margin-bottom:8px}
-        .selo-predador p{color:rgba(255,255,255,.6)}
-        .fase-progress-container{background:rgba(0,0,0,.3);border:1px solid rgba(212,175,125,.2);border-radius:6px;padding:12px 15px;margin-bottom:15px}
-        .fase-progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-        .fase-progress-label{font-family:"Cinzel",serif;font-size:.85em;color:#d4af7d;letter-spacing:1px}
-        .fase-progress-count{font-family:"Cinzel",serif;font-size:.9em;color:rgba(255,255,255,.7)}
-        .fase-progress-bar{height:10px;background:rgba(212,175,125,.15);border-radius:5px;overflow:hidden;position:relative}
-        .fase-progress-fill{height:100%;background:linear-gradient(90deg,#d4af7d,#c9a066);border-radius:5px;transition:width .5s ease}
-        .fase-progress-percent{text-align:right;font-size:.75em;color:rgba(212,175,125,.7);margin-top:5px}
-        .metas-header{display:flex;justify-content:space-between;align-items:center;margin:20px 0 15px;padding-bottom:10px;border-bottom:1px solid rgba(212,175,125,.15)}
-        .metas-header span{font-family:"Cinzel",serif;font-size:.85em;color:#d4af7d;letter-spacing:1px}
-        .btn-add-meta{background:transparent;border:1px solid rgba(212,175,125,.3);color:#d4af7d;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:.75em;display:flex;align-items:center;gap:5px;transition:all .3s}
-        .btn-add-meta:hover{background:rgba(212,175,125,.1)}
-        .metas-grid-container{background:rgba(0,0,0,.2);border:1px solid rgba(212,175,125,.1);border-radius:8px;overflow:hidden}
-        .metas-dias-header{display:flex;align-items:center;background:rgba(212,175,125,.1);padding:10px 15px;border-bottom:1px solid rgba(212,175,125,.15)}
-        .meta-nome-header{flex:1;font-size:.8em;color:rgba(212,175,125,.7);text-transform:uppercase;letter-spacing:1px}
-        .dias-header-row{display:flex;gap:8px}
-        .dia-header{width:32px;height:24px;display:flex;align-items:center;justify-content:center;font-size:.75em;color:rgba(255,255,255,.5);font-weight:600}
-        .dia-header.completo{color:#d4af7d;text-shadow:0 0 10px rgba(212,175,125,.5)}
-        .meta-row-toji{display:flex;align-items:center;padding:12px 15px;border-bottom:1px solid rgba(212,175,125,.05)}
+        .selo-predador h2{font-family:"Cinzel",serif;font-size:1.5em;color:#d4af7d;letter-spacing:3px}
+        .fase-progress-container{background:rgba(0,0,0,.3);border:1px solid rgba(212,175,125,.2);padding:12px 15px;margin-bottom:15px}
+        .fase-progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:5px}
+        .fase-progress-label{font-family:"Cinzel",serif;font-size:.8em;color:#d4af7d;letter-spacing:1px}
+        .fase-progress-count{font-family:"Cinzel",serif;font-size:.85em;color:rgba(255,255,255,.7)}
+        .fase-progress-bar{height:8px;background:rgba(212,175,125,.15);overflow:hidden;position:relative}
+        .fase-progress-fill{height:100%;background:#d4af7d;transition:width .5s ease}
+        .fase-progress-percent{text-align:right;font-size:.7em;color:rgba(212,175,125,.6);margin-top:5px}
+        .metas-header{display:flex;justify-content:space-between;align-items:center;margin:15px 0 12px;padding-bottom:8px;border-bottom:1px solid rgba(212,175,125,.1);flex-wrap:wrap;gap:10px}
+        .metas-header span{font-family:"Cinzel",serif;font-size:.8em;color:rgba(212,175,125,.7);letter-spacing:1px}
+        .btn-add-meta{background:transparent;border:1px solid rgba(212,175,125,.2);color:rgba(212,175,125,.6);padding:6px 12px;cursor:pointer;font-size:.75em;display:flex;align-items:center;gap:5px;transition:all .2s}
+        .btn-add-meta:hover{background:rgba(212,175,125,.1);color:#d4af7d}
+        .metas-grid-container{background:rgba(0,0,0,.2);border:1px solid rgba(212,175,125,.1);overflow:hidden}
+        .metas-dias-header{display:flex;align-items:center;background:rgba(212,175,125,.05);padding:10px 12px;border-bottom:1px solid rgba(212,175,125,.1)}
+        .meta-nome-header{flex:1;font-size:.75em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px}
+        .dias-header-row{display:flex;gap:6px;flex-wrap:wrap}
+        .dia-header{width:32px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.7em;color:rgba(255,255,255,.4)}
+        .dia-header.completo{color:#d4af7d}
+        .meta-row-toji{display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(212,175,125,.05);flex-wrap:wrap;gap:8px}
         .meta-row-toji:last-child{border-bottom:none}
-        .meta-row-toji:hover{background:rgba(212,175,125,.03)}
-        .meta-nome{flex:1;color:rgba(255,255,255,.8);font-size:.9em;display:flex;align-items:center;gap:10px}
+        .meta-nome{flex:1;min-width:0;color:rgba(255,255,255,.7);font-size:.85em;display:flex;align-items:center;gap:8px;word-wrap:break-word;overflow-wrap:break-word;line-height:1.4}
         .meta-actions-inline{display:flex;gap:4px;opacity:0;transition:opacity .2s}
         .meta-row-toji:hover .meta-actions-inline{opacity:1}
-        .btn-meta-action-sm{background:transparent;border:none;color:rgba(255,255,255,.4);padding:4px;cursor:pointer;border-radius:3px;transition:all .2s}
-        .btn-meta-action-sm:hover{color:#d4af7d;background:rgba(212,175,125,.1)}
-        .btn-meta-action-sm.del:hover{color:#e74c3c;background:rgba(231,76,60,.1)}
-        .meta-dias-row{display:flex;gap:8px}
-        .dia-check{width:32px;height:32px;border:2px solid rgba(212,175,125,.25);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
-        .dia-check:hover{border-color:#d4af7d;background:rgba(212,175,125,.1)}
+        .btn-meta-action-sm{background:transparent;border:none;color:rgba(255,255,255,.3);padding:4px;cursor:pointer;transition:all .2s}
+        .btn-meta-action-sm:hover{color:#d4af7d}
+        .btn-meta-action-sm.del:hover{color:#8b0000}
+        .meta-dias-row{display:flex;gap:6px;flex-wrap:wrap}
+        .dia-check{width:32px;height:32px;border:1px solid rgba(212,175,125,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+        .dia-check:hover{border-color:rgba(212,175,125,.5)}
         .dia-check.checked{background:#d4af7d;border-color:#d4af7d}
-        .dia-check.checked::after{content:'✓';color:#0a0a0a;font-weight:bold;font-size:.8em}
+        .dia-check.checked::after{content:'✓';color:#0a0a0a;font-weight:bold;font-size:.75em}
         .ritual-actions-toji{display:flex;gap:6px;margin-left:auto}
         .btn-add-ritual{width:100%;background:transparent;border:1px dashed rgba(212,175,125,.3);color:rgba(212,175,125,.7);padding:12px;border-radius:6px;cursor:pointer;font-size:.85em;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;transition:all .3s}
         .btn-add-ritual:hover{border-color:#d4af7d;color:#d4af7d;background:rgba(212,175,125,.05)}
@@ -532,47 +583,52 @@
             <div class="tab-content active" id="tab-laws"><div class="law-week-card" id="lawWeekCard"></div><div class="laws-filter"><button class="filter-btn active" onclick="filterLaws('todas')">Todas</button><button class="filter-btn" onclick="filterLaws('aplicadas')">Aplicadas</button><button class="filter-btn" onclick="filterLaws('pendentes')">Pendentes</button><button class="filter-btn" onclick="filterLaws('favoritas')">Favoritas</button></div><div class="laws-list" id="lawsList"></div></div>
             <!-- ABA TOJI -->
             <div class="tab-content" id="tab-toji">
-                <div class="toji-header">
-                    <h2 class="toji-title">TOJI</h2>
-                    <p class="toji-subtitle">Caminho do Predador Silencioso</p>
-                    <p class="toji-frase">"Força é tudo. Emoção é ruído."</p>
-                    <div class="essencia-container">
-                        <span class="essencia-label">ESSÊNCIA TOJI</span>
-                        <div class="radial-progress">
-                            <svg viewBox="0 0 150 150" width="120" height="120">
-                                <defs><linearGradient id="tojiGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#c9a066"/><stop offset="100%" style="stop-color:#c9a066"/></linearGradient></defs>
-                                <circle cx="75" cy="75" r="60" fill="none" stroke="rgba(212,175,125,0.2)" stroke-width="8"/>
-                                <circle id="essenciaCircle" cx="75" cy="75" r="60" fill="none" stroke="url(#tojiGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="377" transform="rotate(-90 75 75)"/>
-                            </svg>
-                            <div class="radial-value" id="essenciaValor">0%</div>
+                <!-- STATUS BRUTAL -->
+                <div class="toji-status-brutal">
+                    <div class="status-row">
+                        <div class="status-item">
+                            <span class="status-label">SEQUÊNCIA</span>
+                            <span class="status-value" id="tojiStreak">0</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">ONTEM</span>
+                            <span class="status-value" id="tojiOntem">—</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">FASE</span>
+                            <span class="status-value" id="tojiFaseAtual">1</span>
                         </div>
                     </div>
+                    <div class="alvo-container">
+                        <span class="alvo-label">ALVO:</span>
+                        <input type="text" id="alvoInput" placeholder="O que você vai eliminar hoje?" onchange="salvarAlvo()">
+                        <button class="alvo-btn" id="alvoBtn" onclick="eliminarAlvo()">ELIMINAR</button>
+                    </div>
                 </div>
+
                 <div class="toji-section">
-                    <h3 class="toji-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> TRAÇOS TOJI</h3>
+                    <h3 class="toji-section-title">TRAÇOS</h3>
                     <div class="tracos-grid" id="tracosGrid"></div>
                 </div>
                 <div class="toji-section">
-                    <h3 class="toji-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6"/></svg> PLANO DE 1 ANO — O CAMINHO TOJI</h3>
+                    <h3 class="toji-section-title">FASES</h3>
                     <div id="blocosContainer"></div>
                 </div>
                 <div class="toji-section">
-                    <h3 class="toji-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> RITUAIS DIÁRIOS DO PREDADOR</h3>
+                    <h3 class="toji-section-title">RITUAIS</h3>
                     <div id="rituaisToji"></div>
-                    <div class="ritual-progress-toji"><span id="rituaisTojProgress">0 / 5 rituais hoje</span></div>
+                    <div class="ritual-progress-toji"><span id="rituaisTojProgress">0/5</span></div>
                 </div>
                 <div class="toji-section">
-                    <h3 class="toji-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px"><path d="M18 6L6 18M6 6l12 12"/></svg> CORTE DIÁRIO</h3>
+                    <h3 class="toji-section-title">CORTES</h3>
                     <div class="corte-input-toji">
-                        <input type="text" id="corteInputToji" placeholder="O que você cortou hoje? (pensamento, hábito, pessoa...)">
+                        <input type="text" id="corteInputToji" placeholder="O que você cortou?">
                         <button class="btn-corte" onclick="adicionarCorteToji()">CORTAR</button>
                     </div>
                     <div id="cortesListaToji"></div>
                 </div>
                 <div class="selo-predador" id="seloPredador">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                    <h2>PREDADOR FORMADO</h2>
-                    <p>Você completou o Caminho Toji. A força está em você.</p>
+                    <h2>PREDADOR</h2>
                 </div>
             </div>
             <!-- ABA SHELBY -->
@@ -1005,22 +1061,150 @@ function renderToji(){
 checkWeekReset();
 const hoje=new Date().toDateString();
 if(tojiData.lastReset!==hoje){tojiData.rituais={};tojiData.lastReset=hoje;saveToji();}
-renderTracosToji();renderBlocosToji();renderRituaisToji();renderCortesToji();atualizarEssenciaToji();verificarSeloPredador();
+renderStatusBrutal();
+renderTracosToji();renderBlocosToji();renderRituaisToji();renderCortesToji();verificarSeloPredador();
 }
+
+// SISTEMA BRUTALISTA - ALVO, STREAK, STATUS
+function renderStatusBrutal(){
+    // Streak
+    const streak = calcularStreak();
+    const streakEl = document.getElementById('tojiStreak');
+    if(streakEl) streakEl.textContent = streak;
+    
+    // Status de ontem
+    const ontemEl = document.getElementById('tojiOntem');
+    if(ontemEl){
+        const ontemStatus = verificarOntem();
+        ontemEl.textContent = ontemStatus ? '✓' : '✗';
+        ontemEl.className = 'status-value ' + (ontemStatus ? 'success' : 'fail');
+    }
+    
+    // Fase atual
+    const faseEl = document.getElementById('tojiFaseAtual');
+    if(faseEl){
+        const faseAtual = calcularFaseAtual();
+        faseEl.textContent = faseAtual;
+    }
+    
+    // Alvo
+    const alvoInput = document.getElementById('alvoInput');
+    const alvoBtn = document.getElementById('alvoBtn');
+    if(alvoInput && alvoBtn){
+        const alvoHoje = tojiData.alvoHoje || {};
+        const hoje = new Date().toDateString();
+        if(alvoHoje.data === hoje){
+            alvoInput.value = alvoHoje.texto || '';
+            if(alvoHoje.eliminado){
+                alvoInput.disabled = true;
+                alvoInput.style.textDecoration = 'line-through';
+                alvoInput.style.color = 'rgba(212,175,125,.4)';
+                alvoBtn.textContent = '✓';
+                alvoBtn.classList.add('done');
+            } else {
+                alvoInput.disabled = false;
+                alvoInput.style.textDecoration = 'none';
+                alvoInput.style.color = '#fff';
+                alvoBtn.textContent = 'ELIMINAR';
+                alvoBtn.classList.remove('done');
+            }
+        } else {
+            alvoInput.value = '';
+            alvoInput.disabled = false;
+            alvoInput.style.textDecoration = 'none';
+            alvoInput.style.color = '#fff';
+            alvoBtn.textContent = 'ELIMINAR';
+            alvoBtn.classList.remove('done');
+        }
+    }
+}
+
+function calcularStreak(){
+    if(!tojiData.historiaDias) tojiData.historiaDias = {};
+    let streak = 0;
+    let data = new Date();
+    data.setDate(data.getDate() - 1); // Começa de ontem
+    
+    while(true){
+        const key = data.toDateString();
+        if(tojiData.historiaDias[key] === true){
+            streak++;
+            data.setDate(data.getDate() - 1);
+        } else {
+            break;
+        }
+    }
+    return streak;
+}
+
+function verificarOntem(){
+    if(!tojiData.historiaDias) return false;
+    const ontem = new Date();
+    ontem.setDate(ontem.getDate() - 1);
+    return tojiData.historiaDias[ontem.toDateString()] === true;
+}
+
+function calcularFaseAtual(){
+    const blocos = getBlocosConfig();
+    for(let i = 0; i < blocos.length; i++){
+        const bd = tojiData.blocos[blocos[i].id];
+        if(!bd || !bd.prova) return blocos[i].id;
+    }
+    return 4; // Todas completas
+}
+
+function salvarAlvo(){
+    const alvoInput = document.getElementById('alvoInput');
+    if(!alvoInput) return;
+    const hoje = new Date().toDateString();
+    if(!tojiData.alvoHoje || tojiData.alvoHoje.data !== hoje){
+        tojiData.alvoHoje = { data: hoje, texto: '', eliminado: false };
+    }
+    tojiData.alvoHoje.texto = alvoInput.value;
+    saveToji();
+}
+
+function eliminarAlvo(){
+    const alvoInput = document.getElementById('alvoInput');
+    if(!alvoInput || !alvoInput.value.trim()) return;
+    
+    const hoje = new Date().toDateString();
+    if(!tojiData.alvoHoje || tojiData.alvoHoje.data !== hoje){
+        tojiData.alvoHoje = { data: hoje, texto: alvoInput.value, eliminado: false };
+    }
+    
+    if(tojiData.alvoHoje.eliminado) return; // Já foi eliminado
+    
+    tojiData.alvoHoje.eliminado = true;
+    
+    // Registrar dia como sucesso se todos os rituais foram feitos
+    marcarDiaSeCompleto();
+    
+    saveToji();
+    renderStatusBrutal();
+}
+
+function marcarDiaSeCompleto(){
+    const rituais = tojiData.rituaisConfig || RITUAIS_TOJI_DEFAULT;
+    const feitos = rituais.filter(r => tojiData.rituais[r.id]).length;
+    const total = rituais.length;
+    
+    // Se fez pelo menos 80% dos rituais e eliminou o alvo
+    if(feitos >= Math.floor(total * 0.8) && tojiData.alvoHoje?.eliminado){
+        if(!tojiData.historiaDias) tojiData.historiaDias = {};
+        tojiData.historiaDias[new Date().toDateString()] = true;
+        saveToji();
+    }
+}
+
 function renderTracosToji(){
 const grid=document.getElementById('tracosGrid');if(!grid)return;
 grid.innerHTML=TRACOS_TOJI.map(t=>{
 const v=tojiData.tracos[t.id]||0;
-return `<div class="traco-item"><div class="traco-header">${t.icon}<h4>${t.nome}</h4></div><p class="traco-desc">${t.desc}</p><div class="traco-bar"><div class="traco-fill" style="width:${v}%"></div></div><div class="traco-controls"><span class="traco-percent">${v}%</span><div class="traco-btns"><button class="traco-btn" onclick="ajustarTracoToji('${t.id}',-5)">−</button><button class="traco-btn" onclick="ajustarTracoToji('${t.id}',5)">+</button></div></div></div>`;
+return `<div class="traco-item"><div class="traco-header"><h4>${t.nome}</h4></div><div class="traco-bar"><div class="traco-fill" style="width:${v}%"></div></div><div class="traco-controls"><span class="traco-percent">${v}%</span><div class="traco-btns"><button class="traco-btn" onclick="ajustarTracoToji('${t.id}',-5)">−</button><button class="traco-btn" onclick="ajustarTracoToji('${t.id}',5)">+</button></div></div></div>`;
 }).join('');
 }
-function ajustarTracoToji(id,delta){tojiData.tracos[id]=Math.max(0,Math.min(100,(tojiData.tracos[id]||0)+delta));saveToji();renderTracosToji();atualizarEssenciaToji();}
-function atualizarEssenciaToji(){
-const vals=TRACOS_TOJI.map(t=>tojiData.tracos[t.id]||0);
-const media=vals.reduce((a,b)=>a+b,0)/vals.length;
-const el=document.getElementById('essenciaValor');if(el)el.textContent=Math.round(media)+'%';
-const circle=document.getElementById('essenciaCircle');if(circle){const circ=2*Math.PI*60;circle.style.strokeDashoffset=circ-(media/100)*circ;}
-}
+function ajustarTracoToji(id,delta){tojiData.tracos[id]=Math.max(0,Math.min(100,(tojiData.tracos[id]||0)+delta));saveToji();renderTracosToji();}
 function getFaseProgresso(faseId){return parseInt(localStorage.getItem('toji_fase'+faseId+'_progresso'))||0;}
 function setFaseProgresso(faseId,valor){localStorage.setItem('toji_fase'+faseId+'_progresso',Math.min(90,Math.max(0,valor)));}
 function verificarDiaCompleto(blocoId,diaIdx){
@@ -1145,7 +1329,7 @@ c.innerHTML+=`<button class="btn-add-ritual" onclick="adicionarRitualToji()"><sv
 const done=rituais.filter(r=>tojiData.rituais[r.id]).length;
 const prog=document.getElementById('rituaisTojProgress');if(prog)prog.textContent=`${done} / ${rituais.length} rituais hoje`;
 }
-function toggleRitualToji(id){tojiData.rituais[id]=!tojiData.rituais[id];saveToji();renderRituaisToji();}
+function toggleRitualToji(id){tojiData.rituais[id]=!tojiData.rituais[id];saveToji();renderRituaisToji();marcarDiaSeCompleto();renderStatusBrutal();}
 function adicionarRitualToji(){
 const texto=prompt('Nome do ritual:');if(!texto)return;
 const hora=prompt('Horário (ex: 05:00):','00:00');if(!hora)return;
