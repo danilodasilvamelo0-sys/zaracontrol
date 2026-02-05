@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VLAD — Conselheiro de Guerra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f1a 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(75, 0, 130, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(139, 0, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .header {
+            background: linear-gradient(180deg, rgba(20, 20, 35, 0.98) 0%, rgba(15, 15, 25, 0.95) 100%);
+            border-bottom: 2px solid rgba(139, 0, 0, 0.5);
+            padding: 20px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.2) 0%, rgba(80, 0, 0, 0.3) 100%);
+            border: 1px solid rgba(139, 0, 0, 0.4);
+            border-radius: 8px;
+            color: #d4af7d;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9em;
+            font-weight: 500;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.4) 0%, rgba(100, 0, 0, 0.5) 100%);
+            border-color: rgba(212, 175, 125, 0.5);
+            transform: translateX(-3px);
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+        }
+
+        .back-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #d4af7d;
+            text-shadow: 0 0 20px rgba(212, 175, 125, 0.4);
+            letter-spacing: 3px;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(212, 175, 125, 0.6);
+            font-size: 0.85em;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #8b0000;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 10px rgba(139, 0, 0, 0.8); }
+            50% { opacity: 0.5; box-shadow: 0 0 20px rgba(139, 0, 0, 1); }
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, rgba(20, 20, 35, 0.9) 0%, rgba(30, 30, 50, 0.7) 100%);
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 0%, #8b0000 50%, transparent 100%);
+        }
+
+        .title-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 0%, #8b0000 50%, transparent 100%);
+        }
+
+        .vlad-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 30px rgba(139, 0, 0, 0.6));
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3em;
+            font-weight: 700;
+            color: #d4af7d;
+            text-shadow: 0 0 40px rgba(212, 175, 125, 0.4), 0 0 80px rgba(139, 0, 0, 0.2);
+            letter-spacing: 8px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2em;
+            color: #8b0000;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(139, 0, 0, 0.4);
+        }
+
+        .description {
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 25px 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 3px solid #8b0000;
+            border-radius: 0 12px 12px 0;
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: rgba(224, 224, 224, 0.85);
+            text-align: left;
+        }
+
+        .description strong {
+            color: #d4af7d;
+        }
+
+        .chat-container {
+            background: linear-gradient(135deg, rgba(20, 20, 35, 0.95) 0%, rgba(15, 15, 25, 0.98) 100%);
+            border: 2px solid rgba(139, 0, 0, 0.4);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: linear-gradient(180deg, rgba(139, 0, 0, 0.25) 0%, rgba(80, 0, 0, 0.15) 100%);
+            border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+        }
+
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8b0000 0%, #4a0000 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            border: 2px solid rgba(212, 175, 125, 0.4);
+        }
+
+        .chat-info h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            color: #d4af7d;
+            margin-bottom: 3px;
+            letter-spacing: 2px;
+        }
+
+        .chat-info span {
+            font-size: 0.8em;
+            color: rgba(224, 224, 224, 0.5);
+        }
+
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 100, 0, 0.2);
+            border: 1px solid rgba(0, 150, 0, 0.3);
+            border-radius: 20px;
+            font-size: 0.8em;
+            color: #4ade80;
+        }
+
+        .chat-status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-iframe-container {
+            height: 600px;
+            background: #0a0a0a;
+            position: relative;
+        }
+
+        .chat-iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .chat-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: rgba(224, 224, 224, 0.6);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .placeholder-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .placeholder-text {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: #d4af7d;
+        }
+
+        .placeholder-subtext {
+            font-size: 0.9em;
+            color: rgba(224, 224, 224, 0.4);
+            max-width: 400px;
+        }
+
+        .open-chat-btn {
+            margin-top: 25px;
+            padding: 15px 35px;
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.4) 0%, rgba(80, 0, 0, 0.5) 100%);
+            border: 1px solid rgba(139, 0, 0, 0.6);
+            border-radius: 8px;
+            color: #d4af7d;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95em;
+            font-weight: 500;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .open-chat-btn:hover {
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.6) 0%, rgba(100, 0, 0, 0.7) 100%);
+            border-color: #d4af7d;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(139, 0, 0, 0.2);
+            color: rgba(224, 224, 224, 0.3);
+            font-size: 0.85em;
+        }
+
+        .footer span {
+            color: #8b0000;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .main-title {
+                font-size: 2em;
+                letter-spacing: 4px;
+            }
+
+            .subtitle {
+                font-size: 1em;
+                letter-spacing: 3px;
+            }
+
+            .title-section {
+                padding: 30px 20px;
+            }
+
+            .description {
+                padding: 20px;
+                font-size: 0.95em;
+            }
+
+            .chat-iframe-container {
+                height: 500px;
+            }
+
+            .chat-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="comando.html" class="back-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Voltar ao Painel
+            </a>
+            <div class="logo">PAINEL DE GUERRA</div>
+        </div>
+        <div class="header-status">
+            <div class="status-dot"></div>
+            <span>Zona de Inteligência Ativa</span>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="title-section">
+            <div class="vlad-icon">🦇</div>
+            <h1 class="main-title">VLAD</h1>
+            <p class="subtitle">Conselheiro de Guerra</p>
+            <div class="description">
+                <strong>Você entrou na Zona de Inteligência.</strong> Aqui você fala diretamente com <strong>Vlad</strong> para decisões críticas, planejamento de império e análises sombrias. Este é o espaço onde estratégias são forjadas e o futuro é desenhado nas sombras.
+            </div>
+        </section>
+
+        <section class="chat-container">
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <div class="chat-avatar">🦇</div>
+                    <div class="chat-info">
+                        <h3>VLAD</h3>
+                        <span>Conselheiro Estratégico • IA de Guerra</span>
+                    </div>
+                </div>
+                <div class="chat-status">
+                    <div class="chat-status-dot"></div>
+                    <span>Online</span>
+                </div>
+            </div>
+            <div class="chat-iframe-container">
+                <div class="chat-placeholder">
+                    <div class="placeholder-icon">🔮</div>
+                    <p class="placeholder-text">Canal de Comunicação com Vlad</p>
+                    <p class="placeholder-subtext">Clique abaixo para abrir o ChatGPT e iniciar sua sessão estratégica com o Conselheiro de Guerra.</p>
+                    <a href="https://chat.openai.com" target="_blank" class="open-chat-btn">
+                        Abrir ChatGPT
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>Zona de Inteligência <span>•</span> Painel de Guerra <span>•</span> ZARA Control</p>
+    </footer>
+</body>
+</html>
