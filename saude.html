@@ -248,32 +248,51 @@
         .med-alerta-nome { color: #fff; font-size: 0.9em; }
         .med-alerta-qtd { color: #e74c3c; font-size: 0.85em; font-weight: 500; }
         
-        /* Timeline Medicamentos */
-        .med-timeline { padding: 20px; }
-        .med-timeline-item { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; }
-        .med-timeline-item:last-child { border-bottom: none; }
-        .med-timeline-hora { min-width: 60px; text-align: center; }
-        .med-timeline-hora-valor { font-family: 'Playfair Display', serif; font-size: 1.1em; color: #d4af7d; }
-        .med-timeline-hora-status { font-size: 0.65em; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
-        .med-timeline-hora-status.pendente { color: rgba(255,255,255,0.4); }
-        .med-timeline-hora-status.tomado { color: #2ecc71; }
-        .med-timeline-hora-status.atrasado { color: #f1c40f; }
-        .med-timeline-hora-status.perdido { color: #e74c3c; }
-        .med-timeline-content { flex: 1; min-width: 0; }
-        .med-timeline-nome { color: #fff; font-size: 1em; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .med-timeline-categoria { font-size: 0.65em; padding: 2px 8px; border-radius: 10px; background: rgba(212, 175, 125, 0.2); color: #d4af7d; }
+        /* Timeline Medicamentos - Formato Tabular */
+        .med-timeline { padding: 15px; }
+        .med-timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(212, 175, 125, 0.1);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        .med-timeline-item:hover { border-color: rgba(212, 175, 125, 0.25); }
+        .med-timeline-item.tomado { opacity: 0.5; }
+        .med-col { display: flex; flex-direction: column; gap: 4px; }
+        .med-col-label { font-size: 0.65em; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; }
+        .med-col-valor { font-size: 0.95em; color: #fff; }
+        .med-col-hora { min-width: 70px; }
+        .med-col-hora .med-col-valor { font-family: 'Playfair Display', serif; font-size: 1.1em; color: #d4af7d; }
+        .med-col-status { font-size: 0.7em; text-transform: uppercase; }
+        .med-col-status.pendente { color: rgba(255,255,255,0.4); }
+        .med-col-status.tomado { color: #2ecc71; }
+        .med-col-status.atrasado { color: #f1c40f; }
+        .med-col-status.perdido { color: #e74c3c; }
+        .med-col-nome { flex: 1; min-width: 120px; }
+        .med-col-dose { min-width: 80px; }
+        .med-col-estoque { min-width: 80px; }
+        .med-col-actions { display: flex; gap: 8px; align-items: center; }
+        .med-check-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(46, 204, 113, 0.4); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .med-check-btn:hover { border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
+        .med-check-btn.checked { background: #2ecc71; border-color: #2ecc71; }
+        .med-check-btn svg { width: 16px; height: 16px; color: #fff; opacity: 0; }
+        .med-check-btn.checked svg { opacity: 1; }
+        .med-timeline-categoria { font-size: 0.65em; padding: 2px 8px; border-radius: 10px; background: rgba(212, 175, 125, 0.2); color: #d4af7d; margin-top: 4px; display: inline-block; }
         .med-timeline-categoria.sos { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
         .med-timeline-categoria.antibiotico { background: rgba(155, 89, 182, 0.2); color: #9b59b6; }
-        .med-timeline-detalhes { display: flex; flex-wrap: wrap; gap: 15px; font-size: 0.85em; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
-        .med-timeline-obs { font-size: 0.8em; color: rgba(212, 175, 125, 0.7); font-style: italic; margin-top: 5px; }
-        .med-timeline-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
-        .med-timeline-check { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(46, 204, 113, 0.5); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0; }
-        .med-timeline-check:hover { border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
-        .med-timeline-check.checked { background: #2ecc71; border-color: #2ecc71; }
-        .med-timeline-check svg { width: 16px; height: 16px; color: #fff; opacity: 0; }
-        .med-timeline-check.checked svg { opacity: 1; }
-        .med-timeline-item.tomado { opacity: 0.6; }
-        .med-timeline-item.tomado .med-timeline-nome { text-decoration: line-through; }
+        
+        @media (max-width: 768px) {
+            .med-timeline-item { flex-wrap: wrap; gap: 10px; }
+            .med-col-hora { min-width: 60px; }
+            .med-col-nome { flex: 1 1 100%; order: -1; }
+            .med-col-dose, .med-col-estoque { flex: 1; min-width: 70px; }
+            .med-col-actions { width: 100%; justify-content: flex-end; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+        }
         
         /* Histórico */
         .historico-filtros { display: flex; gap: 10px; padding: 15px 20px; border-bottom: 1px solid rgba(212, 175, 125, 0.1); }
@@ -1381,8 +1400,8 @@
         
         <!-- Cards Informativos -->
         <div class="dieta-cards">
-            <div class="dieta-card" onclick="toggleCardExpand('cardPrescricao')">
-                <div class="dieta-card-header">
+            <div class="dieta-card">
+                <div class="dieta-card-header" onclick="toggleCardExpand('cardPrescricao')">
                     <div class="dieta-card-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                     </div>
@@ -1390,12 +1409,12 @@
                     <svg class="dieta-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
                 <div class="dieta-card-content" id="cardPrescricao">
-                    <textarea id="prescricaoTexto" placeholder="Adicione sua prescrição nutricional aqui..." onchange="salvarDietaCards()"></textarea>
+                    <textarea id="prescricaoTexto" placeholder="Adicione sua prescrição nutricional aqui..." onchange="salvarDietaCards()" onclick="event.stopPropagation()"></textarea>
                 </div>
             </div>
             
-            <div class="dieta-card" onclick="toggleCardExpand('cardAgua')">
-                <div class="dieta-card-header">
+            <div class="dieta-card">
+                <div class="dieta-card-header" onclick="toggleCardExpand('cardAgua')">
                     <div class="dieta-card-icon agua">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
                     </div>
@@ -1406,14 +1425,14 @@
                 <div class="dieta-card-content" id="cardAgua">
                     <div class="agua-input-row">
                         <label>Meta diária:</label>
-                        <input type="number" id="aguaMeta" step="0.5" min="0" max="10" value="4" onchange="salvarDietaCards()">
+                        <input type="number" id="aguaMeta" step="0.5" min="0" max="10" value="4" onchange="salvarDietaCards()" onclick="event.stopPropagation()">
                         <span>Litros</span>
                     </div>
                 </div>
             </div>
             
-            <div class="dieta-card" onclick="toggleCardExpand('cardInfo')">
-                <div class="dieta-card-header">
+            <div class="dieta-card">
+                <div class="dieta-card-header" onclick="toggleCardExpand('cardInfo')">
                     <div class="dieta-card-icon info">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                     </div>
@@ -1424,26 +1443,26 @@
                     <div class="info-grid">
                         <div class="info-item">
                             <label>Calorias:</label>
-                            <input type="text" id="infoCalorias" placeholder="3.600kcal" onchange="salvarDietaCards()">
+                            <input type="text" id="infoCalorias" placeholder="3.600kcal" onchange="salvarDietaCards()" onclick="event.stopPropagation()">
                         </div>
                         <div class="info-item">
                             <label>CHO:</label>
-                            <input type="text" id="infoCHO" placeholder="450g" onchange="salvarDietaCards()">
+                            <input type="text" id="infoCHO" placeholder="450g" onchange="salvarDietaCards()" onclick="event.stopPropagation()">
                         </div>
                         <div class="info-item">
                             <label>PTN:</label>
-                            <input type="text" id="infoPTN" placeholder="180g" onchange="salvarDietaCards()">
+                            <input type="text" id="infoPTN" placeholder="180g" onchange="salvarDietaCards()" onclick="event.stopPropagation()">
                         </div>
                         <div class="info-item">
                             <label>LIP:</label>
-                            <input type="text" id="infoLIP" placeholder="80g" onchange="salvarDietaCards()">
+                            <input type="text" id="infoLIP" placeholder="80g" onchange="salvarDietaCards()" onclick="event.stopPropagation()">
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="dieta-card refeicao-livre" onclick="toggleCardExpand('cardLivre')">
-                <div class="dieta-card-header">
+            <div class="dieta-card refeicao-livre">
+                <div class="dieta-card-header" onclick="toggleCardExpand('cardLivre')">
                     <div class="dieta-card-icon livre">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
                     </div>
@@ -1451,7 +1470,7 @@
                     <svg class="dieta-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                 </div>
                 <div class="dieta-card-content" id="cardLivre">
-                    <textarea id="refeicaoLivreTexto" placeholder="Descreva sua refeição livre semanal..." onchange="salvarDietaCards()"></textarea>
+                    <textarea id="refeicaoLivreTexto" placeholder="Descreva sua refeição livre semanal..." onchange="salvarDietaCards()" onclick="event.stopPropagation()"></textarea>
                 </div>
             </div>
         </div>
@@ -2048,27 +2067,29 @@
                 
                 return `
                 <div class="med-timeline-item ${tomado ? 'tomado' : ''}">
-                    <div class="med-timeline-hora">
-                        <div class="med-timeline-hora-valor">${horaMed}</div>
-                        <div class="med-timeline-hora-status ${statusClass}">${statusTexto}</div>
+                    <div class="med-col med-col-hora">
+                        <span class="med-col-label">HORÁRIO</span>
+                        <span class="med-col-valor">${horaMed}</span>
+                        <span class="med-col-status ${statusClass}">${statusTexto}</span>
                     </div>
-                    <div class="med-timeline-content">
-                        <div class="med-timeline-nome">
-                            ${med.nome}
-                            ${med.categoria ? `<span class="med-timeline-categoria ${catClass}">${catNome[med.categoria] || ''}</span>` : ''}
-                        </div>
-                        <div class="med-timeline-detalhes">
-                            <span>💊 ${med.dose}</span>
-                            <span class="${getEstoqueClass(med.estoque)}">📦 ${med.estoque} ${getTipoAbrev(med.tipo)}</span>
-                            ${tolerancia !== 30 ? `<span>⏱️ ±${tolerancia}min</span>` : ''}
-                        </div>
-                        ${med.obs ? `<div class="med-timeline-obs">📝 ${med.obs}</div>` : ''}
+                    <div class="med-col med-col-nome">
+                        <span class="med-col-label">MEDICAMENTO</span>
+                        <span class="med-col-valor">${med.nome}</span>
+                        ${med.categoria ? `<span class="med-timeline-categoria ${catClass}">${catNome[med.categoria] || ''}</span>` : ''}
                     </div>
-                    <div class="med-timeline-actions">
+                    <div class="med-col med-col-dose">
+                        <span class="med-col-label">DOSE</span>
+                        <span class="med-col-valor">${med.dose}</span>
+                    </div>
+                    <div class="med-col med-col-estoque">
+                        <span class="med-col-label">ESTOQUE</span>
+                        <span class="med-col-valor ${getEstoqueClass(med.estoque)}">${med.estoque} ${getTipoAbrev(med.tipo)}</span>
+                    </div>
+                    <div class="med-col med-col-actions">
                         <button class="btn-notify ${med.notificar ? 'active' : ''}" onclick="toggleNotificar('${med.id}')" title="Notificação Telegram">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                         </button>
-                        <button class="med-timeline-check ${tomado ? 'checked' : ''}" onclick="toggleTomado('${med.id}', ${!tomado})">
+                        <button class="med-check-btn ${tomado ? 'checked' : ''}" onclick="toggleTomado('${med.id}', ${!tomado})">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                         </button>
                     </div>
