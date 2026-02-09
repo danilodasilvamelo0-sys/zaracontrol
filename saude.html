@@ -661,145 +661,212 @@
             .treino-alertas { margin: 10px; padding: 10px; }
         }
         
-        /* ==================== DIETA - CARDS INFORMATIVOS ==================== */
-        .dieta-cards {
-            padding: 15px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .dieta-card {
+        /* ==================== DIETA - NOVO SISTEMA ==================== */
+        /* Resumo Nutricional */
+        .nutri-resumo {
+            margin: 15px 20px;
             background: #1a1a1a;
-            border: 1px solid rgba(212, 175, 125, 0.1);
+            border: 1px solid rgba(212, 175, 125, 0.15);
             border-radius: 12px;
             overflow: hidden;
-            cursor: pointer;
         }
-        .dieta-card-header {
+        .nutri-resumo-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
             padding: 15px;
+            border-bottom: 1px solid rgba(212, 175, 125, 0.1);
         }
-        .dieta-card-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            background: rgba(212, 175, 125, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .dieta-card-icon svg {
-            width: 18px;
-            height: 18px;
-            color: #d4af7d;
-        }
-        .dieta-card-icon.agua { background: rgba(52, 152, 219, 0.15); }
-        .dieta-card-icon.agua svg { color: #3498db; }
-        .dieta-card-icon.info { background: rgba(155, 89, 182, 0.15); }
-        .dieta-card-icon.info svg { color: #9b59b6; }
-        .dieta-card-icon.livre { background: rgba(46, 204, 113, 0.15); }
-        .dieta-card-icon.livre svg { color: #2ecc71; }
-        .dieta-card-titulo {
-            flex: 1;
-            font-size: 0.95em;
-            color: #fff;
-        }
-        .dieta-card-valor {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1em;
-            color: #3498db;
-            margin-right: 10px;
-        }
-        .dieta-card-chevron, .dieta-card-arrow {
-            width: 20px;
-            height: 20px;
-            color: rgba(255,255,255,0.3);
-            transition: transform 0.3s;
-        }
-        .dieta-card.expanded .dieta-card-chevron {
-            transform: rotate(180deg);
-        }
-        .dieta-card-content {
-            display: none;
-            padding: 0 15px 15px;
-            border-top: 1px solid rgba(212, 175, 125, 0.1);
-        }
-        .dieta-card.expanded .dieta-card-content {
-            display: block;
-        }
-        .dieta-card-content textarea {
-            width: 100%;
-            min-height: 120px;
-            background: #141414;
-            border: 1px solid rgba(212, 175, 125, 0.15);
-            border-radius: 8px;
-            padding: 12px;
-            color: #fff;
-            font-size: 0.9em;
-            line-height: 1.6;
-            resize: vertical;
-            margin-top: 12px;
-        }
-        .dieta-card-content textarea:focus {
-            outline: none;
-            border-color: #d4af7d;
-        }
-        .agua-input-row {
+        .nutri-resumo-titulo {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-top: 12px;
+            font-size: 0.9em;
+            color: #d4af7d;
         }
-        .agua-input-row label {
-            color: rgba(255,255,255,0.6);
-            font-size: 0.85em;
+        .nutri-resumo-titulo svg { width: 20px; height: 20px; }
+        .btn-edit-nutri {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(212, 175, 125, 0.3);
+            border-radius: 8px;
+            background: transparent;
+            color: #d4af7d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
-        .agua-input-row input {
-            width: 70px;
-            padding: 8px 12px;
-            background: #141414;
-            border: 1px solid rgba(212, 175, 125, 0.2);
-            border-radius: 6px;
-            color: #fff;
-            text-align: center;
-        }
-        .agua-input-row span {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.85em;
-        }
-        .info-grid {
+        .btn-edit-nutri:hover { background: rgba(212, 175, 125, 0.1); }
+        .btn-edit-nutri svg { width: 16px; height: 16px; }
+        .nutri-resumo-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 12px;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 15px;
+            gap: 10px;
         }
-        .info-item {
+        .nutri-item {
+            text-align: center;
+            padding: 12px 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        .nutri-item-label { font-size: 0.65em; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .nutri-item-valor { font-family: 'Playfair Display', serif; font-size: 1.1em; color: #fff; }
+        .nutri-item-vazio { color: rgba(255,255,255,0.3); font-style: italic; font-size: 0.8em; }
+        
+        /* Água Tracker */
+        .agua-tracker {
+            margin: 0 20px 15px;
+            background: #1a1a1a;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .agua-tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .agua-tracker-titulo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+            color: #3498db;
+        }
+        .agua-tracker-titulo svg { width: 20px; height: 20px; }
+        .agua-tracker-meta {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2em;
+            color: #3498db;
+        }
+        .agua-tracker-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .agua-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            background: transparent;
+            color: #3498db;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .agua-btn:hover { background: rgba(52, 152, 219, 0.15); border-color: #3498db; }
+        .agua-btn svg { width: 18px; height: 18px; }
+        .agua-btn.config { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); }
+        .agua-btn.config:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+        .agua-progress {
+            flex: 1;
+            height: 12px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .agua-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border-radius: 6px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+        
+        /* Informações Adicionais */
+        .info-section {
+            margin: 0 20px 15px;
+        }
+        .info-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .info-section-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1em;
+            color: #d4af7d;
+        }
+        .btn-add-info {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(212, 175, 125, 0.3);
+            background: transparent;
+            color: #d4af7d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn-add-info:hover { background: rgba(212, 175, 125, 0.15); }
+        .btn-add-info svg { width: 16px; height: 16px; }
+        .info-lista {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
-        .info-item label {
-            font-size: 0.75em;
-            color: rgba(255,255,255,0.5);
-            text-transform: uppercase;
+        .info-item-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: #1a1a1a;
+            border: 1px solid rgba(212, 175, 125, 0.1);
+            border-radius: 10px;
         }
-        .info-item input {
-            padding: 10px 12px;
-            background: #141414;
-            border: 1px solid rgba(212, 175, 125, 0.15);
-            border-radius: 6px;
+        .info-item-card:hover { border-color: rgba(212, 175, 125, 0.25); }
+        .info-item-texto {
+            flex: 1;
             color: #fff;
             font-size: 0.9em;
         }
-        .info-item input:focus {
-            outline: none;
-            border-color: #d4af7d;
+        .info-item-acoes {
+            display: flex;
+            gap: 5px;
         }
-        .refeicao-livre .dieta-card-header {
-            background: rgba(46, 204, 113, 0.05);
+        .info-item-acoes button {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .info-item-acoes button:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .info-item-acoes button.delete:hover { color: #e74c3c; }
+        .info-item-acoes svg { width: 16px; height: 16px; }
+        .info-vazia {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85em;
+        }
+        
+        /* Mobile Dieta */
+        @media (max-width: 768px) {
+            .nutri-resumo { margin: 10px 15px; }
+            .nutri-resumo-grid { grid-template-columns: repeat(2, 1fr); padding: 12px; }
+            .nutri-item { padding: 10px 6px; }
+            .nutri-item-valor { font-size: 1em; }
+            .agua-tracker { margin: 0 15px 10px; padding: 12px; }
+            .agua-btn { width: 32px; height: 32px; }
+            .agua-btn svg { width: 16px; height: 16px; }
+            .info-section { margin: 0 15px 10px; }
         }
         
         /* ==================== REFEIÇÕES / DIETA ==================== */
@@ -1398,83 +1465,63 @@
             <p>Gestão de Refeições e Nutrição</p>
         </div>
         
-        <!-- Cards Informativos -->
-        <div class="dieta-cards">
-            <div class="dieta-card">
-                <div class="dieta-card-header" onclick="toggleCardExpand('cardPrescricao')">
-                    <div class="dieta-card-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                    </div>
-                    <span class="dieta-card-titulo">Prescrição</span>
-                    <svg class="dieta-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <!-- Resumo Nutricional -->
+        <div class="nutri-resumo">
+            <div class="nutri-resumo-header">
+                <div class="nutri-resumo-titulo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                    <span>Metas Nutricionais</span>
                 </div>
-                <div class="dieta-card-content" id="cardPrescricao">
-                    <textarea id="prescricaoTexto" placeholder="Adicione sua prescrição nutricional aqui..." onchange="salvarDietaCards()" onclick="event.stopPropagation()"></textarea>
+                <button class="btn-edit-nutri" onclick="abrirModalNutri()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+            </div>
+            <div class="nutri-resumo-grid" id="nutriResumoGrid">
+                <!-- Renderizado via JS -->
+            </div>
+        </div>
+
+        <!-- Água -->
+        <div class="agua-tracker">
+            <div class="agua-tracker-header">
+                <div class="agua-tracker-titulo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                    <span>Água</span>
+                </div>
+                <div class="agua-tracker-meta">
+                    <span id="aguaAtualDisplay">0</span> / <span id="aguaMetaDisplay">4</span>L
                 </div>
             </div>
-            
-            <div class="dieta-card">
-                <div class="dieta-card-header" onclick="toggleCardExpand('cardAgua')">
-                    <div class="dieta-card-icon agua">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-                    </div>
-                    <span class="dieta-card-titulo">Ingestão Hídrica</span>
-                    <span class="dieta-card-valor" id="aguaValorDisplay">0L</span>
-                    <svg class="dieta-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            <div class="agua-tracker-controls">
+                <button class="agua-btn menos" onclick="ajustarAgua(-0.5)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="agua-progress">
+                    <div class="agua-progress-bar" id="aguaProgressBar"></div>
                 </div>
-                <div class="dieta-card-content" id="cardAgua">
-                    <div class="agua-input-row">
-                        <label>Meta diária:</label>
-                        <input type="number" id="aguaMeta" step="0.5" min="0" max="10" value="4" onchange="salvarDietaCards()" onclick="event.stopPropagation()">
-                        <span>Litros</span>
-                    </div>
-                </div>
+                <button class="agua-btn mais" onclick="ajustarAgua(0.5)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <button class="agua-btn config" onclick="editarMetaAgua()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/></svg>
+                </button>
             </div>
-            
-            <div class="dieta-card">
-                <div class="dieta-card-header" onclick="toggleCardExpand('cardInfo')">
-                    <div class="dieta-card-icon info">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                    </div>
-                    <span class="dieta-card-titulo">Informações Adicionais</span>
-                    <svg class="dieta-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                </div>
-                <div class="dieta-card-content" id="cardInfo">
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <label>Calorias:</label>
-                            <input type="text" id="infoCalorias" placeholder="3.600kcal" onchange="salvarDietaCards()" onclick="event.stopPropagation()">
-                        </div>
-                        <div class="info-item">
-                            <label>CHO:</label>
-                            <input type="text" id="infoCHO" placeholder="450g" onchange="salvarDietaCards()" onclick="event.stopPropagation()">
-                        </div>
-                        <div class="info-item">
-                            <label>PTN:</label>
-                            <input type="text" id="infoPTN" placeholder="180g" onchange="salvarDietaCards()" onclick="event.stopPropagation()">
-                        </div>
-                        <div class="info-item">
-                            <label>LIP:</label>
-                            <input type="text" id="infoLIP" placeholder="80g" onchange="salvarDietaCards()" onclick="event.stopPropagation()">
-                        </div>
-                    </div>
-                </div>
+        </div>
+
+        <!-- Informações Adicionais -->
+        <div class="info-section">
+            <div class="info-section-header">
+                <h3>Informações</h3>
+                <button class="btn-add-info" onclick="abrirModalInfo()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
             </div>
-            
-            <div class="dieta-card refeicao-livre">
-                <div class="dieta-card-header" onclick="toggleCardExpand('cardLivre')">
-                    <div class="dieta-card-icon livre">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-                    </div>
-                    <span class="dieta-card-titulo">Refeição Livre</span>
-                    <svg class="dieta-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                </div>
-                <div class="dieta-card-content" id="cardLivre">
-                    <textarea id="refeicaoLivreTexto" placeholder="Descreva sua refeição livre semanal..." onchange="salvarDietaCards()" onclick="event.stopPropagation()"></textarea>
-                </div>
+            <div class="info-lista" id="infoLista">
+                <!-- Renderizado via JS -->
             </div>
         </div>
         
+        <!-- Refeições -->
         <div class="dieta-header">
             <h2>Minhas Refeições</h2>
             <button class="btn-primary" onclick="abrirModalRefeicao()">+ Adicionar</button>
@@ -1512,6 +1559,35 @@
         <div class="treinos-container" id="listaTreinos"></div>
     </div>
     <div class="container page-section" id="page-fotos"><div class="header"><h1>Fotos Comparativas</h1><p>Em desenvolvimento...</p></div></div>
+
+    <!-- Modal Metas Nutricionais -->
+    <div class="modal-overlay" id="modalNutri">
+        <div class="modal-content">
+            <h3>Metas Nutricionais</h3>
+            <div class="form-group"><label>Calorias</label><input type="text" id="nutriCalorias" placeholder="Ex: 3.600kcal"></div>
+            <div class="form-group"><label>Carboidratos (CHO)</label><input type="text" id="nutriCHO" placeholder="Ex: 450g"></div>
+            <div class="form-group"><label>Proteína (PTN)</label><input type="text" id="nutriPTN" placeholder="Ex: 180g"></div>
+            <div class="form-group"><label>Gordura (LIP)</label><input type="text" id="nutriLIP" placeholder="Ex: 80g"></div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="fecharModalNutri()">Cancelar</button>
+                <button class="btn-primary" onclick="salvarNutri()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Adicionar Info -->
+    <div class="modal-overlay" id="modalInfo">
+        <div class="modal-content">
+            <h3>Adicionar Informação</h3>
+            <input type="hidden" id="infoEditId">
+            <div class="form-group"><label>Título/Categoria</label><input type="text" id="infoTitulo" placeholder="Ex: Prescrição, Observação..."></div>
+            <div class="form-group"><label>Conteúdo</label><textarea id="infoConteudo" rows="4" placeholder="Digite a informação..."></textarea></div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="fecharModalInfo()">Cancelar</button>
+                <button class="btn-primary" onclick="salvarInfo()">Salvar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal Edição -->
     <div class="modal-overlay" id="modalEditMed">
@@ -3224,6 +3300,190 @@
         setInterval(verificarHorariosMedicamentos, 30000);
 
         // ==========================================
+        // DIETA - METAS NUTRICIONAIS
+        // ==========================================
+        function renderNutriResumo() {
+            const grid = document.getElementById('nutriResumoGrid');
+            if (!grid) return;
+            
+            if (!saude.nutricao) saude.nutricao = { calorias: '', cho: '', ptn: '', lip: '' };
+            
+            const items = [
+                { label: 'Calorias', valor: saude.nutricao.calorias },
+                { label: 'CHO', valor: saude.nutricao.cho },
+                { label: 'PTN', valor: saude.nutricao.ptn },
+                { label: 'LIP', valor: saude.nutricao.lip }
+            ];
+            
+            grid.innerHTML = items.map(item => `
+                <div class="nutri-item">
+                    <div class="nutri-item-label">${item.label}</div>
+                    <div class="nutri-item-valor">${item.valor || '<span class="nutri-item-vazio">--</span>'}</div>
+                </div>
+            `).join('');
+        }
+        
+        function abrirModalNutri() {
+            if (!saude.nutricao) saude.nutricao = { calorias: '', cho: '', ptn: '', lip: '' };
+            document.getElementById('nutriCalorias').value = saude.nutricao.calorias || '';
+            document.getElementById('nutriCHO').value = saude.nutricao.cho || '';
+            document.getElementById('nutriPTN').value = saude.nutricao.ptn || '';
+            document.getElementById('nutriLIP').value = saude.nutricao.lip || '';
+            document.getElementById('modalNutri').classList.add('active');
+        }
+        
+        function fecharModalNutri() {
+            document.getElementById('modalNutri').classList.remove('active');
+        }
+        
+        function salvarNutri() {
+            saude.nutricao = {
+                calorias: document.getElementById('nutriCalorias').value.trim(),
+                cho: document.getElementById('nutriCHO').value.trim(),
+                ptn: document.getElementById('nutriPTN').value.trim(),
+                lip: document.getElementById('nutriLIP').value.trim()
+            };
+            salvarDados();
+            fecharModalNutri();
+            renderNutriResumo();
+        }
+        
+        // ==========================================
+        // DIETA - ÁGUA TRACKER
+        // ==========================================
+        function renderAguaTracker() {
+            if (!saude.agua) saude.agua = { meta: 4, atual: 0, data: getDataHoje() };
+            
+            // Reset diário
+            if (saude.agua.data !== getDataHoje()) {
+                saude.agua.atual = 0;
+                saude.agua.data = getDataHoje();
+                salvarDados();
+            }
+            
+            const atual = saude.agua.atual || 0;
+            const meta = saude.agua.meta || 4;
+            const pct = Math.min((atual / meta) * 100, 100);
+            
+            document.getElementById('aguaAtualDisplay').textContent = atual;
+            document.getElementById('aguaMetaDisplay').textContent = meta;
+            document.getElementById('aguaProgressBar').style.width = pct + '%';
+        }
+        
+        function ajustarAgua(delta) {
+            if (!saude.agua) saude.agua = { meta: 4, atual: 0, data: getDataHoje() };
+            if (saude.agua.data !== getDataHoje()) {
+                saude.agua.atual = 0;
+                saude.agua.data = getDataHoje();
+            }
+            
+            saude.agua.atual = Math.max(0, (saude.agua.atual || 0) + delta);
+            salvarDados();
+            renderAguaTracker();
+        }
+        
+        function editarMetaAgua() {
+            const novaMeta = prompt('Meta diária de água (litros):', saude.agua?.meta || 4);
+            if (novaMeta !== null && !isNaN(parseFloat(novaMeta))) {
+                if (!saude.agua) saude.agua = { meta: 4, atual: 0, data: getDataHoje() };
+                saude.agua.meta = parseFloat(novaMeta);
+                salvarDados();
+                renderAguaTracker();
+            }
+        }
+        
+        // ==========================================
+        // DIETA - INFORMAÇÕES ADICIONAIS
+        // ==========================================
+        function renderInfoLista() {
+            const container = document.getElementById('infoLista');
+            if (!container) return;
+            
+            if (!saude.informacoes) saude.informacoes = [];
+            
+            if (saude.informacoes.length === 0) {
+                container.innerHTML = '<div class="info-vazia">Nenhuma informação adicionada</div>';
+                return;
+            }
+            
+            container.innerHTML = saude.informacoes.map(info => `
+                <div class="info-item-card">
+                    <div class="info-item-texto">
+                        <strong>${info.titulo}:</strong> ${info.conteudo}
+                    </div>
+                    <div class="info-item-acoes">
+                        <button onclick="editarInfo('${info.id}')" title="Editar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="delete" onclick="excluirInfo('${info.id}')" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function abrirModalInfo() {
+            document.getElementById('infoEditId').value = '';
+            document.getElementById('infoTitulo').value = '';
+            document.getElementById('infoConteudo').value = '';
+            document.getElementById('modalInfo').classList.add('active');
+        }
+        
+        function fecharModalInfo() {
+            document.getElementById('modalInfo').classList.remove('active');
+        }
+        
+        function salvarInfo() {
+            const id = document.getElementById('infoEditId').value;
+            const titulo = document.getElementById('infoTitulo').value.trim();
+            const conteudo = document.getElementById('infoConteudo').value.trim();
+            
+            if (!titulo || !conteudo) {
+                alert('Preencha o título e o conteúdo.');
+                return;
+            }
+            
+            if (!saude.informacoes) saude.informacoes = [];
+            
+            if (id) {
+                // Editar
+                const idx = saude.informacoes.findIndex(i => i.id === id);
+                if (idx !== -1) {
+                    saude.informacoes[idx] = { id, titulo, conteudo };
+                }
+            } else {
+                // Novo
+                saude.informacoes.push({
+                    id: Date.now().toString(),
+                    titulo,
+                    conteudo
+                });
+            }
+            
+            salvarDados();
+            fecharModalInfo();
+            renderInfoLista();
+        }
+        
+        function editarInfo(id) {
+            const info = saude.informacoes.find(i => i.id === id);
+            if (!info) return;
+            
+            document.getElementById('infoEditId').value = info.id;
+            document.getElementById('infoTitulo').value = info.titulo;
+            document.getElementById('infoConteudo').value = info.conteudo;
+            document.getElementById('modalInfo').classList.add('active');
+        }
+        
+        function excluirInfo(id) {
+            if (!confirm('Excluir esta informação?')) return;
+            saude.informacoes = saude.informacoes.filter(i => i.id !== id);
+            salvarDados();
+            renderInfoLista();
+        }
+
+        // ==========================================
         // REFEIÇÕES / DIETA
         // ==========================================
         let alimentosTemp = [];
@@ -3575,9 +3835,11 @@
             renderTreinos();
             renderAlertas();
             renderRefeicoes();
-            carregarDietaCards();
+            renderNutriResumo();
+            renderAguaTracker();
+            renderInfoLista();
             carregarTelegramConfig();
-            verificarHorariosMedicamentos(); // Verificar imediatamente
+            verificarHorariosMedicamentos();
         }
         
         inicializar();
