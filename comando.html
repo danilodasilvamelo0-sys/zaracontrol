@@ -1534,7 +1534,36 @@ exemplo:'Thomas mantinha informantes em gangues rivais, na polícia e até no go
 codigo:['Informação é a moeda mais valiosa. Quem tem, comanda.','Nunca entre em uma sala sem saber quem está lá e o que querem.','O espião perfeito é aquele que ninguém sabe que existe.']}
 ];
 let shelbyData=JSON.parse(localStorage.getItem(SHELBY_STORAGE))||{tracosLicitos:{},tracosIlicitos:{},fasesLicitas:{},fasesIlicitas:{},checklist:{},missoesSombrias:{},operacaoOculta:{texto:'',concluida:false},weekStart:null,lastReset:null};
-function saveShelby(){localStorage.setItem(SHELBY_STORAGE,JSON.stringify(shelbyData));}
+
+// SINCRONIZAÇÃO AUTOMÁTICA
+window.addEventListener('focus', async () => {
+    console.log('↻ Sincronizando dados...');
+    try {
+        const response = await fetch('/api/sync?get=true', {timeout: 2000});
+        if(response.ok) {
+            const serverData = await response.json();
+            shelbyData = { ...shelbyData, ...serverData };
+            localStorage.setItem(SHELBY_STORAGE, JSON.stringify(shelbyData));
+            console.log('✓ Dados sincronizados do servidor');
+        }
+    } catch(e) {
+        console.log('ℹ Modo offline - usando dados locais');
+    }
+});
+async function saveShelby(){
+    // Salvar localmente
+    localStorage.setItem(SHELBY_STORAGE,JSON.stringify(shelbyData));
+    console.log('✓ Dados salvos localmente');
+    
+    // Tentar sincronizar com servidor se disponível
+    try {
+        await fetch('/api/sync', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(shelbyData)
+        }).catch(()=>{});
+    } catch(e) {}
+}
 function getShelbyFaseProgresso(tipo,faseId){return parseInt(localStorage.getItem('shelby_'+tipo+'_fase'+faseId+'*progresso'))||0;}
 function setShelbyFaseProgresso(tipo,faseId,valor){localStorage.setItem('shelby*'+tipo+'_fase'+faseId+'_progresso',Math.min(90,Math.max(0,valor)));}
 function toggleLadoShelby(lado){
