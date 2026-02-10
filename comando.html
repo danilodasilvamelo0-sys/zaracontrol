@@ -848,19 +848,20 @@ async function carregarSupabase() {
     try {
         const { data: supaData, error } = await supabaseClient
             .from('comando_dados')
-            .select('data')
+            .select('*')
             .eq('user_id', USER_ID)
-            .single();
+            .maybeSingle();
         if (error) {
-            console.log('Nenhum dado no Supabase ainda');
+            console.error('Erro ao carregar:', error);
             return false;
         }
-        if (supaData && supaData.data) {
+        if (supaData?.data) {
             data = {...data, ...supaData.data, laws: data.laws.map((law, i) => ({...law, ...(supaData.data.laws?.[i] || {})}))};
             if (!data.warHistory) data.warHistory = [];
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             return true;
         }
+        return false;
     } catch (e) {
         console.error('Erro ao carregar do Supabase:', e);
     }
@@ -1108,18 +1109,19 @@ async function carregarTojiSupabase() {
     try {
         const { data: supaData, error } = await supabaseClient
             .from('toji_dados')
-            .select('data')
+            .select('*')
             .eq('user_id', USER_ID)
-            .single();
+            .maybeSingle();
         if (error) {
-            console.log('Nenhum dado Toji no Supabase ainda');
+            console.error('Erro ao carregar Toji:', error);
             return false;
         }
-        if (supaData && supaData.data) {
+        if (supaData?.data) {
             tojiData = supaData.data;
             localStorage.setItem(TOJI_STORAGE, JSON.stringify(tojiData));
             return true;
         }
+        return false;
     } catch (e) {
         console.error('Erro ao carregar Toji do Supabase:', e);
     }
@@ -1669,18 +1671,19 @@ async function carregarShelbySupabase() {
     try {
         const { data: supaData, error } = await supabaseClient
             .from('shelby_dados')
-            .select('data')
+            .select('*')
             .eq('user_id', USER_ID)
-            .single();
+            .maybeSingle();
         if (error) {
-            console.log('Nenhum dado Shelby no Supabase ainda');
+            console.error('Erro ao carregar Shelby:', error);
             return false;
         }
-        if (supaData && supaData.data) {
+        if (supaData?.data) {
             shelbyData = supaData.data;
             localStorage.setItem(SHELBY_STORAGE, JSON.stringify(shelbyData));
             return true;
         }
+        return false;
     } catch (e) {
         console.error('Erro ao carregar Shelby do Supabase:', e);
     }
