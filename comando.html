@@ -38,6 +38,7 @@
         .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:2000;justify-content:center;align-items:center;padding:20px}.modal-overlay.active{display:flex}.modal-content{background:#1a1a1a;border:1px solid rgba(212,175,125,.2);border-radius:16px;padding:30px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.modal-title{font-family:'Playfair Display',serif;font-size:1.3em;color:#d4af7d}.modal-close{background:transparent;border:none;color:rgba(255,255,255,.5);font-size:1.5em;cursor:pointer;padding:5px;line-height:1}.modal-close:hover{color:#fff}.form-group{margin-bottom:20px}.form-group label{display:block;font-size:.75em;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 15px;background:rgba(0,0,0,.3);border:1px solid rgba(212,175,125,.2);border-radius:8px;color:#fff;font-size:.95em;outline:none;font-family:inherit}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#d4af7d}.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,.3)}.form-group select option{background:#1a1a1a;color:#fff}.modal-buttons{display:flex;gap:10px;justify-content:flex-end;margin-top:25px}
         .footer-actions{background:linear-gradient(135deg,#1a1a1a,#0f0f0f);border-top:1px solid rgba(212,175,125,.2);padding:20px 25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}.reset-info{font-size:.8em;color:rgba(255,255,255,.4)}.reset-info svg{width:14px;height:14px;vertical-align:middle;margin-right:5px}
         .toast{position:fixed;bottom:100px;right:20px;padding:15px 25px;background:#1a1a1a;border:1px solid rgba(212,175,125,.3);border-radius:10px;color:#fff;font-size:.9em;z-index:10001;opacity:0;transform:translateY(20px);transition:all .3s}.toast.active{opacity:1;transform:translateY(0)}.toast.success{border-color:#2ecc71}.toast.error{border-color:#e74c3c}
+        #syncStatus{position:fixed;bottom:20px;right:20px;padding:12px 22px;border-radius:10px;font-size:.9em;font-weight:500;z-index:10001;opacity:0;transition:opacity .3s;color:#fff}
         ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0a0a0a}::-webkit-scrollbar-thumb{background:rgba(212,175,125,.3);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(212,175,125,.5)}
         @media(max-width:768px){.header h1{font-size:1.4em;letter-spacing:2px}.identity-card{padding:20px}.identity-text{font-size:1.1em}.provocation-text{font-size:1.2em}.provocation-actions{flex-direction:column}.provocation-actions button{width:100%;justify-content:center}.status-grid{grid-template-columns:1fr 1fr;gap:12px}.status-card{padding:15px}.missions-grid{grid-template-columns:1fr}.tabs-header{gap:5px}.tab-btn{padding:10px 12px;font-size:.75em;flex:1;justify-content:center}.tab-btn span{display:none}.law-week-title{font-size:1.4em}.law-week-actions{flex-direction:column}.law-week-actions button{width:100%}.footer-actions{flex-direction:column;text-align:center}.crimes-cards-grid{grid-template-columns:1fr}.fase-accordion-header{padding:15px}.fase-accordion-title{font-size:.9em}.fase-accordion-num{width:32px;height:32px;font-size:.9em}.fase-crime-item-header{padding:12px}.fase-crime-item-nome{font-size:.85em}.manual-section-content{padding-left:0}.manual-section-header{flex-wrap:wrap}}
         @media(max-width:480px){.status-grid{grid-template-columns:1fr}.weekly-checks{justify-content:space-between}.day-check input[type="checkbox"]{width:28px;height:28px}.crimes-cards-grid{gap:10px}.crime-card-mini{padding:15px}.fase-accordion-subtitle{font-size:.7em}}
@@ -859,6 +860,7 @@ async function carregarSupabase() {
             data = {...data, ...supaData.data, laws: data.laws.map((law, i) => ({...law, ...(supaData.data.laws?.[i] || {})}))};
             if (!data.warHistory) data.warHistory = [];
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            mostrarStatus('Dados carregados', 'success');
             return true;
         }
         return false;
@@ -1046,6 +1048,18 @@ closeExportModal();
 showToast('PDF gerado! Use Ctrl+P para salvar.','success');
 }
 function showToast(message,type='success'){const toast=document.getElementById('toast');toast.textContent=message;toast.className='toast '+type+' active';setTimeout(()=>{toast.classList.remove('active');},3000);}
+function mostrarStatus(msg, tipo) {
+    let status = document.getElementById('syncStatus');
+    if (!status) {
+        status = document.createElement('div');
+        status.id = 'syncStatus';
+        document.body.appendChild(status);
+    }
+    status.textContent = msg;
+    status.style.background = tipo === 'success' ? 'rgba(39, 174, 96, 0.95)' : 'rgba(231, 76, 60, 0.95)';
+    status.style.opacity = '1';
+    setTimeout(() => { status.style.opacity = '0'; }, 3000);
+}
 function renderAll(){renderStatus();renderHistory();renderLaws();renderToji();renderShelby();}
 
 // ============================================
@@ -1119,6 +1133,7 @@ async function carregarTojiSupabase() {
         if (supaData?.data) {
             tojiData = supaData.data;
             localStorage.setItem(TOJI_STORAGE, JSON.stringify(tojiData));
+            mostrarStatus('Dados carregados', 'success');
             return true;
         }
         return false;
@@ -1681,6 +1696,7 @@ async function carregarShelbySupabase() {
         if (supaData?.data) {
             shelbyData = supaData.data;
             localStorage.setItem(SHELBY_STORAGE, JSON.stringify(shelbyData));
+            mostrarStatus('Dados carregados', 'success');
             return true;
         }
         return false;
