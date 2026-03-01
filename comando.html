@@ -38,7 +38,6 @@
         .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:2000;justify-content:center;align-items:center;padding:20px}.modal-overlay.active{display:flex}.modal-content{background:#1a1a1a;border:1px solid rgba(212,175,125,.2);border-radius:16px;padding:30px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.modal-title{font-family:'Playfair Display',serif;font-size:1.3em;color:#d4af7d}.modal-close{background:transparent;border:none;color:rgba(255,255,255,.5);font-size:1.5em;cursor:pointer;padding:5px;line-height:1}.modal-close:hover{color:#fff}.form-group{margin-bottom:20px}.form-group label{display:block;font-size:.75em;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 15px;background:rgba(0,0,0,.3);border:1px solid rgba(212,175,125,.2);border-radius:8px;color:#fff;font-size:.95em;outline:none;font-family:inherit}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#d4af7d}.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,.3)}.form-group select option{background:#1a1a1a;color:#fff}.modal-buttons{display:flex;gap:10px;justify-content:flex-end;margin-top:25px}
         .footer-actions{background:linear-gradient(135deg,#1a1a1a,#0f0f0f);border-top:1px solid rgba(212,175,125,.2);padding:20px 25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}.reset-info{font-size:.8em;color:rgba(255,255,255,.4)}.reset-info svg{width:14px;height:14px;vertical-align:middle;margin-right:5px}
         .toast{position:fixed;bottom:100px;right:20px;padding:15px 25px;background:#1a1a1a;border:1px solid rgba(212,175,125,.3);border-radius:10px;color:#fff;font-size:.9em;z-index:10001;opacity:0;transform:translateY(20px);transition:all .3s}.toast.active{opacity:1;transform:translateY(0)}.toast.success{border-color:#2ecc71}.toast.error{border-color:#e74c3c}
-        #syncStatus{position:fixed;bottom:20px;right:20px;padding:12px 22px;border-radius:10px;font-size:.9em;font-weight:500;z-index:10001;opacity:0;transition:opacity .3s;color:#fff}
         ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0a0a0a}::-webkit-scrollbar-thumb{background:rgba(212,175,125,.3);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(212,175,125,.5)}
         @media(max-width:768px){.header h1{font-size:1.4em;letter-spacing:2px}.identity-card{padding:20px}.identity-text{font-size:1.1em}.provocation-text{font-size:1.2em}.provocation-actions{flex-direction:column}.provocation-actions button{width:100%;justify-content:center}.status-grid{grid-template-columns:1fr 1fr;gap:12px}.status-card{padding:15px}.missions-grid{grid-template-columns:1fr}.tabs-header{gap:5px}.tab-btn{padding:10px 12px;font-size:.75em;flex:1;justify-content:center}.tab-btn span{display:none}.law-week-title{font-size:1.4em}.law-week-actions{flex-direction:column}.law-week-actions button{width:100%}.footer-actions{flex-direction:column;text-align:center}.crimes-cards-grid{grid-template-columns:1fr}.fase-accordion-header{padding:15px}.fase-accordion-title{font-size:.9em}.fase-accordion-num{width:32px;height:32px;font-size:.9em}.fase-crime-item-header{padding:12px}.fase-crime-item-nome{font-size:.85em}.manual-section-content{padding-left:0}.manual-section-header{flex-wrap:wrap}}
         @media(max-width:480px){.status-grid{grid-template-columns:1fr}.weekly-checks{justify-content:space-between}.day-check input[type="checkbox"]{width:28px;height:28px}.crimes-cards-grid{gap:10px}.crime-card-mini{padding:15px}.fase-accordion-subtitle{font-size:.7em}}
@@ -168,11 +167,13 @@
         .corte-input-toji input::placeholder{color:rgba(255,255,255,.2)}
         .btn-corte{background:transparent;border:1px solid rgba(212,175,125,.3);color:#d4af7d;padding:8px 15px;font-family:"Cinzel",serif;font-size:.8em;cursor:pointer;transition:all .2s;flex-shrink:0}
         .btn-corte:hover{background:#8b0000;border-color:#8b0000;color:#fff}
-        .corte-item-toji{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(212,175,125,.05);flex-wrap:wrap}
+        .corte-item-toji{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(212,175,125,.05);flex-wrap:wrap}
         .corte-icon-toji{flex-shrink:0}
         .corte-icon-toji svg{width:14px;height:14px;color:rgba(212,175,125,.4)}
         .corte-text-toji{color:rgba(255,255,255,.5);flex:1;min-width:0;font-size:.85em;word-wrap:break-word;overflow-wrap:break-word;line-height:1.4}
         .corte-data-toji{font-size:.7em;color:rgba(255,255,255,.3);flex-shrink:0}
+        .btn-corte-del{background:transparent;border:none;color:rgba(255,255,255,.2);cursor:pointer;padding:5px;transition:color .2s;flex-shrink:0}
+        .btn-corte-del:hover{color:#e74c3c}
         .rituais-semanais-toji{display:none}
         .toji-plano-desc{display:none}
         .sistema-progresso-info{display:none}
@@ -791,84 +792,15 @@
     <div class="modal-overlay" id="ritualModal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Novo Ritual de Força</h3><button class="modal-close" onclick="closeRitualModal()">&times;</button></div><input type="hidden" id="ritualId"><input type="hidden" id="ritualFrequency"><div class="form-group"><label>Nome do Ritual</label><input type="text" id="ritualName" placeholder="Ex: Meditação matinal"></div><div class="form-group"><label>Horário (opcional)</label><input type="time" id="ritualTime"></div><div class="form-group"><label>Ícone</label><select id="ritualIcon"><option value="sun">☀️ Sol</option><option value="moon">🌙 Lua</option><option value="fire">🔥 Fogo</option><option value="book">📖 Livro</option><option value="run">🏃 Exercício</option><option value="meditate">🧘 Meditação</option><option value="write">✍️ Escrita</option></select></div><div class="modal-buttons"><button class="btn-secondary" onclick="closeRitualModal()">Cancelar</button><button class="btn-primary" onclick="saveRitual()">Salvar</button></div></div></div>
     <div class="modal-overlay" id="exportModal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Exportar Relatório de Guerra</h3><button class="modal-close" onclick="closeExportModal()">&times;</button></div><div class="form-group"><label>Formato de Exportação</label><select id="exportFormat"><option value="txt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;vertical-align:middle;margin-right:5px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>TXT (Texto Puro)</option><option value="pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;vertical-align:middle;margin-right:5px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>PDF (Documento)</option></select></div><div style="padding:15px;background:rgba(212,175,125,.1);border:1px solid rgba(212,175,125,.3);border-radius:8px;margin-bottom:15px;"><p style="font-size:.85em;color:rgba(255,255,255,.7);line-height:1.5;margin:0;font-style:italic;">"Quem não sangra no treino, sangra no campo."</p></div><div class="modal-buttons"><button class="btn-secondary" onclick="closeExportModal()">Cancelar</button><button class="btn-primary" onclick="generateReport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>Gerar Relatório</button></div></div></div>
     <div class="toast" id="toast"></div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-const SUPABASE_URL = 'https://ltwamldgdwqzyssoukzl.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
-const USER_ID = 'default_user';
-let supabaseClient = null;
-let useSupabase = false;
-try {
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    useSupabase = true;
-} catch (e) {
-    console.log('Supabase indisponivel, usando localStorage');
-}
-
 const STORAGE_KEY='painelGuerra';
 const provocations=["Você já matou o fraco hoje?","O conforto é o veneno do guerreiro.","Quem você foi ontem já morreu?","A dor que você evita é o crescimento que você perde.","Você está construindo ou destruindo?","Seu maior inimigo acordou com você.","O medo só existe se você alimentá-lo.","Disciplina é liberdade. Você é livre?","O mundo não deve nada a você.","Silêncio. Foco. Execução.","Você está caçando ou sendo caçado?","A mediocridade é uma escolha diária.","Ninguém vem te salvar. Levante.","O fraco reclama. O forte executa.","Cada desculpa é uma derrota aceita.","Você está mais forte que ontem?","O tempo não espera. Nem deveria."];
 const statusPhrases={discipline:{low:"Você está perdendo terreno.",medium:"Mantenha a guarda erguida.",high:"O escudo está firme."},focus:{fraco:"Você ainda se distrai com lixo.",moderado:"A mira ainda treme.",afiado:"Um tiro, um alvo."},spirit:{seco:"A chama está morrendo.",vivo:"Continue regando o fogo.",blindado:"Nada penetra. Nada abala."},danger:{baixo:"Você está doméstico demais.",medio:"Você ainda é previsível.",alto:"Eles temem o que não entendem."}};
 const laws48=[{number:1,title:"Nunca ofusque o brilho do mestre",description:"Faça sempre com que as pessoas acima de você se sintam superiores."},{number:2,title:"Nunca confie demais nos amigos",description:"Desconfie dos amigos, pois eles o trairão mais rápido."},{number:3,title:"Oculte suas intenções",description:"Mantenha as pessoas sem saber para onde você está indo."},{number:4,title:"Sempre diga menos do que o necessário",description:"Pessoas poderosas impressionam dizendo menos."},{number:5,title:"Proteja sua reputação com sua vida",description:"A reputação é a pedra angular do poder."},{number:6,title:"Chame atenção a qualquer preço",description:"O que não é visto conta como nada."},{number:7,title:"Faça os outros trabalharem para você",description:"Use a sabedoria dos outros para avançar sua causa."},{number:8,title:"Faça as pessoas virem até você",description:"Quando você força o outro a agir, você está no controle."},{number:9,title:"Vença através de ações",description:"Demonstre, não argumente."},{number:10,title:"Evite os infelizes e azarados",description:"Estados emocionais são contagiosos."},{number:11,title:"Mantenha as pessoas dependentes de você",description:"Quanto mais você é confiado, mais liberdade você tem."},{number:12,title:"Use honestidade seletiva",description:"Um gesto sincero pode encobrir dezenas de desonestos."},{number:13,title:"Apele para o interesse próprio",description:"Não lembre favores passados."},{number:14,title:"Seja um espião",description:"Saber sobre seu rival é crítico."},{number:15,title:"Esmague seu inimigo totalmente",description:"Um inimigo temido deve ser esmagado completamente."},{number:16,title:"Use a ausência para aumentar respeito",description:"Muito circulando fará você desvalorizar."},{number:17,title:"Cultive imprevisibilidade",description:"Seja deliberadamente imprevisível."},{number:18,title:"Não construa fortalezas",description:"O isolamento o expõe a mais perigos."},{number:19,title:"Saiba com quem está lidando",description:"Nunca assuma que todos reagem igual."},{number:20,title:"Não se comprometa com ninguém",description:"É tolice apressar-se a tomar um lado."},{number:21,title:"Jogue de bobo para pegar um esperto",description:"Faça suas vítimas se sentirem espertas."},{number:22,title:"Use a tática da rendição",description:"A rendição lhe dá tempo para se recuperar."},{number:23,title:"Concentre suas forças",description:"Encontre uma mina rica e minere-a mais profundamente."},{number:24,title:"Jogue o cortesão perfeito",description:"Domine a arte da indireção."},{number:25,title:"Recrie-se",description:"Forje uma nova identidade que comanda atenção."},{number:26,title:"Mantenha suas mãos limpas",description:"Suas mãos nunca são sujas por erros."},{number:27,title:"Jogue com a necessidade de acreditar",description:"Torne-se o ponto focal do desejo de crer."},{number:28,title:"Entre na ação com ousadia",description:"A timidez é perigosa."},{number:29,title:"Planeje todo o caminho até o fim",description:"O final é tudo."},{number:30,title:"Faça parecer sem esforço",description:"Esconda todo o trabalho duro."},{number:31,title:"Controle as opções",description:"Faça os outros jogarem com suas cartas."},{number:32,title:"Jogue com as fantasias",description:"A verdade é frequentemente evitada."},{number:33,title:"Descubra o ponto fraco",description:"Todos têm uma fraqueza."},{number:34,title:"Aja como rei",description:"A maneira como você se comporta determina como é tratado."},{number:35,title:"Domine a arte do timing",description:"Nunca pareça ter pressa."},{number:36,title:"Despreze o que não pode ter",description:"Ignorar é a melhor vingança."},{number:37,title:"Crie espetáculos convincentes",description:"Gestos simbólicos grandiosos criam aura de poder."},{number:38,title:"Pense como quiser, comporte-se como os outros",description:"Não ostente ideias não convencionais."},{number:39,title:"Agite a água para pegar o peixe",description:"Deixe seus inimigos com raiva enquanto permanece calmo."},{number:40,title:"Despreze a refeição grátis",description:"O que é oferecido de graça é perigoso."},{number:41,title:"Evite pisar nos sapatos de um grande homem",description:"Suceder um grande homem exige o dobro."},{number:42,title:"Ataque o pastor",description:"Identifique e neutralize o líder."},{number:43,title:"Trabalhe nos corações e mentes",description:"Seduza os outros a querer se mover em sua direção."},{number:44,title:"Desarme com o efeito espelho",description:"Espelhe seus inimigos para confundi-los."},{number:45,title:"Pregue mudança, mas nunca reforme demais",description:"Muita inovação é traumática."},{number:46,title:"Nunca pareça perfeito demais",description:"A inveja cria inimigos silenciosos."},{number:47,title:"Na vitória, aprenda quando parar",description:"A arrogância pode empurrá-lo além da meta."},{number:48,title:"Assuma forma sem forma",description:"Mantenha-se adaptável e em movimento."}];
 let data={status:{discipline:75,focus:'moderado',spirit:'vivo',danger:'medio'},missions:[{id:1,type:'corpo',title:'Dominar o Físico',description:'Treinar com consistência e disciplina.',weeklyChecks:{seg:false,ter:false,qua:false,qui:false,sex:false,sab:false,dom:false}},{id:2,type:'mente',title:'Expandir o Conhecimento',description:'Leitura diária e estudo de estratégia.',weeklyChecks:{seg:false,ter:false,qua:false,qui:false,sex:false,sab:false,dom:false}},{id:3,type:'espirito',title:'Fortalecer a Mente',description:'Meditação e controle emocional.',weeklyChecks:{seg:false,ter:false,qua:false,qui:false,sex:false,sab:false,dom:false}}],rituals:{daily:[{id:1,name:'Acordar às 5h',time:'05:00',icon:'sun',completed:false},{id:2,name:'Meditação matinal',time:'05:30',icon:'meditate',completed:false},{id:3,name:'Leitura estratégica',time:'06:00',icon:'book',completed:false},{id:4,name:'Treino físico',time:'07:00',icon:'run',completed:false},{id:5,name:'Revisão do dia',time:'22:00',icon:'write',completed:false}],weekly:[{id:6,name:'Planejamento semanal',time:null,icon:'write',completed:false},{id:7,name:'Análise de resultados',time:null,icon:'book',completed:false}]},laws:laws48.map(l=>({...l,applied:false,favorite:false,notes:''})),lawOfTheWeek:1,warHistory:[],lastReset:null};
-async function init(){
-    await carregarSupabase();
-    await carregarTojiSupabase();
-    await carregarShelbySupabase();
-    loadData();
-    checkWeeklyReset();
-    updateDate();
-    setRandomProvocation();
-    populateLawsDropdown();
-    renderAll();
-    setInterval(checkWeeklyReset,60000);
-}
+function init(){loadData();checkWeeklyReset();updateDate();setRandomProvocation();populateLawsDropdown();renderAll();setInterval(checkWeeklyReset,60000);}
 function loadData(){const saved=localStorage.getItem(STORAGE_KEY);if(saved){const parsed=JSON.parse(saved);data={...data,...parsed,laws:data.laws.map((law,i)=>({...law,...(parsed.laws?.[i]||{})}))};if(!data.warHistory)data.warHistory=[];}}
-function saveData(){
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
-    if (navigator.onLine && useSupabase) {
-        salvarSupabase();
-    }
-}
-async function salvarSupabase() {
-    if (!useSupabase) return;
-    try {
-        const { error } = await supabaseClient.from('comando_dados').upsert({
-            user_id: USER_ID,
-            data: data,
-            updated_at: new Date().toISOString()
-        });
-        if (error) {
-            console.error('Erro Supabase:', error);
-        }
-    } catch (e) {
-        console.error('Exceção Supabase:', e);
-    }
-}
-async function carregarSupabase() {
-    if (!useSupabase) return false;
-    try {
-        const { data: supaData, error } = await supabaseClient
-            .from('comando_dados')
-            .select('*')
-            .eq('user_id', USER_ID)
-            .maybeSingle();
-        if (error) {
-            console.error('Erro ao carregar:', error);
-            return false;
-        }
-        if (supaData?.data) {
-            data = {...data, ...supaData.data, laws: data.laws.map((law, i) => ({...law, ...(supaData.data.laws?.[i] || {})}))};
-            if (!data.warHistory) data.warHistory = [];
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            mostrarStatus('Dados carregados', 'success');
-            return true;
-        }
-        return false;
-    } catch (e) {
-        console.error('Erro ao carregar do Supabase:', e);
-    }
-    return false;
-}
+function saveData(){localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}
 function updateDate(){const now=new Date();document.getElementById('currentDate').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
 function setRandomProvocation(){const el=document.getElementById('dailyProvocation');if(el)el.textContent=`"${provocations[Math.floor(Math.random()*provocations.length)]}"`;}
 function populateLawsDropdown(){const select=document.getElementById('victoryLaw');if(!select)return;select.innerHTML='<option value="">Nenhuma</option>';laws48.forEach(law=>{const option=document.createElement('option');option.value=law.number;option.textContent=`Lei ${law.number}: ${law.title}`;select.appendChild(option);});}
@@ -1048,18 +980,6 @@ closeExportModal();
 showToast('PDF gerado! Use Ctrl+P para salvar.','success');
 }
 function showToast(message,type='success'){const toast=document.getElementById('toast');toast.textContent=message;toast.className='toast '+type+' active';setTimeout(()=>{toast.classList.remove('active');},3000);}
-function mostrarStatus(msg, tipo) {
-    let status = document.getElementById('syncStatus');
-    if (!status) {
-        status = document.createElement('div');
-        status.id = 'syncStatus';
-        document.body.appendChild(status);
-    }
-    status.textContent = msg;
-    status.style.background = tipo === 'success' ? 'rgba(39, 174, 96, 0.95)' : 'rgba(231, 76, 60, 0.95)';
-    status.style.opacity = '1';
-    setTimeout(() => { status.style.opacity = '0'; }, 3000);
-}
 function renderAll(){renderStatus();renderHistory();renderLaws();renderToji();renderShelby();}
 
 // ============================================
@@ -1097,51 +1017,7 @@ const DIAS_SEMANA_FULL=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
 let tojiData=JSON.parse(localStorage.getItem(TOJI_STORAGE))||{tracos:{},blocos:{},rituais:{},rituaisConfig:null,cortes:[],lastReset:null,weekStart:null};
 if(!tojiData.blocos||typeof tojiData.blocos!=='object')tojiData.blocos={};
 if(!tojiData.rituaisConfig)tojiData.rituaisConfig=[...RITUAIS_TOJI_DEFAULT];
-function saveToji(){
-    localStorage.setItem(TOJI_STORAGE,JSON.stringify(tojiData));
-    if (navigator.onLine && useSupabase) {
-        salvarTojiSupabase();
-    }
-}
-async function salvarTojiSupabase() {
-    if (!useSupabase) return;
-    try {
-        const { error } = await supabaseClient.from('toji_dados').upsert({
-            user_id: USER_ID,
-            data: tojiData,
-            updated_at: new Date().toISOString()
-        });
-        if (error) {
-            console.error('Erro Supabase Toji:', error);
-        }
-    } catch (e) {
-        console.error('Exceção Supabase Toji:', e);
-    }
-}
-async function carregarTojiSupabase() {
-    if (!useSupabase) return false;
-    try {
-        const { data: supaData, error } = await supabaseClient
-            .from('toji_dados')
-            .select('*')
-            .eq('user_id', USER_ID)
-            .maybeSingle();
-        if (error) {
-            console.error('Erro ao carregar Toji:', error);
-            return false;
-        }
-        if (supaData?.data) {
-            tojiData = supaData.data;
-            localStorage.setItem(TOJI_STORAGE, JSON.stringify(tojiData));
-            mostrarStatus('Dados carregados', 'success');
-            return true;
-        }
-        return false;
-    } catch (e) {
-        console.error('Erro ao carregar Toji do Supabase:', e);
-    }
-    return false;
-}
+function saveToji(){localStorage.setItem(TOJI_STORAGE,JSON.stringify(tojiData));}
 function getBlocosConfig(){
 if(!tojiData.blocosConfig)tojiData.blocosConfig=JSON.parse(JSON.stringify(BLOCOS_TOJI_DEFAULT));
 return tojiData.blocosConfig;
@@ -1483,7 +1359,15 @@ function renderCortesToji(){
 const c=document.getElementById('cortesListaToji');if(!c)return;
 const last7=tojiData.cortes.slice(-7).reverse();
 if(!last7.length){c.innerHTML='<p style="color:rgba(255,255,255,.4);text-align:center;padding:20px;">Nenhum corte registrado.</p>';return;}
-c.innerHTML=last7.map(ct=>`<div class="corte-item-toji"><div class="corte-icon-toji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><span class="corte-text-toji">${ct.texto}</span><span class="corte-data-toji">${ct.data}</span></div>`).join('');
+c.innerHTML=last7.map((ct,idx)=>{
+    const realIdx=tojiData.cortes.length-1-idx;
+    return `<div class="corte-item-toji"><div class="corte-icon-toji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><span class="corte-text-toji">${ct.texto}</span><span class="corte-data-toji">${ct.data}</span><button class="btn-corte-del" onclick="excluirCorteToji(${realIdx})" title="Excluir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div>`;
+}).join('');
+}
+function excluirCorteToji(idx){
+if(!confirm('Excluir este corte?'))return;
+tojiData.cortes.splice(idx,1);
+saveToji();renderCortesToji();showToast('Corte excluído!','success');
 }
 function adicionarCorteToji(){
 const input=document.getElementById('corteInputToji');const texto=input.value.trim();if(!texto)return;
@@ -1660,51 +1544,7 @@ exemplo:'Thomas mantinha informantes em gangues rivais, na polícia e até no go
 codigo:['Informação é a moeda mais valiosa. Quem tem, comanda.','Nunca entre em uma sala sem saber quem está lá e o que querem.','O espião perfeito é aquele que ninguém sabe que existe.']}
 ];
 let shelbyData=JSON.parse(localStorage.getItem(SHELBY_STORAGE))||{tracosLicitos:{},tracosIlicitos:{},fasesLicitas:{},fasesIlicitas:{},checklist:{},missoesSombrias:{},operacaoOculta:{texto:'',concluida:false},weekStart:null,lastReset:null};
-function saveShelby(){
-    localStorage.setItem(SHELBY_STORAGE,JSON.stringify(shelbyData));
-    if (navigator.onLine && useSupabase) {
-        salvarShelbySupabase();
-    }
-}
-async function salvarShelbySupabase() {
-    if (!useSupabase) return;
-    try {
-        const { error } = await supabaseClient.from('shelby_dados').upsert({
-            user_id: USER_ID,
-            data: shelbyData,
-            updated_at: new Date().toISOString()
-        });
-        if (error) {
-            console.error('Erro Supabase Shelby:', error);
-        }
-    } catch (e) {
-        console.error('Exceção Supabase Shelby:', e);
-    }
-}
-async function carregarShelbySupabase() {
-    if (!useSupabase) return false;
-    try {
-        const { data: supaData, error } = await supabaseClient
-            .from('shelby_dados')
-            .select('*')
-            .eq('user_id', USER_ID)
-            .maybeSingle();
-        if (error) {
-            console.error('Erro ao carregar Shelby:', error);
-            return false;
-        }
-        if (supaData?.data) {
-            shelbyData = supaData.data;
-            localStorage.setItem(SHELBY_STORAGE, JSON.stringify(shelbyData));
-            mostrarStatus('Dados carregados', 'success');
-            return true;
-        }
-        return false;
-    } catch (e) {
-        console.error('Erro ao carregar Shelby do Supabase:', e);
-    }
-    return false;
-}
+function saveShelby(){localStorage.setItem(SHELBY_STORAGE,JSON.stringify(shelbyData));}
 function getShelbyFaseProgresso(tipo,faseId){return parseInt(localStorage.getItem('shelby_'+tipo+'_fase'+faseId+'*progresso'))||0;}
 function setShelbyFaseProgresso(tipo,faseId,valor){localStorage.setItem('shelby*'+tipo+'_fase'+faseId+'_progresso',Math.min(90,Math.max(0,valor)));}
 function toggleLadoShelby(lado){
