@@ -5245,6 +5245,37 @@
         }
     }
 
+    function quitarDivida(grupoId) {
+        const parcelasDoGrupo = financeiro.despesasVariaveis.filter(
+            d => String(d.grupoParcelaId) === String(grupoId) && !d.pago
+        );
+
+        if (parcelasDoGrupo.length === 0) {
+            alert('Todas as parcelas já estão pagas!');
+            return;
+        }
+
+        const nome = parcelasDoGrupo[0].descricao;
+        const totalRestante = parcelasDoGrupo.reduce((s, p) => s + p.valor, 0);
+
+        if (!confirm(
+            `Quitar "${nome}"?\n\n` +
+            `${parcelasDoGrupo.length} parcelas pendentes\n` +
+            `Total: ${formatarMoeda(totalRestante)}\n\n` +
+            `Todas serão marcadas como pagas na data de hoje.`
+        )) return;
+
+        const hoje = new Date().toISOString().split('T')[0];
+        parcelasDoGrupo.forEach(p => {
+            p.pago = true;
+            p.dataPagamento = hoje;
+        });
+
+        salvarDados();
+        renderizar();
+        mostrarStatus(`"${nome}" quitada!`, 'success');
+    }
+
     function editarDespesaVariavel(id) {
         const item = financeiro.despesasVariaveis.find(d => d.id === id);
         if (!item) return;
@@ -6799,7 +6830,7 @@
 
         // === TABELA DESPESAS VARIÁVEIS ===
         const variaveisTable = document.getElementById('despesasVariaveisTable');
-        const temConteudoVariaveis = variaveisMes.length > 0 || parcelasEmAtraso.length > 0;
+        const temConteudoVariaveis = variaveisMes.length > 0 || parcelasEmAtraso.some(d => d.grupoParcelaId);
         document.getElementById('emptyDespesasVariaveis').style.display = temConteudoVariaveis ? 'none' : 'block';
 
         // Separar despesas parceladas de não parceladas
@@ -6815,42 +6846,14 @@
             gruposParcelados[p.grupoParcelaId].push(p);
         });
 
+        // Incluir também grupos que SÓ têm parcelas em atraso (sem parcela no mês atual)
+        parcelasEmAtraso.filter(d => d.grupoParcelaId).forEach(d => {
+            if (!gruposParcelados[d.grupoParcelaId]) {
+                gruposParcelados[d.grupoParcelaId] = [];
+            }
+        });
+
         let htmlVariaveis = '';
-
-        // Renderizar PARCELAS EM ATRASO (meses anteriores) — informativo, sem somar no mês
-        if (parcelasEmAtraso.length > 0) {
-            const totalAtraso = parcelasEmAtraso.reduce((s, d) => s + d.valor, 0);
-            htmlVariaveis += `
-                <tr style="background: rgba(231, 76, 60, 0.08);">
-                    <td colspan="6" style="padding: 12px 15px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <svg style="width:18px;height:18px;stroke:#e74c3c;fill:none;" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                                <span style="color: #e74c3c; font-weight: 500; font-size: 0.9em;">${parcelasEmAtraso.length} parcela${parcelasEmAtraso.length > 1 ? 's' : ''} em atraso</span>
-                                <span style="color: rgba(255,255,255,0.4); font-size: 0.8em;">(não contabilizado no mês)</span>
-                            </div>
-                            <span style="color: #e74c3c; font-weight: 600;">${formatarMoeda(totalAtraso)}</span>
-                        </div>
-                    </td>
-                </tr>
-            `;
-
-            parcelasEmAtraso.forEach(d => {
-                htmlVariaveis += `
-                    <tr style="background: rgba(231, 76, 60, 0.04); opacity: 0.7;">
-                        <td><input type="checkbox" class="checkbox-status" onchange="togglePagoVariavel(${d.id})"></td>
-                        <td class="descricao" style="padding-left: 10px;">
-                            ${d.descricao}
-                            ${d.parcelado ? `<span style="color: rgba(255,255,255,0.4); font-size: 0.8em;"> ${d.parcelaAtual}/${d.totalParcelas}</span>` : ''}
-                        </td>
-                        <td><span class="categoria">${d.categoria}</span></td>
-                        <td>${formatarData(d.data)} <span class="badge vencido" style="font-size: 0.7em;">Atraso</span></td>
-                        <td style="color: #e74c3c; font-weight: 500;">${formatarMoeda(d.valor)}</td>
-                        <td></td>
-                    </tr>
-                `;
-            });
-        }
 
         // Renderizar despesas não parceladas normalmente
         naoParceladas.forEach(d => {
@@ -6897,21 +6900,29 @@
 
         // Renderizar grupos parcelados
         Object.keys(gruposParcelados).forEach(grupoId => {
-            const parcelas = gruposParcelados[grupoId].sort((a, b) => a.parcelaAtual - b.parcelaAtual);
-            const primeiraParcela = parcelas[0];
+            const parcelasDoMes = gruposParcelados[grupoId].sort((a, b) => a.parcelaAtual - b.parcelaAtual);
 
-            // Calcular totais (converter grupoId para comparação segura)
+            // TODAS as parcelas deste grupo (incluindo outros meses)
             const todasParcelas = financeiro.despesasVariaveis.filter(dv => String(dv.grupoParcelaId) === String(grupoId));
+            if (todasParcelas.length === 0) return;
+            
+            const primeiraParcela = parcelasDoMes[0] || todasParcelas[0];
             const valorTotal = todasParcelas.reduce((s, p) => s + p.valor, 0);
-            const parcelasPagas = todasParcelas.filter(p => p.pago).length;
-            const parcelasRestantes = todasParcelas.length - parcelasPagas;
+            const parcelasPagasCount = todasParcelas.filter(p => p.pago).length;
+            const parcelasRestantes = todasParcelas.length - parcelasPagasCount;
+            const valorRestante = todasParcelas.filter(p => !p.pago).reduce((s, p) => s + p.valor, 0);
+            const todasQuitadas = parcelasRestantes === 0;
+
+            // Parcelas EM ATRASO deste grupo (meses anteriores, não pagas)
+            const atrasadasDoGrupo = parcelasEmAtraso.filter(d => String(d.grupoParcelaId) === String(grupoId));
+            const totalAtrasadoGrupo = atrasadasDoGrupo.reduce((s, d) => s + d.valor, 0);
             
             // Verificar se está pausado
             const estaPausado = primeiraParcela.pausado === true;
             const badgePausado = estaPausado ? '<span class="badge pausado">⏸ PAUSADO</span>' : '<span class="badge parcela">Parcelado</span>';
             const classePausado = estaPausado ? ' grupo-pausado' : '';
             
-            // Ícone: pausado mostra PLAY, ativo mostra PAUSE
+            // Ícones
             const svgPause = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
             const svgPlay = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
             const iconePausePlay = estaPausado ? svgPlay : svgPause;
@@ -6921,16 +6932,25 @@
             htmlVariaveis += `
                 <tr class="${classePausado}" style="background: rgba(52, 152, 219, 0.05); font-weight: 500;">
                     <td colspan="6" style="padding: 12px 15px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                                 <span style="font-size: 1em;">${primeiraParcela.descricao}</span>
                                 ${badgePausado}
                                 <span class="categoria">${primeiraParcela.categoria}</span>
+                                ${atrasadasDoGrupo.length > 0 ? `<span style="background: rgba(231,76,60,0.15); color: #e74c3c; padding: 2px 8px; border-radius: 10px; font-size: 0.75em; font-weight: 600;">${atrasadasDoGrupo.length} em atraso</span>` : ''}
                             </div>
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <span style="color: rgba(255,255,255,0.6); font-size: 0.85em;">Restam: ${parcelasRestantes} parcelas</span>
-                                <span style="color: rgba(255,255,255,0.4); font-size: 0.8em;">Total: ${formatarMoeda(valorTotal)}</span>
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <span style="color: rgba(255,255,255,0.6); font-size: 0.85em;">Restam: ${parcelasRestantes}x</span>
+                                <span style="color: rgba(255,255,255,0.4); font-size: 0.8em;">Saldo: ${formatarMoeda(valorRestante)}</span>
                                 <div class="action-buttons">
+                                    ${!todasQuitadas ? `
+                                    <button class="action-btn" onclick="quitarDivida('${grupoId}')" title="Quitar dívida" style="color: #2ecc71;">
+                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                        </svg>
+                                    </button>
+                                    ` : ''}
                                     <button class="action-btn btn-pause" onclick="togglePauseGrupo('${grupoId}')" title="${titlePausePlay}">
                                         ${iconePausePlay}
                                     </button>
@@ -6953,8 +6973,25 @@
                 </tr>
             `;
 
-            // Renderizar cada parcela
-            parcelas.forEach(p => {
+            // Renderizar parcelas EM ATRASO deste grupo (não contabilizadas no mês)
+            atrasadasDoGrupo.sort((a, b) => a.parcelaAtual - b.parcelaAtual).forEach(p => {
+                htmlVariaveis += `
+                    <tr style="background: rgba(231, 76, 60, 0.06); opacity: 0.75;">
+                        <td style="padding-left: 40px;"><input type="checkbox" class="checkbox-status" onchange="togglePagoVariavel(${p.id})"></td>
+                        <td class="descricao" style="padding-left: 10px;">
+                            <span style="color: #e74c3c;">Parcela ${p.parcelaAtual}/${p.totalParcelas} – Atraso</span>
+                            <span style="color: rgba(255,255,255,0.3); font-size: 0.75em; margin-left: 6px;">(fora do saldo)</span>
+                        </td>
+                        <td></td>
+                        <td>${formatarData(p.data)} <span class="badge vencido" style="font-size: 0.7em;">Vencida</span></td>
+                        <td style="color: #e74c3c; font-weight: 500;">${formatarMoeda(p.valor)}</td>
+                        <td></td>
+                    </tr>
+                `;
+            });
+
+            // Renderizar parcelas DO MÊS ATUAL
+            parcelasDoMes.forEach(p => {
                 const status = getStatusVencimento(p.data, p.pago);
                 const temComprovante = p.comprovante !== null && p.comprovante !== undefined;
 
