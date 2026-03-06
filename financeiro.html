@@ -3334,11 +3334,11 @@
         </div>
     </div>
 
-    <!-- SEÇÃO: RECEITAS -->
-    <div class="section" id="sectionReceitas">
+    <!-- SEÇÃO: RECEITAS FIXAS -->
+    <div class="section" id="sectionReceitasFixas">
         <div class="section-header">
-            <h2>Receitas <span class="subtotal" id="subtotalReceitas"></span></h2>
-            <button class="btn-add-section" id="btnAddReceita" title="Adicionar receita">
+            <h2>Receitas Fixas <span class="subtotal" id="subtotalReceitasFixas"></span></h2>
+            <button class="btn-add-section" id="btnAddReceitaFixa" title="Adicionar receita fixa">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -3346,7 +3346,7 @@
             </button>
         </div>
         <div class="section-content">
-            <div id="formReceita" class="form-container"></div>
+            <div id="formReceitaFixa" class="form-container"></div>
             <div class="table-container">
                 <table class="transacoes-table">
                     <thead>
@@ -3359,10 +3359,42 @@
                             <th class="col-acoes">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="receitasTable"></tbody>
+                    <tbody id="receitasFixasTable"></tbody>
                 </table>
             </div>
-            <div id="emptyReceitas" class="empty-state">Nenhuma receita cadastrada</div>
+            <div id="emptyReceitasFixas" class="empty-state">Nenhuma receita fixa cadastrada</div>
+        </div>
+    </div>
+
+    <!-- SEÇÃO: RECEITAS VARIÁVEIS -->
+    <div class="section" id="sectionReceitasVariaveis">
+        <div class="section-header">
+            <h2>Receitas Variáveis <span class="subtotal" id="subtotalReceitasVariaveis"></span></h2>
+            <button class="btn-add-section" id="btnAddReceitaVariavel" title="Adicionar receita variável">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="section-content">
+            <div id="formReceitaVariavel" class="form-container"></div>
+            <div class="table-container">
+                <table class="transacoes-table">
+                    <thead>
+                        <tr>
+                            <th class="col-status"></th>
+                            <th class="col-descricao">Descrição</th>
+                            <th class="col-categoria">Categoria</th>
+                            <th class="col-data">Data</th>
+                            <th class="col-valor">Valor</th>
+                            <th class="col-acoes">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="receitasVariaveisTable"></tbody>
+                </table>
+            </div>
+            <div id="emptyReceitasVariaveis" class="empty-state">Nenhuma receita variável cadastrada</div>
         </div>
     </div>
 
@@ -3625,7 +3657,8 @@
         emprestimos: [],
         economias: [],
         receitasFixas: [], // Modelos de receitas recorrentes
-        receitasMes: {}, // Instâncias de receitas por mês
+        receitasMes: {}, // Instâncias de receitas fixas por mês
+        receitasAvulsas: [], // Receitas variáveis (avulsas, manuais)
         arquivados: {
             receitas: [],
             despesasFixas: [],
@@ -3643,6 +3676,7 @@
     if (!financeiro.despesasFixasMes) financeiro.despesasFixasMes = {};
     if (!financeiro.receitasFixas) financeiro.receitasFixas = [];
     if (!financeiro.receitasMes) financeiro.receitasMes = {};
+    if (!financeiro.receitasAvulsas) financeiro.receitasAvulsas = [];
     if (!financeiro.despesasAvulsas) financeiro.despesasAvulsas = [];
 
     // Estado da aplicação
@@ -3916,13 +3950,20 @@
     
     function criarFormulario(tipo) {
         const configs = {
-            receita: {
+            receitaFixa: {
                 campos: [
-                    { id: 'receitaDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Salário' },
-                    { id: 'receitaValor', label: 'Valor', type: 'number', step: '0.01' },
-                    { id: 'receitaCategoria', label: 'Categoria', type: 'select', options: ['Salário', 'Freelance', 'Investimentos', 'Outros'] },
-                    { id: 'receitaDia', label: 'Dia Recebimento', type: 'number', min: 1, max: 31, placeholder: '5' },
-                    { id: 'receitaRecorrente', label: 'Receita Recorrente?', type: 'checkbox' }
+                    { id: 'receitaFixaDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Salário' },
+                    { id: 'receitaFixaValor', label: 'Valor', type: 'number', step: '0.01' },
+                    { id: 'receitaFixaCategoria', label: 'Categoria', type: 'select', options: ['Salário', 'Pensão', 'Aluguel Recebido', 'Outros'] },
+                    { id: 'receitaFixaDia', label: 'Dia Recebimento', type: 'number', min: 1, max: 31, placeholder: '5' }
+                ]
+            },
+            receitaVariavel: {
+                campos: [
+                    { id: 'receitaVariavelDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Freelance, Bônus' },
+                    { id: 'receitaVariavelValor', label: 'Valor', type: 'number', step: '0.01' },
+                    { id: 'receitaVariavelCategoria', label: 'Categoria', type: 'select', options: ['Freelance', 'Investimentos', 'Vendas', 'Bônus', 'Presente', 'Outros'] },
+                    { id: 'receitaVariavelData', label: 'Data', type: 'date' }
                 ]
             },
             despesaFixa: {
@@ -4205,7 +4246,8 @@
     }
 
     // Event listeners dos botões
-    document.getElementById('btnAddReceita').onclick = () => mostrarForm('receita');
+    document.getElementById('btnAddReceitaFixa').onclick = () => mostrarForm('receitaFixa');
+    document.getElementById('btnAddReceitaVariavel').onclick = () => mostrarForm('receitaVariavel');
     document.getElementById('btnAddDespesaFixa').onclick = () => mostrarForm('despesaFixa');
     document.getElementById('btnAddDespesaVariavel').onclick = () => mostrarForm('despesaVariavel');
     document.getElementById('btnAddDespesaAvulsa').onclick = () => mostrarForm('despesaAvulsa');
@@ -4216,44 +4258,54 @@
     // RECEITAS (com suporte a recorrentes)
     // ==========================================
     
-    function salvarReceita() {
-        const desc = document.getElementById('receitaDescricao').value.trim();
-        const valor = parseFloat(document.getElementById('receitaValor').value) || 0;
-        const cat = document.getElementById('receitaCategoria').value || 'Outros';
-        const dia = parseInt(document.getElementById('receitaDia').value) || 5;
-        const recorrente = document.getElementById('receitaRecorrente')?.checked || false;
+    function salvarReceitaFixa() {
+        const desc = document.getElementById('receitaFixaDescricao').value.trim();
+        const valor = parseFloat(document.getElementById('receitaFixaValor').value) || 0;
+        const cat = document.getElementById('receitaFixaCategoria').value || 'Outros';
+        const dia = parseInt(document.getElementById('receitaFixaDia').value) || 5;
         
         if (!desc || !valor) return alert('Preencha descrição e valor!');
         
-        if (recorrente) {
-            // Criar receita recorrente (modelo)
-            financeiro.receitasFixas.push({
-                id: gerarId(),
-                descricao: desc,
-                valor: valor,
-                categoria: cat,
-                diaRecebimento: dia,
-                ativa: true,
-                criadoEm: new Date().toISOString()
-            });
-            gerarInstanciasReceitas();
-        } else {
-            // Criar receita única no mês atual
-            const key = getMesAnoKey();
-            if (!financeiro.receitasMes[key]) financeiro.receitasMes[key] = [];
-            financeiro.receitasMes[key].push({
-                id: gerarId(),
-                descricao: desc,
-                valor: valor,
-                categoria: cat,
-                data: getDataRecebimento(dia),
-                recebido: false,
-                recorrente: false
-            });
-        }
+        // Criar receita recorrente (modelo)
+        financeiro.receitasFixas.push({
+            id: gerarId(),
+            descricao: desc,
+            valor: valor,
+            categoria: cat,
+            diaRecebimento: dia,
+            ativa: true,
+            criadoEm: new Date().toISOString()
+        });
+        gerarInstanciasReceitas();
         
         salvarDados();
-        esconderForm('receita');
+        esconderForm('receitaFixa');
+        renderizar();
+    }
+
+    function salvarReceitaVariavel() {
+        const desc = document.getElementById('receitaVariavelDescricao').value.trim();
+        const valor = parseFloat(document.getElementById('receitaVariavelValor').value) || 0;
+        const cat = document.getElementById('receitaVariavelCategoria').value || 'Outros';
+        let data = document.getElementById('receitaVariavelData').value;
+        
+        if (!desc || !valor) return alert('Preencha descrição e valor!');
+        
+        if (!data) {
+            data = `${anoSelecionado}-${mesSelecionado}-${String(new Date().getDate()).padStart(2, '0')}`;
+        }
+        
+        financeiro.receitasAvulsas.push({
+            id: gerarId(),
+            descricao: desc,
+            valor: valor,
+            categoria: cat,
+            data: data,
+            recebido: false
+        });
+        
+        salvarDados();
+        esconderForm('receitaVariavel');
         renderizar();
     }
 
@@ -4305,6 +4357,15 @@
         return [...receitasAntigas, ...receitasNovas];
     }
 
+    function getReceitasFixasMes() {
+        const key = getMesAnoKey();
+        return (financeiro.receitasMes[key] || []).filter(r => r.recorrente);
+    }
+
+    function getReceitasVariaveisMes() {
+        return filtrarPorMes(financeiro.receitasAvulsas);
+    }
+
     function toggleRecebido(id) {
         // Procurar nas receitas antigas
         let item = financeiro.receitas.find(r => r.id === id);
@@ -4315,9 +4376,18 @@
             return;
         }
         
-        // Procurar nas receitas novas (por mês)
+        // Procurar nas receitas fixas (por mês)
         const key = getMesAnoKey();
         item = (financeiro.receitasMes[key] || []).find(r => r.id === id);
+        if (item) {
+            item.recebido = !item.recebido;
+            salvarDados();
+            renderizar();
+            return;
+        }
+
+        // Procurar nas receitas variáveis (avulsas)
+        item = financeiro.receitasAvulsas.find(r => r.id === id);
         if (item) {
             item.recebido = !item.recebido;
             salvarDados();
@@ -4336,13 +4406,12 @@
             return;
         }
         
-        // Procurar nas receitas do mês
+        // Procurar nas receitas fixas do mês
         const key = getMesAnoKey();
         const receitasMes = financeiro.receitasMes[key] || [];
         const receita = receitasMes.find(r => r.id === id);
         
         if (receita && receita.recorrente && receita.modeloId) {
-            // É uma receita recorrente - perguntar o que fazer
             const opcao = confirm(
                 'Esta é uma receita recorrente.\n\n' +
                 'OK = Excluir APENAS esta do mês atual\n' +
@@ -4350,15 +4419,26 @@
             );
             
             if (opcao) {
-                // Excluir apenas do mês atual
                 financeiro.receitasMes[key] = receitasMes.filter(r => r.id !== id);
                 salvarDados();
                 renderizar();
             }
-        } else {
-            // Receita única
+            return;
+        }
+        
+        if (receita) {
             if (!confirm('Excluir esta receita?')) return;
             financeiro.receitasMes[key] = receitasMes.filter(r => r.id !== id);
+            salvarDados();
+            renderizar();
+            return;
+        }
+
+        // Procurar nas receitas variáveis (avulsas)
+        idx = financeiro.receitasAvulsas.findIndex(r => r.id === id);
+        if (idx !== -1) {
+            if (!confirm('Excluir esta receita variável?')) return;
+            financeiro.receitasAvulsas.splice(idx, 1);
             salvarDados();
             renderizar();
         }
@@ -4412,15 +4492,21 @@
         // Procurar nas receitas antigas
         let item = financeiro.receitas.find(r => r.id === id);
         let isNovoSistema = false;
+        let isAvulsa = false;
         
         if (!item) {
             const key = getMesAnoKey();
             item = (financeiro.receitasMes[key] || []).find(r => r.id === id);
             isNovoSistema = true;
         }
+        if (!item) {
+            item = financeiro.receitasAvulsas.find(r => r.id === id);
+            isAvulsa = true;
+            isNovoSistema = false;
+        }
         if (!item) return;
 
-        itemEditando = { tipo: 'receita', id: id, isNovoSistema: isNovoSistema };
+        itemEditando = { tipo: 'receita', id: id, isNovoSistema: isNovoSistema, isAvulsa: isAvulsa };
         
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
@@ -4456,7 +4542,9 @@
     function salvarEdicaoReceita() {
         let item = null;
         
-        if (itemEditando.isNovoSistema) {
+        if (itemEditando.isAvulsa) {
+            item = financeiro.receitasAvulsas.find(r => r.id === itemEditando.id);
+        } else if (itemEditando.isNovoSistema) {
             const key = getMesAnoKey();
             item = (financeiro.receitasMes[key] || []).find(r => r.id === itemEditando.id);
         } else {
@@ -4590,6 +4678,10 @@
 
     function getDespesasFixasMes() {
         const key = getMesAnoKey();
+        
+        // Nunca retornar dados de antes de 2026
+        if (key < '2026-01') return [];
+        
         const despesas = financeiro.despesasFixasMes[key] || [];
         
         // Retornar todas as despesas (do mês atual + atrasadas de meses anteriores)
@@ -6365,6 +6457,8 @@
         gerarInstanciasReceitas();
 
         const receitasMes = getReceitasMes();
+        const receitasFixasMesArr = getReceitasFixasMes();
+        const receitasVariaveisMesArr = getReceitasVariaveisMes();
         const fixasMes = getDespesasFixasMes();
         const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis);
         const avulsasMes = filtrarPorMes(financeiro.despesasAvulsas);
@@ -6375,9 +6469,11 @@
         
         // === CÁLCULOS PARA OS KPIs ===
         
-        // KPI 1: Receita Total (entradas do mês - recebidas ou não)
-        const receitaTotalMes = receitasMes.reduce((s, r) => s + r.valor, 0);
-        const receitaRecebida = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
+        // KPI 1: Receita Total (fixas + variáveis)
+        const totalRecFixas = receitasMes.reduce((s, r) => s + r.valor, 0);
+        const totalRecVariaveis = receitasVariaveisMesArr.reduce((s, r) => s + r.valor, 0);
+        const receitaTotalMes = totalRecFixas + totalRecVariaveis;
+        const receitaRecebida = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0) + receitasVariaveisMesArr.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
         const receitaPendente = receitaTotalMes - receitaRecebida;
         
         // KPI 2: Despesas Totais (fixas + parceladas + avulsas + empréstimos)
@@ -6416,7 +6512,7 @@
         document.getElementById('kpiReceita').textContent = formatarMoeda(receitaTotalMes);
         const receitaDetalhe = document.getElementById('kpiReceitaDetalhe');
         if (receitaPendente > 0) {
-            receitaDetalhe.innerHTML = `<span>Recebido: ${formatarMoeda(receitaRecebida)}</span><span>Pendente: ${formatarMoeda(receitaPendente)}</span>`;
+            receitaDetalhe.innerHTML = `<span>Fixas: ${formatarMoeda(totalRecFixas)}</span><span>Variáveis: ${formatarMoeda(totalRecVariaveis)}</span>`;
         } else {
             receitaDetalhe.innerHTML = `<span>✓ Tudo recebido</span>`;
         }
@@ -6485,21 +6581,24 @@
         }
 
         // Subtotais (mantém compatibilidade)
-        document.getElementById('subtotalReceitas').textContent = `(${formatarMoeda(receitaRecebida)} de ${formatarMoeda(receitaTotalMes)})`;
+        const recFixasRecebidas = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
+        const recVarRecebidas = receitasVariaveisMesArr.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
+        document.getElementById('subtotalReceitasFixas').textContent = `(${formatarMoeda(recFixasRecebidas)} de ${formatarMoeda(totalRecFixas)})`;
+        document.getElementById('subtotalReceitasVariaveis').textContent = `(${formatarMoeda(recVarRecebidas)} de ${formatarMoeda(totalRecVariaveis)})`;
         document.getElementById('subtotalFixas').textContent = `(${formatarMoeda(fixasPagas)})`;
         document.getElementById('subtotalVariaveis').textContent = `(${formatarMoeda(parceladasPagas)})`;
         document.getElementById('subtotalAvulsas').textContent = `(${formatarMoeda(avulsasPagas)})`;
         document.getElementById('subtotalEconomias').textContent = `(${formatarMoeda(totalEconomizado)})`;
 
-        // === TABELA RECEITAS ===
-        const receitasTable = document.getElementById('receitasTable');
-        document.getElementById('emptyReceitas').style.display = receitasMes.length ? 'none' : 'block';
-        receitasTable.innerHTML = receitasMes.map(r => `
+        // === TABELA RECEITAS FIXAS ===
+        const recFixasTable = document.getElementById('receitasFixasTable');
+        document.getElementById('emptyReceitasFixas').style.display = receitasMes.length ? 'none' : 'block';
+        recFixasTable.innerHTML = receitasMes.map(r => `
             <tr class="${r.recebido ? 'done' : ''}">
                 <td><input type="checkbox" class="checkbox-status" ${r.recebido ? 'checked' : ''} onchange="toggleRecebido(${r.id})"></td>
                 <td class="descricao">
                     ${r.descricao}
-                    ${r.recorrente ? '<span class="badge-recorrente" title="Receita Recorrente">🔄</span>' : ''}
+                    ${r.recorrente ? '<span class="badge recorrente"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="M7 23l-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></span>' : ''}
                 </td>
                 <td><span class="categoria">${r.categoria}</span></td>
                 <td>${formatarData(r.data)}</td>
@@ -6521,6 +6620,35 @@
                             </svg>
                         </button>
                         ` : ''}
+                        <button class="action-btn btn-delete" onclick="deletarReceita(${r.id})" title="Excluir">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+        // === TABELA RECEITAS VARIÁVEIS ===
+        const recVarTable = document.getElementById('receitasVariaveisTable');
+        document.getElementById('emptyReceitasVariaveis').style.display = receitasVariaveisMesArr.length ? 'none' : 'block';
+        recVarTable.innerHTML = receitasVariaveisMesArr.map(r => `
+            <tr class="${r.recebido ? 'done' : ''}">
+                <td><input type="checkbox" class="checkbox-status" ${r.recebido ? 'checked' : ''} onchange="toggleRecebido(${r.id})"></td>
+                <td class="descricao">${r.descricao}</td>
+                <td><span class="categoria">${r.categoria}</span></td>
+                <td>${formatarData(r.data)}</td>
+                <td class="valor-positivo">${formatarMoeda(r.valor)}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn btn-edit" onclick="editarReceita(${r.id})" title="Editar">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
                         <button class="action-btn btn-delete" onclick="deletarReceita(${r.id})" title="Excluir">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
@@ -7068,7 +7196,8 @@
     // Renderizar itens arquivados
     function renderizarArquivados() {
         // Limpar tabelas ativas
-        document.getElementById('receitasTable').innerHTML = '';
+        document.getElementById('receitasFixasTable').innerHTML = '';
+        document.getElementById('receitasVariaveisTable').innerHTML = '';
         document.getElementById('despesasFixasTable').innerHTML = '';
         document.getElementById('despesasVariaveisTable').innerHTML = '';
         document.getElementById('despesasAvulsasTable').innerHTML = '';
@@ -7354,60 +7483,90 @@
     
     // Limpar dados antigos (2025) e despesas atrasadas antigas
     function limparDadosAntigos() {
-        const versaoLimpeza = localStorage.getItem('financeiro_limpeza_v3');
-        if (versaoLimpeza === 'done') return; // Já executou
+        let modificado = false;
         
-        const mesAtualKey = getMesAnoKey();
-        const mesAnteriorKey = getMesAnteriorKey();
-        
-        // 1. Remover TODOS os meses de 2025 e anteriores
+        // 1. Remover TODOS os meses de 2025 e anteriores do despesasFixasMes
         Object.keys(financeiro.despesasFixasMes || {}).forEach(key => {
             if (key < '2026-01') {
                 delete financeiro.despesasFixasMes[key];
+                modificado = true;
             }
         });
         
-        // 2. Para cada mês de 2026, remover despesas atrasadas que NÃO são do mês anterior
+        // 2. Remover TODOS os meses de 2025 e anteriores do receitasMes
+        Object.keys(financeiro.receitasMes || {}).forEach(key => {
+            if (key < '2026-01') {
+                delete financeiro.receitasMes[key];
+                modificado = true;
+            }
+        });
+
+        // 3. Para cada mês de 2026+, limpar instâncias atrasadas inválidas
         Object.keys(financeiro.despesasFixasMes || {}).forEach(key => {
             if (key >= '2026-01') {
+                const antes = financeiro.despesasFixasMes[key].length;
                 financeiro.despesasFixasMes[key] = (financeiro.despesasFixasMes[key] || []).filter(d => {
-                    // Se não é atrasada, manter
+                    // Manter instâncias normais (não atrasadas)
                     if (!d.atrasada) return true;
                     
-                    // Se é atrasada, só manter se veio do mês ANTERIOR ao mês atual
-                    // Por exemplo: em Fevereiro (2026-02), só mantém atrasadas de Janeiro (2026-01)
-                    if (d.mesOriginal) {
-                        // Calcular qual seria o mês anterior ao key atual
+                    // Atrasada: verificar se o original existe e NÃO foi pago
+                    if (d.idOriginal && d.mesOriginal) {
+                        // Se o mês original é anterior a 2026, remover
+                        if (d.mesOriginal < '2026-01') return false;
+                        
+                        const originais = financeiro.despesasFixasMes[d.mesOriginal] || [];
+                        const original = originais.find(o => o.id === d.idOriginal);
+                        
+                        // Se o original não existe mais, remover
+                        if (!original) return false;
+                        
+                        // Se o original foi pago, remover (a menos que esta atrasada também já foi paga)
+                        if (original.pago && !d.pago) return false;
+                        
+                        // Verificar que o mesOriginal é exatamente o mês anterior ao key
                         let [ano, mes] = key.split('-').map(Number);
                         mes--;
                         if (mes < 1) { mes = 12; ano--; }
                         const mesAnteriorDoKey = `${ano}-${String(mes).padStart(2, '0')}`;
                         
-                        // Só manter se é do mês anterior E esse mês é de 2026
-                        return d.mesOriginal === mesAnteriorDoKey && d.mesOriginal >= '2026-01';
+                        // Só manter atrasada se veio do mês imediatamente anterior
+                        if (d.mesOriginal !== mesAnteriorDoKey) return false;
+                        
+                        return true;
                     }
                     
-                    // Se não tem mesOriginal mas tem dataOriginal, verificar pelo ano
-                    if (d.dataOriginal && d.dataOriginal.startsWith('2025')) {
-                        return false; // Remover se é de 2025
-                    }
-                    
-                    return false; // Na dúvida, remover atrasadas sem referência clara
+                    // Atrasada sem referência clara — remover
+                    return false;
                 });
+                if (financeiro.despesasFixasMes[key].length !== antes) modificado = true;
             }
         });
         
-        // 3. Limpar também receitas de 2025
-        Object.keys(financeiro.receitasMes || {}).forEach(key => {
-            if (key < '2026-01') {
-                delete financeiro.receitasMes[key];
-            }
+        // 4. Remover instâncias duplicadas (mesmo modeloId e não-atrasada aparecendo mais de uma vez)
+        Object.keys(financeiro.despesasFixasMes || {}).forEach(key => {
+            const despesas = financeiro.despesasFixasMes[key] || [];
+            const vistos = new Set();
+            const antes = despesas.length;
+            financeiro.despesasFixasMes[key] = despesas.filter(d => {
+                if (!d.atrasada) {
+                    const chave = `normal_${d.modeloId}`;
+                    if (vistos.has(chave)) return false;
+                    vistos.add(chave);
+                }
+                if (d.atrasada) {
+                    const chave = `atrasada_${d.idOriginal}`;
+                    if (vistos.has(chave)) return false;
+                    vistos.add(chave);
+                }
+                return true;
+            });
+            if (financeiro.despesasFixasMes[key].length !== antes) modificado = true;
         });
         
-        // Salvar e marcar como limpo
-        localStorage.setItem('financeiro_v5', JSON.stringify(financeiro));
-        localStorage.setItem('financeiro_limpeza_v3', 'done');
-        console.log('Dados antigos de 2025 e atrasadas antigas removidos');
+        if (modificado) {
+            localStorage.setItem('financeiro_v5', JSON.stringify(financeiro));
+            console.log('Dados limpos: removidas instâncias inválidas/duplicadas');
+        }
     }
     
     async function init() {
@@ -7469,19 +7628,20 @@
 
     function atualizarSugestoesSabedoria() {
         // Coletar dados financeiros
-        const receitasMes = getReceitasMes();
-        const fixasMes = getDespesasFixasMes();
+        const receitasMesSab = getReceitasMes();
+        const receitasVarSab = getReceitasVariaveisMes();
+        const fixasMesSab = getDespesasFixasMes();
         const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis || []).filter(d => !d.pausado);
         const avulsasMesSab = filtrarPorMes(financeiro.despesasAvulsas || []);
         
         // Receitas do mês
-        const totalReceita = receitasMes.reduce((s, r) => s + r.valor, 0);
-        const receitaRecebida = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
-        const receitaPendente = totalReceita - receitaRecebida;
+        const totalReceita = receitasMesSab.reduce((s, r) => s + r.valor, 0) + receitasVarSab.reduce((s, r) => s + r.valor, 0);
+        const receitaRecebidaSab = receitasMesSab.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0) + receitasVarSab.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
+        const receitaPendente = totalReceita - receitaRecebidaSab;
         
         // Despesas do mês
-        const totalDespesas = fixasMes.reduce((s, d) => s + d.valor, 0) + variaveisMes.reduce((s, d) => s + d.valor, 0) + avulsasMesSab.reduce((s, d) => s + d.valor, 0);
-        const despesasPagas = fixasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) + 
+        const totalDespesas = fixasMesSab.reduce((s, d) => s + d.valor, 0) + variaveisMes.reduce((s, d) => s + d.valor, 0) + avulsasMesSab.reduce((s, d) => s + d.valor, 0);
+        const despesasPagas = fixasMesSab.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) + 
                              variaveisMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) +
                              avulsasMesSab.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
         const despesasPendentes = totalDespesas - despesasPagas;
