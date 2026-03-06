@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZARA | Financeiro</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         /* ========== RESET E BASE ========== */
         * {
@@ -77,80 +77,10 @@
             margin-top: 4px;
         }
 
-        /* ========== SISTEMA DE ABAS PRINCIPAL ========== */
-        .tabs-main {
-            margin-bottom: 25px;
-        }
-
-        .tabs-header-main {
-            display: flex;
-            gap: 0;
-            background: #141414;
-            border: 1px solid rgba(212, 175, 125, 0.15);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .tab-btn-main {
-            flex: 1;
-            padding: 18px 30px;
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.95em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-
-        .tab-btn-main:hover {
-            background: rgba(212, 175, 125, 0.05);
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .tab-btn-main.active {
-            background: rgba(212, 175, 125, 0.1);
-            color: #d4af7d;
-        }
-
-        .tab-btn-main.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #d4af7d, #c9a050);
-        }
-
-        .tab-btn-main svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-        }
-
-        .tab-content-main {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .tab-content-main.active {
-            display: block;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        margin-top: 4px;
-    }
 
     /* ========== SELETOR DE MÊS ========== */
     .mes-selector {
@@ -2960,6 +2890,71 @@
         table {
             min-width: 400px;
         }
+
+        .section-header {
+            padding: 14px 15px;
+        }
+
+        .section-header h2 {
+            font-size: 1em;
+        }
+
+        .section-content {
+            padding: 12px;
+        }
+
+        .transacoes-table {
+            min-width: 500px;
+        }
+
+        .transacoes-table th {
+            padding: 10px 8px;
+            font-size: 0.7em;
+            letter-spacing: 0.5px;
+        }
+
+        .transacoes-table td {
+            padding: 12px 8px;
+            font-size: 0.85em;
+        }
+
+        .col-acoes {
+            width: 100px;
+        }
+
+        .action-btn {
+            width: 28px;
+            height: 28px;
+        }
+
+        .emprestimo-card {
+            padding: 15px;
+        }
+
+        .emprestimo-valores {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px;
+        }
+
+        .emprestimo-acoes-rapidas {
+            flex-direction: column;
+        }
+
+        .emprestimo-acoes-rapidas button {
+            width: 100%;
+        }
+
+        .reserva-card {
+            padding: 15px;
+        }
+
+        .reserva-acoes-rapidas {
+            flex-direction: column;
+        }
+
+        .reserva-acoes-rapidas button {
+            width: 100%;
+        }
     }
     
     @media (max-width: 380px) {
@@ -2982,573 +2977,6 @@
         }
     }
 
-
-        /* ========== CSS ADICIONAL - MÓDULO APOSTA ========== */
-        .kpi-grid-aposta {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .kpi-card-aposta {
-            background: #141414;
-            border: 1px solid rgba(212, 175, 125, 0.15);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .kpi-card-aposta::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-        }
-
-        .kpi-card-aposta.entrada::before { background: linear-gradient(90deg, #3498db, #2980b9); }
-        .kpi-card-aposta.lucro::before { background: linear-gradient(90deg, #27ae60, #2ecc71); }
-        .kpi-card-aposta.lucro.negativo::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
-        .kpi-card-aposta.banca::before { background: linear-gradient(90deg, #d4af7d, #c9a050); }
-        .kpi-card-aposta.zero::before { background: linear-gradient(90deg, #9b59b6, #8e44ad); }
-        .kpi-card-aposta.deposito::before { background: linear-gradient(90deg, #1abc9c, #16a085); }
-
-        .kpi-card-aposta label {
-            display: block;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.7em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-        }
-
-        .kpi-card-aposta .valor {
-            font-size: 1.5em;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .kpi-card-aposta.entrada .valor { color: #3498db; }
-        .kpi-card-aposta.lucro .valor { color: #2ecc71; }
-        .kpi-card-aposta.lucro.negativo .valor { color: #e74c3c; }
-        .kpi-card-aposta.banca .valor { color: #d4af7d; }
-        .kpi-card-aposta.zero .valor { color: #9b59b6; }
-        .kpi-card-aposta.zero.zerado .valor { color: #2ecc71; }
-        .kpi-card-aposta.deposito .valor { color: #1abc9c; }
-
-        .kpi-card-aposta .subtexto {
-            font-size: 0.75em;
-            color: rgba(255, 255, 255, 0.4);
-            margin-top: 6px;
-        }
-
-        .kpi-card-aposta .indicador {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.8em;
-            margin-top: 8px;
-            padding: 3px 8px;
-            border-radius: 10px;
-        }
-
-        .kpi-card-aposta .indicador.positivo {
-            background: rgba(46, 204, 113, 0.15);
-            color: #2ecc71;
-        }
-
-        .kpi-card-aposta .indicador.negativo {
-            background: rgba(231, 76, 60, 0.15);
-            color: #e74c3c;
-        }
-
-        .kpi-grid-secondary-aposta {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .kpi-card-sm-aposta {
-            background: #141414;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 18px;
-            text-align: center;
-        }
-
-        .kpi-card-sm-aposta label {
-            display: block;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.7em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .kpi-card-sm-aposta .valor {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .kpi-card-sm-aposta .subtexto {
-            font-size: 0.75em;
-            color: rgba(255, 255, 255, 0.3);
-            margin-top: 4px;
-        }
-
-        .kpi-card-sm-aposta.alerta .valor {
-            color: #e74c3c;
-        }
-
-        /* Tabelas Aposta */
-        .table-aposta {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table-aposta th {
-            text-align: center;
-            padding: 14px 12px;
-            color: #d4af7d;
-            font-size: 0.75em;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            border-bottom: 1px solid rgba(212, 175, 125, 0.2);
-        }
-
-        .table-aposta td {
-            padding: 16px 12px;
-            color: #fff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.95em;
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .table-aposta tbody tr:hover {
-            background: rgba(212, 175, 125, 0.05);
-        }
-
-        .table-aposta .col-obs {
-            text-align: left;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85em;
-        }
-
-        .status-icon-aposta {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9em;
-        }
-
-        .status-icon-aposta.verde {
-            background: rgba(46, 204, 113, 0.15);
-            color: #2ecc71;
-        }
-
-        .status-icon-aposta.vermelho {
-            background: rgba(231, 76, 60, 0.15);
-            color: #e74c3c;
-        }
-
-        .status-icon-aposta.neutro {
-            background: rgba(149, 165, 166, 0.15);
-            color: #95a5a6;
-        }
-
-        /* Fechamento Semanal */
-        .fechamento-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .fechamento-atual {
-            background: linear-gradient(135deg, rgba(212, 175, 125, 0.1) 0%, rgba(212, 175, 125, 0.05) 100%);
-            border: 1px solid rgba(212, 175, 125, 0.25);
-            border-radius: 15px;
-            padding: 25px;
-        }
-
-        .fechamento-atual h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1em;
-            color: #d4af7d;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .fechamento-atual h3 .badge {
-            background: rgba(212, 175, 125, 0.2);
-            padding: 3px 10px;
-            border-radius: 10px;
-            font-size: 0.7em;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .fechamento-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .fechamento-item:last-child {
-            border-bottom: none;
-        }
-
-        .fechamento-item label {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85em;
-        }
-
-        .fechamento-item .valor {
-            font-weight: 600;
-            font-size: 1em;
-        }
-
-        .fechamento-progress {
-            margin-top: 15px;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-
-        .progress-fill.positivo {
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-        }
-
-        .progress-fill.negativo {
-            background: linear-gradient(90deg, #c0392b, #e74c3c);
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.75em;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .fechamento-historico {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
-            padding: 25px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .fechamento-historico h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 20px;
-        }
-
-        .semana-item {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-        }
-
-        .semana-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .semana-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .semana-header .periodo {
-            font-size: 0.8em;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .semana-header .resultado {
-            font-weight: 600;
-            font-size: 0.95em;
-        }
-
-        .semana-stats {
-            display: flex;
-            gap: 15px;
-            font-size: 0.75em;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        /* Modal Aposta */
-        .modal-overlay-aposta {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            padding: 20px;
-        }
-
-        .modal-overlay-aposta.active {
-            display: flex;
-        }
-
-        .modal-aposta {
-            background: #1a1a1a;
-            border: 1px solid rgba(212, 175, 125, 0.2);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow: hidden;
-        }
-
-        .modal-header-aposta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
-            border-bottom: 1px solid rgba(212, 175, 125, 0.15);
-        }
-
-        .modal-header-aposta h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2em;
-            color: #d4af7d;
-        }
-
-        .modal-close-aposta {
-            width: 36px;
-            height: 36px;
-            border: none;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .modal-close-aposta:hover {
-            background: rgba(231, 76, 60, 0.15);
-            color: #e74c3c;
-        }
-
-        .modal-body-aposta {
-            padding: 25px;
-            overflow-y: auto;
-            max-height: 70vh;
-        }
-
-        .form-group-aposta {
-            margin-bottom: 20px;
-        }
-
-        .form-group-aposta label {
-            display: block;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.8em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .form-group-aposta input,
-        .form-group-aposta select,
-        .form-group-aposta textarea {
-            width: 100%;
-            padding: 14px 16px;
-            background: #0f0f0f;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            color: #fff;
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-
-        .form-group-aposta input:focus,
-        .form-group-aposta select:focus,
-        .form-group-aposta textarea:focus {
-            outline: none;
-            border-color: #d4af7d;
-        }
-
-        .form-row-aposta {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .btn-submit-aposta {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #d4af7d 0%, #c9a050 100%);
-            border: none;
-            border-radius: 12px;
-            color: #0a0a0a;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-submit-aposta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(212, 175, 125, 0.3);
-        }
-
-        .empty-state-aposta {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        .empty-state-aposta svg {
-            width: 50px;
-            height: 50px;
-            stroke: rgba(255, 255, 255, 0.15);
-            margin-bottom: 15px;
-        }
-
-        .valor-positivo { color: #2ecc71 !important; font-weight: 500; }
-        .valor-negativo { color: #e74c3c !important; font-weight: 500; }
-
-        .action-btn-aposta {
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .action-btn-aposta:hover {
-            background: rgba(231, 76, 60, 0.15);
-            color: #e74c3c;
-        }
-
-        .action-btn-aposta svg {
-            width: 16px;
-            height: 16px;
-            stroke: currentColor;
-        }
-
-        #syncStatus {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 12px 22px;
-            border-radius: 10px;
-            font-size: 0.9em;
-            font-weight: 500;
-            z-index: 10001;
-            opacity: 0;
-            transition: opacity 0.3s;
-            color: #fff;
-        }
-
-        @media (max-width: 1200px) {
-            .kpi-grid-aposta {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 900px) {
-            .kpi-grid-aposta {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .fechamento-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-                padding-bottom: 100px;
-                padding-left: 15px;
-            }
-
-            .sidebar {
-                display: none;
-            }
-
-            .mobile-nav {
-                display: block;
-            }
-
-            .tab-btn-main {
-                padding: 14px 15px;
-                font-size: 0.75em;
-                letter-spacing: 1px;
-            }
-
-            .kpi-grid-aposta {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-
-            .kpi-card-aposta {
-                padding: 15px;
-            }
-
-            .kpi-card-aposta .valor {
-                font-size: 1.2em;
-            }
-
-            .form-row-aposta {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .kpi-grid-secondary-aposta {
-                grid-template-columns: 1fr;
-            }
-        }
 
         /* ========== ALERTAS DE VENCIMENTO ========== */
         .alertas-container {
@@ -3771,32 +3199,8 @@
         </div>
     </div>
 
-    <!-- SISTEMA DE ABAS PRINCIPAL -->
-    <div class="tabs-main">
-        <div class="tabs-header-main">
-            <button class="tab-btn-main active" data-tab="planejamento">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>
-                    <rect x="9" y="3" width="6" height="4" rx="2"></rect>
-                    <path d="M9 12l2 2 4-4"></path>
-                </svg>
-                <span>Planejamento</span>
-            </button>
-            <button class="tab-btn-main" data-tab="aposta">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <circle cx="12" cy="12" r="6"></circle>
-                    <circle cx="12" cy="12" r="2"></circle>
-                </svg>
-                <span>Roleta</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- ======================= -->
-    <!-- TAB: PLANEJAMENTO -->
-    <!-- ======================= -->
-    <div class="tab-content-main active" id="tab-planejamento">
+    <!-- PLANEJAMENTO FINANCEIRO -->
+    <div id="tab-planejamento">
     <!-- SELETOR DE MÊS/ANO E VISUALIZAÇÃO -->
     <div class="mes-selector">
         <div class="mes-controls">
@@ -4027,6 +3431,38 @@
     </div>
 
     <!-- SEÇÃO: EMPRÉSTIMOS / DÍVIDAS -->
+    <div class="section" id="sectionDespesasAvulsas">
+        <div class="section-header">
+            <h2>Despesas Variáveis <span class="subtotal" id="subtotalAvulsas"></span></h2>
+            <button class="btn-add-section" id="btnAddDespesaAvulsa" title="Adicionar despesa variável">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="section-content">
+            <div id="formDespesaAvulsa" class="form-container"></div>
+            <div class="table-container">
+                <table class="transacoes-table">
+                    <thead>
+                        <tr>
+                            <th class="col-status"></th>
+                            <th class="col-descricao">Descrição</th>
+                            <th class="col-categoria">Categoria</th>
+                            <th class="col-data">Data</th>
+                            <th class="col-valor">Valor</th>
+                            <th class="col-acoes">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="despesasAvulsasTable"></tbody>
+                </table>
+            </div>
+            <div id="emptyDespesasAvulsas" class="empty-state">Nenhuma despesa variável cadastrada</div>
+        </div>
+    </div>
+
+    <!-- SEÇÃO: EMPRÉSTIMOS / DÍVIDAS -->
     <div class="section" id="sectionEmprestimos">
         <div class="section-header">
             <h2>Empréstimos / Dívidas</h2>
@@ -4155,354 +3591,6 @@
 </div>
     </div>
 
-    <!-- ======================= -->
-    <!-- TAB: APOSTA (ROLETA) -->
-    <!-- ======================= -->
-    <div class="tab-content-main" id="tab-aposta">
-        
-        <!-- KPIs Principais -->
-        <div class="kpi-grid-aposta">
-            <div class="kpi-card-aposta entrada">
-                <label>Entrada</label>
-                <div class="valor" id="kpiEntrada">R$ 0</div>
-                <div class="subtexto">total depositado</div>
-            </div>
-            <div class="kpi-card-aposta lucro" id="kpiLucroCard">
-                <label>Lucro</label>
-                <div class="valor" id="kpiLucro">R$ 0</div>
-                <div class="indicador positivo" id="kpiLucroIndicador">
-                    <span>0%</span> ROI
-                </div>
-            </div>
-            <div class="kpi-card-aposta banca">
-                <label>Banca Atual</label>
-                <div class="valor" id="kpiBanca">R$ 0</div>
-                <div class="subtexto">disponível</div>
-            </div>
-            <div class="kpi-card-aposta zero" id="kpiZeroCard">
-                <label>Zero à Banca</label>
-                <div class="valor" id="kpiZero">R$ 0</div>
-                <div class="subtexto" id="kpiZeroTexto">para break-even</div>
-            </div>
-            <div class="kpi-card-aposta deposito">
-                <label>Próximo Depósito</label>
-                <div class="valor" id="kpiProxDeposito">--</div>
-                <div class="subtexto" id="kpiProxDepositoData">configurar</div>
-            </div>
-        </div>
-
-        <!-- KPIs Secundários -->
-        <div class="kpi-grid-secondary-aposta">
-            <div class="kpi-card-sm-aposta">
-                <label>Sessões</label>
-                <div class="valor" id="kpiSessoes">0</div>
-                <div class="subtexto">registradas</div>
-            </div>
-            <div class="kpi-card-sm-aposta">
-                <label>Win Rate</label>
-                <div class="valor" id="kpiWinRate">0%</div>
-                <div class="subtexto" id="kpiWinRateDetalhe">0V / 0L</div>
-            </div>
-            <div class="kpi-card-sm-aposta alerta" id="kpiMaiorLossCard">
-                <label>Maior Loss</label>
-                <div class="valor" id="kpiMaiorLoss">R$ 0</div>
-                <div class="subtexto">sessão única</div>
-            </div>
-        </div>
-
-        <!-- GRÁFICO -->
-        <div class="secao" style="margin-bottom: 25px;">
-            <div class="secao-header">
-                <h2 class="secao-titulo">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px;stroke:#d4af7d;">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                    </svg>
-                    Evolução da Banca
-                </h2>
-            </div>
-            <div class="secao-content">
-                <div style="position: relative; height: 280px;">
-                    <canvas id="chartBanca"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- MOVIMENTAÇÕES -->
-        <div class="secao">
-            <div class="secao-header">
-                <h2 class="secao-titulo">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px;stroke:#d4af7d;">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
-                    </svg>
-                    Movimentação de Banca
-                </h2>
-                <button class="btn-add" onclick="abrirModalMovimentacao()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    Registrar
-                </button>
-            </div>
-            <div class="secao-content">
-                <div class="table-container">
-                    <table class="table-aposta">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Tipo</th>
-                                <th>Valor</th>
-                                <th>Banca Após</th>
-                                <th>Observação</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="movimentacoesTable"></tbody>
-                    </table>
-                </div>
-                <div class="empty-state-aposta" id="emptyMovimentacoes">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
-                    </svg>
-                    <p>Nenhuma movimentação registrada</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- SESSÕES -->
-        <div class="secao">
-            <div class="secao-header">
-                <h2 class="secao-titulo">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px;stroke:#d4af7d;">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    Sessões de Roleta
-                </h2>
-                <button class="btn-add" onclick="abrirModalSessao()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    Nova Sessão
-                </button>
-            </div>
-            <div class="secao-content">
-                <div class="table-container">
-                    <table class="table-aposta">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Duração</th>
-                                <th>Banca In</th>
-                                <th>Banca Out</th>
-                                <th>Resultado</th>
-                                <th>Status</th>
-                                <th>Observação</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sessoesTable"></tbody>
-                    </table>
-                </div>
-                <div class="empty-state-aposta" id="emptySessoes">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    <p>Nenhuma sessão registrada</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- FECHAMENTO SEMANAL -->
-        <div class="secao">
-            <div class="secao-header">
-                <h2 class="secao-titulo">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px;stroke:#d4af7d;">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                    Fechamento Semanal
-                </h2>
-                <button class="btn-add" onclick="abrirModalConfigAposta()" style="background: rgba(155,89,182,0.12); border-color: rgba(155,89,182,0.3); color: #9b59b6;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"></path>
-                    </svg>
-                    Config
-                </button>
-            </div>
-            <div class="secao-content">
-                <div class="fechamento-container">
-                    <!-- Semana Atual -->
-                    <div class="fechamento-atual">
-                        <h3>
-                            Semana Atual
-                            <span class="badge" id="semanaAtualPeriodo">--/-- a --/--</span>
-                        </h3>
-                        <div class="fechamento-item">
-                            <label>Banca Inicial</label>
-                            <div class="valor" id="semanaAtualBancaInicial">R$ 0</div>
-                        </div>
-                        <div class="fechamento-item">
-                            <label>Banca Atual</label>
-                            <div class="valor" id="semanaAtualBancaAtual">R$ 0</div>
-                        </div>
-                        <div class="fechamento-item">
-                            <label>Sessões</label>
-                            <div class="valor" id="semanaAtualSessoes">0</div>
-                        </div>
-                        <div class="fechamento-item">
-                            <label>Resultado</label>
-                            <div class="valor" id="semanaAtualResultado">R$ 0</div>
-                        </div>
-                        <div class="fechamento-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill positivo" id="semanaAtualProgress" style="width: 50%"></div>
-                            </div>
-                            <div class="progress-label">
-                                <span id="semanaAtualPerformance">0%</span>
-                                <span>performance</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Histórico -->
-                    <div class="fechamento-historico">
-                        <h3>Semanas Anteriores</h3>
-                        <div id="historicoSemanas">
-                            <div class="empty-state-aposta" style="padding: 20px;">
-                                <p>Nenhum histórico ainda</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    </div><!-- fim .container -->
-
-    <!-- MODAIS DO MÓDULO APOSTA -->
-    <div class="modal-overlay-aposta" id="modalMovimentacao">
-        <div class="modal-aposta">
-            <div class="modal-header-aposta">
-                <h3>Registrar Movimentação</h3>
-                <button class="modal-close-aposta" onclick="fecharModalAposta('modalMovimentacao')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body-aposta">
-                <form id="formMovimentacao" onsubmit="salvarMovimentacaoAposta(event)">
-                    <div class="form-row-aposta">
-                        <div class="form-group-aposta">
-                            <label>Tipo</label>
-                            <select id="movTipo" required>
-                                <option value="deposito">Depósito</option>
-                                <option value="saque">Saque</option>
-                            </select>
-                        </div>
-                        <div class="form-group-aposta">
-                            <label>Data</label>
-                            <input type="date" id="movData" required>
-                        </div>
-                    </div>
-                    <div class="form-group-aposta">
-                        <label>Valor (R$)</label>
-                        <input type="number" id="movValor" step="0.01" min="0" required placeholder="0.00">
-                    </div>
-                    <div class="form-group-aposta">
-                        <label>Observação (opcional)</label>
-                        <input type="text" id="movObs" placeholder="Ex: Lucro sacado, Aporte mensal...">
-                    </div>
-                    <button type="submit" class="btn-submit-aposta">Salvar Movimentação</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay-aposta" id="modalSessao">
-        <div class="modal-aposta">
-            <div class="modal-header-aposta">
-                <h3>Registrar Sessão</h3>
-                <button class="modal-close-aposta" onclick="fecharModalAposta('modalSessao')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body-aposta">
-                <form id="formSessao" onsubmit="salvarSessaoAposta(event)">
-                    <div class="form-row-aposta">
-                        <div class="form-group-aposta">
-                            <label>Data</label>
-                            <input type="date" id="sessaoData" required>
-                        </div>
-                        <div class="form-group-aposta">
-                            <label>Duração (minutos)</label>
-                            <input type="number" id="sessaoDuracao" min="1" required placeholder="30">
-                        </div>
-                    </div>
-                    <div class="form-row-aposta">
-                        <div class="form-group-aposta">
-                            <label>Banca Entrada (R$)</label>
-                            <input type="number" id="sessaoBancaIn" step="0.01" min="0" required placeholder="0.00">
-                        </div>
-                        <div class="form-group-aposta">
-                            <label>Banca Saída (R$)</label>
-                            <input type="number" id="sessaoBancaOut" step="0.01" min="0" required placeholder="0.00">
-                        </div>
-                    </div>
-                    <div class="form-group-aposta">
-                        <label>Observação (opcional)</label>
-                        <textarea id="sessaoObs" rows="2" placeholder="Ex: Parei no alvo, Martingale bust..."></textarea>
-                    </div>
-                    <button type="submit" class="btn-submit-aposta">Salvar Sessão</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay-aposta" id="modalConfigAposta">
-        <div class="modal-aposta">
-            <div class="modal-header-aposta">
-                <h3>Configurações da Roleta</h3>
-                <button class="modal-close-aposta" onclick="fecharModalAposta('modalConfigAposta')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body-aposta">
-                <form id="formConfigAposta" onsubmit="salvarConfigAposta(event)">
-                    <div class="form-group-aposta">
-                        <label>Banca de Referência (R$)</label>
-                        <input type="number" id="configBancaRef" step="0.01" min="0" placeholder="Meta de banca para break-even">
-                    </div>
-                    <div class="form-row-aposta">
-                        <div class="form-group-aposta">
-                            <label>Próximo Depósito (R$)</label>
-                            <input type="number" id="configProxDepValor" step="0.01" min="0" placeholder="Valor">
-                        </div>
-                        <div class="form-group-aposta">
-                            <label>Data do Depósito</label>
-                            <input type="date" id="configProxDepData">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-submit-aposta">Salvar Configurações</button>
-                </form>
-            </div>
-        </div>
-    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -4532,7 +3620,8 @@
         receitas: [],
         despesasFixas: [],           // Modelos de despesas recorrentes
         despesasFixasMes: {},        // Instâncias mensais: {"2025-01": [...]}
-        despesasVariaveis: [],
+        despesasVariaveis: [],       // Despesas parceladas
+        despesasAvulsas: [],         // Despesas variáveis (avulsas, não recorrentes)
         emprestimos: [],
         economias: [],
         receitasFixas: [], // Modelos de receitas recorrentes
@@ -4541,6 +3630,7 @@
             receitas: [],
             despesasFixas: [],
             despesasVariaveis: [],
+            despesasAvulsas: [],
             emprestimos: [],
             economias: []
         }
@@ -4553,6 +3643,7 @@
     if (!financeiro.despesasFixasMes) financeiro.despesasFixasMes = {};
     if (!financeiro.receitasFixas) financeiro.receitasFixas = [];
     if (!financeiro.receitasMes) financeiro.receitasMes = {};
+    if (!financeiro.despesasAvulsas) financeiro.despesasAvulsas = [];
 
     // Estado da aplicação
     let mesSelecionado = '';
@@ -4769,6 +3860,13 @@
         }
     }
 
+    function verComprovanteAvulsa(id) {
+        const item = financeiro.despesasAvulsas.find(d => d.id === id);
+        if (item?.comprovante) {
+            verComprovante(item.comprovante);
+        }
+    }
+
     function verComprovanteHistorico(emprestimoId, historicoIdx) {
         const emp = financeiro.emprestimos.find(e => e.id === emprestimoId);
         if (emp?.historico?.[historicoIdx]?.comprovante) {
@@ -4851,6 +3949,14 @@
                     { id: 'emprestimoPrincipal', label: 'Valor Principal', type: 'number', step: '0.01' },
                     { id: 'emprestimoJuros', label: 'Taxa Juros (%)', type: 'number', step: '0.1', placeholder: '10' },
                     { id: 'emprestimoCategoria', label: 'Categoria', type: 'select', options: ['Agiota', 'Banco', 'Financeira', 'Pessoa Física', 'Cartão', 'Outros'] }
+                ]
+            },
+            despesaAvulsa: {
+                campos: [
+                    { id: 'despesaAvulsaDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Farmácia, Uber, etc.' },
+                    { id: 'despesaAvulsaValor', label: 'Valor', type: 'number', step: '0.01' },
+                    { id: 'despesaAvulsaCategoria', label: 'Categoria', type: 'select', options: ['Alimentação', 'Transporte', 'Lazer', 'Compras', 'Saúde', 'Educação', 'Outros'] },
+                    { id: 'despesaAvulsaData', label: 'Data', type: 'date' }
                 ]
             },
             economia: {
@@ -5102,6 +4208,7 @@
     document.getElementById('btnAddReceita').onclick = () => mostrarForm('receita');
     document.getElementById('btnAddDespesaFixa').onclick = () => mostrarForm('despesaFixa');
     document.getElementById('btnAddDespesaVariavel').onclick = () => mostrarForm('despesaVariavel');
+    document.getElementById('btnAddDespesaAvulsa').onclick = () => mostrarForm('despesaAvulsa');
     document.getElementById('btnAddEmprestimo').onclick = () => mostrarForm('emprestimo');
     document.getElementById('btnAddEconomia').onclick = () => mostrarForm('economia');
 
@@ -5429,6 +4536,18 @@
             }
         });
 
+        // LIMPAR instâncias atrasadas cujo original já foi pago
+        financeiro.despesasFixasMes[key] = financeiro.despesasFixasMes[key].filter(d => {
+            if (d.atrasada && d.idOriginal && d.mesOriginal) {
+                const original = (financeiro.despesasFixasMes[d.mesOriginal] || []).find(o => o.id === d.idOriginal);
+                // Se o original foi pago, remover a instância atrasada (a menos que esta também já tenha sido paga)
+                if (original && original.pago && !d.pago) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
         // Verificar despesas NÃO PAGAS APENAS do MÊS ANTERIOR (não de vários meses)
         const mesAnteriorKey = getMesAnteriorKey();
         
@@ -5437,8 +4556,8 @@
             const despesasMesAnterior = financeiro.despesasFixasMes[mesAnteriorKey] || [];
 
             despesasMesAnterior.forEach(despesaAnterior => {
-                // Só arrastar se NÃO foi paga e NÃO é uma despesa já atrasada
-                if (!despesaAnterior.pago && !despesaAnterior.atrasada) {
+                // Só arrastar se NÃO foi paga
+                if (!despesaAnterior.pago) {
                     // Verificar se já não existe uma despesa atrasada para este item específico
                     const jaExisteAtrasada = financeiro.despesasFixasMes[key].some(
                         d => d.atrasada && d.idOriginal === despesaAnterior.id
@@ -5708,6 +4827,20 @@
                 const comprovante = await criarComprovante(
                     fileInput, 
                     'despesa_variavel', 
+                    item.valor, 
+                    item.descricao
+                );
+                
+                item.pago = true;
+                item.dataPagamento = data;
+                item.comprovante = comprovante;
+            }
+        } else if (itemEditando.tipo === 'despesaAvulsa') {
+            const item = financeiro.despesasAvulsas.find(d => d.id === itemEditando.id);
+            if (item) {
+                const comprovante = await criarComprovante(
+                    fileInput, 
+                    'despesa_avulsa', 
                     item.valor, 
                     item.descricao
                 );
@@ -6416,6 +5549,133 @@
     }
 
     // ==========================================
+    // DESPESAS VARIÁVEIS (AVULSAS)
+    // ==========================================
+
+    function salvarDespesaAvulsa() {
+        const desc = document.getElementById('despesaAvulsaDescricao').value.trim();
+        const valor = parseFloat(document.getElementById('despesaAvulsaValor').value) || 0;
+        const cat = document.getElementById('despesaAvulsaCategoria').value || 'Outros';
+        let data = document.getElementById('despesaAvulsaData').value;
+
+        if (!desc || !valor) return alert('Preencha descrição e valor!');
+
+        if (!data) {
+            data = `${anoSelecionado}-${mesSelecionado}-${String(new Date().getDate()).padStart(2, '0')}`;
+        }
+
+        financeiro.despesasAvulsas.push({
+            id: gerarId(),
+            descricao: desc,
+            valor: valor,
+            categoria: cat,
+            data: data,
+            pago: false,
+            dataPagamento: null,
+            comprovante: null
+        });
+
+        salvarDados();
+        esconderForm('despesaAvulsa');
+        renderizar();
+    }
+
+    function togglePagoAvulsa(id) {
+        const item = financeiro.despesasAvulsas.find(d => d.id === id);
+        if (!item) return;
+
+        if (!item.pago) {
+            itemEditando = { tipo: 'despesaAvulsa', id: id };
+            const body = document.getElementById('modalEditarBody');
+            body.innerHTML = `
+                <div class="info-box">
+                    <strong>${item.descricao}</strong> - ${formatarMoeda(item.valor)}
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data do Pagamento</label>
+                        <input type="date" id="pagamentoData" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    <div class="form-group">
+                        <label>Comprovante (opcional)</label>
+                        <input type="file" id="pagamentoComprovante" accept="image/*,.pdf">
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                    <button class="btn-salvar" onclick="confirmarPagamentoDespesa()">Confirmar</button>
+                </div>
+            `;
+            document.querySelector('#modalEditar .modal-header h3').textContent = 'Registrar Pagamento';
+            abrirModal('modalEditar');
+        } else {
+            item.pago = false;
+            item.dataPagamento = null;
+            item.comprovante = null;
+            salvarDados();
+            renderizar();
+        }
+    }
+
+    function editarDespesaAvulsa(id) {
+        const item = financeiro.despesasAvulsas.find(d => d.id === id);
+        if (!item) return;
+
+        itemEditando = { tipo: 'despesaAvulsa', id: id };
+
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" id="editDescricao" value="${item.descricao}">
+                </div>
+                <div class="form-group">
+                    <label>Valor</label>
+                    <input type="number" id="editValor" value="${item.valor.toFixed(2)}" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="editCategoria">
+                        ${['Alimentação', 'Transporte', 'Lazer', 'Compras', 'Saúde', 'Educação', 'Outros'].map(c => `<option value="${c}" ${c === item.categoria ? 'selected' : ''}>${c}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="editData" value="${item.data}">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoAvulsa()">Salvar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Despesa Variável';
+        abrirModal('modalEditar');
+    }
+
+    function salvarEdicaoAvulsa() {
+        const item = financeiro.despesasAvulsas.find(d => d.id === itemEditando.id);
+        if (!item) return;
+
+        item.descricao = document.getElementById('editDescricao').value.trim();
+        item.valor = parseFloat(document.getElementById('editValor').value) || item.valor;
+        item.categoria = document.getElementById('editCategoria').value;
+        item.data = document.getElementById('editData').value || item.data;
+
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+    }
+
+    function deletarDespesaAvulsa(id) {
+        if (!confirm('Excluir esta despesa variável?')) return;
+        financeiro.despesasAvulsas = financeiro.despesasAvulsas.filter(d => d.id !== id);
+        salvarDados();
+        renderizar();
+    }
+
+    // ==========================================
     // EMPRÉSTIMOS / DÍVIDAS
     // ==========================================
     
@@ -7107,6 +6367,7 @@
         const receitasMes = getReceitasMes();
         const fixasMes = getDespesasFixasMes();
         const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis);
+        const avulsasMes = filtrarPorMes(financeiro.despesasAvulsas);
         const emprestimosAtivos = financeiro.emprestimos.filter(e => !e.arquivado);
 
         // Cálculos do mês (excluindo parcelas pausadas)
@@ -7119,17 +6380,21 @@
         const receitaRecebida = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
         const receitaPendente = receitaTotalMes - receitaRecebida;
         
-        // KPI 2: Despesas Totais (fixas + variáveis)
+        // KPI 2: Despesas Totais (fixas + parceladas + avulsas + empréstimos)
         const totalFixasMes = fixasMes.reduce((s, d) => s + d.valor, 0);
-        const totalVariaveisMes = variaveisAtivas.reduce((s, d) => s + d.valor, 0);
-        const despesasTotaisMes = totalFixasMes + totalVariaveisMes;
+        const totalParceladasMes = variaveisAtivas.reduce((s, d) => s + d.valor, 0);
+        const totalAvulsasMes = avulsasMes.reduce((s, d) => s + d.valor, 0);
+        const totalEmprestimosMes = emprestimosAtivos.reduce((s, e) => s + (e.parcelaMensal || 0), 0);
+        const despesasTotaisMes = totalFixasMes + totalParceladasMes + totalAvulsasMes + totalEmprestimosMes;
         
         // Para detalhamento: pagas vs pendentes
         const fixasPagas = fixasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
         const fixasPendentes = totalFixasMes - fixasPagas;
-        const variaveisPagas = variaveisAtivas.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
-        const variaveisPendentes = totalVariaveisMes - variaveisPagas;
-        const totalPago = fixasPagas + variaveisPagas;
+        const parceladasPagas = variaveisAtivas.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+        const parceladasPendentes = totalParceladasMes - parceladasPagas;
+        const avulsasPagas = avulsasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+        const avulsasPendentes = totalAvulsasMes - avulsasPagas;
+        const totalPago = fixasPagas + parceladasPagas + avulsasPagas;
         
         // KPI 3: Saldo Disponível (receita recebida - despesas pagas)
         const saldoDisponivel = receitaRecebida - totalPago;
@@ -7160,7 +6425,9 @@
         document.getElementById('kpiDespesas').textContent = formatarMoeda(despesasTotaisMes);
         document.getElementById('kpiDespesasDetalhe').innerHTML = `
             <span>Fixas: ${formatarMoeda(totalFixasMes)}</span>
-            <span>Variáveis: ${formatarMoeda(totalVariaveisMes)}</span>
+            <span>Parceladas: ${formatarMoeda(totalParceladasMes)}</span>
+            ${totalAvulsasMes > 0 ? `<span>Variáveis: ${formatarMoeda(totalAvulsasMes)}</span>` : ''}
+            ${totalEmprestimosMes > 0 ? `<span>Empréstimos: ${formatarMoeda(totalEmprestimosMes)}</span>` : ''}
         `;
         
         // KPI 3: Saldo Disponível
@@ -7205,7 +6472,7 @@
         const previsaoDetalhe = document.getElementById('kpiPrevisaoDetalhe');
         previsaoCard.classList.remove('negativo');
         
-        const despesasPendentes = fixasPendentes + variaveisPendentes;
+        const despesasPendentes = fixasPendentes + parceladasPendentes + avulsasPendentes;
         if (previsaoFechamento >= 0) {
             if (despesasPendentes > 0) {
                 previsaoDetalhe.innerHTML = `<span>Falta pagar: ${formatarMoeda(despesasPendentes)}</span>`;
@@ -7220,7 +6487,8 @@
         // Subtotais (mantém compatibilidade)
         document.getElementById('subtotalReceitas').textContent = `(${formatarMoeda(receitaRecebida)} de ${formatarMoeda(receitaTotalMes)})`;
         document.getElementById('subtotalFixas').textContent = `(${formatarMoeda(fixasPagas)})`;
-        document.getElementById('subtotalVariaveis').textContent = `(${formatarMoeda(variaveisPagas)})`;
+        document.getElementById('subtotalVariaveis').textContent = `(${formatarMoeda(parceladasPagas)})`;
+        document.getElementById('subtotalAvulsas').textContent = `(${formatarMoeda(avulsasPagas)})`;
         document.getElementById('subtotalEconomias').textContent = `(${formatarMoeda(totalEconomizado)})`;
 
         // === TABELA RECEITAS ===
@@ -7564,6 +6832,52 @@
 
         variaveisTable.innerHTML = htmlVariaveis;
 
+        // === TABELA DESPESAS AVULSAS ===
+        const avulsasTable = document.getElementById('despesasAvulsasTable');
+        document.getElementById('emptyDespesasAvulsas').style.display = avulsasMes.length ? 'none' : 'block';
+
+        avulsasTable.innerHTML = avulsasMes.map(d => {
+            const status = getStatusVencimento(d.data, d.pago);
+            const temComprovante = d.comprovante !== null && d.comprovante !== undefined;
+            const valorClass = d.pago ? 'valor-positivo' : 'valor-negativo';
+
+            return `
+                <tr class="${d.pago ? 'done' : ''} ${status.classe}">
+                    <td><input type="checkbox" class="checkbox-status" ${d.pago ? 'checked' : ''} onchange="togglePagoAvulsa(${d.id})"></td>
+                    <td class="descricao">
+                        ${d.descricao}
+                        ${temComprovante ? '<span class="badge comprovante"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></span>' : ''}
+                    </td>
+                    <td><span class="categoria">${d.categoria}</span></td>
+                    <td>${formatarData(d.data)} ${status.badge}</td>
+                    <td class="${valorClass}">${formatarMoeda(d.valor)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            ${temComprovante ? `
+                                <button class="action-btn btn-comprovante" onclick="verComprovanteAvulsa(${d.id})" title="Ver Comprovante">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                                    </svg>
+                                </button>
+                            ` : ''}
+                            <button class="action-btn btn-edit" onclick="editarDespesaAvulsa(${d.id})" title="Editar">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="action-btn btn-delete" onclick="deletarDespesaAvulsa(${d.id})" title="Excluir">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
         // === CARDS EMPRÉSTIMOS ===
         const empContainer = document.getElementById('emprestimosContainer');
         document.getElementById('emptyEmprestimos').style.display = emprestimosAtivos.length ? 'none' : 'block';
@@ -7757,6 +7071,7 @@
         document.getElementById('receitasTable').innerHTML = '';
         document.getElementById('despesasFixasTable').innerHTML = '';
         document.getElementById('despesasVariaveisTable').innerHTML = '';
+        document.getElementById('despesasAvulsasTable').innerHTML = '';
         document.getElementById('reservasContainer').innerHTML = '';
         
         // Mostrar empréstimos arquivados
@@ -8157,6 +7472,7 @@
         const receitasMes = getReceitasMes();
         const fixasMes = getDespesasFixasMes();
         const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis || []).filter(d => !d.pausado);
+        const avulsasMesSab = filtrarPorMes(financeiro.despesasAvulsas || []);
         
         // Receitas do mês
         const totalReceita = receitasMes.reduce((s, r) => s + r.valor, 0);
@@ -8164,9 +7480,10 @@
         const receitaPendente = totalReceita - receitaRecebida;
         
         // Despesas do mês
-        const totalDespesas = fixasMes.reduce((s, d) => s + d.valor, 0) + variaveisMes.reduce((s, d) => s + d.valor, 0);
+        const totalDespesas = fixasMes.reduce((s, d) => s + d.valor, 0) + variaveisMes.reduce((s, d) => s + d.valor, 0) + avulsasMesSab.reduce((s, d) => s + d.valor, 0);
         const despesasPagas = fixasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) + 
-                             variaveisMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+                             variaveisMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) +
+                             avulsasMesSab.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
         const despesasPendentes = totalDespesas - despesasPagas;
         
         // TODAS as economias
@@ -8404,646 +7721,6 @@
         atualizarSugestoesSabedoria();
     };
 
-    // ==========================================
-    // SISTEMA DE ABAS PRINCIPAL (Planejamento/Aposta)
-    // ==========================================
-    
-    document.querySelectorAll('.tab-btn-main').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn-main').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content-main').forEach(c => c.classList.remove('active'));
-            
-            btn.classList.add('active');
-            const tabId = btn.dataset.tab;
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            
-            // Atualizar gráfico quando mudar para aba de aposta
-            if (tabId === 'aposta') {
-                setTimeout(() => atualizarGraficoAposta(), 100);
-            }
-        });
-    });
-
-    // ==========================================
-    // MÓDULO APOSTA - ESTRUTURA DE DADOS
-    // ==========================================
-
-    let dadosAposta = {
-        config: {
-            bancaReferencia: 0,
-            proxDepositoValor: 0,
-            proxDepositoData: null
-        },
-        movimentacoes: [],
-        sessoes: [],
-        fechamentos: []
-    };
-
-    let chartBancaAposta = null;
-
-    // Carregar dados da aposta
-    function carregarDadosAposta() {
-        const saved = localStorage.getItem('zara_aposta_v1');
-        if (saved) {
-            dadosAposta = JSON.parse(saved);
-        }
-    }
-
-    function salvarDadosAposta() {
-        localStorage.setItem('zara_aposta_v1', JSON.stringify(dadosAposta));
-        salvarApostaSupabase();
-    }
-
-    async function salvarApostaSupabase() {
-        if (!useSupabase) return;
-        try {
-            const { error } = await supabaseClient.from('aposta').upsert({
-                id: USER_ID,
-                user_id: USER_ID,
-                dados: dadosAposta,
-                updated_at: new Date().toISOString()
-            });
-            if (error) console.error('Erro Supabase Aposta:', error);
-        } catch (e) {
-            console.error('Exceção:', e);
-        }
-    }
-
-    async function carregarApostaSupabase() {
-        if (!useSupabase) return;
-        try {
-            const { data, error } = await supabaseClient
-                .from('aposta')
-                .select('*')
-                .eq('user_id', USER_ID)
-                .maybeSingle();
-
-            if (!error && data?.dados) {
-                dadosAposta = { ...dadosAposta, ...data.dados };
-                localStorage.setItem('zara_aposta_v1', JSON.stringify(dadosAposta));
-            }
-        } catch (e) {
-            console.error('Exceção:', e);
-        }
-    }
-
-    // ==========================================
-    // MÓDULO APOSTA - MODAL HANDLERS
-    // ==========================================
-
-    function abrirModalMovimentacao() {
-        document.getElementById('movData').value = new Date().toISOString().split('T')[0];
-        document.getElementById('modalMovimentacao').classList.add('active');
-    }
-
-    function abrirModalSessao() {
-        document.getElementById('sessaoData').value = new Date().toISOString().split('T')[0];
-        const bancaAtual = calcularBancaAtualAposta();
-        document.getElementById('sessaoBancaIn').value = bancaAtual > 0 ? bancaAtual.toFixed(2) : '';
-        document.getElementById('modalSessao').classList.add('active');
-    }
-
-    function abrirModalConfigAposta() {
-        document.getElementById('configBancaRef').value = dadosAposta.config.bancaReferencia || '';
-        document.getElementById('configProxDepValor').value = dadosAposta.config.proxDepositoValor || '';
-        document.getElementById('configProxDepData').value = dadosAposta.config.proxDepositoData || '';
-        document.getElementById('modalConfigAposta').classList.add('active');
-    }
-
-    function fecharModalAposta(id) {
-        document.getElementById(id).classList.remove('active');
-    }
-
-    document.querySelectorAll('.modal-overlay-aposta').forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.classList.remove('active');
-        });
-    });
-
-    // ==========================================
-    // MÓDULO APOSTA - CRUD MOVIMENTAÇÕES
-    // ==========================================
-
-    function salvarMovimentacaoAposta(e) {
-        e.preventDefault();
-        
-        const mov = {
-            id: Date.now(),
-            tipo: document.getElementById('movTipo').value,
-            data: document.getElementById('movData').value,
-            valor: parseFloat(document.getElementById('movValor').value),
-            obs: document.getElementById('movObs').value
-        };
-
-        dadosAposta.movimentacoes.push(mov);
-        dadosAposta.movimentacoes.sort((a, b) => new Date(b.data) - new Date(a.data));
-        
-        salvarDadosAposta();
-        renderizarMovimentacoesAposta();
-        atualizarKPIsAposta();
-        atualizarGraficoAposta();
-        fecharModalAposta('modalMovimentacao');
-        document.getElementById('formMovimentacao').reset();
-        mostrarStatus('Movimentação salva', 'success');
-    }
-
-    function excluirMovimentacaoAposta(id) {
-        if (!confirm('Excluir esta movimentação?')) return;
-        dadosAposta.movimentacoes = dadosAposta.movimentacoes.filter(m => m.id !== id);
-        salvarDadosAposta();
-        renderizarMovimentacoesAposta();
-        atualizarKPIsAposta();
-        atualizarGraficoAposta();
-    }
-
-    function renderizarMovimentacoesAposta() {
-        const tbody = document.getElementById('movimentacoesTable');
-        const empty = document.getElementById('emptyMovimentacoes');
-        
-        if (dadosAposta.movimentacoes.length === 0) {
-            tbody.innerHTML = '';
-            empty.style.display = 'block';
-            return;
-        }
-
-        empty.style.display = 'none';
-        let bancaAcumulada = 0;
-        
-        const movsOrdenadas = [...dadosAposta.movimentacoes].sort((a, b) => new Date(a.data) - new Date(b.data));
-        const bancaApos = {};
-        movsOrdenadas.forEach(mov => {
-            bancaAcumulada += mov.tipo === 'deposito' ? mov.valor : -mov.valor;
-            bancaApos[mov.id] = bancaAcumulada;
-        });
-
-        tbody.innerHTML = dadosAposta.movimentacoes.map(mov => `
-            <tr>
-                <td>${formatarDataAposta(mov.data)}</td>
-                <td>
-                    <span class="status-icon-aposta ${mov.tipo === 'deposito' ? 'verde' : 'vermelho'}">
-                        ${mov.tipo === 'deposito' ? '↑' : '↓'}
-                    </span>
-                </td>
-                <td class="${mov.tipo === 'deposito' ? 'valor-positivo' : 'valor-negativo'}">
-                    ${mov.tipo === 'deposito' ? '+' : '-'}${formatarMoedaAposta(mov.valor)}
-                </td>
-                <td>${formatarMoedaAposta(bancaApos[mov.id])}</td>
-                <td class="col-obs">${mov.obs || '-'}</td>
-                <td>
-                    <button class="action-btn-aposta" onclick="excluirMovimentacaoAposta(${mov.id})" title="Excluir">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
-    }
-
-    // ==========================================
-    // MÓDULO APOSTA - CRUD SESSÕES
-    // ==========================================
-
-    function salvarSessaoAposta(e) {
-        e.preventDefault();
-        
-        const bancaIn = parseFloat(document.getElementById('sessaoBancaIn').value);
-        const bancaOut = parseFloat(document.getElementById('sessaoBancaOut').value);
-        
-        const sessao = {
-            id: Date.now(),
-            data: document.getElementById('sessaoData').value,
-            duracao: parseInt(document.getElementById('sessaoDuracao').value),
-            bancaIn: bancaIn,
-            bancaOut: bancaOut,
-            resultado: bancaOut - bancaIn,
-            obs: document.getElementById('sessaoObs').value
-        };
-
-        dadosAposta.sessoes.push(sessao);
-        dadosAposta.sessoes.sort((a, b) => new Date(b.data) - new Date(a.data));
-        
-        verificarFechamentoSemanalAposta();
-        
-        salvarDadosAposta();
-        renderizarSessoesAposta();
-        atualizarKPIsAposta();
-        atualizarFechamentoSemanalAposta();
-        atualizarGraficoAposta();
-        fecharModalAposta('modalSessao');
-        document.getElementById('formSessao').reset();
-        mostrarStatus('Sessão registrada', 'success');
-    }
-
-    function excluirSessaoAposta(id) {
-        if (!confirm('Excluir esta sessão?')) return;
-        dadosAposta.sessoes = dadosAposta.sessoes.filter(s => s.id !== id);
-        salvarDadosAposta();
-        renderizarSessoesAposta();
-        atualizarKPIsAposta();
-        atualizarFechamentoSemanalAposta();
-        atualizarGraficoAposta();
-    }
-
-    function renderizarSessoesAposta() {
-        const tbody = document.getElementById('sessoesTable');
-        const empty = document.getElementById('emptySessoes');
-        
-        if (dadosAposta.sessoes.length === 0) {
-            tbody.innerHTML = '';
-            empty.style.display = 'block';
-            return;
-        }
-
-        empty.style.display = 'none';
-        
-        tbody.innerHTML = dadosAposta.sessoes.map(sessao => {
-            const status = sessao.resultado > 0 ? 'verde' : (sessao.resultado < 0 ? 'vermelho' : 'neutro');
-            const statusIcon = sessao.resultado > 0 ? '✓' : (sessao.resultado < 0 ? '✗' : '—');
-            
-            return `
-                <tr>
-                    <td>${formatarDataAposta(sessao.data)}</td>
-                    <td>${sessao.duracao}min</td>
-                    <td>${formatarMoedaAposta(sessao.bancaIn)}</td>
-                    <td>${formatarMoedaAposta(sessao.bancaOut)}</td>
-                    <td class="${sessao.resultado >= 0 ? 'valor-positivo' : 'valor-negativo'}">
-                        ${sessao.resultado >= 0 ? '+' : ''}${formatarMoedaAposta(sessao.resultado)}
-                    </td>
-                    <td><span class="status-icon-aposta ${status}">${statusIcon}</span></td>
-                    <td class="col-obs">${sessao.obs || '-'}</td>
-                    <td>
-                        <button class="action-btn-aposta" onclick="excluirSessaoAposta(${sessao.id})" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    }
-
-    // ==========================================
-    // MÓDULO APOSTA - CÁLCULOS E KPIs
-    // ==========================================
-
-    function calcularBancaAtualAposta() {
-        let banca = 0;
-        dadosAposta.movimentacoes.forEach(mov => {
-            banca += mov.tipo === 'deposito' ? mov.valor : -mov.valor;
-        });
-        dadosAposta.sessoes.forEach(sessao => {
-            banca += sessao.resultado;
-        });
-        return banca;
-    }
-
-    function calcularTotalDepositosAposta() {
-        return dadosAposta.movimentacoes
-            .filter(m => m.tipo === 'deposito')
-            .reduce((sum, m) => sum + m.valor, 0);
-    }
-
-    function calcularLucroTotalAposta() {
-        return dadosAposta.sessoes.reduce((sum, s) => sum + s.resultado, 0);
-    }
-
-    function calcularWinRateAposta() {
-        if (dadosAposta.sessoes.length === 0) return { rate: 0, wins: 0, losses: 0 };
-        const wins = dadosAposta.sessoes.filter(s => s.resultado > 0).length;
-        const losses = dadosAposta.sessoes.filter(s => s.resultado < 0).length;
-        return { rate: (wins / dadosAposta.sessoes.length) * 100, wins, losses };
-    }
-
-    function calcularMaiorLossAposta() {
-        if (dadosAposta.sessoes.length === 0) return 0;
-        const losses = dadosAposta.sessoes.filter(s => s.resultado < 0).map(s => Math.abs(s.resultado));
-        return losses.length > 0 ? Math.max(...losses) : 0;
-    }
-
-    function atualizarKPIsAposta() {
-        const entrada = calcularTotalDepositosAposta();
-        const lucro = calcularLucroTotalAposta();
-        const banca = calcularBancaAtualAposta();
-        const bancaRef = dadosAposta.config.bancaReferencia || entrada;
-        const zeroABanca = bancaRef - banca;
-        const winRate = calcularWinRateAposta();
-        const maiorLoss = calcularMaiorLossAposta();
-
-        document.getElementById('kpiEntrada').textContent = formatarMoedaAposta(entrada);
-        document.getElementById('kpiLucro').textContent = formatarMoedaAposta(lucro);
-        document.getElementById('kpiBanca').textContent = formatarMoedaAposta(banca);
-        document.getElementById('kpiZero').textContent = formatarMoedaAposta(Math.abs(zeroABanca));
-        
-        const lucroCard = document.getElementById('kpiLucroCard');
-        const lucroIndicador = document.getElementById('kpiLucroIndicador');
-        if (lucro >= 0) {
-            lucroCard.classList.remove('negativo');
-            lucroIndicador.classList.remove('negativo');
-            lucroIndicador.classList.add('positivo');
-        } else {
-            lucroCard.classList.add('negativo');
-            lucroIndicador.classList.remove('positivo');
-            lucroIndicador.classList.add('negativo');
-        }
-        const roi = entrada > 0 ? ((lucro / entrada) * 100).toFixed(1) : 0;
-        lucroIndicador.innerHTML = `<span>${lucro >= 0 ? '+' : ''}${roi}%</span> ROI`;
-
-        const zeroCard = document.getElementById('kpiZeroCard');
-        const zeroTexto = document.getElementById('kpiZeroTexto');
-        if (zeroABanca <= 0) {
-            zeroCard.classList.add('zerado');
-            zeroTexto.textContent = '✓ meta atingida';
-        } else {
-            zeroCard.classList.remove('zerado');
-            zeroTexto.textContent = 'para break-even';
-        }
-
-        if (dadosAposta.config.proxDepositoData && dadosAposta.config.proxDepositoValor) {
-            const hoje = new Date();
-            const dataDeposito = new Date(dadosAposta.config.proxDepositoData + 'T00:00:00');
-            const diffDias = Math.ceil((dataDeposito - hoje) / (1000 * 60 * 60 * 24));
-            document.getElementById('kpiProxDeposito').textContent = formatarMoedaAposta(dadosAposta.config.proxDepositoValor);
-            document.getElementById('kpiProxDepositoData').textContent = diffDias > 0 ? `em ${diffDias} dias` : (diffDias === 0 ? 'hoje!' : 'atrasado');
-        } else {
-            document.getElementById('kpiProxDeposito').textContent = '--';
-            document.getElementById('kpiProxDepositoData').innerHTML = '<a href="#" onclick="abrirModalConfigAposta(); return false;" style="color: #d4af7d;">configurar</a>';
-        }
-
-        document.getElementById('kpiSessoes').textContent = dadosAposta.sessoes.length;
-        document.getElementById('kpiWinRate').textContent = `${winRate.rate.toFixed(0)}%`;
-        document.getElementById('kpiWinRateDetalhe').textContent = `${winRate.wins}V / ${winRate.losses}L`;
-        document.getElementById('kpiMaiorLoss').textContent = formatarMoedaAposta(maiorLoss);
-
-        const maiorLossCard = document.getElementById('kpiMaiorLossCard');
-        if (banca > 0 && maiorLoss > banca * 0.2) {
-            maiorLossCard.classList.add('alerta');
-        } else {
-            maiorLossCard.classList.remove('alerta');
-        }
-    }
-
-    // ==========================================
-    // MÓDULO APOSTA - GRÁFICO
-    // ==========================================
-
-    function atualizarGraficoAposta() {
-        const ctx = document.getElementById('chartBanca');
-        if (!ctx) return;
-
-        const eventos = [];
-        
-        dadosAposta.movimentacoes.forEach(mov => {
-            eventos.push({
-                data: mov.data,
-                valor: mov.tipo === 'deposito' ? mov.valor : -mov.valor
-            });
-        });
-        
-        dadosAposta.sessoes.forEach(sessao => {
-            eventos.push({
-                data: sessao.data,
-                valor: sessao.resultado
-            });
-        });
-        
-        eventos.sort((a, b) => new Date(a.data) - new Date(b.data));
-        
-        let bancaAcumulada = 0;
-        const labels = ['Início'];
-        const data = [0];
-        
-        eventos.forEach(evento => {
-            bancaAcumulada += evento.valor;
-            labels.push(formatarDataCurtaAposta(new Date(evento.data + 'T00:00:00')));
-            data.push(bancaAcumulada);
-        });
-        
-        if (chartBancaAposta) chartBancaAposta.destroy();
-        
-        chartBancaAposta = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Banca',
-                    data: data,
-                    borderColor: '#d4af7d',
-                    backgroundColor: 'rgba(212, 175, 125, 0.1)',
-                    fill: true,
-                    tension: 0.3,
-                    pointBackgroundColor: data.map((val, i) => i === 0 ? '#d4af7d' : (val >= data[i-1] ? '#2ecc71' : '#e74c3c')),
-                    pointBorderColor: '#0a0a0a',
-                    pointBorderWidth: 2,
-                    pointRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#1a1a1a',
-                        titleColor: '#d4af7d',
-                        bodyColor: '#fff',
-                        callbacks: {
-                            label: function(context) {
-                                return formatarMoedaAposta(context.parsed.y);
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: 'rgba(255, 255, 255, 0.5)', maxRotation: 45 }
-                    },
-                    y: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: {
-                            color: 'rgba(255, 255, 255, 0.5)',
-                            callback: function(value) { return 'R$ ' + value.toLocaleString('pt-BR'); }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // ==========================================
-    // MÓDULO APOSTA - FECHAMENTO SEMANAL
-    // ==========================================
-
-    function getInicioSemanaAposta(date = new Date()) {
-        const d = new Date(date);
-        const day = d.getDay();
-        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-        d.setDate(diff);
-        d.setHours(0, 0, 0, 0);
-        return d;
-    }
-
-    function getFimSemanaAposta(date = new Date()) {
-        const inicio = getInicioSemanaAposta(date);
-        const fim = new Date(inicio);
-        fim.setDate(inicio.getDate() + 6);
-        fim.setHours(23, 59, 59, 999);
-        return fim;
-    }
-
-    function verificarFechamentoSemanalAposta() {
-        const hoje = new Date();
-        const inicioSemanaAtual = getInicioSemanaAposta(hoje);
-        const semanaAnterior = new Date(inicioSemanaAtual);
-        semanaAnterior.setDate(semanaAnterior.getDate() - 7);
-        
-        const keyAnterior = `${semanaAnterior.getFullYear()}-${String(semanaAnterior.getMonth() + 1).padStart(2, '0')}-${String(semanaAnterior.getDate()).padStart(2, '0')}`;
-        const jaFechada = dadosAposta.fechamentos.some(f => f.semanaKey === keyAnterior);
-        
-        if (!jaFechada) {
-            const fimSemanaAnterior = getFimSemanaAposta(semanaAnterior);
-            const sessoesSemana = dadosAposta.sessoes.filter(s => {
-                const dataSessao = new Date(s.data + 'T00:00:00');
-                return dataSessao >= semanaAnterior && dataSessao <= fimSemanaAnterior;
-            });
-            
-            if (sessoesSemana.length > 0) {
-                const resultado = sessoesSemana.reduce((sum, s) => sum + s.resultado, 0);
-                const wins = sessoesSemana.filter(s => s.resultado > 0).length;
-                const losses = sessoesSemana.filter(s => s.resultado < 0).length;
-                const maiorGain = Math.max(...sessoesSemana.map(s => s.resultado), 0);
-                const maiorLoss = Math.min(...sessoesSemana.map(s => s.resultado), 0);
-                
-                dadosAposta.fechamentos.push({
-                    id: Date.now(),
-                    semanaKey: keyAnterior,
-                    inicio: semanaAnterior.toISOString().split('T')[0],
-                    fim: fimSemanaAnterior.toISOString().split('T')[0],
-                    totalSessoes: sessoesSemana.length,
-                    wins, losses, resultado,
-                    maiorGain,
-                    maiorLoss: Math.abs(maiorLoss),
-                    fechadoEm: new Date().toISOString()
-                });
-                mostrarStatus('📊 Fechamento semanal criado', 'success');
-            }
-        }
-    }
-
-    function atualizarFechamentoSemanalAposta() {
-        const hoje = new Date();
-        const inicioSemana = getInicioSemanaAposta(hoje);
-        const fimSemana = getFimSemanaAposta(hoje);
-
-        const sessoesSemana = dadosAposta.sessoes.filter(s => {
-            const dataSessao = new Date(s.data + 'T00:00:00');
-            return dataSessao >= inicioSemana && dataSessao <= fimSemana;
-        });
-
-        const resultadoSemana = sessoesSemana.reduce((sum, s) => sum + s.resultado, 0);
-        const bancaAtual = calcularBancaAtualAposta();
-        const bancaInicialSemana = bancaAtual - resultadoSemana;
-        const performance = bancaInicialSemana > 0 ? ((resultadoSemana / bancaInicialSemana) * 100) : 0;
-
-        document.getElementById('semanaAtualPeriodo').textContent = 
-            `${formatarDataCurtaAposta(inicioSemana)} a ${formatarDataCurtaAposta(fimSemana)}`;
-        document.getElementById('semanaAtualBancaInicial').textContent = formatarMoedaAposta(bancaInicialSemana);
-        document.getElementById('semanaAtualBancaAtual').textContent = formatarMoedaAposta(bancaAtual);
-        document.getElementById('semanaAtualSessoes').textContent = sessoesSemana.length;
-        
-        const resultadoEl = document.getElementById('semanaAtualResultado');
-        resultadoEl.textContent = `${resultadoSemana >= 0 ? '+' : ''}${formatarMoedaAposta(resultadoSemana)}`;
-        resultadoEl.className = `valor ${resultadoSemana >= 0 ? 'valor-positivo' : 'valor-negativo'}`;
-
-        const progressEl = document.getElementById('semanaAtualProgress');
-        const progressWidth = Math.min(Math.abs(performance), 100);
-        progressEl.style.width = `${50 + (performance > 0 ? progressWidth/2 : -progressWidth/2)}%`;
-        progressEl.className = `progress-fill ${resultadoSemana >= 0 ? 'positivo' : 'negativo'}`;
-        
-        document.getElementById('semanaAtualPerformance').textContent = 
-            `${performance >= 0 ? '+' : ''}${performance.toFixed(1)}%`;
-        
-        renderizarHistoricoSemanasAposta();
-    }
-
-    function renderizarHistoricoSemanasAposta() {
-        const container = document.getElementById('historicoSemanas');
-        
-        if (dadosAposta.fechamentos.length === 0) {
-            container.innerHTML = '<div class="empty-state-aposta" style="padding: 20px;"><p>Nenhum histórico ainda</p></div>';
-            return;
-        }
-        
-        const fechamentosOrdenados = [...dadosAposta.fechamentos].sort((a, b) => new Date(b.inicio) - new Date(a.inicio));
-        
-        container.innerHTML = fechamentosOrdenados.slice(0, 10).map(f => `
-            <div class="semana-item">
-                <div class="semana-header">
-                    <span class="periodo">${formatarDataCurtaAposta(new Date(f.inicio + 'T00:00:00'))} - ${formatarDataCurtaAposta(new Date(f.fim + 'T00:00:00'))}</span>
-                    <span class="resultado ${f.resultado >= 0 ? 'valor-positivo' : 'valor-negativo'}">
-                        ${f.resultado >= 0 ? '+' : ''}${formatarMoedaAposta(f.resultado)}
-                    </span>
-                </div>
-                <div class="semana-stats">
-                    <span>${f.totalSessoes} sessões</span>
-                    <span>${f.wins}V / ${f.losses}L</span>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // ==========================================
-    // MÓDULO APOSTA - CONFIGURAÇÕES
-    // ==========================================
-
-    function salvarConfigAposta(e) {
-        e.preventDefault();
-        dadosAposta.config.bancaReferencia = parseFloat(document.getElementById('configBancaRef').value) || 0;
-        dadosAposta.config.proxDepositoValor = parseFloat(document.getElementById('configProxDepValor').value) || 0;
-        dadosAposta.config.proxDepositoData = document.getElementById('configProxDepData').value || null;
-        salvarDadosAposta();
-        atualizarKPIsAposta();
-        fecharModalAposta('modalConfigAposta');
-        mostrarStatus('Configurações salvas', 'success');
-    }
-
-    // ==========================================
-    // MÓDULO APOSTA - UTILITÁRIOS
-    // ==========================================
-
-    function formatarMoedaAposta(valor) {
-        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    }
-
-    function formatarDataAposta(dataStr) {
-        const data = new Date(dataStr + 'T00:00:00');
-        return data.toLocaleDateString('pt-BR');
-    }
-
-    function formatarDataCurtaAposta(data) {
-        return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-    }
-
-    // ==========================================
-    // INICIALIZAÇÃO DO MÓDULO APOSTA
-    // ==========================================
-
-    async function initAposta() {
-        carregarDadosAposta();
-        await carregarApostaSupabase();
-        verificarFechamentoSemanalAposta();
-        renderizarMovimentacoesAposta();
-        renderizarSessoesAposta();
-        atualizarKPIsAposta();
-        atualizarFechamentoSemanalAposta();
-    }
-
-    // Chamar após init do planejamento
-    initAposta();
 </script>
 </body>
 </html>
