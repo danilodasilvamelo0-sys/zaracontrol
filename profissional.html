@@ -342,8 +342,6 @@
             <a href="saude.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Saude</span></a>
             <a href="financeiro.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Financeiro</span></a>
             <a href="profissional.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><span>Profissional</span></a>
-            <div class="sidebar-divider"></div>
-            <a href="pessoal.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Pessoal</span></a>
         </div>
         <div class="sidebar-footer"><p><span class="instituto">ZARA</span>Private Access</p></div>
     </nav>
@@ -369,23 +367,20 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
                 Prof
             </a>
-            <a href="pessoal.html" class="mobile-nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                Pessoal
-            </a>
         </div>
     </nav>
     <div class="container">
         <div class="header"><h1>Profissional</h1><p>Estudos OAB</p></div>
         <div class="sub-content active" id="aba-oab">
             <div class="config-bar">
+                <div class="config-item"><label>Data Inscrição:</label><input type="date" id="dataInscricao" onchange="salvarConfig()"></div>
                 <div class="config-item"><label>Inicio Estudos:</label><input type="date" id="dataInicio" onchange="salvarConfig()"></div>
                 <div class="config-item"><label>Data Prova:</label><input type="date" id="dataProva" onchange="salvarConfig()"></div>
                 <div class="config-item"><label>Dias Restantes:</label><span class="valor" id="diasRestantes">-</span></div>
                 <div class="config-item"><label>Dias Estudados:</label><span class="valor" id="diasEstudados">0</span></div>
             </div>
             <div class="section"><div class="section-header"><h3 class="section-title">Disciplinas OAB</h3><button class="btn btn-primary btn-sm" onclick="abrirModal('modalDisciplina')">Adicionar</button></div><div id="listaDisciplinas"></div></div>
-            <div class="section"><div class="section-header"><h3 class="section-title">Cronograma Semanal</h3><button class="btn btn-primary btn-sm" onclick="novaSemana()">Nova Semana</button></div><div id="cronogramaCalendario"></div></div>
+            <div class="section"><div class="section-header"><h3 class="section-title">Cronograma Semanal</h3><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-secondary btn-sm" onclick="abrirModal('modalReorganizar')">Reorganizar</button><button class="btn btn-primary btn-sm" onclick="novaSemana()">Nova Semana</button></div></div><div id="cronogramaCalendario"></div></div>
             <div class="section"><div class="section-header"><h3 class="section-title">Simulados</h3><button class="btn btn-primary btn-sm" onclick="abrirModal('modalSimulado')">Adicionar</button></div><div id="listaSimulados"></div></div>
             <div class="section"><div class="section-header"><h3 class="section-title">Exercicios</h3><button class="btn btn-primary btn-sm" onclick="abrirModal('modalExercicio')">Adicionar</button></div><div id="listaExercicios"></div></div>
         </div>
@@ -396,6 +391,7 @@
     <div class="modal-overlay" id="modalTarefa"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Tarefa</h3><button class="modal-close" onclick="fecharModal('modalTarefa')">&times;</button></div><input type="hidden" id="tarId"><div class="form-row"><div class="form-group"><label>Horario</label><input type="time" id="tarHora"></div><div class="form-group"><label>Categoria</label><select id="tarCat"><option>Leitura</option><option>Aula</option><option>Questoes</option><option>Revisao</option></select></div></div><div class="form-group"><label>Descricao</label><input type="text" id="tarDesc"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalTarefa')">Cancelar</button><button class="btn btn-primary" onclick="salvarTarefa()">Salvar</button></div></div></div>
     <div class="modal-overlay" id="modalSimulado"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Simulado</h3><button class="modal-close" onclick="fecharModal('modalSimulado')">&times;</button></div><input type="hidden" id="simId"><div class="form-row"><div class="form-group"><label>Data</label><input type="date" id="simData"></div><div class="form-group"><label>Nota %</label><input type="number" id="simNota" min="0" max="100"></div></div><div class="form-row"><div class="form-group"><label>Total</label><input type="number" id="simTotal"></div><div class="form-group"><label>Acertos</label><input type="number" id="simAcertos"></div></div><div class="form-group"><label>Obs</label><textarea id="simObs"></textarea></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalSimulado')">Cancelar</button><button class="btn btn-primary" onclick="salvarSimulado()">Salvar</button></div></div></div>
     <div class="modal-overlay" id="modalExercicio"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Exercicio</h3><button class="modal-close" onclick="fecharModal('modalExercicio')">&times;</button></div><input type="hidden" id="exId"><div class="form-row"><div class="form-group"><label>Data</label><input type="date" id="exData"></div><div class="form-group"><label>Materia</label><select id="exMateria"></select></div></div><div class="form-row"><div class="form-group"><label>Questoes</label><input type="number" id="exQtd"></div><div class="form-group"><label>Acertos</label><input type="number" id="exAcertos"></div></div><div class="form-group"><label>Tempo (min)</label><input type="number" id="exTempo"></div><div class="form-group"><label>Obs</label><textarea id="exObs"></textarea></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalExercicio')">Cancelar</button><button class="btn btn-primary" onclick="salvarExercicio()">Salvar</button></div></div></div>
+    <div class="modal-overlay" id="modalReorganizar"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Reorganizar Cronograma</h3><button class="modal-close" onclick="fecharModal('modalReorganizar')">&times;</button></div><p style="font-size:0.85em;color:rgba(255,255,255,0.5);margin-bottom:15px;">Redistribui todas as atividades existentes dentro do novo período. As semanas serão recriadas automaticamente.</p><div class="form-row"><div class="form-group"><label>Data Início</label><input type="date" id="reorgInicio"></div><div class="form-group"><label>Data Fim</label><input type="date" id="reorgFim"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalReorganizar')">Cancelar</button><button class="btn btn-primary" onclick="reorganizarCronograma()">Reorganizar</button></div></div></div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
 // ==========================================
@@ -503,7 +499,7 @@ function abrirModal(id){document.getElementById(id).classList.add('active');}
 function fecharModal(id){document.getElementById(id).classList.remove('active');}
 function fmtData(d){if(!d)return'-';const[a,m,dia]=d.split('-');return dia+'/'+m+'/'+a;}
 function diasRest(d){if(!d)return 0;const h=new Date();h.setHours(0,0,0,0);const p=new Date(d+'T00:00:00');return Math.ceil((p-h)/(1000*60*60*24));}
-function salvarConfig(){D.config.dataInicio=document.getElementById('dataInicio').value;D.config.dataProva=document.getElementById('dataProva').value;salvar();calcDias();}
+function salvarConfig(){D.config.dataInscricao=document.getElementById('dataInscricao').value;D.config.dataInicio=document.getElementById('dataInicio').value;D.config.dataProva=document.getElementById('dataProva').value;salvar();calcDias();}
 function calcDias(){const h=new Date();h.setHours(0,0,0,0);if(D.config.dataProva){const p=new Date(D.config.dataProva+'T00:00:00');const df=Math.ceil((p-h)/(1000*60*60*24));document.getElementById('diasRestantes').textContent=df>0?df:0;}else{document.getElementById('diasRestantes').textContent='-';}let t=0;D.disciplinas.forEach(d=>t+=d.dias||0);document.getElementById('diasEstudados').textContent=t;}
 function atualizarSelects(){const ops=D.disciplinas.map(d=>'<option value="'+d.nome+'">'+d.nome+'</option>').join('');['atMateria','exMateria'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=ops||'<option>-</option>';});}
 let timers={};
@@ -657,6 +653,114 @@ function criarSemana(){
     fecharModal('modalSemana');
     document.getElementById('semInicio').value='';
     document.getElementById('semFim').value='';
+}
+
+function reorganizarCronograma(){
+    const inicioStr=document.getElementById('reorgInicio').value;
+    const fimStr=document.getElementById('reorgFim').value;
+    if(!inicioStr||!fimStr)return alert('Preencha as datas de início e fim.');
+
+    const inicio=new Date(inicioStr+'T00:00:00');
+    const fim=new Date(fimStr+'T00:00:00');
+    if(fim<=inicio)return alert('A data final deve ser depois da data inicial.');
+
+    // Coletar TODAS as atividades de todos os cronogramas, agrupadas por dia da semana
+    const todasAtividades={};
+    D.cronogramas.forEach(s=>{
+        (s.atividades||[]).forEach(a=>{
+            const dia=a.dia; // 0=seg, 1=ter, ... 6=dom
+            if(!todasAtividades[dia])todasAtividades[dia]=[];
+            // Guardar sem duplicar (pegar a versão mais recente de cada matéria+tipo por dia)
+            todasAtividades[dia].push({
+                materia:a.materia,
+                tipo:a.tipo,
+                assunto:a.assunto,
+                ok:false // Resetar status ao reorganizar
+            });
+        });
+    });
+
+    // Deduplicar por dia: manter combinações únicas de matéria+assunto
+    Object.keys(todasAtividades).forEach(dia=>{
+        const unicos=[];
+        const vistos=new Set();
+        todasAtividades[dia].forEach(a=>{
+            const chave=a.materia+'|'+a.assunto;
+            if(!vistos.has(chave)){
+                vistos.add(chave);
+                unicos.push(a);
+            }
+        });
+        todasAtividades[dia]=unicos;
+    });
+
+    // Calcular total de dias e gerar semanas
+    const fmtISO=d=>{
+        const y=d.getFullYear();
+        const m=String(d.getMonth()+1).padStart(2,'0');
+        const day=String(d.getDate()).padStart(2,'0');
+        return y+'-'+m+'-'+day;
+    };
+
+    const novosCronogramas=[];
+    let cursor=new Date(inicio);
+    let numSemana=1;
+
+    while(cursor<=fim){
+        const semInicio=new Date(cursor);
+        const semFim=new Date(cursor);
+        semFim.setDate(cursor.getDate()+6);
+        // Se semFim passa do fim, ajustar
+        if(semFim>fim)semFim.setTime(fim.getTime());
+
+        const atividades=[];
+        // Para cada dia desta semana
+        for(let d=0;d<7;d++){
+            const diaData=new Date(semInicio);
+            diaData.setDate(semInicio.getDate()+d);
+            if(diaData>fim)break;
+
+            const diaSemana=d; // posição na semana (0-6)
+            // Buscar atividades modelo para este dia da semana
+            const modelo=todasAtividades[diaSemana]||[];
+            modelo.forEach(a=>{
+                atividades.push({
+                    id:Date.now().toString()+Math.random().toString(36).substr(2,5),
+                    dia:diaSemana,
+                    materia:a.materia,
+                    tipo:a.tipo,
+                    assunto:a.assunto,
+                    ok:false
+                });
+            });
+        }
+
+        novosCronogramas.push({
+            id:Date.now().toString()+numSemana,
+            inicio:fmtISO(semInicio),
+            fim:fmtISO(semFim>fim?fim:semFim),
+            numero:numSemana,
+            atividades:atividades
+        });
+
+        numSemana++;
+        cursor.setDate(cursor.getDate()+7);
+    }
+
+    if(!confirm(
+        'Reorganizar cronograma?\n\n'+
+        'Período: '+fmtData(inicioStr)+' a '+fmtData(fimStr)+'\n'+
+        'Serão criadas '+novosCronogramas.length+' semanas.\n'+
+        'As atividades serão redistribuídas por dia da semana.\n\n'+
+        'O cronograma atual será substituído.'
+    ))return;
+
+    D.cronogramas=novosCronogramas;
+    semanaAtualIdx=encontrarSemanaAtual();
+    salvar();
+    renderCron();
+    fecharModal('modalReorganizar');
+    mostrarStatus('Cronograma reorganizado!','success');
 }
 
 function delSem(id){
@@ -834,6 +938,7 @@ function delEx(id){if(!confirm('Excluir?'))return;D.exercicios=D.exercicios.filt
 
 async function inicializar(){
     await carregarSupabase();
+    document.getElementById('dataInscricao').value=D.config.dataInscricao||'';
     document.getElementById('dataInicio').value=D.config.dataInicio||'';
     document.getElementById('dataProva').value=D.config.dataProva||'';
     calcDias();
