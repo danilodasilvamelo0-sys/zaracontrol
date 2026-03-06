@@ -391,7 +391,7 @@
     <div class="modal-overlay" id="modalTarefa"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Tarefa</h3><button class="modal-close" onclick="fecharModal('modalTarefa')">&times;</button></div><input type="hidden" id="tarId"><div class="form-row"><div class="form-group"><label>Horario</label><input type="time" id="tarHora"></div><div class="form-group"><label>Categoria</label><select id="tarCat"><option>Leitura</option><option>Aula</option><option>Questoes</option><option>Revisao</option></select></div></div><div class="form-group"><label>Descricao</label><input type="text" id="tarDesc"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalTarefa')">Cancelar</button><button class="btn btn-primary" onclick="salvarTarefa()">Salvar</button></div></div></div>
     <div class="modal-overlay" id="modalSimulado"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Simulado</h3><button class="modal-close" onclick="fecharModal('modalSimulado')">&times;</button></div><input type="hidden" id="simId"><div class="form-row"><div class="form-group"><label>Data</label><input type="date" id="simData"></div><div class="form-group"><label>Nota %</label><input type="number" id="simNota" min="0" max="100"></div></div><div class="form-row"><div class="form-group"><label>Total</label><input type="number" id="simTotal"></div><div class="form-group"><label>Acertos</label><input type="number" id="simAcertos"></div></div><div class="form-group"><label>Obs</label><textarea id="simObs"></textarea></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalSimulado')">Cancelar</button><button class="btn btn-primary" onclick="salvarSimulado()">Salvar</button></div></div></div>
     <div class="modal-overlay" id="modalExercicio"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Exercicio</h3><button class="modal-close" onclick="fecharModal('modalExercicio')">&times;</button></div><input type="hidden" id="exId"><div class="form-row"><div class="form-group"><label>Data</label><input type="date" id="exData"></div><div class="form-group"><label>Materia</label><select id="exMateria"></select></div></div><div class="form-row"><div class="form-group"><label>Questoes</label><input type="number" id="exQtd"></div><div class="form-group"><label>Acertos</label><input type="number" id="exAcertos"></div></div><div class="form-group"><label>Tempo (min)</label><input type="number" id="exTempo"></div><div class="form-group"><label>Obs</label><textarea id="exObs"></textarea></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalExercicio')">Cancelar</button><button class="btn btn-primary" onclick="salvarExercicio()">Salvar</button></div></div></div>
-    <div class="modal-overlay" id="modalReorganizar"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Reorganizar Cronograma</h3><button class="modal-close" onclick="fecharModal('modalReorganizar')">&times;</button></div><p style="font-size:0.85em;color:rgba(255,255,255,0.5);margin-bottom:15px;">Redistribui todas as atividades existentes dentro do novo período. As semanas serão recriadas automaticamente.</p><div class="form-row"><div class="form-group"><label>Data Início</label><input type="date" id="reorgInicio"></div><div class="form-group"><label>Data Fim</label><input type="date" id="reorgFim"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalReorganizar')">Cancelar</button><button class="btn btn-primary" onclick="reorganizarCronograma()">Reorganizar</button></div></div></div>
+    <div class="modal-overlay" id="modalReorganizar"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Reorganizar Cronograma</h3><button class="modal-close" onclick="fecharModal('modalReorganizar')">&times;</button></div><p style="font-size:0.85em;color:rgba(255,255,255,0.5);margin-bottom:15px;">Distribui as disciplinas automaticamente: máximo 2 matérias por dia, simulado completo em dia isolado, simulado leve junto com matérias.</p><div class="form-row"><div class="form-group"><label>Data Início</label><input type="date" id="reorgInicio"></div><div class="form-group"><label>Data Fim</label><input type="date" id="reorgFim"></div></div><div class="form-row"><div class="form-group"><label>Simulado Completo a cada</label><select id="reorgSimFreq"><option value="7">1 semana</option><option value="14" selected>2 semanas</option><option value="21">3 semanas</option><option value="0">Não incluir</option></select></div><div class="form-group"><label>Dia do Simulado</label><select id="reorgSimDia"><option value="5">Sábado</option><option value="6">Domingo</option><option value="4">Sexta</option></select></div></div><div class="form-group" style="margin-bottom:15px;"><label>Simulado Leve (revisão rápida)</label><select id="reorgSimLeve"><option value="1">1x por semana</option><option value="2">2x por semana</option><option value="0" selected>Não incluir</option></select></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalReorganizar')">Cancelar</button><button class="btn btn-primary" onclick="reorganizarCronograma()">Reorganizar</button></div></div></div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
 // ==========================================
@@ -664,37 +664,43 @@ function reorganizarCronograma(){
     const fim=new Date(fimStr+'T00:00:00');
     if(fim<=inicio)return alert('A data final deve ser depois da data inicial.');
 
-    // Coletar TODAS as atividades de todos os cronogramas, agrupadas por dia da semana
-    const todasAtividades={};
-    D.cronogramas.forEach(s=>{
-        (s.atividades||[]).forEach(a=>{
-            const dia=a.dia; // 0=seg, 1=ter, ... 6=dom
-            if(!todasAtividades[dia])todasAtividades[dia]=[];
-            // Guardar sem duplicar (pegar a versão mais recente de cada matéria+tipo por dia)
-            todasAtividades[dia].push({
-                materia:a.materia,
-                tipo:a.tipo,
-                assunto:a.assunto,
-                ok:false // Resetar status ao reorganizar
+    const simFreq=parseInt(document.getElementById('reorgSimFreq').value)||0;
+    const simDia=parseInt(document.getElementById('reorgSimDia').value);
+    const simLeve=parseInt(document.getElementById('reorgSimLeve').value)||0;
+
+    // Pegar disciplinas cadastradas
+    const disciplinas=D.disciplinas.map(d=>d.nome);
+    if(disciplinas.length===0)return alert('Cadastre disciplinas primeiro antes de reorganizar.');
+
+    // Peso OAB: matérias que mais caem aparecem com mais frequência
+    const pesoOAB={
+        'Direito Constitucional':5,'Direito Civil':5,'Direito Penal':4,
+        'Processo Civil':4,'Processo Penal':3,'Ética Profissional':4,
+        'Direito do Trabalho':3,'Processo do Trabalho':2,'Direito Administrativo':3,
+        'Direito Tributário':2,'Direito Empresarial':2,'Direito do Consumidor':2,
+        'ECA':1,'Direito Ambiental':1,'Direitos Humanos':2,'Direito Internacional':1
+    };
+
+    // Criar pool de matérias ponderado pelo peso
+    function criarPool(){
+        const pool=[];
+        disciplinas.forEach(nome=>{
+            // Encontrar peso: buscar match parcial ou default 2
+            let peso=2;
+            Object.keys(pesoOAB).forEach(k=>{
+                if(nome.toLowerCase().includes(k.toLowerCase().split(' ').pop()) || 
+                   k.toLowerCase().includes(nome.toLowerCase().split(' ').pop())){
+                    peso=pesoOAB[k];
+                }
             });
+            for(let i=0;i<peso;i++) pool.push(nome);
         });
-    });
+        return pool;
+    }
 
-    // Deduplicar por dia: manter combinações únicas de matéria+assunto
-    Object.keys(todasAtividades).forEach(dia=>{
-        const unicos=[];
-        const vistos=new Set();
-        todasAtividades[dia].forEach(a=>{
-            const chave=a.materia+'|'+a.assunto;
-            if(!vistos.has(chave)){
-                vistos.add(chave);
-                unicos.push(a);
-            }
-        });
-        todasAtividades[dia]=unicos;
-    });
+    // Tipos de estudo por ciclo para OAB
+    const tiposEstudo=['Estudo','Lei Seca','Revisão','Questões','Vídeo Aula'];
 
-    // Calcular total de dias e gerar semanas
     const fmtISO=d=>{
         const y=d.getFullYear();
         const m=String(d.getMonth()+1).padStart(2,'0');
@@ -702,37 +708,120 @@ function reorganizarCronograma(){
         return y+'-'+m+'-'+day;
     };
 
+    // Calcular total de dias
+    const totalDias=Math.ceil((fim-inicio)/(1000*60*60*24))+1;
+    const totalSemanas=Math.ceil(totalDias/7);
+
+    // Gerar distribuição inteligente
     const novosCronogramas=[];
     let cursor=new Date(inicio);
     let numSemana=1;
+    let poolMaterias=criarPool();
+    let poolIdx=0;
+    let diaGlobal=0;
+    let tipoIdx=0;
+
+    // Shuffle do pool para variar
+    function shuffle(arr){
+        const a=[...arr];
+        for(let i=a.length-1;i>0;i--){
+            const j=Math.floor(Math.random()*(i+1));
+            [a[i],a[j]]=[a[j],a[i]];
+        }
+        return a;
+    }
+    poolMaterias=shuffle(poolMaterias);
+
+    function pegarMateria(){
+        if(poolIdx>=poolMaterias.length){
+            poolMaterias=shuffle(criarPool());
+            poolIdx=0;
+        }
+        return poolMaterias[poolIdx++];
+    }
+
+    function pegarTipo(){
+        const t=tiposEstudo[tipoIdx%tiposEstudo.length];
+        tipoIdx++;
+        return t;
+    }
+
+    function gerarId(){
+        return Date.now().toString()+Math.random().toString(36).substr(2,6);
+    }
 
     while(cursor<=fim){
         const semInicio=new Date(cursor);
         const semFim=new Date(cursor);
         semFim.setDate(cursor.getDate()+6);
-        // Se semFim passa do fim, ajustar
         if(semFim>fim)semFim.setTime(fim.getTime());
 
         const atividades=[];
-        // Para cada dia desta semana
+        let simLeveColocados=0;
+
         for(let d=0;d<7;d++){
             const diaData=new Date(semInicio);
             diaData.setDate(semInicio.getDate()+d);
             if(diaData>fim)break;
 
-            const diaSemana=d; // posição na semana (0-6)
-            // Buscar atividades modelo para este dia da semana
-            const modelo=todasAtividades[diaSemana]||[];
-            modelo.forEach(a=>{
+            diaGlobal++;
+            const ehDiaSimCompleto=(simFreq>0 && d===simDia && ((numSemana-1)%Math.round(simFreq/7))===0);
+
+            if(ehDiaSimCompleto){
+                // DIA DE SIMULADO COMPLETO — isolado, sem matérias
                 atividades.push({
-                    id:Date.now().toString()+Math.random().toString(36).substr(2,5),
-                    dia:diaSemana,
-                    materia:a.materia,
-                    tipo:a.tipo,
-                    assunto:a.assunto,
-                    ok:false
+                    id:gerarId(),dia:d,
+                    materia:'Simulado',tipo:'Simulado',
+                    assunto:'Simulado Completo (80 questões)',ok:false
                 });
-            });
+                atividades.push({
+                    id:gerarId(),dia:d,
+                    materia:'Simulado',tipo:'Revisão',
+                    assunto:'Correção e análise dos erros',ok:false
+                });
+            } else {
+                // Verificar se cabe simulado leve neste dia
+                const colocarSimLeve=(simLeve>0 && simLeveColocados<simLeve && d>=3 && d!==simDia);
+
+                if(colocarSimLeve){
+                    // DIA COM SIMULADO LEVE + 2 MATÉRIAS
+                    const mat1=pegarMateria();
+                    let mat2=pegarMateria();
+                    // Evitar repetir matéria no mesmo dia
+                    let tentativas=0;
+                    while(mat2===mat1 && tentativas<10 && disciplinas.length>1){
+                        mat2=pegarMateria();
+                        tentativas++;
+                    }
+
+                    atividades.push({id:gerarId(),dia:d,materia:mat1,tipo:pegarTipo(),assunto:mat1,ok:false});
+                    atividades.push({id:gerarId(),dia:d,materia:mat2,tipo:pegarTipo(),assunto:mat2,ok:false});
+                    atividades.push({
+                        id:gerarId(),dia:d,
+                        materia:'Simulado',tipo:'Questões',
+                        assunto:'Simulado Leve (20-30 questões)',ok:false
+                    });
+                    simLeveColocados++;
+                } else {
+                    // DIA NORMAL — máximo 2 matérias
+                    const mat1=pegarMateria();
+                    let mat2=pegarMateria();
+                    let tentativas=0;
+                    while(mat2===mat1 && tentativas<10 && disciplinas.length>1){
+                        mat2=pegarMateria();
+                        tentativas++;
+                    }
+
+                    const tipo1=pegarTipo();
+                    const tipo2=pegarTipo();
+
+                    atividades.push({id:gerarId(),dia:d,materia:mat1,tipo:tipo1,assunto:mat1+' – '+tipo1,ok:false});
+                    
+                    if(disciplinas.length>1 || mat2!==mat1){
+                        atividades.push({id:gerarId(),dia:d,materia:mat2,tipo:tipo2,assunto:mat2+' – '+tipo2,ok:false});
+                    }
+                }
+            }
         }
 
         novosCronogramas.push({
@@ -748,10 +837,14 @@ function reorganizarCronograma(){
     }
 
     if(!confirm(
-        'Reorganizar cronograma?\n\n'+
+        'Reorganizar cronograma OAB?\n\n'+
         'Período: '+fmtData(inicioStr)+' a '+fmtData(fimStr)+'\n'+
-        'Serão criadas '+novosCronogramas.length+' semanas.\n'+
-        'As atividades serão redistribuídas por dia da semana.\n\n'+
+        totalSemanas+' semanas | '+disciplinas.length+' disciplinas\n\n'+
+        'Regras aplicadas:\n'+
+        '• Máximo 2 matérias por dia\n'+
+        '• Simulado completo em dia isolado'+(simFreq>0?' (a cada '+(simFreq/7)+' sem)':' (desativado)')+'\n'+
+        '• Simulado leve'+(simLeve>0?' ('+simLeve+'x/sem com matérias)':' (desativado)')+'\n'+
+        '• Matérias de maior peso OAB com mais frequência\n\n'+
         'O cronograma atual será substituído.'
     ))return;
 
@@ -760,7 +853,7 @@ function reorganizarCronograma(){
     salvar();
     renderCron();
     fecharModal('modalReorganizar');
-    mostrarStatus('Cronograma reorganizado!','success');
+    mostrarStatus('Cronograma OAB reorganizado!','success');
 }
 
 function delSem(id){
