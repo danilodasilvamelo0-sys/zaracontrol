@@ -4267,6 +4267,7 @@
         if (!desc || !valor) return alert('Preencha descrição e valor!');
         
         // Criar receita recorrente (modelo)
+        // mesInicio = mês atual selecionado — só gera instâncias daqui em diante
         financeiro.receitasFixas.push({
             id: gerarId(),
             descricao: desc,
@@ -4274,6 +4275,7 @@
             categoria: cat,
             diaRecebimento: dia,
             ativa: true,
+            mesInicio: getMesAnoKey(),
             criadoEm: new Date().toISOString()
         });
         gerarInstanciasReceitas();
@@ -4324,13 +4326,16 @@
         }
 
         // DATA LIMITE: Só gerar receitas a partir de Janeiro/2026
-        const dataLimite = '2026-01';
-        if (key < dataLimite) {
+        if (key < '2026-01') {
             return;
         }
 
         // Gerar instâncias para o mês atual
         financeiro.receitasFixas.filter(rf => rf.ativa).forEach(modelo => {
+            // Só gerar se o mês atual é >= mesInicio do modelo
+            const mesInicio = modelo.mesInicio || '2026-01';
+            if (key < mesInicio) return;
+
             const jaExiste = financeiro.receitasMes[key].some(r => r.modeloId === modelo.id);
             if (!jaExiste) {
                 financeiro.receitasMes[key].push({
@@ -6466,6 +6471,15 @@
 
         // Cálculos do mês (excluindo parcelas pausadas)
         const variaveisAtivas = variaveisMes.filter(d => d.pausado !== true);
+
+        // Parcelas em atraso (meses anteriores, não pagas, não pausadas)
+        // Aparecem na tabela mas NÃO entram nos cálculos do mês
+        const keyAtual = getMesAnoKey();
+        const parcelasEmAtraso = (financeiro.despesasVariaveis || []).filter(d => {
+            if (!d.data || d.pago || d.pausado) return false;
+            const mesParcela = d.data.substring(0, 7);
+            return mesParcela < keyAtual;
+        });
         
         // === CÁLCULOS PARA OS KPIs ===
         
@@ -6596,10 +6610,7 @@
         recFixasTable.innerHTML = receitasMes.map(r => `
             <tr class="${r.recebido ? 'done' : ''}">
                 <td><input type="checkbox" class="checkbox-status" ${r.recebido ? 'checked' : ''} onchange="toggleRecebido(${r.id})"></td>
-                <td class="descricao">
-                    ${r.descricao}
-                    ${r.recorrente ? '<span class="badge recorrente"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="M7 23l-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></span>' : ''}
-                </td>
+                <td class="descricao">${r.descricao}</td>
                 <td><span class="categoria">${r.categoria}</span></td>
                 <td>${formatarData(r.data)}</td>
                 <td class="valor-positivo">${formatarMoeda(r.valor)}</td>
@@ -6611,8 +6622,8 @@
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                             </svg>
                         </button>
-                        ${r.recorrente && r.modeloId ? `
-                        <button class="action-btn btn-encerrar" onclick="encerrarReceitaRecorrente(${r.modeloId})" title="Encerrar Recorrência">
+                        ${r.modeloId ? `
+                        <button class="action-btn btn-encerrar" onclick="encerrarReceitaRecorrente(${r.modeloId})" title="Encerrar">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="15" y1="9" x2="9" y2="15"></line>
@@ -6788,7 +6799,8 @@
 
         // === TABELA DESPESAS VARIÁVEIS ===
         const variaveisTable = document.getElementById('despesasVariaveisTable');
-        document.getElementById('emptyDespesasVariaveis').style.display = variaveisMes.length ? 'none' : 'block';
+        const temConteudoVariaveis = variaveisMes.length > 0 || parcelasEmAtraso.length > 0;
+        document.getElementById('emptyDespesasVariaveis').style.display = temConteudoVariaveis ? 'none' : 'block';
 
         // Separar despesas parceladas de não parceladas
         const naoParceladas = variaveisMes.filter(d => !d.parcelado);
@@ -6804,6 +6816,41 @@
         });
 
         let htmlVariaveis = '';
+
+        // Renderizar PARCELAS EM ATRASO (meses anteriores) — informativo, sem somar no mês
+        if (parcelasEmAtraso.length > 0) {
+            const totalAtraso = parcelasEmAtraso.reduce((s, d) => s + d.valor, 0);
+            htmlVariaveis += `
+                <tr style="background: rgba(231, 76, 60, 0.08);">
+                    <td colspan="6" style="padding: 12px 15px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <svg style="width:18px;height:18px;stroke:#e74c3c;fill:none;" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                <span style="color: #e74c3c; font-weight: 500; font-size: 0.9em;">${parcelasEmAtraso.length} parcela${parcelasEmAtraso.length > 1 ? 's' : ''} em atraso</span>
+                                <span style="color: rgba(255,255,255,0.4); font-size: 0.8em;">(não contabilizado no mês)</span>
+                            </div>
+                            <span style="color: #e74c3c; font-weight: 600;">${formatarMoeda(totalAtraso)}</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            parcelasEmAtraso.forEach(d => {
+                htmlVariaveis += `
+                    <tr style="background: rgba(231, 76, 60, 0.04); opacity: 0.7;">
+                        <td><input type="checkbox" class="checkbox-status" onchange="togglePagoVariavel(${d.id})"></td>
+                        <td class="descricao" style="padding-left: 10px;">
+                            ${d.descricao}
+                            ${d.parcelado ? `<span style="color: rgba(255,255,255,0.4); font-size: 0.8em;"> ${d.parcelaAtual}/${d.totalParcelas}</span>` : ''}
+                        </td>
+                        <td><span class="categoria">${d.categoria}</span></td>
+                        <td>${formatarData(d.data)} <span class="badge vencido" style="font-size: 0.7em;">Atraso</span></td>
+                        <td style="color: #e74c3c; font-weight: 500;">${formatarMoeda(d.valor)}</td>
+                        <td></td>
+                    </tr>
+                `;
+            });
+        }
 
         // Renderizar despesas não parceladas normalmente
         naoParceladas.forEach(d => {
