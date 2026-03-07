@@ -39,7 +39,7 @@
         .footer-actions{background:linear-gradient(135deg,#1a1a1a,#0f0f0f);border-top:1px solid rgba(212,175,125,.2);padding:20px 25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}.reset-info{font-size:.8em;color:rgba(255,255,255,.4)}.reset-info svg{width:14px;height:14px;vertical-align:middle;margin-right:5px}
         .toast{position:fixed;bottom:100px;right:20px;padding:15px 25px;background:#1a1a1a;border:1px solid rgba(212,175,125,.3);border-radius:10px;color:#fff;font-size:.9em;z-index:10001;opacity:0;transform:translateY(20px);transition:all .3s}.toast.active{opacity:1;transform:translateY(0)}.toast.success{border-color:#2ecc71}.toast.error{border-color:#e74c3c}
         ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0a0a0a}::-webkit-scrollbar-thumb{background:rgba(212,175,125,.3);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(212,175,125,.5)}
-        @media(max-width:768px){.header h1{font-size:1.4em;letter-spacing:2px}.identity-card{padding:20px}.identity-text{font-size:1.1em}.provocation-text{font-size:1.2em}.provocation-actions{flex-direction:column}.provocation-actions button{width:100%;justify-content:center}.status-grid{grid-template-columns:1fr 1fr;gap:12px}.status-card{padding:15px}.missions-grid{grid-template-columns:1fr}.tabs-header{gap:5px}.tab-btn{padding:10px 12px;font-size:.75em;flex:1;justify-content:center}.tab-btn span{display:none}.law-week-title{font-size:1.4em}.law-week-actions{flex-direction:column}.law-week-actions button{width:100%}.footer-actions{flex-direction:column;text-align:center}.crimes-cards-grid{grid-template-columns:1fr}.fase-accordion-header{padding:15px}.fase-accordion-title{font-size:.9em}.fase-accordion-num{width:32px;height:32px;font-size:.9em}.fase-crime-item-header{padding:12px}.fase-crime-item-nome{font-size:.85em}.manual-section-content{padding-left:0}.manual-section-header{flex-wrap:wrap}}
+        @media(max-width:768px){.header h1{font-size:1.4em;letter-spacing:2px}.status-grid{grid-template-columns:1fr 1fr;gap:12px}.status-card{padding:15px}.missions-grid{grid-template-columns:1fr}.tabs-header{gap:5px}.tab-btn{padding:12px 16px;font-size:.8em;flex:1;justify-content:center}.tab-btn svg{width:16px;height:16px}.footer-actions{flex-direction:column;text-align:center}.fase-accordion-header{padding:15px}.fase-accordion-title{font-size:.9em}.fase-accordion-num{width:32px;height:32px;font-size:.9em}.fase-crime-item-header{padding:12px}.fase-crime-item-nome{font-size:.85em}.manual-section-content{padding-left:0}.manual-section-header{flex-wrap:wrap}}
         @media(max-width:480px){.status-grid{grid-template-columns:1fr}.weekly-checks{justify-content:space-between}.day-check input[type="checkbox"]{width:28px;height:28px}.crimes-cards-grid{gap:10px}.crime-card-mini{padding:15px}.fase-accordion-subtitle{font-size:.7em}}
         /* TOJI MOBILE */
         @media(max-width:768px){
@@ -1027,7 +1027,7 @@ checkWeekReset();
 const hoje=new Date().toDateString();
 if(tojiData.lastReset!==hoje){tojiData.rituais={};tojiData.lastReset=hoje;saveToji();}
 renderStatusBrutal();
-renderTracosToji();renderBlocosToji();renderRituaisToji();renderCortesToji();verificarSeloPredador();
+renderBlocosToji();verificarSeloPredador();
 }
 
 // SISTEMA BRUTALISTA - ALVO, STREAK, STATUS
@@ -1159,19 +1159,12 @@ renderStatusBrutal();
 }
 
 function marcarDiaSeCompleto(){
-const rituais = tojiData.rituaisConfig || RITUAIS_TOJI_DEFAULT;
-const feitos = rituais.filter(r => tojiData.rituais[r.id]).length;
-const total = rituais.length;
-
-```
-// Se fez pelo menos 80% dos rituais e eliminou o alvo
-if(feitos >= Math.floor(total * 0.8) && tojiData.alvoHoje?.eliminado){
-    if(!tojiData.historiaDias) tojiData.historiaDias = {};
-    tojiData.historiaDias[new Date().toDateString()] = true;
-    saveToji();
+// Dia completo se eliminou o alvo
+if(tojiData.alvoHoje?.eliminado){
+if(!tojiData.historiaDias) tojiData.historiaDias = {};
+tojiData.historiaDias[new Date().toDateString()] = true;
+saveToji();
 }
-```
-
 }
 
 function renderTracosToji(){
