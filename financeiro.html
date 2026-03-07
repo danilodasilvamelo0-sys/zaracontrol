@@ -6534,14 +6534,28 @@
         
         // Empréstimos: somar juros pagos + amortizações feitas no mês atual
         const mesAnoAtual = getMesAnoKey();
-        let totalEmprestimosMes = 0;
+        let empJurosPagosMes = 0;
+        let empAmortizadoMes = 0;
         emprestimosAtivos.forEach(e => {
             (e.historicoPagamentos || []).forEach(p => {
                 if (p.data && p.data.substring(0, 7) === mesAnoAtual) {
-                    totalEmprestimosMes += (p.valor || 0);
+                    if (p.tipo === 'juros') {
+                        empJurosPagosMes += (p.valor || 0);
+                    } else if (p.tipo === 'amortizacao') {
+                        empAmortizadoMes += (p.valor || 0);
+                    } else {
+                        empAmortizadoMes += (p.valor || 0);
+                    }
                 }
             });
         });
+        const totalEmpPagoMes = empJurosPagosMes + empAmortizadoMes;
+
+        // Juros acumulados (gerados mas não pagos) — conta como despesa pendente
+        const jurosAcumuladosTotal = emprestimosAtivos.reduce((s, e) => s + (e.jurosAcumulados || 0), 0);
+
+        // Despesas Totais = fixas + parceladas + avulsas + empréstimos (pagos + juros pendentes)
+        const totalEmprestimosMes = totalEmpPagoMes + jurosAcumuladosTotal;
         const despesasTotaisMes = totalFixasMes + totalParceladasMes + totalAvulsasMes + totalEmprestimosMes;
         
         // Para detalhamento: pagas vs pendentes
@@ -6551,9 +6565,9 @@
         const parceladasPendentes = totalParceladasMes - parceladasPagas;
         const avulsasPagas = avulsasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
         const avulsasPendentes = totalAvulsasMes - avulsasPagas;
-        const totalPago = fixasPagas + parceladasPagas + avulsasPagas;
+        const totalPago = fixasPagas + parceladasPagas + avulsasPagas + totalEmpPagoMes;
         
-        // KPI 3: Saldo Disponível (receita recebida - despesas pagas)
+        // KPI 3: Saldo Disponível (receita recebida - tudo que foi pago incluindo empréstimos)
         const saldoDisponivel = receitaRecebida - totalPago;
         
         // KPI 4: % Comprometido (despesas totais / receita total)
@@ -6584,7 +6598,8 @@
             <span>Fixas: ${formatarMoeda(totalFixasMes)}</span>
             <span>Parceladas: ${formatarMoeda(totalParceladasMes)}</span>
             ${totalAvulsasMes > 0 ? `<span>Variáveis: ${formatarMoeda(totalAvulsasMes)}</span>` : ''}
-            ${totalEmprestimosMes > 0 ? `<span>Empréstimos: ${formatarMoeda(totalEmprestimosMes)}</span>` : ''}
+            ${totalEmpPagoMes > 0 ? `<span>Emp. Pago: ${formatarMoeda(totalEmpPagoMes)}</span>` : ''}
+            ${jurosAcumuladosTotal > 0 ? `<span style="color:#e74c3c;">Juros Pendentes: ${formatarMoeda(jurosAcumuladosTotal)}</span>` : ''}
         `;
         
         // KPI 3: Saldo Disponível
@@ -6593,7 +6608,11 @@
         const saldoDetalhe = document.getElementById('kpiSaldoDetalhe');
         if (saldoDisponivel >= 0) {
             saldoCard.classList.remove('negativo');
-            saldoDetalhe.innerHTML = `<span>Livre para uso</span>`;
+            if (totalEmpPagoMes > 0) {
+                saldoDetalhe.innerHTML = `<span>Emp: -${formatarMoeda(totalEmpPagoMes)} (juros: ${formatarMoeda(empJurosPagosMes)} + amort: ${formatarMoeda(empAmortizadoMes)})</span>`;
+            } else {
+                saldoDetalhe.innerHTML = `<span>Livre para uso</span>`;
+            }
         } else {
             saldoCard.classList.add('negativo');
             saldoDetalhe.innerHTML = `<span class="kpi-badge negativo">No vermelho</span>`;
@@ -6629,7 +6648,7 @@
         const previsaoDetalhe = document.getElementById('kpiPrevisaoDetalhe');
         previsaoCard.classList.remove('negativo');
         
-        const despesasPendentes = fixasPendentes + parceladasPendentes + avulsasPendentes;
+        const despesasPendentes = fixasPendentes + parceladasPendentes + avulsasPendentes + jurosAcumuladosTotal;
         if (previsaoFechamento >= 0) {
             if (despesasPendentes > 0) {
                 previsaoDetalhe.innerHTML = `<span>Falta pagar: ${formatarMoeda(despesasPendentes)}</span>`;
