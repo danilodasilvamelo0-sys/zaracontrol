@@ -480,11 +480,17 @@
     }
 
     .transacoes-table tr.done {
-        opacity: 0.5;
+        opacity: 0.85;
+        background: rgba(46, 204, 113, 0.06);
     }
 
     .transacoes-table tr.done td {
         text-decoration: none;
+        color: #2ecc71;
+    }
+
+    .transacoes-table tr.done td.descricao {
+        color: rgba(46, 204, 113, 0.8);
     }
 
     .transacoes-table tr.vencido {
@@ -6521,11 +6527,21 @@
         const receitaRecebida = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0) + receitasVariaveisMesArr.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
         const receitaPendente = receitaTotalMes - receitaRecebida;
         
-        // KPI 2: Despesas Totais (fixas + parceladas + avulsas + empréstimos)
+        // KPI 2: Despesas Totais (fixas + parceladas + avulsas + empréstimos pagos no mês)
         const totalFixasMes = fixasMes.reduce((s, d) => s + d.valor, 0);
         const totalParceladasMes = variaveisAtivas.reduce((s, d) => s + d.valor, 0);
         const totalAvulsasMes = avulsasMes.reduce((s, d) => s + d.valor, 0);
-        const totalEmprestimosMes = emprestimosAtivos.reduce((s, e) => s + (e.parcelaMensal || 0), 0);
+        
+        // Empréstimos: somar juros pagos + amortizações feitas no mês atual
+        const mesAnoAtual = getMesAnoKey();
+        let totalEmprestimosMes = 0;
+        emprestimosAtivos.forEach(e => {
+            (e.historicoPagamentos || []).forEach(p => {
+                if (p.data && p.data.substring(0, 7) === mesAnoAtual) {
+                    totalEmprestimosMes += (p.valor || 0);
+                }
+            });
+        });
         const despesasTotaisMes = totalFixasMes + totalParceladasMes + totalAvulsasMes + totalEmprestimosMes;
         
         // Para detalhamento: pagas vs pendentes
@@ -7719,7 +7735,9 @@
         const avulsasMesSab = filtrarPorMes(financeiro.despesasAvulsas || []);
         
         // Receitas do mês
-        const totalReceita = receitasMesSab.reduce((s, r) => s + r.valor, 0) + receitasVarSab.reduce((s, r) => s + r.valor, 0);
+        const totalRecFixas = receitasMesSab.reduce((s, r) => s + r.valor, 0);
+        const totalRecVariaveis = receitasVarSab.reduce((s, r) => s + r.valor, 0);
+        const totalReceita = totalRecFixas + totalRecVariaveis;
         const receitaRecebidaSab = receitasMesSab.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0) + receitasVarSab.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
         const receitaPendente = totalReceita - receitaRecebidaSab;
         
@@ -7945,6 +7963,26 @@
 
             if (acoes.length === 0) {
                 acoes.push({ texto: 'Continue monitorando suas finanças e mantenha a disciplina', prioridade: 'medio' });
+            }
+
+            // Empresa-Persona: sempre incluir visão estratégica
+            if (totalReceita > 0) {
+                const taxaPoupanca = totalReceita > 0 ? ((totalReceita - totalDespesas) / totalReceita * 100) : 0;
+                if (taxaPoupanca < 10) {
+                    acoes.push({ texto: 'CEO paga a si mesmo primeiro — reserve 10% antes de qualquer gasto', prioridade: 'urgente' });
+                }
+                if (emprestimosAtivos.length > 0) {
+                    const maiorJuros = emprestimosAtivos.reduce((max, e) => (e.taxaJuros || 0) > (max.taxaJuros || 0) ? e : max, emprestimosAtivos[0]);
+                    if (maiorJuros) {
+                        acoes.push({ texto: `Elimine "${maiorJuros.descricao}" (${maiorJuros.taxaJuros}% a.m.) — dívida cara mata o fluxo de caixa`, prioridade: 'urgente' });
+                    }
+                }
+                if (percentComprometido <= 60 && totalDividas === 0) {
+                    acoes.push({ texto: 'Posição sólida — invista em ativos que gerem renda passiva', prioridade: 'medio' });
+                }
+                if (totalRecFixas > 0 && totalRecVariaveis === 0) {
+                    acoes.push({ texto: 'Diversifique receitas — uma única fonte de renda é risco concentrado', prioridade: 'importante' });
+                }
             }
 
             planoLista.innerHTML = acoes.slice(0, 5).map((a, i) => `
