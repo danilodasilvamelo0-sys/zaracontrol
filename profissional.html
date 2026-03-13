@@ -459,30 +459,90 @@ function renderRoleta(){
     const estEl=document.getElementById('estatisticasGerais');
     if(estEl) estEl.innerHTML=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;"><div><div style="font-size:.7em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.2em;font-weight:600;">${total}</div></div><div><div style="font-size:.7em;color:#c0392b;">Vermelho</div><div style="font-size:1.2em;font-weight:600;color:#c0392b;">${verms}</div></div><div><div style="font-size:.7em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.2em;font-weight:600;">${pretos}</div></div><div><div style="font-size:.7em;color:#27ae60;">Zero</div><div style="font-size:1.2em;font-weight:600;color:#27ae60;">${zeros}</div></div></div>`;
 
-    // === SUGESTÃO DE ENTRADA ===
+    // === SUGESTÃO DE ENTRADA — SISTEMA DE PARES ===
     const recDuz=document.getElementById('recDuziasBody');
     const recCol=document.getElementById('recColunasBody');
+    const recDuzCard=document.getElementById('recDuzias');
+    const recColCard=document.getElementById('recColunas');
 
     if(total<10){
-        recDuz.innerHTML='<span style="color:rgba(255,255,255,.4);">Min. 10 números</span>';
-        recCol.innerHTML='<span style="color:rgba(255,255,255,.4);">Min. 10 números</span>';
+        recDuz.innerHTML='<span style="color:rgba(255,255,255,.4);font-size:.85em;">Min. 10 números</span>';
+        recCol.innerHTML='<span style="color:rgba(255,255,255,.4);font-size:.85em;">Min. 10 números</span>';
+        recDuzCard.style.borderColor='rgba(212,175,125,.3)';
+        recColCard.style.borderColor='rgba(212,175,125,.3)';
     } else {
-        // Encontrar as 2 mais frias
-        const dzRank=[{i:0,pct:dzPct[0]},{i:1,pct:dzPct[1]},{i:2,pct:dzPct[2]}].sort((a,b)=>a.pct-b.pct);
-        const clRank=[{i:0,pct:clPct[0]},{i:1,pct:clPct[1]},{i:2,pct:clPct[2]}].sort((a,b)=>a.pct-b.pct);
+        // LÓGICA: encontrar a MAIS QUENTE (excluída) — as outras 2 são o par de entrada
+        // Quanto mais quente a excluída, mais confiável é apostar nas outras 2
 
-        function badgeClass(pct){return pct<25?'hot':pct<30?'warm':'neutral';}
+        // DÚZIAS
+        const dzRank=[{i:0,pct:dzPct[0],nome:dzNomes[0],cnt:dz[0]},{i:1,pct:dzPct[1],nome:dzNomes[1],cnt:dz[1]},{i:2,pct:dzPct[2],nome:dzNomes[2],cnt:dz[2]}].sort((a,b)=>b.pct-a.pct);
+        const dzQuente=dzRank[0]; // a mais quente = excluída
+        const dzPar=dzRank.slice(1); // as 2 frias = entrada
+        const dzDom=dzQuente.pct-33.3; // dominância da quente
 
-        recDuz.innerHTML=dzRank.slice(0,2).map(d=>`<span class="rec-badge ${badgeClass(d.pct)}">${dzNomes[d.i]}</span>`).join('')+`<div style="font-size:.7em;color:rgba(255,255,255,.35);margin-top:4px;">Apostar nas 2 mais frias</div>`;
-        recCol.innerHTML=clRank.slice(0,2).map(c2=>`<span class="rec-badge ${badgeClass(c2.pct)}">${clNomes[c2.i]}</span>`).join('')+`<div style="font-size:.7em;color:rgba(255,255,255,.35);margin-top:4px;">Apostar nas 2 mais frias</div>`;
+        // Tendência recente (últimos 10): a quente continua quente?
+        const ult10=h.slice(-10).filter(n=>n!==0);
+        const dzUlt=[0,0,0];ult10.forEach(n=>{if(n>0)dzUlt[duzia(n)-1]++;});
+        const dzQuenteRecente=dzUlt[dzQuente.i];
+        const confirmaDz=dzQuenteRecente>=4; // quente apareceu 4+ nas últimas 10
+
+        // Confiança do par
+        let dzConf,dzSinal,dzCor,dzBorder;
+        if(dzDom>=12 && confirmaDz){dzConf='ALTA';dzSinal='APOSTAR';dzCor='#2ecc71';dzBorder='rgba(46,204,113,.6)';}
+        else if(dzDom>=8){dzConf=confirmaDz?'ALTA':'MODERADA';dzSinal='APOSTAR';dzCor=confirmaDz?'#2ecc71':'#f1c40f';dzBorder=confirmaDz?'rgba(46,204,113,.5)':'rgba(241,196,15,.5)';}
+        else if(dzDom>=4){dzConf='MODERADA';dzSinal='ATENÇÃO';dzCor='#f1c40f';dzBorder='rgba(241,196,15,.4)';}
+        else{dzConf='BAIXA';dzSinal='AGUARDAR';dzCor='rgba(255,255,255,.4)';dzBorder='rgba(255,255,255,.15)';}
+
+        recDuzCard.style.borderColor=dzBorder;
+        recDuz.innerHTML=`
+            <div style="font-size:.7em;color:${dzCor};font-weight:700;letter-spacing:1px;margin-bottom:6px;">${dzSinal} — Confiança ${dzConf}</div>
+            <div style="display:flex;gap:8px;justify-content:center;">
+                <span class="rec-badge" style="background:${dzCor}22;border:1px solid ${dzCor};color:${dzCor};">${dzPar[0].nome}</span>
+                <span class="rec-badge" style="background:${dzCor}22;border:1px solid ${dzCor};color:${dzCor};">${dzPar[1].nome}</span>
+            </div>
+            <div style="font-size:.68em;color:rgba(255,255,255,.3);margin-top:6px;">Excluída: ${dzQuente.nome} (${dzQuente.pct}% — ${dzQuente.cnt}x)${confirmaDz?' ✓ confirmada recente':''}</div>
+        `;
+
+        // COLUNAS — mesma lógica
+        const clRank=[{i:0,pct:clPct[0],nome:clNomes[0],cnt:cl[0]},{i:1,pct:clPct[1],nome:clNomes[1],cnt:cl[1]},{i:2,pct:clPct[2],nome:clNomes[2],cnt:cl[2]}].sort((a,b)=>b.pct-a.pct);
+        const clQuente=clRank[0];
+        const clPar=clRank.slice(1);
+        const clDom=clQuente.pct-33.3;
+
+        const clUlt=[0,0,0];ult10.forEach(n=>{if(n>0)clUlt[coluna(n)-1]++;});
+        const clQuenteRecente=clUlt[clQuente.i];
+        const confirmaCol=clQuenteRecente>=4;
+
+        let clConf,clSinal,clCorr,clBorderC;
+        if(clDom>=12 && confirmaCol){clConf='ALTA';clSinal='APOSTAR';clCorr='#2ecc71';clBorderC='rgba(46,204,113,.6)';}
+        else if(clDom>=8){clConf=confirmaCol?'ALTA':'MODERADA';clSinal='APOSTAR';clCorr=confirmaCol?'#2ecc71':'#f1c40f';clBorderC=confirmaCol?'rgba(46,204,113,.5)':'rgba(241,196,15,.5)';}
+        else if(clDom>=4){clConf='MODERADA';clSinal='ATENÇÃO';clCorr='#f1c40f';clBorderC='rgba(241,196,15,.4)';}
+        else{clConf='BAIXA';clSinal='AGUARDAR';clCorr='rgba(255,255,255,.4)';clBorderC='rgba(255,255,255,.15)';}
+
+        recColCard.style.borderColor=clBorderC;
+        recCol.innerHTML=`
+            <div style="font-size:.7em;color:${clCorr};font-weight:700;letter-spacing:1px;margin-bottom:6px;">${clSinal} — Confiança ${clConf}</div>
+            <div style="display:flex;gap:8px;justify-content:center;">
+                <span class="rec-badge" style="background:${clCorr}22;border:1px solid ${clCorr};color:${clCorr};">${clPar[0].nome}</span>
+                <span class="rec-badge" style="background:${clCorr}22;border:1px solid ${clCorr};color:${clCorr};">${clPar[1].nome}</span>
+            </div>
+            <div style="font-size:.68em;color:rgba(255,255,255,.3);margin-top:6px;">Excluída: ${clQuente.nome} (${clQuente.pct}% — ${clQuente.cnt}x)${confirmaCol?' ✓ confirmada recente':''}</div>
+        `;
     }
 
     // === INDICADORES ===
-    // Confiança (baseada na amostra e desvio)
-    const maxDesvio=Math.max(Math.abs(dzPct[0]-33),Math.abs(dzPct[1]-33),Math.abs(dzPct[2]-33),Math.abs(clPct[0]-33),Math.abs(clPct[1]-33),Math.abs(clPct[2]-33));
-    let confianca=total<10?0:Math.min(Math.round((total/50)*50+(maxDesvio/20)*50),99);
-    document.getElementById('indConfianca').textContent=total<10?'—':confianca+'%';
-    document.getElementById('indConfianca').style.color=confianca>70?'#2ecc71':confianca>40?'#f1c40f':'rgba(255,255,255,.5)';
+    // Confiança geral: média da dominância de dúzias + colunas
+    if(total>=10){
+        const dzD=Math.max(dzPct[0],dzPct[1],dzPct[2])-33.3;
+        const clD=Math.max(clPct[0],clPct[1],clPct[2])-33.3;
+        const mediaD=(dzD+clD)/2;
+        const confPct=Math.min(Math.round(50+(mediaD*4)+(total>30?15:total>20?10:0)),99);
+        document.getElementById('indConfianca').textContent=confPct+'%';
+        document.getElementById('indConfianca').style.color=confPct>70?'#2ecc71':confPct>50?'#f1c40f':'rgba(255,255,255,.5)';
+    } else {
+        document.getElementById('indConfianca').textContent='—';
+        document.getElementById('indConfianca').style.color='rgba(255,255,255,.5)';
+    }
 
     // Assertividade
     const ac=(R.acertos||0);const er=(R.erros||0);const totalAE=ac+er;
