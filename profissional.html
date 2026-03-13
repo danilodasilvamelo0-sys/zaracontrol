@@ -766,29 +766,45 @@ function renderRoleta(){
         const dzExcl=convDz.excluida;
         const dzPar=[0,1,2].filter(i=>i!==dzExcl);
 
-        // Score composto com convergência
+        // Score composto com convergência + FEEDBACK DA ASSERTIVIDADE
+        const aDzLive=R.assertDz||{ac:0,er:0};
+        const tDzLive=aDzLive.ac+aDzLive.er;
+        const dzAssertLive=tDzLive>0?aDzLive.ac/tDzLive*100:66.7; // default = teórico 2/3
+
+        // Penalidade/bônus baseado na assertividade REAL
+        let dzAssertMod=0;
+        if(tDzLive>=8){
+            if(dzAssertLive>=75) dzAssertMod=15;      // acertando muito = bônus forte
+            else if(dzAssertLive>=65) dzAssertMod=8;   // acertando bem = bônus
+            else if(dzAssertLive>=55) dzAssertMod=0;   // normal
+            else if(dzAssertLive>=45) dzAssertMod=-15;  // abaixo do esperado = penalidade
+            else dzAssertMod=-30;                       // muito ruim = penalidade pesada
+        }
+
         const dzScore=(
-            Math.max(0,dzZ[dzExcl])*25+          // Z-Score da quente
-            (sDz.f)*12+                            // Chi² significância
-            Math.min(gaps.dz[dzPar[0]]+gaps.dz[dzPar[1]],20)*1.2+ // Gaps das frias
-            (bayDz[dzExcl]>38?10:bayDz[dzExcl]>35?5:0)+  // Bayesian confirma
-            (momDz[dzExcl]>5?8:momDz[dzExcl]>0?4:0)+     // Momentum confirma
-            (convDz.consenso>60?15:convDz.consenso>45?8:0)+ // Convergência
-            (janDz&&janDz.desvio[dzExcl]>8?8:0)+  // Janela confirma
-            (total>30?8:total>20?4:0)              // Bônus amostra
+            Math.max(0,dzZ[dzExcl])*25+
+            (sDz.f)*12+
+            Math.min(gaps.dz[dzPar[0]]+gaps.dz[dzPar[1]],20)*1.2+
+            (bayDz[dzExcl]>38?10:bayDz[dzExcl]>35?5:0)+
+            (momDz[dzExcl]>5?8:momDz[dzExcl]>0?4:0)+
+            (convDz.consenso>60?15:convDz.consenso>45?8:0)+
+            (janDz&&janDz.desvio[dzExcl]>8?8:0)+
+            (total>30?8:total>20?4:0)+
+            dzAssertMod  // feedback da assertividade
         );
 
-        // Momentum da excluída: desacelerando = melhor momento
-        const dzMomExcl=momDz[dzExcl];
-        const dzDesacel=dzMomExcl<-3;
+        // Hard cut: se assertividade < 40% com 10+ entradas, NÃO ENTRAR
+        const dzForceStop = tDzLive>=10 && dzAssertLive<40;
 
         let dzSinal,dzConf,dzCor,dzBrd;
-        if(dzScore>=65&&convDz.consenso>55){dzSinal='APOSTAR';dzConf='ALTA';dzCor='#2ecc71';dzBrd='rgba(46,204,113,.7)';}
+        if(dzForceStop){dzSinal='NÃO ENTRAR';dzConf='';dzCor='#e74c3c';dzBrd='rgba(231,76,60,.5)';}
+        else if(dzScore>=65&&convDz.consenso>55){dzSinal='APOSTAR';dzConf='ALTA';dzCor='#2ecc71';dzBrd='rgba(46,204,113,.7)';}
         else if(dzScore>=45){dzSinal='APOSTAR';dzConf=convDz.consenso>50?'MODERADA':'BAIXA';dzCor='#f1c40f';dzBrd='rgba(241,196,15,.5)';}
         else if(dzScore>=25){dzSinal='ATENÇÃO';dzConf='BAIXA';dzCor='#f39c12';dzBrd='rgba(243,156,18,.3)';}
         else{dzSinal='AGUARDAR';dzConf='';dzCor='rgba(255,255,255,.4)';dzBrd='rgba(255,255,255,.15)';}
 
         recDuzCard.style.borderColor=dzBrd;
+        const dzMomExcl=momDz[dzExcl];const dzDesacel=dzMomExcl<-3;
         recDuz.innerHTML=`
             <div style="font-size:.7em;color:${dzCor};font-weight:700;letter-spacing:1px;margin-bottom:6px;">${dzSinal}${dzConf?' — '+dzConf:''}</div>
             <div style="display:flex;gap:8px;justify-content:center;">
@@ -796,15 +812,29 @@ function renderRoleta(){
                 <span class="rec-badge" style="background:${dzCor}22;border:1px solid ${dzCor};color:${dzCor};">${dzN[dzPar[1]]}</span>
             </div>
             <div style="font-size:.62em;color:rgba(255,255,255,.3);margin-top:6px;">
-                Excl: ${dzN[dzExcl]} (Z:${dzZ[dzExcl]>=0?'+':''}${dzZ[dzExcl].toFixed(2)}) | Conv: ${convDz.consenso.toFixed(0)}%${dzDesacel?' | ▼ Desacelerando':''}
+                Excl: ${dzN[dzExcl]} (Z:${dzZ[dzExcl]>=0?'+':''}${dzZ[dzExcl].toFixed(2)}) | Conv: ${convDz.consenso.toFixed(0)}%${dzDesacel?' | ▼ Desacel.':''}
             </div>
-            <div style="font-size:.58em;color:rgba(212,175,125,.35);margin-top:2px;">Score: ${dzScore.toFixed(0)}/100</div>
+            <div style="font-size:.58em;color:rgba(212,175,125,.35);margin-top:2px;">Score: ${dzScore.toFixed(0)} ${tDzLive>=5?'| Assert: '+dzAssertLive.toFixed(0)+'%':''}</div>
+            ${dzForceStop?'<div style="font-size:.65em;color:#e74c3c;margin-top:4px;">Modelo não está funcionando para dúzias nesta mesa</div>':''}
         `;
 
-        // COLUNAS — mesma lógica
+        // COLUNAS — mesma lógica + assertividade feedback
         const convCl=calcConvergencia(clZ,momCl,bayCl,gaps.cl,janCl);
         const clExcl=convCl.excluida;
         const clParR=[0,1,2].filter(i=>i!==clExcl);
+
+        const aClLive=R.assertCol||{ac:0,er:0};
+        const tClLive=aClLive.ac+aClLive.er;
+        const clAssertLive=tClLive>0?aClLive.ac/tClLive*100:66.7;
+
+        let clAssertMod=0;
+        if(tClLive>=8){
+            if(clAssertLive>=75) clAssertMod=15;
+            else if(clAssertLive>=65) clAssertMod=8;
+            else if(clAssertLive>=55) clAssertMod=0;
+            else if(clAssertLive>=45) clAssertMod=-15;
+            else clAssertMod=-30;
+        }
 
         const clScore=(
             Math.max(0,clZ[clExcl])*25+
@@ -814,14 +844,18 @@ function renderRoleta(){
             (momCl[clExcl]>5?8:momCl[clExcl]>0?4:0)+
             (convCl.consenso>60?15:convCl.consenso>45?8:0)+
             (janCl&&janCl.desvio[clExcl]>8?8:0)+
-            (total>30?8:total>20?4:0)
+            (total>30?8:total>20?4:0)+
+            clAssertMod
         );
+
+        const clForceStop = tClLive>=10 && clAssertLive<40;
 
         const clMomExcl=momCl[clExcl];
         const clDesacel=clMomExcl<-3;
 
         let clSinal,clConf,clCorr,clBrdC;
-        if(clScore>=65&&convCl.consenso>55){clSinal='APOSTAR';clConf='ALTA';clCorr='#2ecc71';clBrdC='rgba(46,204,113,.7)';}
+        if(clForceStop){clSinal='NÃO ENTRAR';clConf='';clCorr='#e74c3c';clBrdC='rgba(231,76,60,.5)';}
+        else if(clScore>=65&&convCl.consenso>55){clSinal='APOSTAR';clConf='ALTA';clCorr='#2ecc71';clBrdC='rgba(46,204,113,.7)';}
         else if(clScore>=45){clSinal='APOSTAR';clConf=convCl.consenso>50?'MODERADA':'BAIXA';clCorr='#f1c40f';clBrdC='rgba(241,196,15,.5)';}
         else if(clScore>=25){clSinal='ATENÇÃO';clConf='BAIXA';clCorr='#f39c12';clBrdC='rgba(243,156,18,.3)';}
         else{clSinal='AGUARDAR';clConf='';clCorr='rgba(255,255,255,.4)';clBrdC='rgba(255,255,255,.15)';}
@@ -834,9 +868,10 @@ function renderRoleta(){
                 <span class="rec-badge" style="background:${clCorr}22;border:1px solid ${clCorr};color:${clCorr};">${clN[clParR[1]]}</span>
             </div>
             <div style="font-size:.62em;color:rgba(255,255,255,.3);margin-top:6px;">
-                Excl: ${clN[clExcl]} (Z:${clZ[clExcl]>=0?'+':''}${clZ[clExcl].toFixed(2)}) | Conv: ${convCl.consenso.toFixed(0)}%${clDesacel?' | ▼ Desacelerando':''}
+                Excl: ${clN[clExcl]} (Z:${clZ[clExcl]>=0?'+':''}${clZ[clExcl].toFixed(2)}) | Conv: ${convCl.consenso.toFixed(0)}%${clDesacel?' | ▼ Desacel.':''}
             </div>
-            <div style="font-size:.58em;color:rgba(212,175,125,.35);margin-top:2px;">Score: ${clScore.toFixed(0)}/100</div>
+            <div style="font-size:.58em;color:rgba(212,175,125,.35);margin-top:2px;">Score: ${clScore.toFixed(0)} ${tClLive>=5?'| Assert: '+clAssertLive.toFixed(0)+'%':''}</div>
+            ${clForceStop?'<div style="font-size:.65em;color:#e74c3c;margin-top:4px;">Modelo não está funcionando para colunas nesta mesa</div>':''}
         `;
     }
 
