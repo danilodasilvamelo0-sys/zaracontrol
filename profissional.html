@@ -369,33 +369,161 @@ function deletarMeta(id){if(!confirm('Excluir?'))return;D.metas=D.metas.filter(x
 function renderMetas(){const c=document.getElementById('metasLista');if(!D.metas.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhuma meta.</div>';return;}const pl={'1m':'1 mês','3m':'3 meses','6m':'6 meses','1a':'1 ano'};const pil={identidade:'Identidade',posicionamento:'Posicion.',projetos:'Projetos',reputacao:'Reputação',geral:'Geral'};c.innerHTML=D.metas.map(m=>`<div class="meta-card"><div class="meta-header"><span class="meta-texto">${m.texto}</span><span class="meta-prazo">${pl[m.prazo]||m.prazo}</span></div><div style="display:flex;justify-content:space-between;margin-top:6px;"><span style="font-size:.7em;color:rgba(212,175,125,.5);">${pil[m.pilar]||''}</span><span style="font-size:.8em;color:#d4af7d;">${m.progresso}%</span></div><div class="meta-barra"><div class="meta-fill" style="width:${m.progresso}%"></div></div><div class="projeto-acoes" style="margin-top:8px;"><button class="btn-mini" onclick="abrirModalMeta('${m.id}')">Editar</button><button class="btn-mini delete" onclick="deletarMeta('${m.id}')">Excluir</button></div></div>`).join('');}
 
 // ==========================================
-// ROLETA — MÉTODO DÚZIAS E COLUNAS
+// ROLETA — ENGINE ESTATÍSTICA
 // ==========================================
 const VERMELHOS=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-
 function corNum(n){if(n===0)return'z';return VERMELHOS.includes(n)?'v':'p';}
 function duzia(n){if(n===0)return 0;if(n<=12)return 1;if(n<=24)return 2;return 3;}
 function coluna(n){if(n===0)return 0;return((n-1)%3)+1;}
 
+// ==========================================
+// MATH: Z-SCORE
+// Mede quantos desvios padrão o valor observado está do esperado.
+// Para binomial: Z = (observado - esperado) / sqrt(n * p * (1-p))
+// p = 12/37 ≈ 0.3243 para cada dúzia/coluna (roleta europeia)
+// ==========================================
+const P_DUZIA = 12/37; // 0.3243
+const P_COLUNA = 12/37;
+
+function zScore(observado, n, p) {
+    const esperado = n * p;
+    const stdDev = Math.sqrt(n * p * (1 - p));
+    if (stdDev === 0) return 0;
+    return (observado - esperado) / stdDev;
+}
+
+// ==========================================
+// MATH: CHI-QUADRADO (Pearson)
+// Testa se a distribuição é significativamente diferente da esperada.
+// χ² = Σ (observado - esperado)² / esperado
+// Graus de liberdade = 2 (3 categorias - 1)
+// Valores críticos: 5.99 (p<0.05), 9.21 (p<0.01)
+// ==========================================
+function chiQuadrado(observados, n, p) {
+    const esperado = n * p;
+    if (esperado === 0) return 0;
+    return observados.reduce((sum, obs) => sum + Math.pow(obs - esperado, 2) / esperado, 0);
+}
+
+function chiPValue(chi2) {
+    // Aproximação para df=2: p = e^(-chi2/2)
+    return Math.exp(-chi2 / 2);
+}
+
+function chiSignificancia(chi2) {
+    if (chi2 >= 9.21) return { nivel: 'p<0.01', texto: 'Altamente significativo', forca: 3 };
+    if (chi2 >= 5.99) return { nivel: 'p<0.05', texto: 'Significativo', forca: 2 };
+    if (chi2 >= 4.60) return { nivel: 'p<0.10', texto: 'Marginalmente significativo', forca: 1 };
+    return { nivel: 'p>0.10', texto: 'Não significativo', forca: 0 };
+}
+
+// ==========================================
+// MATH: ANÁLISE DE GAPS (Streaks)
+// Gap = quantos giros desde a última aparição de cada dúzia/coluna
+// Gap médio esperado = 37/12 ≈ 3.08 giros
+// ==========================================
+function calcularGaps(historico) {
+    const gaps = { dz: [0, 0, 0], cl: [0, 0, 0] };
+    // Contar de trás para frente até encontrar
+    for (let g = 0; g < 3; g++) {
+        let gap = 0;
+        for (let i = historico.length - 1; i >= 0; i--) {
+            const n = historico[i];
+            if (n === 0) { gap++; continue; }
+            if (duzia(n) - 1 === g) break;
+            gap++;
+        }
+        gaps.dz[g] = gap;
+    }
+    for (let g = 0; g < 3; g++) {
+        let gap = 0;
+        for (let i = historico.length - 1; i >= 0; i--) {
+            const n = historico[i];
+            if (n === 0) { gap++; continue; }
+            if (coluna(n) - 1 === g) break;
+            gap++;
+        }
+        gaps.cl[g] = gap;
+    }
+    return gaps;
+}
+
+// ==========================================
+// MATH: BAYESIAN — Peso maior nos recentes
+// Usa janela deslizante com pesos exponenciais
+// Números mais recentes têm peso maior
+// ==========================================
+function bayesianPcts(historico, tipo) {
+    const h = historico.filter(n => n !== 0);
+    if (h.length === 0) return [33.3, 33.3, 33.3];
+
+    const counts = [0, 0, 0];
+    const decay = 0.97; // fator de decaimento
+    let totalWeight = 0;
+
+    h.forEach((n, idx) => {
+        const weight = Math.pow(decay, h.length - 1 - idx); // recentes pesam mais
+        const cat = tipo === 'dz' ? duzia(n) - 1 : coluna(n) - 1;
+        if (cat >= 0) counts[cat] += weight;
+        totalWeight += weight;
+    });
+
+    if (totalWeight === 0) return [33.3, 33.3, 33.3];
+    return counts.map(c => (c / totalWeight) * 100);
+}
+
+// ==========================================
+// MATH: VOLATILIDADE
+// Mede variância da distribuição ao longo do tempo
+// Divide em blocos de 10 e compara as distribuições
+// Alta volatilidade = mesa instável
+// ==========================================
+function calcularVolatilidade(historico) {
+    const h = historico.filter(n => n !== 0);
+    if (h.length < 20) return { valor: 0, texto: '—' };
+
+    const blocoSize = 10;
+    const blocos = [];
+    for (let i = 0; i <= h.length - blocoSize; i += blocoSize) {
+        const bloco = h.slice(i, i + blocoSize);
+        const dz = [0, 0, 0];
+        bloco.forEach(n => { dz[duzia(n) - 1]++; });
+        blocos.push(dz.map(d => d / blocoSize * 100));
+    }
+
+    if (blocos.length < 2) return { valor: 0, texto: '—' };
+
+    // Variância entre blocos para cada dúzia
+    let totalVar = 0;
+    for (let d = 0; d < 3; d++) {
+        const vals = blocos.map(b => b[d]);
+        const media = vals.reduce((s, v) => s + v, 0) / vals.length;
+        const variancia = vals.reduce((s, v) => s + Math.pow(v - media, 2), 0) / vals.length;
+        totalVar += variancia;
+    }
+
+    const vol = Math.sqrt(totalVar / 3);
+    if (vol > 25) return { valor: vol, texto: 'MUITO ALTA' };
+    if (vol > 15) return { valor: vol, texto: 'ALTA' };
+    if (vol > 8) return { valor: vol, texto: 'MODERADA' };
+    return { valor: vol, texto: 'BAIXA' };
+}
+
+// ==========================================
 // MESA REAL — LAYOUT HORIZONTAL
+// ==========================================
 function buildMesa(){
     const m=document.getElementById('mesaRoleta');if(!m)return;
-    // 3 linhas: row1=col3(3,6,9..36), row2=col2(2,5,8..35), row3=col1(1,4,7..34)
     let html='<table class="mesa-table">';
-    // Zero na lateral
     html+='<tr><td class="z" rowspan="3" onclick="addNum(0)" style="width:38px;font-size:1.2em;">0</td>';
-    // Row 1: coluna 3 (3,6,9...36)
     for(let i=3;i<=36;i+=3) html+=`<td class="${corNum(i)}" onclick="addNum(${i})">${i}</td>`;
-    html+='<td class="dz-label" onclick="addNum(-1)" style="cursor:default;">2:1</td></tr>';
-    // Row 2: coluna 2 (2,5,8...35)
+    html+='<td class="dz-label" style="cursor:default;">2:1</td></tr>';
     html+='<tr>';
     for(let i=2;i<=35;i+=3) html+=`<td class="${corNum(i)}" onclick="addNum(${i})">${i}</td>`;
     html+='<td class="dz-label" style="cursor:default;">2:1</td></tr>';
-    // Row 3: coluna 1 (1,4,7...34)
     html+='<tr>';
     for(let i=1;i<=34;i+=3) html+=`<td class="${corNum(i)}" onclick="addNum(${i})">${i}</td>`;
     html+='<td class="dz-label" style="cursor:default;">2:1</td></tr>';
-    // Dúzias row
     html+='<tr><td class="dz-label" style="cursor:default;"></td>';
     html+='<td class="dz-label" colspan="4" style="cursor:default;">1st 12</td>';
     html+='<td class="dz-label" colspan="4" style="cursor:default;">2nd 12</td>';
@@ -405,49 +533,42 @@ function buildMesa(){
     m.innerHTML=html;
 }
 
+// ==========================================
+// SUGESTÃO ATUAL (para assertividade automática)
+// ==========================================
 function getSugestaoAtual(){
-    // Calcula a sugestão ANTES de inserir o novo número
     const h=R.historico;
     const semZero=h.filter(n=>n!==0);
-    const T=semZero.length||1;
-    if(h.length<10) return null;
+    const T=semZero.length;
+    if(T<10) return null;
 
     const dz=[0,0,0];semZero.forEach(n=>{dz[duzia(n)-1]++;});
-    const dzPct=dz.map(d=>Math.round((d/T)*100));
     const cl=[0,0,0];semZero.forEach(n=>{cl[coluna(n)-1]++;});
-    const clPct=cl.map(c2=>Math.round((c2/T)*100));
 
-    // A mais quente de cada = excluída
-    const dzMax=dzPct.indexOf(Math.max(...dzPct));
-    const clMax=clPct.indexOf(Math.max(...clPct));
+    // Z-Scores: mais positivo = mais quente = excluída
+    const dzZ=dz.map(d=>zScore(d,T,P_DUZIA));
+    const clZ=cl.map(c2=>zScore(c2,T,P_COLUNA));
 
-    // As 2 frias = par sugerido (índices 0,1,2 de dúzia e coluna)
-    const dzPar=[0,1,2].filter(i=>i!==dzMax);
-    const clPar=[0,1,2].filter(i=>i!==clMax);
+    const dzMax=dzZ.indexOf(Math.max(...dzZ));
+    const clMax=clZ.indexOf(Math.max(...clZ));
 
-    return {dzPar,clPar};
+    return {dzPar:[0,1,2].filter(i=>i!==dzMax),clPar:[0,1,2].filter(i=>i!==clMax)};
 }
 
+// ==========================================
+// ENTRADA DE NÚMERO + AUTO-ASSERTIVIDADE
+// ==========================================
 function addNum(n){
     if(n<0)return;
-
-    // Auto-assertividade: verificar se o número que acabou de sair está no par sugerido
     const sug=getSugestaoAtual();
     if(sug && n!==0){
-        const dzDoNum=duzia(n)-1; // 0,1,2
-        const clDoNum=coluna(n)-1;
         if(!R.assertDz)R.assertDz={ac:0,er:0};
         if(!R.assertCol)R.assertCol={ac:0,er:0};
-
-        // Dúzia: o número caiu no par sugerido?
-        if(sug.dzPar.includes(dzDoNum)) R.assertDz.ac++;
-        else R.assertDz.er++;
-
-        // Coluna: o número caiu no par sugerido?
-        if(sug.clPar.includes(clDoNum)) R.assertCol.ac++;
-        else R.assertCol.er++;
+        const dzN=duzia(n)-1;
+        const clN=coluna(n)-1;
+        if(sug.dzPar.includes(dzN)) R.assertDz.ac++; else R.assertDz.er++;
+        if(sug.clPar.includes(clN)) R.assertCol.ac++; else R.assertCol.er++;
     }
-
     R.historico.push(n);
     if(R.historico.length>200)R.historico=R.historico.slice(-200);
     saveR();renderRoleta();
@@ -455,47 +576,107 @@ function addNum(n){
 function desfazerUltimo(){if(!R.historico.length)return;R.historico.pop();saveR();renderRoleta();}
 function limparHistorico(){if(!confirm('Limpar?'))return;R.historico=[];R.assertDz={ac:0,er:0};R.assertCol={ac:0,er:0};saveR();renderRoleta();}
 
+// ==========================================
+// RENDER PRINCIPAL
+// ==========================================
 function renderRoleta(){
     const h=R.historico;
     const total=h.length;
-
-    // Últimos números
-    const ult=h.slice(-30);
-    document.getElementById('ultimosNums').innerHTML=ult.map(n=>`<div class="ultimo-num ${corNum(n)}">${n}</div>`).join('');
-
     const semZero=h.filter(n=>n!==0);
     const T=semZero.length||1;
 
-    // Dúzias count
+    // Últimos números
+    document.getElementById('ultimosNums').innerHTML=h.slice(-30).map(n=>`<div class="ultimo-num ${corNum(n)}">${n}</div>`).join('');
+
+    // Contagens brutas
     const dz=[0,0,0];semZero.forEach(n=>{dz[duzia(n)-1]++;});
     const dzPct=dz.map(d=>Math.round((d/T)*100));
-
-    // Colunas count
     const cl=[0,0,0];semZero.forEach(n=>{cl[coluna(n)-1]++;});
     const clPct=cl.map(c2=>Math.round((c2/T)*100));
 
     const dzNomes=['1ª (1-12)','2ª (13-24)','3ª (25-36)'];
     const clNomes=['Col 1 (1,4,7...)','Col 2 (2,5,8...)','Col 3 (3,6,9...)'];
 
-    // Barras de análise
-    function renderBarras(container,nomes,pcts,counts){
+    // Z-Scores
+    const dzZ=dz.map(d=>zScore(d,T,P_DUZIA));
+    const clZ=cl.map(c2=>zScore(c2,T,P_COLUNA));
+
+    // Chi-Quadrado
+    const chiDz=chiQuadrado(dz,T,P_DUZIA);
+    const chiCol=chiQuadrado(cl,T,P_COLUNA);
+    const sigDz=chiSignificancia(chiDz);
+    const sigCol=chiSignificancia(chiCol);
+
+    // Gaps
+    const gaps=calcularGaps(h);
+
+    // Bayesian (peso recente)
+    const bayesDz=bayesianPcts(h,'dz');
+    const bayesCol=bayesianPcts(h,'cl');
+
+    // Volatilidade
+    const vol=calcularVolatilidade(h);
+
+    // === BARRAS DE ANÁLISE ===
+    function renderBarras(container,nomes,pcts,counts,zScores,gapsArr,bayesArr){
         const el=document.getElementById(container);if(!el)return;
         el.innerHTML=nomes.map((nome,i)=>{
-            const pct=pcts[i];const classe=pct>38?'quente':pct<28?'frio':'morno';
-            return`<div class="barra-container"><div class="barra-label"><span class="barra-nome">${nome}</span><span class="barra-pct">${pct}% (${counts[i]}x)</span></div><div class="barra-track"><div class="barra-fill ${classe}" style="width:${pct}%"></div></div></div>`;
+            const pct=pcts[i];
+            const z=zScores[i];
+            const gap=gapsArr[i];
+            const bayesPct=bayesArr[i];
+            const classe=z>1.0?'quente':z<-1.0?'frio':'morno';
+            const zCor=z>1.5?'#e74c3c':z>0.5?'#f39c12':z<-1.5?'#2ecc71':z<-0.5?'#3498db':'rgba(255,255,255,.5)';
+            return`<div class="barra-container">
+                <div class="barra-label">
+                    <span class="barra-nome">${nome}</span>
+                    <span class="barra-pct">${pct}% (${counts[i]}x)</span>
+                </div>
+                <div class="barra-track"><div class="barra-fill ${classe}" style="width:${pct}%"></div></div>
+                <div style="display:flex;justify-content:space-between;margin-top:3px;font-size:.68em;">
+                    <span style="color:${zCor};">Z: ${z>=0?'+':''}${z.toFixed(2)}</span>
+                    <span style="color:rgba(255,255,255,.35);">Gap: ${gap}</span>
+                    <span style="color:rgba(212,175,125,.5);">Bayes: ${bayesPct.toFixed(1)}%</span>
+                </div>
+            </div>`;
         }).join('');
     }
-    renderBarras('analiseDuzias',dzNomes,dzPct,dz);
-    renderBarras('analiseColunas',clNomes,clPct,cl);
+    renderBarras('analiseDuzias',dzNomes,dzPct,dz,dzZ,gaps.dz,bayesDz);
+    renderBarras('analiseColunas',clNomes,clPct,cl,clZ,gaps.cl,bayesCol);
 
-    // Estatísticas
+    // === ESTATÍSTICAS ===
     const zeros=h.filter(n=>n===0).length;
     const verms=semZero.filter(n=>VERMELHOS.includes(n)).length;
     const pretos=T-verms;
     const estEl=document.getElementById('estatisticasGerais');
-    if(estEl) estEl.innerHTML=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;"><div><div style="font-size:.7em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.2em;font-weight:600;">${total}</div></div><div><div style="font-size:.7em;color:#c0392b;">Vermelho</div><div style="font-size:1.2em;font-weight:600;color:#c0392b;">${verms}</div></div><div><div style="font-size:.7em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.2em;font-weight:600;">${pretos}</div></div><div><div style="font-size:.7em;color:#27ae60;">Zero</div><div style="font-size:1.2em;font-weight:600;color:#27ae60;">${zeros}</div></div></div>`;
+    if(estEl) estEl.innerHTML=`
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;margin-bottom:12px;">
+            <div><div style="font-size:.65em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.2em;font-weight:600;">${total}</div></div>
+            <div><div style="font-size:.65em;color:#c0392b;">Verm.</div><div style="font-size:1.2em;font-weight:600;color:#c0392b;">${verms}</div></div>
+            <div><div style="font-size:.65em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.2em;font-weight:600;">${pretos}</div></div>
+            <div><div style="font-size:.65em;color:#27ae60;">Zero</div><div style="font-size:1.2em;font-weight:600;color:#27ae60;">${zeros}</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.72em;">
+            <div style="background:rgba(212,175,125,.05);padding:8px;border-radius:6px;">
+                <div style="color:rgba(212,175,125,.6);margin-bottom:3px;">Chi² Dúzias</div>
+                <div style="color:#fff;font-weight:600;">${chiDz.toFixed(2)} <span style="color:${sigDz.forca>=2?'#2ecc71':sigDz.forca>=1?'#f1c40f':'rgba(255,255,255,.4)'};">(${sigDz.nivel})</span></div>
+            </div>
+            <div style="background:rgba(212,175,125,.05);padding:8px;border-radius:6px;">
+                <div style="color:rgba(212,175,125,.6);margin-bottom:3px;">Chi² Colunas</div>
+                <div style="color:#fff;font-weight:600;">${chiCol.toFixed(2)} <span style="color:${sigCol.forca>=2?'#2ecc71':sigCol.forca>=1?'#f1c40f':'rgba(255,255,255,.4)'};">(${sigCol.nivel})</span></div>
+            </div>
+            <div style="background:rgba(212,175,125,.05);padding:8px;border-radius:6px;">
+                <div style="color:rgba(212,175,125,.6);margin-bottom:3px;">Volatilidade</div>
+                <div style="color:${vol.texto==='MUITO ALTA'||vol.texto==='ALTA'?'#e74c3c':vol.texto==='MODERADA'?'#f1c40f':'#2ecc71'};font-weight:600;">${vol.texto}${vol.valor>0?' ('+vol.valor.toFixed(1)+')':''}</div>
+            </div>
+            <div style="background:rgba(212,175,125,.05);padding:8px;border-radius:6px;">
+                <div style="color:rgba(212,175,125,.6);margin-bottom:3px;">Amostra</div>
+                <div style="color:#fff;font-weight:600;">${T} spins</div>
+            </div>
+        </div>
+    `;
 
-    // === SUGESTÃO DE ENTRADA — SISTEMA DE PARES ===
+    // === SUGESTÃO DE ENTRADA — Z-SCORE + BAYESIAN + GAPS ===
     const recDuz=document.getElementById('recDuziasBody');
     const recCol=document.getElementById('recColunasBody');
     const recDuzCard=document.getElementById('recDuzias');
@@ -507,80 +688,89 @@ function renderRoleta(){
         recDuzCard.style.borderColor='rgba(212,175,125,.3)';
         recColCard.style.borderColor='rgba(212,175,125,.3)';
     } else {
-        // LÓGICA: encontrar a MAIS QUENTE (excluída) — as outras 2 são o par de entrada
-        // Quanto mais quente a excluída, mais confiável é apostar nas outras 2
+        // DÚZIAS: a com Z-Score mais alto = mais quente = excluída
+        const dzRank=[0,1,2].map(i=>({i,z:dzZ[i],pct:dzPct[i],nome:dzNomes[i],cnt:dz[i],gap:gaps.dz[i],bayes:bayesDz[i]})).sort((a,b)=>b.z-a.z);
+        const dzExcl=dzRank[0];
+        const dzPar=dzRank.slice(1);
 
-        // DÚZIAS
-        const dzRank=[{i:0,pct:dzPct[0],nome:dzNomes[0],cnt:dz[0]},{i:1,pct:dzPct[1],nome:dzNomes[1],cnt:dz[1]},{i:2,pct:dzPct[2],nome:dzNomes[2],cnt:dz[2]}].sort((a,b)=>b.pct-a.pct);
-        const dzQuente=dzRank[0]; // a mais quente = excluída
-        const dzPar=dzRank.slice(1); // as 2 frias = entrada
-        const dzDom=dzQuente.pct-33.3; // dominância da quente
+        // Score composto: Z-Score + Gap + Bayesian + Chi²
+        // Quanto MAIOR o Z da excluída, melhor o sinal
+        // Quanto MAIOR o gap das frias, mais "devidas" estão
+        const dzScore = (
+            Math.max(0, dzExcl.z) * 30 +                    // Z da quente (peso 30)
+            (sigDz.forca) * 15 +                              // Chi² significância (peso 15)
+            Math.min(dzPar[0].gap + dzPar[1].gap, 20) * 1.5 + // Gaps das frias (peso 1.5 cada)
+            (dzExcl.bayes > 38 ? 10 : dzExcl.bayes > 35 ? 5 : 0) + // Bayesian confirma (peso 10)
+            (total > 30 ? 10 : total > 20 ? 5 : 0)           // Bônus amostra
+        );
 
-        // Tendência recente (últimos 10): a quente continua quente?
-        const ult10=h.slice(-10).filter(n=>n!==0);
-        const dzUlt=[0,0,0];ult10.forEach(n=>{if(n>0)dzUlt[duzia(n)-1]++;});
-        const dzQuenteRecente=dzUlt[dzQuente.i];
-        const confirmaDz=dzQuenteRecente>=4; // quente apareceu 4+ nas últimas 10
-
-        // Confiança do par
-        let dzConf,dzSinal,dzCor,dzBorder;
-        if(dzDom>=12 && confirmaDz){dzConf='ALTA';dzSinal='APOSTAR';dzCor='#2ecc71';dzBorder='rgba(46,204,113,.6)';}
-        else if(dzDom>=8){dzConf=confirmaDz?'ALTA':'MODERADA';dzSinal='APOSTAR';dzCor=confirmaDz?'#2ecc71':'#f1c40f';dzBorder=confirmaDz?'rgba(46,204,113,.5)':'rgba(241,196,15,.5)';}
-        else if(dzDom>=4){dzConf='MODERADA';dzSinal='ATENÇÃO';dzCor='#f1c40f';dzBorder='rgba(241,196,15,.4)';}
-        else{dzConf='BAIXA';dzSinal='AGUARDAR';dzCor='rgba(255,255,255,.4)';dzBorder='rgba(255,255,255,.15)';}
+        let dzSinal,dzConf,dzCor,dzBorder;
+        if(dzScore>=60){dzSinal='APOSTAR';dzConf='ALTA';dzCor='#2ecc71';dzBorder='rgba(46,204,113,.6)';}
+        else if(dzScore>=40){dzSinal='APOSTAR';dzConf='MODERADA';dzCor='#f1c40f';dzBorder='rgba(241,196,15,.5)';}
+        else if(dzScore>=25){dzSinal='ATENÇÃO';dzConf='BAIXA';dzCor='#f39c12';dzBorder='rgba(243,156,18,.3)';}
+        else{dzSinal='AGUARDAR';dzConf='—';dzCor='rgba(255,255,255,.4)';dzBorder='rgba(255,255,255,.15)';}
 
         recDuzCard.style.borderColor=dzBorder;
         recDuz.innerHTML=`
-            <div style="font-size:.7em;color:${dzCor};font-weight:700;letter-spacing:1px;margin-bottom:6px;">${dzSinal} — Confiança ${dzConf}</div>
+            <div style="font-size:.7em;color:${dzCor};font-weight:700;letter-spacing:1px;margin-bottom:6px;">${dzSinal}${dzConf!=='—'?' — '+dzConf:''}</div>
             <div style="display:flex;gap:8px;justify-content:center;">
                 <span class="rec-badge" style="background:${dzCor}22;border:1px solid ${dzCor};color:${dzCor};">${dzPar[0].nome}</span>
                 <span class="rec-badge" style="background:${dzCor}22;border:1px solid ${dzCor};color:${dzCor};">${dzPar[1].nome}</span>
             </div>
-            <div style="font-size:.68em;color:rgba(255,255,255,.3);margin-top:6px;">Excluída: ${dzQuente.nome} (${dzQuente.pct}% — ${dzQuente.cnt}x)${confirmaDz?' ✓ confirmada recente':''}</div>
+            <div style="font-size:.65em;color:rgba(255,255,255,.3);margin-top:6px;">
+                Excl: ${dzExcl.nome} (Z:${dzExcl.z>=0?'+':''}${dzExcl.z.toFixed(2)} | ${dzExcl.pct}%)
+            </div>
+            <div style="font-size:.6em;color:rgba(212,175,125,.4);margin-top:2px;">Score: ${dzScore.toFixed(0)}/100</div>
         `;
 
-        // COLUNAS — mesma lógica
-        const clRank=[{i:0,pct:clPct[0],nome:clNomes[0],cnt:cl[0]},{i:1,pct:clPct[1],nome:clNomes[1],cnt:cl[1]},{i:2,pct:clPct[2],nome:clNomes[2],cnt:cl[2]}].sort((a,b)=>b.pct-a.pct);
-        const clQuente=clRank[0];
-        const clPar=clRank.slice(1);
-        const clDom=clQuente.pct-33.3;
+        // COLUNAS: mesma lógica
+        const clRank=[0,1,2].map(i=>({i,z:clZ[i],pct:clPct[i],nome:clNomes[i],cnt:cl[i],gap:gaps.cl[i],bayes:bayesCol[i]})).sort((a,b)=>b.z-a.z);
+        const clExcl=clRank[0];
+        const clParR=clRank.slice(1);
 
-        const clUlt=[0,0,0];ult10.forEach(n=>{if(n>0)clUlt[coluna(n)-1]++;});
-        const clQuenteRecente=clUlt[clQuente.i];
-        const confirmaCol=clQuenteRecente>=4;
+        const clScore = (
+            Math.max(0, clExcl.z) * 30 +
+            (sigCol.forca) * 15 +
+            Math.min(clParR[0].gap + clParR[1].gap, 20) * 1.5 +
+            (clExcl.bayes > 38 ? 10 : clExcl.bayes > 35 ? 5 : 0) +
+            (total > 30 ? 10 : total > 20 ? 5 : 0)
+        );
 
-        let clConf,clSinal,clCorr,clBorderC;
-        if(clDom>=12 && confirmaCol){clConf='ALTA';clSinal='APOSTAR';clCorr='#2ecc71';clBorderC='rgba(46,204,113,.6)';}
-        else if(clDom>=8){clConf=confirmaCol?'ALTA':'MODERADA';clSinal='APOSTAR';clCorr=confirmaCol?'#2ecc71':'#f1c40f';clBorderC=confirmaCol?'rgba(46,204,113,.5)':'rgba(241,196,15,.5)';}
-        else if(clDom>=4){clConf='MODERADA';clSinal='ATENÇÃO';clCorr='#f1c40f';clBorderC='rgba(241,196,15,.4)';}
-        else{clConf='BAIXA';clSinal='AGUARDAR';clCorr='rgba(255,255,255,.4)';clBorderC='rgba(255,255,255,.15)';}
+        let clSinal,clConf,clCorr,clBorderC;
+        if(clScore>=60){clSinal='APOSTAR';clConf='ALTA';clCorr='#2ecc71';clBorderC='rgba(46,204,113,.6)';}
+        else if(clScore>=40){clSinal='APOSTAR';clConf='MODERADA';clCorr='#f1c40f';clBorderC='rgba(241,196,15,.5)';}
+        else if(clScore>=25){clSinal='ATENÇÃO';clConf='BAIXA';clCorr='#f39c12';clBorderC='rgba(243,156,18,.3)';}
+        else{clSinal='AGUARDAR';clConf='—';clCorr='rgba(255,255,255,.4)';clBorderC='rgba(255,255,255,.15)';}
 
         recColCard.style.borderColor=clBorderC;
         recCol.innerHTML=`
-            <div style="font-size:.7em;color:${clCorr};font-weight:700;letter-spacing:1px;margin-bottom:6px;">${clSinal} — Confiança ${clConf}</div>
+            <div style="font-size:.7em;color:${clCorr};font-weight:700;letter-spacing:1px;margin-bottom:6px;">${clSinal}${clConf!=='—'?' — '+clConf:''}</div>
             <div style="display:flex;gap:8px;justify-content:center;">
-                <span class="rec-badge" style="background:${clCorr}22;border:1px solid ${clCorr};color:${clCorr};">${clPar[0].nome}</span>
-                <span class="rec-badge" style="background:${clCorr}22;border:1px solid ${clCorr};color:${clCorr};">${clPar[1].nome}</span>
+                <span class="rec-badge" style="background:${clCorr}22;border:1px solid ${clCorr};color:${clCorr};">${clParR[0].nome}</span>
+                <span class="rec-badge" style="background:${clCorr}22;border:1px solid ${clCorr};color:${clCorr};">${clParR[1].nome}</span>
             </div>
-            <div style="font-size:.68em;color:rgba(255,255,255,.3);margin-top:6px;">Excluída: ${clQuente.nome} (${clQuente.pct}% — ${clQuente.cnt}x)${confirmaCol?' ✓ confirmada recente':''}</div>
+            <div style="font-size:.65em;color:rgba(255,255,255,.3);margin-top:6px;">
+                Excl: ${clExcl.nome} (Z:${clExcl.z>=0?'+':''}${clExcl.z.toFixed(2)} | ${clExcl.pct}%)
+            </div>
+            <div style="font-size:.6em;color:rgba(212,175,125,.4);margin-top:2px;">Score: ${clScore.toFixed(0)}/100</div>
         `;
     }
 
     // === INDICADORES ===
-    // Confiança geral: média da dominância de dúzias + colunas
+    // Confiança: baseada no score composto médio
     if(total>=10){
-        const dzD=Math.max(dzPct[0],dzPct[1],dzPct[2])-33.3;
-        const clD=Math.max(clPct[0],clPct[1],clPct[2])-33.3;
-        const mediaD=(dzD+clD)/2;
-        const confPct=Math.min(Math.round(50+(mediaD*4)+(total>30?15:total>20?10:0)),99);
-        document.getElementById('indConfianca').textContent=confPct+'%';
-        document.getElementById('indConfianca').style.color=confPct>70?'#2ecc71':confPct>50?'#f1c40f':'rgba(255,255,255,.5)';
+        const dzS2=[0,1,2].map(i=>({z:dzZ[i]})).sort((a,b)=>b.z-a.z);
+        const clS2=[0,1,2].map(i=>({z:clZ[i]})).sort((a,b)=>b.z-a.z);
+        const avgMaxZ=(dzS2[0].z+clS2[0].z)/2;
+        const confPct=Math.min(Math.round(40+(avgMaxZ*15)+(sigDz.forca+sigCol.forca)*5+(total>30?10:0)),99);
+        document.getElementById('indConfianca').textContent=Math.max(0,confPct)+'%';
+        document.getElementById('indConfianca').style.color=confPct>65?'#2ecc71':confPct>45?'#f1c40f':'rgba(255,255,255,.5)';
     } else {
         document.getElementById('indConfianca').textContent='—';
         document.getElementById('indConfianca').style.color='rgba(255,255,255,.5)';
     }
 
-    // Assertividade — automática, separada por dúzias e colunas
+    // Assertividade — automática
     const aDz=R.assertDz||{ac:0,er:0};
     const aCol=R.assertCol||{ac:0,er:0};
     const totalDzAE=aDz.ac+aDz.er;
@@ -593,45 +783,40 @@ function renderRoleta(){
     const indAssert=document.getElementById('indAssert');
     indAssert.textContent=totalAE>0?avgAssert+'%':'—';
     indAssert.style.color=avgAssert>65?'#2ecc71':avgAssert>50?'#f1c40f':totalAE>0?'#e74c3c':'rgba(255,255,255,.5)';
-    if(totalAE>0)indAssert.title='Dúzias: '+dzAssertPct+'% ('+aDz.ac+'/'+totalDzAE+') | Colunas: '+colAssertPct+'% ('+aCol.ac+'/'+totalColAE+')';
 
     // Detalhe assertividade
     const adEl=document.getElementById('assertDetalhe');
     if(adEl){
         if(totalAE>0){
-            const dzCor=dzAssertPct>65?'#2ecc71':dzAssertPct>50?'#f1c40f':'#e74c3c';
-            const clCor2=colAssertPct>65?'#2ecc71':colAssertPct>50?'#f1c40f':'#e74c3c';
+            const dzCor3=dzAssertPct>65?'#2ecc71':dzAssertPct>50?'#f1c40f':'#e74c3c';
+            const clCor3=colAssertPct>65?'#2ecc71':colAssertPct>50?'#f1c40f':'#e74c3c';
             adEl.innerHTML=`
                 <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:6px;padding:10px;display:flex;justify-content:space-between;align-items:center;">
                     <span style="font-size:.72em;color:rgba(255,255,255,.4);">Dúzias</span>
-                    <span style="font-size:.9em;font-weight:600;color:${dzCor};">${dzAssertPct}% <span style="font-size:.7em;font-weight:400;color:rgba(255,255,255,.3);">(${aDz.ac}/${totalDzAE})</span></span>
+                    <span style="font-size:.9em;font-weight:600;color:${dzCor3};">${dzAssertPct}% <span style="font-size:.7em;font-weight:400;color:rgba(255,255,255,.3);">(${aDz.ac}/${totalDzAE})</span></span>
                 </div>
                 <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:6px;padding:10px;display:flex;justify-content:space-between;align-items:center;">
                     <span style="font-size:.72em;color:rgba(255,255,255,.4);">Colunas</span>
-                    <span style="font-size:.9em;font-weight:600;color:${clCor2};">${colAssertPct}% <span style="font-size:.7em;font-weight:400;color:rgba(255,255,255,.3);">(${aCol.ac}/${totalColAE})</span></span>
+                    <span style="font-size:.9em;font-weight:600;color:${clCor3};">${colAssertPct}% <span style="font-size:.7em;font-weight:400;color:rgba(255,255,255,.3);">(${aCol.ac}/${totalColAE})</span></span>
                 </div>
             `;
-        } else {
-            adEl.innerHTML='';
-        }
+        } else { adEl.innerHTML=''; }
     }
 
-    // Mesa estável/instável
+    // Mesa estável/instável — Chi² combinado + Volatilidade + Zeros
     const alerta=document.getElementById('alertaMesa');
     const indMesa=document.getElementById('indMesa');
     if(total>=15){
-        // Chi-quadrado simplificado
-        const esperado=T/3;
-        const chi2=dz.reduce((s,d)=>s+Math.pow(d-esperado,2)/esperado,0)+cl.reduce((s,c2)=>s+Math.pow(c2-esperado,2)/esperado,0);
-        // Verificar se zero aparece demais (>5% com amostra grande)
+        const chiTotal=chiDz+chiCol;
         const zeroPct=total>0?(zeros/total*100):0;
 
-        if(chi2>15||zeroPct>8){
+        if(chiTotal>18||zeroPct>8||vol.texto==='MUITO ALTA'){
             indMesa.textContent='ALERTA';indMesa.style.color='#e74c3c';
             alerta.style.display='block';
-            if(zeroPct>8) alerta.textContent='⚠ MESA SUSPEITA — Zero apareceu '+zeros+'x ('+zeroPct.toFixed(1)+'%). Frequência anormal. Considere trocar de mesa.';
-            else alerta.textContent='⚠ MESA INSTÁVEL — Distribuição muito irregular (Chi²='+chi2.toFixed(1)+'). Padrão fora do esperado. Cuidado.';
-        } else if(chi2>8){
+            if(zeroPct>8) alerta.textContent='⚠ Zero: '+zeros+'x ('+zeroPct.toFixed(1)+'%). Frequência anormal.';
+            else if(vol.texto==='MUITO ALTA') alerta.textContent='⚠ Volatilidade extrema. Distribuição oscilando demais entre blocos.';
+            else alerta.textContent='⚠ Chi² total: '+chiTotal.toFixed(1)+'. Distribuição muito irregular.';
+        } else if(chiTotal>10||vol.texto==='ALTA'){
             indMesa.textContent='INSTÁVEL';indMesa.style.color='#f1c40f';
             alerta.style.display='none';
         } else {
@@ -643,6 +828,7 @@ function renderRoleta(){
         alerta.style.display='none';
     }
 }
+
 
 // ==========================================
 // GESTÃO DE BANCA — 2:1
