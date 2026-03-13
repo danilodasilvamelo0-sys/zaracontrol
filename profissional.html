@@ -5,332 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0a">
     <title>ZARA | Profissional</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cinzel:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;padding:20px 20px 80px 80px}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        html{scroll-behavior:smooth;background:#0a0a0a!important}
+        body{font-family:'Inter',sans-serif;background:#0a0a0a!important;color:#fff;min-height:100vh;padding:20px 20px 80px 80px}
         body::before,body::after{content:'';position:fixed;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#d4af7d,transparent);z-index:9999}
         body::before{top:0}body::after{bottom:0}
-        .sidebar{position:fixed;top:0;left:0;width:60px;height:100vh;background:linear-gradient(180deg,#0f0f0f,#1a1a1a);border-right:1px solid rgba(212,175,125,0.15);z-index:1000;display:flex;flex-direction:column;align-items:center;padding:15px 0;transition:width 0.3s;overflow:hidden}
-        .sidebar:hover{width:200px}
-        .sidebar-logo{width:40px;height:40px;border:1px solid rgba(212,175,125,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.2em;color:#d4af7d;margin-bottom:20px;text-decoration:none}
-        .sidebar-menu{display:flex;flex-direction:column;gap:5px;width:100%;flex:1}
-        .sidebar-menu a{display:flex;align-items:center;gap:12px;padding:12px 10px;color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.85em;border-left:2px solid transparent;white-space:nowrap;transition:all 0.3s}
-        .sidebar-menu a:hover,.sidebar-menu a.active{background:rgba(212,175,125,0.15);border-left-color:#d4af7d;color:#d4af7d}
-        .sidebar-menu a svg{width:20px;height:20px;min-width:20px;margin-left:10px}
-        .sidebar-menu a span{opacity:0;transition:opacity 0.3s}
-        .sidebar:hover .sidebar-menu a span{opacity:1}
-        .sidebar-divider{height:1px;background:rgba(212,175,125,0.2);margin:8px 10px;width:calc(100% - 20px)}
-        .sidebar-footer{padding:15px 10px;text-align:center;border-top:1px solid rgba(212,175,125,0.2);width:100%}
-        .sidebar-footer p{color:rgba(255,255,255,0.6);font-size:0.7em;opacity:0;transition:opacity 0.3s}
-        .sidebar-footer .instituto{color:#d4af7d;display:block;margin-bottom:3px}
-        .sidebar:hover .sidebar-footer p{opacity:1}
-        .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;border-top:1px solid rgba(212,175,125,0.15);padding:8px 0;z-index:1000}
-        .mobile-nav-items{display:flex;justify-content:space-around}
-        .mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.6em;padding:5px}
-        .mobile-nav-item svg{width:20px;height:20px}
-        .mobile-nav-item.active{color:#d4af7d}
-        @media(max-width:768px){body{padding:20px 10px 80px 10px}.sidebar{display:none}.mobile-nav{display:block}}
-        .container{max-width:1200px;margin:0 auto;background:#141414;border:1px solid rgba(212,175,125,0.15);border-radius:20px;overflow:hidden}
-        .header{background:linear-gradient(135deg,#1a1a1a,#0f0f0f);border-bottom:1px solid rgba(212,175,125,0.2);padding:25px;text-align:center}
-        .header h1{font-family:'Playfair Display',serif;font-size:1.8em;margin-bottom:8px;letter-spacing:3px}
-        .header p{font-size:0.85em;color:rgba(212,175,125,0.8)}
-        .sub-tabs{display:flex;gap:5px;padding:12px 15px;background:#1a1a1a;border-bottom:1px solid rgba(212,175,125,0.1);flex-wrap:wrap}
-        .sub-tab-btn{padding:10px 16px;background:transparent;border:1px solid rgba(212,175,125,0.2);color:rgba(255,255,255,0.5);font-size:0.8em;cursor:pointer;border-radius:6px;transition:all 0.3s}
-        .sub-tab-btn:hover,.sub-tab-btn.active{background:rgba(212,175,125,0.15);border-color:#d4af7d;color:#d4af7d}
-        .sub-content{display:none;padding:20px}
-        .sub-content.active{display:block}
-        .config-bar{background:rgba(212,175,125,0.08);border:1px solid rgba(212,175,125,0.15);border-radius:10px;padding:15px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:20px;align-items:center}
-        .config-item{display:flex;align-items:center;gap:10px}
-        .config-item label{font-size:0.8em;color:rgba(255,255,255,0.6)}
-        .config-item input{padding:8px;background:#141414;border:1px solid rgba(212,175,125,0.2);border-radius:6px;color:#fff;font-size:0.85em}
-        .config-item .valor{font-size:1.1em;color:#d4af7d;font-weight:500}
-        .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
-        .card{background:#1a1a1a;border:1px solid rgba(212,175,125,0.1);border-radius:12px;padding:18px}
-        .card-title{font-size:0.75em;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-        .card-value{font-size:1.5em;color:#fff;font-weight:500}
-        .card-value.destaque{color:#d4af7d}
-        .section{background:#1a1a1a;border:1px solid rgba(212,175,125,0.1);border-radius:12px;padding:20px;margin-bottom:20px}
-        .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px}
-        .section-title{font-family:'Playfair Display',serif;font-size:1.1em;color:#d4af7d}
-        table{width:100%;border-collapse:collapse;background:#141414;border-radius:10px;overflow:hidden}
-        th{background:#1f1f1f;color:#d4af7d;padding:12px;text-align:left;font-size:0.75em;text-transform:uppercase;border-bottom:1px solid rgba(212,175,125,0.15)}
-        td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.03);color:rgba(255,255,255,0.85);font-size:0.85em}
-        tr:hover{background:rgba(212,175,125,0.03)}
-        .checkbox-status{appearance:none;width:22px;height:22px;border:2px solid #2ecc71;border-radius:50%;cursor:pointer;background:transparent;position:relative}
-        .checkbox-status:checked{background:#2ecc71}
-        .checkbox-status:checked::after{content:'';position:absolute;width:5px;height:9px;border:solid #0a0a0a;border-width:0 2px 2px 0;top:50%;left:50%;transform:translate(-50%,-60%) rotate(45deg)}
-        .progress-bar{height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;flex:1}
-        .progress-fill{height:100%;background:linear-gradient(90deg,#2ecc71,#27ae60);border-radius:4px}
-        .btn{padding:10px 20px;border:none;border-radius:6px;font-size:0.85em;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:6px}
-        .btn-primary{background:linear-gradient(135deg,#d4af7d,#c9a066);color:#0a0a0a;font-weight:600}
-        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(212,175,125,0.3)}
-        .btn-secondary{background:transparent;border:1px solid rgba(212,175,125,0.3);color:#d4af7d}
-        .btn-sm{padding:6px 12px;font-size:0.75em}
-        .btn-icon{background:transparent;border:none;color:rgba(255,255,255,0.4);cursor:pointer;padding:5px}
-        .btn-icon:hover{color:#d4af7d}
-        .btn-icon.delete:hover{color:#e74c3c}
-        .btn-icon.play:hover{color:#2ecc71}
-        .btn-group{display:flex;gap:5px}
-        .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-bottom:15px}
-        .form-group{display:flex;flex-direction:column;gap:6px}
-        .form-group label{font-size:0.75em;color:rgba(255,255,255,0.5);text-transform:uppercase}
-        .form-group input,.form-group select,.form-group textarea{padding:10px;background:#141414;border:1px solid rgba(212,175,125,0.2);border-radius:6px;color:#fff;font-size:0.9em;outline:none}
-        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#d4af7d}
-        .form-group select option{background:#141414}
-        .form-group textarea{min-height:80px;resize:vertical;font-family:inherit}
-        .item-card{background:#141414;border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:15px;margin-bottom:12px}
-        .item-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:10px}
-        .item-title{font-size:0.95em;color:#fff;font-weight:500}
-        .item-subtitle{font-size:0.8em;color:rgba(255,255,255,0.5);margin-top:3px}
-        .item-progress{display:flex;align-items:center;gap:10px;margin-top:10px}
-        .item-progress-text{font-size:0.75em;color:rgba(255,255,255,0.5);min-width:40px}
-        .item-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.05);font-size:0.8em;color:rgba(255,255,255,0.5)}
-        .timer-display{font-family:monospace;font-size:1.2em;color:#d4af7d;padding:5px 10px;background:rgba(212,175,125,0.1);border-radius:6px}
-        .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:2000;justify-content:center;align-items:center;padding:20px}
-        .modal-overlay.active{display:flex}
-        .modal-content{background:#1a1a1a;border:1px solid rgba(212,175,125,0.2);border-radius:15px;padding:25px;width:100%;max-width:500px;max-height:85vh;overflow-y:auto}
-        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-        .modal-title{font-family:'Playfair Display',serif;font-size:1.2em;color:#d4af7d}
-        .modal-close{background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5em;cursor:pointer}
-        .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:15px;border-top:1px solid rgba(255,255,255,0.05)}
-        .empty-state{text-align:center;padding:40px 20px;color:rgba(255,255,255,0.4);font-size:0.9em}
-        .status-badge{padding:4px 10px;border-radius:12px;font-size:0.7em;font-weight:500}
-        .status-badge.pendente{background:rgba(241,196,15,0.15);color:#f1c40f}
-        .status-badge.concluido{background:rgba(46,204,113,0.15);color:#2ecc71}
-        .status-badge.atrasado{background:rgba(231,76,60,0.15);color:#e74c3c}
-        .dia-header{display:flex;justify-content:space-between;align-items:center;padding:10px 15px;background:rgba(212,175,125,0.08);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:background 0.3s}
-        .dia-header:hover{background:rgba(212,175,125,0.15)}
-        .dia-header .dia-arrow{transition:transform 0.3s;color:#d4af7d}
-        .dia-header.expanded .dia-arrow{transform:rotate(180deg)}
-        .dia-nome{font-size:0.85em;color:#d4af7d;font-weight:500}
-        .dia-content{padding:10px 15px;background:#141414;border-radius:8px;margin-bottom:15px;display:none}
-        .dia-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
-        .dia-item:last-child{border-bottom:none}
-        .file-upload{border:2px dashed rgba(212,175,125,0.3);border-radius:8px;padding:20px;text-align:center;cursor:pointer}
-        .file-upload:hover{border-color:#d4af7d}
-        .file-upload input{display:none}
-        .file-upload p{font-size:0.85em;color:rgba(255,255,255,0.5)}
-        
-        /* CRONOGRAMA CALENDÁRIO PREMIUM - ESTILO PDF */
-        .cronograma-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;flex-wrap:wrap;gap:15px}
-        .cronograma-titulo{font-family:'Playfair Display',serif;font-size:1.5em;color:#d4af7d;letter-spacing:2px}
-        .cronograma-semana{font-size:0.85em;color:rgba(255,255,255,0.6);margin-top:5px}
-        .cronograma-nav{display:flex;align-items:center;gap:15px}
-        .cronograma-nav-btn{width:36px;height:36px;border-radius:50%;background:rgba(212,175,125,0.1);border:1px solid rgba(212,175,125,0.3);color:#d4af7d;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
-        .cronograma-nav-btn:hover:not(:disabled){background:#d4af7d;color:#0a0a0a}
-        .cronograma-nav-btn:disabled{opacity:0.3;cursor:not-allowed}
-        .cronograma-actions{display:flex;gap:10px;align-items:center}
-        .calendario-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-        @media(max-width:1100px){.calendario-grid{grid-template-columns:repeat(3,1fr)}}
-        @media(max-width:768px){.calendario-grid{grid-template-columns:repeat(2,1fr)}}
-        @media(max-width:480px){.calendario-grid{grid-template-columns:1fr}}
-        
-        .dia-card{background:#141414;border:1px solid rgba(212,175,125,0.15);border-radius:16px;min-height:320px;display:flex;flex-direction:column;transition:all 0.3s;overflow:visible;position:relative}
-        .dia-card:hover{border-color:rgba(212,175,125,0.4);transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.4)}
-        .dia-card.hoje{border-color:#d4af7d;box-shadow:0 0 25px rgba(212,175,125,0.15)}
-        
-        .dia-card-header{padding:20px 18px 15px;display:flex;justify-content:space-between;align-items:flex-start}
-        .dia-header-left{display:flex;align-items:center;gap:12px}
-        .dia-add-btn{width:28px;height:28px;border-radius:50%;background:#27ae60;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 3px 10px rgba(39,174,96,0.3);flex-shrink:0}
-        .dia-add-btn:hover{background:#2ecc71;transform:scale(1.1)}
-        .dia-add-btn svg{width:14px;height:14px}
-        .dia-info{display:flex;flex-direction:column;gap:4px}
-        .dia-nome-cal{font-family:'Playfair Display',serif;font-size:0.95em;color:#fff;font-weight:600;text-transform:uppercase;letter-spacing:1px}
-        .dia-contador{font-size:0.75em;color:#d4af7d;font-weight:600;text-transform:uppercase}
-        
-        .dia-badge{position:absolute;top:15px;right:15px;width:65px;height:65px;background:linear-gradient(135deg,#d4af7d,#c9a066);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(212,175,125,0.3)}
-        .dia-badge-num{font-size:1.8em;font-weight:700;color:#0a0a0a;line-height:1}
-        .dia-badge-mes{font-size:0.6em;color:rgba(10,10,10,0.7);text-transform:lowercase;margin-top:2px;font-weight:500}
-        
-        .dia-card-body{flex:1;padding:10px 18px 20px;overflow-y:auto;max-height:260px}
-        .dia-card-body::-webkit-scrollbar{width:3px}
-        .dia-card-body::-webkit-scrollbar-track{background:transparent}
-        .dia-card-body::-webkit-scrollbar-thumb{background:rgba(212,175,125,0.4);border-radius:2px}
-        
-        .materia-grupo{margin-bottom:18px}
-        .materia-titulo{font-family:'Playfair Display',serif;font-size:1.1em;color:#d4af7d;font-weight:600;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(212,175,125,0.15)}
-        
-        .assunto-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;transition:all 0.2s;position:relative}
-        .assunto-item.concluido .assunto-texto{text-decoration:line-through;color:rgba(255,255,255,0.3)}
-        .assunto-check{flex-shrink:0;appearance:none;width:18px;height:18px;border:2px solid rgba(212,175,125,0.5);border-radius:50%;cursor:pointer;background:transparent;position:relative;transition:all 0.2s}
-        .assunto-check:hover{border-color:#d4af7d}
-        .assunto-check:checked{background:#d4af7d;border-color:#d4af7d}
-        .assunto-check:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#0a0a0a;font-size:10px;font-weight:bold}
-        .assunto-content{flex:1;display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
-        .assunto-texto{font-family:'Inter',sans-serif;font-size:0.85em;color:rgba(255,255,255,0.85);line-height:1.4;flex:1;word-break:break-word}
-        .assunto-acoes{display:flex;gap:4px;opacity:0;transition:opacity 0.2s;flex-shrink:0;z-index:5}
-        .assunto-item:hover .assunto-acoes{opacity:1}
-        .assunto-btn{background:rgba(0,0,0,0.3);border:none;color:rgba(255,255,255,0.5);cursor:pointer;padding:4px;border-radius:4px;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
-        .assunto-btn:hover{color:#d4af7d;background:rgba(212,175,125,0.2)}
-        .assunto-btn.delete:hover{color:#e74c3c;background:rgba(231,76,60,0.2)}
-        
-        .dia-vazio{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,0.25);font-size:0.85em;font-style:italic}
-        .cronograma-empty{text-align:center;padding:60px 20px;color:rgba(255,255,255,0.4)}
-        .cronograma-empty-icon{font-size:3em;margin-bottom:15px;opacity:0.3}
-        .cronograma-empty p{margin-bottom:20px}
-        #syncStatus{position:fixed;bottom:100px;right:20px;padding:12px 22px;border-radius:10px;font-size:0.9em;font-weight:500;z-index:10001;opacity:0;transition:opacity 0.3s;color:#fff}
-        @media(max-width:768px){
-            #syncStatus{bottom:90px;right:10px;left:10px;text-align:center}
-            .cronograma-grid{grid-template-columns:1fr}
-            .assunto-acoes{opacity:1}
-            .dia-card{min-height:auto}
-            .dia-card-body{max-height:none;padding-bottom:15px}
-            
-            /* Body e Container */
-            body{padding:10px 10px 85px 10px}
-            .container{border-radius:12px}
-            
-            /* Header */
-            .header{padding:20px 15px}
-            .header h1{font-size:1.4em;letter-spacing:1px}
-            .header p{font-size:0.8em}
-            
-            /* Sub Tabs */
-            .sub-tabs{padding:10px;gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
-            .sub-tab-btn{padding:8px 12px;font-size:0.75em;flex-shrink:0;white-space:nowrap;flex:none}
-            
-            /* Sub Content */
-            .sub-content{padding:12px}
-            
-            /* Config Bar */
-            .config-bar{padding:12px;gap:10px;flex-direction:column;align-items:stretch}
-            .config-item{width:100%;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
-            .config-item:last-child{border-bottom:none}
-            .config-item label{font-size:0.75em;flex-shrink:0}
-            .config-item input{width:auto;min-width:120px;padding:8px 10px;font-size:0.85em}
-            .config-item .valor{font-size:1em}
-            
-            /* Section */
-            .section{padding:12px;margin-bottom:12px;border-radius:10px}
-            .section-header{flex-direction:column;align-items:stretch;gap:10px;margin-bottom:12px}
-            .section-title{font-size:0.95em;text-align:center}
-            .section-header .btn{width:100%;justify-content:center}
-            
-            /* Cards Grid */
-            .cards-grid{grid-template-columns:repeat(2,1fr);gap:8px}
-            .card{padding:12px}
-            .card-title{font-size:0.65em}
-            .card-value{font-size:1.1em}
-            
-            /* ============ ITEM CARD - DISCIPLINAS ============ */
-            .item-card{padding:12px;margin-bottom:10px}
-            
-            /* Header: Título à esquerda, botões à direita - NÃO MUDAR PARA COLUMN */
-            .item-header{flex-direction:row;align-items:center;gap:8px;margin-bottom:8px}
-            .item-header > div:first-child{flex:1;min-width:0}
-            .item-title{font-size:0.9em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-            .item-subtitle{font-size:0.75em}
-            
-            /* Botões de editar/excluir - manter em linha */
-            .item-header .btn-group{flex-direction:row;flex-shrink:0;gap:4px}
-            .item-header .btn-icon{padding:6px}
-            
-            /* Progress bar */
-            .item-progress{margin-top:8px;gap:8px}
-            .progress-bar{height:6px}
-            .item-progress-text{font-size:0.7em;min-width:35px}
-            
-            /* Footer: Botões e timer */
-            .item-footer{flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:10px;padding-top:10px;align-items:center}
-            .item-footer .btn-group{flex-direction:row;gap:6px;flex:1}
-            .item-footer .btn-icon{padding:6px}
-            .item-footer .btn-icon.play svg,.item-footer .btn-icon svg{width:16px;height:16px}
-            .item-footer .btn.btn-sm{padding:6px 12px;font-size:0.7em;width:auto}
-            .timer-display{font-size:0.9em;padding:4px 8px;margin-left:auto}
-            
-            /* ============ FIM ITEM CARD ============ */
-            
-            /* Tabelas */
-            table{font-size:0.75em;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
-            th,td{padding:8px 6px;white-space:nowrap}
-            th{font-size:0.65em}
-            
-            /* Formulários */
-            .form-row{grid-template-columns:1fr;gap:10px}
-            .form-group label{font-size:0.7em}
-            .form-group input,.form-group select,.form-group textarea{padding:10px;font-size:0.85em}
-            
-            /* Botões gerais */
-            .btn{padding:10px 14px;font-size:0.8em}
-            .btn-sm{padding:8px 12px;font-size:0.75em}
-            
-            /* Modais */
-            .modal-overlay{padding:10px}
-            .modal-content{padding:15px;width:100%;max-height:90vh;border-radius:12px}
-            .modal-header{margin-bottom:15px}
-            .modal-title{font-size:1em}
-            .modal-footer{flex-direction:column;gap:8px;margin-top:15px}
-            .modal-footer .btn{width:100%}
-            
-            /* Cronograma */
-            .cronograma-header{flex-direction:column;gap:12px;padding:12px;text-align:center}
-            .cronograma-titulo{font-size:1.1em}
-            .cronograma-semana{font-size:0.75em}
-            .cronograma-nav{justify-content:center;gap:10px}
-            .cronograma-nav-btn{width:32px;height:32px}
-            .cronograma-actions{width:100%;justify-content:center}
-            
-            /* Calendario Grid */
-            .calendario-grid{grid-template-columns:1fr;gap:12px}
-            
-            /* Dia Card */
-            .dia-card{border-radius:10px}
-            .dia-card-header{padding:12px}
-            .dia-badge{width:50px;height:50px;top:10px;right:10px;border-radius:8px}
-            .dia-badge-num{font-size:1.4em}
-            .dia-badge-mes{font-size:0.55em}
-            .dia-nome-cal{font-size:0.8em}
-            .dia-contador{font-size:0.65em}
-            .dia-add-btn{width:24px;height:24px}
-            .dia-add-btn svg{width:12px;height:12px}
-            
-            /* Matéria */
-            .materia-grupo{margin-bottom:12px}
-            .materia-titulo{font-size:0.9em;margin-bottom:8px;padding-bottom:6px}
-            .assunto-texto{font-size:0.8em}
-            .assunto-check{width:16px;height:16px}
-            .assunto-item{padding:6px 0;gap:8px}
-            .assunto-btn{padding:6px}
-            
-            /* Dia Header Collapsible */
-            .dia-header{padding:10px 12px;margin-bottom:6px}
-            .dia-nome{font-size:0.8em}
-            .dia-content{padding:8px 12px}
-            .dia-item{padding:6px 0;flex-wrap:wrap;gap:6px}
-            
-            /* Status Badge */
-            .status-badge{font-size:0.65em;padding:3px 8px}
-            
-            /* Empty State */
-            .empty-state{padding:25px 15px;font-size:0.85em}
-            
-            /* File Upload */
-            .file-upload{padding:15px}
-            .file-upload p{font-size:0.8em}
-        }
-        
-        @media(max-width:380px){
-            body{padding:8px 8px 80px 8px}
-            .header h1{font-size:1.2em}
-            .header p{font-size:0.75em}
-            .cards-grid{grid-template-columns:1fr}
-            .sub-tab-btn{padding:6px 10px;font-size:0.7em}
-            .config-item label{font-size:0.7em}
-            .config-item input{min-width:100px;font-size:0.8em}
-            .section{padding:10px}
-            .section-title{font-size:0.9em}
-            .item-title{font-size:0.85em}
-            .item-footer .btn.btn-sm{padding:5px 10px;font-size:0.65em}
-            .timer-display{font-size:0.8em;padding:3px 6px}
-            .dia-badge{width:45px;height:45px}
-            .dia-badge-num{font-size:1.2em}
-            .cronograma-titulo{font-size:1em}
-            .modal-content{padding:12px}
-            .modal-title{font-size:0.95em}
-            table{font-size:0.7em}
-            th,td{padding:6px 4px}
-        }
+        .sidebar{position:fixed;top:0;left:0;width:60px;height:100vh;background:linear-gradient(180deg,#0f0f0f,#1a1a1a);border-right:1px solid rgba(212,175,125,.15);z-index:1000;display:flex;flex-direction:column;align-items:center;padding:15px 0;transition:width .3s;overflow:hidden}.sidebar:hover{width:200px}.sidebar-logo{width:40px;height:40px;border:1px solid rgba(212,175,125,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.1em;color:#d4af7d;margin-bottom:20px;text-decoration:none}.sidebar-menu{display:flex;flex-direction:column;gap:5px;width:100%;flex:1}.sidebar-menu a{display:flex;align-items:center;gap:12px;padding:12px 10px;color:rgba(255,255,255,.6);text-decoration:none;font-size:.85em;border-left:2px solid transparent;white-space:nowrap;transition:all .3s}.sidebar-menu a:hover,.sidebar-menu a.active{background:rgba(212,175,125,.15);border-left-color:#d4af7d;color:#d4af7d}.sidebar-menu a svg{width:20px;height:20px;min-width:20px;margin-left:10px}.sidebar-menu a span{opacity:0;transition:opacity .3s}.sidebar:hover .sidebar-menu a span{opacity:1}.sidebar-footer{padding:15px 10px;text-align:center;border-top:1px solid rgba(212,175,125,.2);width:100%}.sidebar-footer p{color:rgba(255,255,255,.6);font-size:.7em;opacity:0;transition:opacity .3s}.sidebar-footer .instituto{color:#d4af7d;display:block;font-family:'Cinzel',serif}.sidebar:hover .sidebar-footer p{opacity:1}
+        .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,#1a1a1a,#0f0f0f);border-top:1px solid rgba(212,175,125,.15);padding:10px 0;z-index:1000}.mobile-nav-items{display:flex;justify-content:space-around}.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:rgba(255,255,255,.5);text-decoration:none;font-size:.65em}.mobile-nav-item svg{width:22px;height:22px}.mobile-nav-item.active{color:#d4af7d}
+        @media(max-width:768px){body{padding:10px 10px 80px 10px}.sidebar{display:none}.mobile-nav{display:block}}
+        .main-container{max-width:1200px;margin:0 auto}
+        .container{background:#141414;border:1px solid rgba(212,175,125,.15);border-radius:20px;overflow:hidden;margin-bottom:25px}
+        .header{background:linear-gradient(135deg,#1a1a1a,#0f0f0f);border-bottom:1px solid rgba(212,175,125,.2);padding:25px;text-align:center}.header h1{font-family:'Cinzel',serif;font-size:1.8em;margin-bottom:8px;letter-spacing:4px;color:#d4af7d}.header p{font-size:.8em;color:rgba(255,255,255,.5);letter-spacing:2px}
+
+        /* TABS PRINCIPAIS */
+        .main-tabs{display:flex;background:#1a1a1a;border-bottom:1px solid rgba(212,175,125,.15)}.main-tab{flex:1;padding:14px;text-align:center;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:.85em;cursor:pointer;transition:all .3s;border-bottom:2px solid transparent;font-family:'Inter',sans-serif}.main-tab:hover{color:rgba(255,255,255,.7)}.main-tab.active{color:#d4af7d;border-bottom-color:#d4af7d;background:rgba(212,175,125,.05)}.main-tab-content{display:none}.main-tab-content.active{display:block}
+        /* SUB-TABS */
+        .sub-tabs{display:flex;gap:5px;padding:12px 15px;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(212,175,125,.08);flex-wrap:wrap}.sub-tab{padding:8px 14px;background:transparent;border:1px solid rgba(212,175,125,.15);color:rgba(255,255,255,.4);font-size:.78em;cursor:pointer;border-radius:6px;transition:all .3s}.sub-tab:hover,.sub-tab.active{background:rgba(212,175,125,.1);border-color:#d4af7d;color:#d4af7d}.sub-content{display:none;padding:20px}.sub-content.active{display:block}
+
+        /* EMPRESA-PERSONA */
+        .pilar{padding:25px;border-bottom:1px solid rgba(212,175,125,.08)}.pilar:last-child{border-bottom:none}
+        .pilar-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;cursor:pointer;user-select:none}.pilar-icon{width:40px;height:40px;background:rgba(212,175,125,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}.pilar-icon svg{width:20px;height:20px;stroke:#d4af7d}.pilar-titulo{font-family:'Cinzel',serif;font-size:1em;color:#d4af7d;letter-spacing:2px;text-transform:uppercase;flex:1}.pilar-toggle{color:rgba(212,175,125,.5);transition:transform .3s}.pilar.open .pilar-toggle{transform:rotate(180deg)}.pilar-desc{font-size:.82em;color:rgba(255,255,255,.4);margin-bottom:18px;line-height:1.6}.pilar-body{display:none}.pilar.open .pilar-body{display:block}
+        .campo-grupo{margin-bottom:15px}.campo-label{font-size:.72em;color:rgba(212,175,125,.7);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}.campo-textarea{width:100%;padding:12px;background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:8px;color:#fff;font-size:.88em;font-family:'Inter',sans-serif;resize:vertical;min-height:60px;line-height:1.6}.campo-textarea:focus{outline:none;border-color:#d4af7d}.campo-textarea::placeholder{color:rgba(255,255,255,.2)}
+        .projeto-card{background:#0a0a0a;border:1px solid rgba(212,175,125,.12);border-radius:10px;padding:15px;margin-bottom:10px}.projeto-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.projeto-nome{font-size:.95em;color:#fff;font-weight:500}.projeto-status{font-size:.7em;padding:3px 10px;border-radius:12px}.projeto-status.ativo{background:rgba(46,204,113,.15);color:#2ecc71}.projeto-status.planejando{background:rgba(241,196,15,.15);color:#f1c40f}.projeto-status.pausado{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}.projeto-status.concluido{background:rgba(52,152,219,.15);color:#3498db}.projeto-meta{font-size:.8em;color:rgba(255,255,255,.5);margin-top:8px;line-height:1.5}.projeto-conexao{font-size:.75em;color:rgba(212,175,125,.6);margin-top:6px;font-style:italic}.projeto-acoes{display:flex;gap:6px;margin-top:10px}
+        .btn-mini{padding:5px 10px;font-size:.75em;background:transparent;border:1px solid rgba(212,175,125,.2);border-radius:5px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .3s}.btn-mini:hover{border-color:#d4af7d;color:#d4af7d}.btn-mini.delete:hover{border-color:#e74c3c;color:#e74c3c}
+        .feedback-card{background:#0a0a0a;border-left:3px solid rgba(212,175,125,.3);border-radius:0 8px 8px 0;padding:12px 15px;margin-bottom:8px}.feedback-data{font-size:.7em;color:rgba(255,255,255,.3)}.feedback-texto{font-size:.85em;color:rgba(255,255,255,.7);margin-top:4px;line-height:1.5}.feedback-tipo{font-size:.65em;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px}.feedback-tipo.positivo{background:rgba(46,204,113,.15);color:#2ecc71}.feedback-tipo.ajuste{background:rgba(241,196,15,.15);color:#f1c40f}.feedback-tipo.critico{background:rgba(231,76,60,.15);color:#e74c3c}
+        .meta-card{background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:10px;padding:15px;margin-bottom:10px}.meta-header{display:flex;justify-content:space-between;align-items:center}.meta-texto{font-size:.9em;color:rgba(255,255,255,.8);flex:1}.meta-prazo{font-size:.75em;color:rgba(212,175,125,.6)}.meta-barra{height:4px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:10px;overflow:hidden}.meta-fill{height:100%;background:linear-gradient(90deg,#d4af7d,#c9a066);border-radius:2px}
+        .btn-add{display:flex;align-items:center;gap:8px;padding:10px 18px;background:transparent;border:1px dashed rgba(212,175,125,.25);border-radius:8px;color:rgba(212,175,125,.6);font-size:.82em;cursor:pointer;width:100%;justify-content:center;margin-top:12px}.btn-add:hover{border-color:#d4af7d;color:#d4af7d}.btn-add svg{width:16px;height:16px}
+
+        /* ==================== ROLETA ==================== */
+        .roleta-grid{display:grid;grid-template-columns:300px 1fr;gap:20px}
+        @media(max-width:768px){.roleta-grid{grid-template-columns:1fr}}
+
+        /* Mesa de números */
+        .mesa-numeros{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+        .mesa-btn{padding:8px 4px;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#fff;font-size:.85em;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;font-family:'Inter',sans-serif}
+        .mesa-btn:active{transform:scale(0.92)}
+        .mesa-btn.vermelho{background:rgba(200,30,30,.6)}.mesa-btn.preto{background:rgba(30,30,30,.8)}.mesa-btn.verde{background:rgba(0,128,0,.6);grid-column:span 3}
+        .mesa-btn.selecionado{box-shadow:0 0 0 2px #d4af7d;transform:scale(1.05)}
+
+        /* Últimos números */
+        .ultimos-numeros{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:15px}
+        .ultimo-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7em;font-weight:600}
+        .ultimo-num.v{background:rgba(200,30,30,.7)}.ultimo-num.p{background:rgba(40,40,40,.9);border:1px solid rgba(255,255,255,.2)}.ultimo-num.z{background:rgba(0,128,0,.7)}
+
+        /* Painel de análise */
+        .analise-box{background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:10px;padding:15px;margin-bottom:15px}
+        .analise-titulo{font-size:.75em;color:rgba(212,175,125,.6);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+        .barra-container{margin-bottom:8px}.barra-label{display:flex;justify-content:space-between;font-size:.8em;margin-bottom:3px}.barra-nome{color:rgba(255,255,255,.7)}.barra-pct{color:#d4af7d;font-weight:600}
+        .barra-track{height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}.barra-fill{height:100%;border-radius:4px;transition:width .4s}
+        .barra-fill.quente{background:linear-gradient(90deg,#e74c3c,#c0392b)}.barra-fill.morno{background:linear-gradient(90deg,#f39c12,#d4af7d)}.barra-fill.frio{background:linear-gradient(90deg,#3498db,#2980b9)}
+
+        /* Recomendação */
+        .recomendacao{background:linear-gradient(135deg,rgba(212,175,125,.15),rgba(0,0,0,.3));border:1px solid rgba(212,175,125,.3);border-radius:12px;padding:20px;text-align:center;margin-bottom:15px}
+        .rec-titulo{font-family:'Cinzel',serif;font-size:.9em;color:#d4af7d;letter-spacing:1px;margin-bottom:12px}
+        .rec-duzias{display:flex;gap:10px;justify-content:center;margin-bottom:8px}
+        .rec-badge{padding:8px 18px;border-radius:8px;font-weight:600;font-size:.9em}
+        .rec-badge.alta{background:rgba(46,204,113,.2);color:#2ecc71;border:1px solid rgba(46,204,113,.4)}
+        .rec-badge.media{background:rgba(241,196,15,.15);color:#f1c40f;border:1px solid rgba(241,196,15,.3)}
+        .rec-confianca{font-size:.75em;color:rgba(255,255,255,.4);margin-top:8px}
+
+        /* Gestão de Banca */
+        .banca-card{background:#0a0a0a;border:1px solid rgba(212,175,125,.12);border-radius:10px;padding:18px;margin-bottom:12px}
+        .banca-valor{font-size:1.8em;color:#d4af7d;font-family:'Cinzel',serif;text-align:center;margin:10px 0}
+        .banca-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .banca-stat{text-align:center;padding:12px;background:rgba(212,175,125,.05);border-radius:8px}.banca-stat-label{font-size:.7em;color:rgba(255,255,255,.4);text-transform:uppercase}.banca-stat-val{font-size:1.2em;color:#fff;margin-top:4px}
+        .banca-stat-val.positivo{color:#2ecc71}.banca-stat-val.negativo{color:#e74c3c}
+
+        /* Disciplina */
+        .regra-item{display:flex;align-items:center;gap:12px;padding:12px;background:#0a0a0a;border:1px solid rgba(212,175,125,.08);border-radius:8px;margin-bottom:6px}
+        .regra-check{width:20px;height:20px;border:2px solid rgba(212,175,125,.4);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}.regra-check.done{background:#d4af7d;border-color:#d4af7d}.regra-check svg{width:12px;height:12px;color:#0a0a0a;opacity:0}.regra-check.done svg{opacity:1}
+        .regra-texto{font-size:.85em;color:rgba(255,255,255,.7)}
+
+        /* Skeleton */
+        .skeleton-box{background:linear-gradient(135deg,rgba(212,175,125,.08),rgba(0,0,0,.2));border:1px dashed rgba(212,175,125,.2);border-radius:10px;padding:30px;text-align:center;color:rgba(255,255,255,.3);font-size:.85em}
+        .skeleton-box h3{color:rgba(212,175,125,.4);font-family:'Cinzel',serif;margin-bottom:10px;font-size:1em}
+
+        /* MODAL */
+        .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:2000;justify-content:center;align-items:center;padding:20px}.modal-overlay.active{display:flex}.modal-content{background:#1a1a1a;border:1px solid rgba(212,175,125,.2);border-radius:16px;padding:25px;width:100%;max-width:450px;max-height:90vh;overflow-y:auto}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.modal-title{font-family:'Cinzel',serif;font-size:1.1em;color:#d4af7d}.modal-close{background:transparent;border:none;color:rgba(255,255,255,.5);font-size:1.5em;cursor:pointer}
+        .form-group{margin-bottom:15px}.form-group label{display:block;font-size:.75em;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.2);border-radius:6px;color:#fff;font-size:.9em;font-family:'Inter',sans-serif}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#d4af7d}.form-group select option{background:#1a1a1a}
+        .modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.btn-salvar{padding:10px 20px;background:linear-gradient(135deg,#d4af7d,#c9a066);border:none;border-radius:6px;color:#0a0a0a;font-weight:600;cursor:pointer;font-size:.85em}.btn-cancelar{padding:10px 20px;background:transparent;border:1px solid rgba(212,175,125,.3);border-radius:6px;color:#d4af7d;cursor:pointer;font-size:.85em}
+        .toast{position:fixed;bottom:100px;right:20px;padding:12px 20px;background:#1a1a1a;border:1px solid #2ecc71;border-radius:8px;color:#fff;font-size:.85em;z-index:10001;opacity:0;transform:translateY(20px);transition:all .3s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0a0a0a}::-webkit-scrollbar-thumb{background:rgba(212,175,125,.3);border-radius:3px}
+        @media(max-width:480px){.header h1{font-size:1.3em}.main-tab{font-size:.75em;padding:10px 6px}.banca-grid{grid-template-columns:1fr}.mesa-btn{font-size:.75em;padding:6px 2px}}
     </style>
 </head>
 <body>
@@ -345,720 +103,479 @@
         </div>
         <div class="sidebar-footer"><p><span class="instituto">ZARA</span>Private Access</p></div>
     </nav>
-    <nav class="mobile-nav">
-        <div class="mobile-nav-items">
-            <a href="comando.html" class="mobile-nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                Comando
-            </a>
-            <a href="index.html" class="mobile-nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                Inicio
-            </a>
-            <a href="saude.html" class="mobile-nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-                Saude
-            </a>
-            <a href="financeiro.html" class="mobile-nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                Fin
-            </a>
-            <a href="profissional.html" class="mobile-nav-item active">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                Prof
-            </a>
+    <nav class="mobile-nav"><div class="mobile-nav-items">
+        <a href="comando.html" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Comando</a>
+        <a href="index.html" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Inicio</a>
+        <a href="saude.html" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Saude</a>
+        <a href="financeiro.html" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Fin</a>
+        <a href="profissional.html" class="mobile-nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Prof.</a>
+    </div></nav>
+
+    <div class="main-container"><div class="container">
+        <div class="header"><h1>Profissional</h1><p>Estratégia &bull; Projetos &bull; Operações</p></div>
+
+        <!-- TABS PRINCIPAIS -->
+        <div class="main-tabs">
+            <button class="main-tab active" onclick="switchMain('persona')">Empresa-Persona</button>
+            <button class="main-tab" onclick="switchMain('apostas')">Apostas</button>
         </div>
-    </nav>
-    <div class="container">
-        <div class="header"><h1>Profissional</h1><p>Estudos OAB</p></div>
-        <div class="sub-content active" id="aba-oab">
-            <div class="config-bar">
-                <div class="config-item"><label>Data Inscrição:</label><input type="date" id="dataInscricao" onchange="salvarConfig()"></div>
-                <div class="config-item"><label>Inicio Estudos:</label><input type="date" id="dataInicio" onchange="salvarConfig()"></div>
-                <div class="config-item"><label>Data Prova:</label><input type="date" id="dataProva" onchange="salvarConfig()"></div>
-                <div class="config-item"><label>Dias Restantes:</label><span class="valor" id="diasRestantes">-</span></div>
-                <div class="config-item"><label>Dias Estudados:</label><span class="valor" id="diasEstudados">0</span></div>
+
+        <!-- ==================== EMPRESA-PERSONA ==================== -->
+        <div class="main-tab-content active" id="tab-persona">
+            <div class="pilar open" id="pilar1"><div class="pilar-header" onclick="togglePilar('pilar1')"><div class="pilar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div><span class="pilar-titulo">Identidade Nuclear</span><svg class="pilar-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><p class="pilar-desc">O alicerce. Quem você é sem máscara.</p><div class="pilar-body"><div class="campo-grupo"><div class="campo-label">O que me move?</div><textarea class="campo-textarea" id="campo_proposito" placeholder="Meu propósito." onchange="salvarCampo('proposito',this.value)"></textarea></div><div class="campo-grupo"><div class="campo-label">O que eu não tolero?</div><textarea class="campo-textarea" id="campo_intolerancias" placeholder="Valores inegociáveis." onchange="salvarCampo('intolerancias',this.value)"></textarea></div><div class="campo-grupo"><div class="campo-label">Minha visão de vida</div><textarea class="campo-textarea" id="campo_visao" placeholder="Onde quero estar em 5 anos." onchange="salvarCampo('visao',this.value)"></textarea></div><div class="campo-grupo"><div class="campo-label">Meu arquétipo</div><textarea class="campo-textarea" id="campo_arquetipo" placeholder="O Estrategista? O Líder?" onchange="salvarCampo('arquetipo',this.value)" style="min-height:40px;"></textarea></div><div class="campo-grupo"><div class="campo-label">Princípios</div><textarea class="campo-textarea" id="campo_principios" placeholder="Regras internas." onchange="salvarCampo('principios',this.value)"></textarea></div></div></div>
+            <div class="pilar" id="pilar2"><div class="pilar-header" onclick="togglePilar('pilar2')"><div class="pilar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><span class="pilar-titulo">Posicionamento</span><svg class="pilar-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><p class="pilar-desc">Como o mundo te vê.</p><div class="pilar-body"><div class="campo-grupo"><div class="campo-label">Frase de posicionamento</div><textarea class="campo-textarea" id="campo_frase" placeholder="Uma frase que define quem você é." onchange="salvarCampo('frase',this.value)" style="min-height:40px;"></textarea></div><div class="campo-grupo"><div class="campo-label">O que dizem de mim?</div><textarea class="campo-textarea" id="campo_percepcao_atual" placeholder="Percepção real." onchange="salvarCampo('percepcao_atual',this.value)"></textarea></div><div class="campo-grupo"><div class="campo-label">O que eu QUERO que digam?</div><textarea class="campo-textarea" id="campo_percepcao_alvo" placeholder="Percepção alvo." onchange="salvarCampo('percepcao_alvo',this.value)"></textarea></div><div class="campo-grupo"><div class="campo-label">Meu diferencial</div><textarea class="campo-textarea" id="campo_diferencial" placeholder="O que te torna insubstituível." onchange="salvarCampo('diferencial',this.value)"></textarea></div></div></div>
+            <div class="pilar" id="pilar3"><div class="pilar-header" onclick="togglePilar('pilar3')"><div class="pilar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><span class="pilar-titulo">Projetos & Território</span><svg class="pilar-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><p class="pilar-desc">Se não serve à persona, não deveria existir.</p><div class="pilar-body"><div id="projetosLista"></div><button class="btn-add" onclick="abrirModalProjeto()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo Projeto</button></div></div>
+            <div class="pilar" id="pilar4"><div class="pilar-header" onclick="togglePilar('pilar4')"><div class="pilar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></div><span class="pilar-titulo">Reputação & Percepção</span><svg class="pilar-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><p class="pilar-desc">Loop de feedback constante.</p><div class="pilar-body"><div id="feedbacksLista"></div><button class="btn-add" onclick="abrirModalFeedback()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Registrar Feedback</button></div></div>
+            <div class="pilar" id="pilar5"><div class="pilar-header" onclick="togglePilar('pilar5')"><div class="pilar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><span class="pilar-titulo">Plano Estratégico</span><svg class="pilar-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><p class="pilar-desc">Metas conectadas à identidade.</p><div class="pilar-body"><div id="metasLista"></div><button class="btn-add" onclick="abrirModalMeta()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova Meta</button></div></div>
+        </div>
+
+        <!-- ==================== APOSTAS ==================== -->
+        <div class="main-tab-content" id="tab-apostas">
+            <div class="sub-tabs">
+                <button class="sub-tab active" onclick="switchSub('esportes')">Esportes</button>
+                <button class="sub-tab" onclick="switchSub('metodo')">Método</button>
+                <button class="sub-tab" onclick="switchSub('banca')">Gestão de Banca</button>
+                <button class="sub-tab" onclick="switchSub('disciplina')">Disciplina</button>
             </div>
-            <div class="section"><div class="section-header"><h3 class="section-title">Disciplinas OAB</h3><button class="btn btn-primary btn-sm" onclick="abrirModal('modalDisciplina')">Adicionar</button></div><div id="listaDisciplinas"></div></div>
-            <div class="section"><div class="section-header"><h3 class="section-title">Cronograma Semanal</h3><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-secondary btn-sm" onclick="abrirModal('modalReorganizar')">Reorganizar</button><button class="btn btn-primary btn-sm" onclick="novaSemana()">Nova Semana</button></div></div><div id="cronogramaCalendario"></div></div>
-            <div class="section"><div class="section-header"><h3 class="section-title">Simulados</h3><button class="btn btn-primary btn-sm" onclick="abrirModal('modalSimulado')">Adicionar</button></div><div id="listaSimulados"></div></div>
-            <div class="section"><div class="section-header"><h3 class="section-title">Exercicios</h3><button class="btn btn-primary btn-sm" onclick="abrirModal('modalExercicio')">Adicionar</button></div><div id="listaExercicios"></div></div>
+
+            <!-- ESPORTES (SKELETON) -->
+            <div class="sub-content active" id="sub-esportes">
+                <div class="skeleton-box" style="margin-bottom:15px;">
+                    <h3>Análise Pré-Jogo — Futebol</h3>
+                    <p>Integração com dados de Betano / bet365. Análise estatística de confrontos, odds, tendências. Em desenvolvimento.</p>
+                </div>
+                <div class="skeleton-box">
+                    <h3>Análise Pré-Jogo — Basquete</h3>
+                    <p>Handicap, over/under, análise de ritmo. Dados de NBA, NBB, Euroliga. Em desenvolvimento.</p>
+                </div>
+            </div>
+
+            <!-- MÉTODO: DÚZIAS E COLUNAS -->
+            <div class="sub-content" id="sub-metodo">
+                <div class="recomendacao" id="recomendacaoBox">
+                    <div class="rec-titulo">AGUARDANDO DADOS</div>
+                    <p style="font-size:.8em;color:rgba(255,255,255,.4);">Insira pelo menos 10 números para análise</p>
+                </div>
+                <div class="roleta-grid">
+                    <!-- COLUNA ESQUERDA: MESA -->
+                    <div>
+                        <div class="analise-box">
+                            <div class="analise-titulo">Últimos Números</div>
+                            <div class="ultimos-numeros" id="ultimosNums"></div>
+                            <div style="display:flex;gap:6px;margin-top:8px;">
+                                <button class="btn-mini" onclick="desfazerUltimo()">Desfazer</button>
+                                <button class="btn-mini delete" onclick="limparHistorico()">Limpar</button>
+                            </div>
+                        </div>
+                        <div class="analise-box">
+                            <div class="analise-titulo">Mesa — Toque no número</div>
+                            <div style="margin-bottom:8px;"><button class="mesa-btn verde" onclick="addNum(0)">0</button></div>
+                            <div class="mesa-numeros" id="mesaNumeros"></div>
+                        </div>
+                    </div>
+                    <!-- COLUNA DIREITA: ANÁLISE -->
+                    <div>
+                        <div class="analise-box">
+                            <div class="analise-titulo">Dúzias — Frequência</div>
+                            <div id="analiseDuzias"></div>
+                        </div>
+                        <div class="analise-box">
+                            <div class="analise-titulo">Colunas — Frequência</div>
+                            <div id="analiseColunas"></div>
+                        </div>
+                        <div class="analise-box">
+                            <div class="analise-titulo">Estatísticas</div>
+                            <div id="estatisticasGerais"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GESTÃO DE BANCA -->
+            <div class="sub-content" id="sub-banca">
+                <div class="banca-card">
+                    <div class="analise-titulo" style="text-align:center">Banca Atual</div>
+                    <div class="banca-valor" id="bancaAtual">R$ 0,00</div>
+                    <div class="banca-grid">
+                        <div class="banca-stat"><div class="banca-stat-label">Banca Inicial</div><div class="banca-stat-val" id="bancaInicial">-</div></div>
+                        <div class="banca-stat"><div class="banca-stat-label">Lucro/Prejuízo</div><div class="banca-stat-val" id="bancaLP">-</div></div>
+                        <div class="banca-stat"><div class="banca-stat-label">Stop Loss</div><div class="banca-stat-val" id="bancaSL">-</div></div>
+                        <div class="banca-stat"><div class="banca-stat-label">Stop Win</div><div class="banca-stat-val" id="bancaSW">-</div></div>
+                    </div>
+                </div>
+                <div class="banca-card">
+                    <div class="analise-titulo">Configurar Banca</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                        <div class="form-group" style="margin:0;"><label>Banca Inicial (R$)</label><input type="number" id="inputBancaInicial" placeholder="500" onchange="salvarBanca()"></div>
+                        <div class="form-group" style="margin:0;"><label>Aposta Base (R$)</label><input type="number" id="inputApostaBase" placeholder="5" onchange="salvarBanca()"></div>
+                        <div class="form-group" style="margin:0;"><label>Stop Loss (%)</label><input type="number" id="inputStopLoss" value="30" onchange="salvarBanca()"></div>
+                        <div class="form-group" style="margin:0;"><label>Stop Win (%)</label><input type="number" id="inputStopWin" value="20" onchange="salvarBanca()"></div>
+                    </div>
+                </div>
+                <div class="banca-card">
+                    <div class="analise-titulo">Registrar Resultado</div>
+                    <div style="display:flex;gap:8px;margin-top:10px;">
+                        <input type="number" id="inputResultado" placeholder="Valor ganho (+) ou perdido (-)" style="flex:1;padding:10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.2);border-radius:6px;color:#fff;font-size:.9em;">
+                        <button class="btn-salvar" onclick="registrarResultado()">Registrar</button>
+                    </div>
+                    <div id="historicoResultados" style="margin-top:15px;"></div>
+                </div>
+            </div>
+
+            <!-- DISCIPLINA -->
+            <div class="sub-content" id="sub-disciplina">
+                <div class="analise-box">
+                    <div class="analise-titulo">Checklist Mental — Antes de Jogar</div>
+                    <div id="checklistDisciplina"></div>
+                </div>
+                <div class="analise-box">
+                    <div class="analise-titulo">Regras Invioláveis</div>
+                    <div style="font-size:.85em;color:rgba(255,255,255,.6);line-height:1.8;">
+                        <p>1. Nunca jogue para recuperar perda.</p>
+                        <p>2. Stop Loss é sagrado. Bateu, sai.</p>
+                        <p>3. Stop Win existe. Ganhou o alvo, sai.</p>
+                        <p>4. Nunca aumente aposta por emoção.</p>
+                        <p>5. Sessão máxima: 30 minutos.</p>
+                        <p>6. Só entra com método. Sem método = sem entrada.</p>
+                        <p>7. Registre TUDO. O que não é medido não é controlado.</p>
+                    </div>
+                </div>
+                <div class="analise-box">
+                    <div class="analise-titulo">Estado Emocional</div>
+                    <p style="font-size:.82em;color:rgba(255,255,255,.5);margin-bottom:10px;">Antes de jogar, marque como se sente. Se não estiver verde, não jogue.</p>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;" id="estadoEmocional">
+                        <button class="btn-mini" onclick="setEstado('calmo')" style="border-color:rgba(46,204,113,.5);color:#2ecc71;">Calmo</button>
+                        <button class="btn-mini" onclick="setEstado('ansioso')" style="border-color:rgba(241,196,15,.5);color:#f1c40f;">Ansioso</button>
+                        <button class="btn-mini" onclick="setEstado('frustrado')" style="border-color:rgba(231,76,60,.5);color:#e74c3c;">Frustrado</button>
+                        <button class="btn-mini" onclick="setEstado('confiante')" style="border-color:rgba(52,152,219,.5);color:#3498db;">Confiante demais</button>
+                    </div>
+                    <div id="estadoMsg" style="margin-top:10px;font-size:.85em;"></div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="modal-overlay" id="modalDisciplina"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Disciplina</h3><button class="modal-close" onclick="fecharModal('modalDisciplina')">&times;</button></div><input type="hidden" id="discId"><div class="form-group"><label>Nome</label><input type="text" id="discNome"></div><div class="form-group"><label>Dias Estudados</label><input type="number" id="discDias" value="0"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalDisciplina')">Cancelar</button><button class="btn btn-primary" onclick="salvarDisciplina()">Salvar</button></div></div></div>
-    <div class="modal-overlay" id="modalSemana"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Nova Semana</h3><button class="modal-close" onclick="fecharModal('modalSemana')">&times;</button></div><div class="form-row"><div class="form-group"><label>Inicio</label><input type="date" id="semInicio"></div><div class="form-group"><label>Fim</label><input type="date" id="semFim"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalSemana')">Cancelar</button><button class="btn btn-primary" onclick="criarSemana()">Criar</button></div></div></div>
-    <div class="modal-overlay" id="modalAtividade"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Atividade</h3><button class="modal-close" onclick="fecharModal('modalAtividade')">&times;</button></div><input type="hidden" id="atId"><input type="hidden" id="atSemId"><input type="hidden" id="atDia"><div class="form-group"><label>Matéria</label><select id="atMateria"></select></div><div class="form-group"><label>Tipos de Estudo</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" class="tipo-check" value="Estudo"> Estudo</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" class="tipo-check" value="Lei Seca"> Lei Seca</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" class="tipo-check" value="Revisão"> Revisão</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" class="tipo-check" value="Vídeo Aula"> Vídeo Aula</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" class="tipo-check" value="Questões"> Questões</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" class="tipo-check" value="Simulado"> Simulado</label></div></div><div class="form-group"><label>Assuntos Específicos</label><div style="display:flex;gap:8px;margin-top:8px;"><input type="text" id="atAssuntoInput" placeholder="Digite e pressione Enter ou +" onkeypress="if(event.key==='Enter'){event.preventDefault();adicionarAssunto();}" style="flex:1;"><button type="button" class="btn btn-primary btn-sm" onclick="adicionarAssunto()" style="padding:8px 12px;">+</button></div><div id="listaAssuntos" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalAtividade')">Cancelar</button><button class="btn btn-primary" onclick="salvarAtividade()">Salvar</button></div></div></div>
-    <div class="modal-overlay" id="modalTarefa"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Tarefa</h3><button class="modal-close" onclick="fecharModal('modalTarefa')">&times;</button></div><input type="hidden" id="tarId"><div class="form-row"><div class="form-group"><label>Horario</label><input type="time" id="tarHora"></div><div class="form-group"><label>Categoria</label><select id="tarCat"><option>Leitura</option><option>Aula</option><option>Questoes</option><option>Revisao</option></select></div></div><div class="form-group"><label>Descricao</label><input type="text" id="tarDesc"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalTarefa')">Cancelar</button><button class="btn btn-primary" onclick="salvarTarefa()">Salvar</button></div></div></div>
-    <div class="modal-overlay" id="modalSimulado"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Simulado</h3><button class="modal-close" onclick="fecharModal('modalSimulado')">&times;</button></div><input type="hidden" id="simId"><div class="form-row"><div class="form-group"><label>Data</label><input type="date" id="simData"></div><div class="form-group"><label>Nota %</label><input type="number" id="simNota" min="0" max="100"></div></div><div class="form-row"><div class="form-group"><label>Total</label><input type="number" id="simTotal"></div><div class="form-group"><label>Acertos</label><input type="number" id="simAcertos"></div></div><div class="form-group"><label>Obs</label><textarea id="simObs"></textarea></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalSimulado')">Cancelar</button><button class="btn btn-primary" onclick="salvarSimulado()">Salvar</button></div></div></div>
-    <div class="modal-overlay" id="modalExercicio"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Exercicio</h3><button class="modal-close" onclick="fecharModal('modalExercicio')">&times;</button></div><input type="hidden" id="exId"><div class="form-row"><div class="form-group"><label>Data</label><input type="date" id="exData"></div><div class="form-group"><label>Materia</label><select id="exMateria"></select></div></div><div class="form-row"><div class="form-group"><label>Questoes</label><input type="number" id="exQtd"></div><div class="form-group"><label>Acertos</label><input type="number" id="exAcertos"></div></div><div class="form-group"><label>Tempo (min)</label><input type="number" id="exTempo"></div><div class="form-group"><label>Obs</label><textarea id="exObs"></textarea></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalExercicio')">Cancelar</button><button class="btn btn-primary" onclick="salvarExercicio()">Salvar</button></div></div></div>
-    <div class="modal-overlay" id="modalReorganizar"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Reorganizar Cronograma</h3><button class="modal-close" onclick="fecharModal('modalReorganizar')">&times;</button></div><p style="font-size:0.85em;color:rgba(255,255,255,0.5);margin-bottom:15px;">Distribui as disciplinas automaticamente: máximo 2 matérias por dia, simulado completo em dia isolado, simulado leve junto com matérias.</p><div class="form-row"><div class="form-group"><label>Data Início</label><input type="date" id="reorgInicio"></div><div class="form-group"><label>Data Fim</label><input type="date" id="reorgFim"></div></div><div class="form-row"><div class="form-group"><label>Simulado Completo a cada</label><select id="reorgSimFreq"><option value="7">1 semana</option><option value="14" selected>2 semanas</option><option value="21">3 semanas</option><option value="0">Não incluir</option></select></div><div class="form-group"><label>Dia do Simulado</label><select id="reorgSimDia"><option value="5">Sábado</option><option value="6">Domingo</option><option value="4">Sexta</option></select></div></div><div class="form-group" style="margin-bottom:15px;"><label>Simulado Leve (revisão rápida)</label><select id="reorgSimLeve"><option value="1">1x por semana</option><option value="2">2x por semana</option><option value="0" selected>Não incluir</option></select></div><div class="modal-footer"><button class="btn btn-secondary" onclick="fecharModal('modalReorganizar')">Cancelar</button><button class="btn btn-primary" onclick="reorganizarCronograma()">Reorganizar</button></div></div></div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-// ==========================================
-// CONFIGURAÇÃO SUPABASE
-// ==========================================
-const SUPABASE_URL = 'https://ltwamldgdwqzyssoukzl.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
-const USER_ID = 'default_user';
+    </div></div>
 
-let supabaseClient = null;
-let useSupabase = false;
+    <!-- MODAIS -->
+    <div class="modal-overlay" id="modalProjeto"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Projeto</h3><button class="modal-close" onclick="fecharModal('modalProjeto')">&times;</button></div><input type="hidden" id="projetoId"><div class="form-group"><label>Nome</label><input type="text" id="projetoNome"></div><div class="form-group"><label>Objetivo</label><textarea id="projetoObjetivo" rows="2"></textarea></div><div class="form-group"><label>Conexão com a Persona</label><textarea id="projetoConexao" rows="2"></textarea></div><div class="form-group"><label>Status</label><select id="projetoStatus"><option value="planejando">Planejando</option><option value="ativo">Ativo</option><option value="pausado">Pausado</option><option value="concluido">Concluído</option></select></div><div class="modal-btns"><button class="btn-cancelar" onclick="fecharModal('modalProjeto')">Cancelar</button><button class="btn-salvar" onclick="salvarProjeto()">Salvar</button></div></div></div>
+    <div class="modal-overlay" id="modalFeedback"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Feedback</h3><button class="modal-close" onclick="fecharModal('modalFeedback')">&times;</button></div><div class="form-group"><label>Feedback</label><textarea id="feedbackTexto" rows="3"></textarea></div><div class="form-group"><label>Tipo</label><select id="feedbackTipo"><option value="positivo">Positivo</option><option value="ajuste">Ajuste</option><option value="critico">Crítico</option></select></div><div class="form-group"><label>Data</label><input type="date" id="feedbackData"></div><div class="modal-btns"><button class="btn-cancelar" onclick="fecharModal('modalFeedback')">Cancelar</button><button class="btn-salvar" onclick="salvarFeedback()">Salvar</button></div></div></div>
+    <div class="modal-overlay" id="modalMeta"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Meta</h3><button class="modal-close" onclick="fecharModal('modalMeta')">&times;</button></div><input type="hidden" id="metaId"><div class="form-group"><label>Meta</label><input type="text" id="metaTexto"></div><div class="form-group"><label>Prazo</label><select id="metaPrazo"><option value="1m">1 mês</option><option value="3m" selected>3 meses</option><option value="6m">6 meses</option><option value="1a">1 ano</option></select></div><div class="form-group"><label>Progresso</label><input type="range" id="metaProgresso" min="0" max="100" value="0" oninput="document.getElementById('metaProgVal').textContent=this.value+'%'"><span id="metaProgVal" style="color:#d4af7d;font-size:.85em;">0%</span></div><div class="form-group"><label>Pilar</label><select id="metaPilar"><option value="identidade">Identidade</option><option value="posicionamento">Posicionamento</option><option value="projetos">Projetos</option><option value="reputacao">Reputação</option><option value="geral">Geral</option></select></div><div class="modal-btns"><button class="btn-cancelar" onclick="fecharModal('modalMeta')">Cancelar</button><button class="btn-salvar" onclick="salvarMeta()">Salvar</button></div></div></div>
+    <div class="toast" id="toast"></div>
 
-try {
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    useSupabase = true;
-} catch (e) {
-    console.log('Supabase indisponivel, usando localStorage');
+<script>
+// ==========================================
+// STORAGE
+// ==========================================
+const EP_KEY='empresaPersona';
+const ROL_KEY='roletaZara';
+const BANCA_KEY='bancaZara';
+
+let D={campos:{},projetos:[],feedbacks:[],metas:[]};
+let R={historico:[],sessoes:[]};
+let B={inicial:0,atual:0,apostaBase:5,stopLoss:30,stopWin:20,resultados:[]};
+
+function loadAll(){
+    const ep=localStorage.getItem(EP_KEY);if(ep)D={...D,...JSON.parse(ep)};
+    const ro=localStorage.getItem(ROL_KEY);if(ro)R={...R,...JSON.parse(ro)};
+    const ba=localStorage.getItem(BANCA_KEY);if(ba)B={...B,...JSON.parse(ba)};
 }
-
-const KEY='zara_prof_v2';
-const vazio={config:{dataInicio:'',dataProva:''},disciplinas:[],cronogramas:[],tarefas:[],simulados:[],exercicios:[],timers:{}};
-let D=JSON.parse(localStorage.getItem(KEY))||JSON.parse(JSON.stringify(vazio));
-Object.keys(vazio).forEach(k=>{if(!D[k])D[k]=vazio[k];});
+function saveEP(){localStorage.setItem(EP_KEY,JSON.stringify(D));}
+function saveR(){localStorage.setItem(ROL_KEY,JSON.stringify(R));}
+function saveB(){localStorage.setItem(BANCA_KEY,JSON.stringify(B));}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
 // ==========================================
-// FUNÇÕES DE SINCRONIZAÇÃO
+// TABS
 // ==========================================
-function salvar(){
-    localStorage.setItem(KEY,JSON.stringify(D));
-    if (navigator.onLine && useSupabase) {
-        salvarSupabase();
-    }
+function switchMain(tab){
+    document.querySelectorAll('.main-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.main-tab-content').forEach(c=>c.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('tab-'+tab).classList.add('active');
 }
-
-async function salvarSupabase() {
-    if (!useSupabase) return;
-    try {
-        const { error } = await supabaseClient.from('profissional_dados').upsert({
-            id: USER_ID,
-            user_id: USER_ID,
-            dados: D,
-            updated_at: new Date().toISOString()
-        });
-        if (error) {
-            if (error.code === '42P01') {
-                console.log('Tabela profissional_dados nao existe, salvando apenas local');
-                return;
-            }
-            console.error('Erro Supabase:', error);
-            return;
-        }
-        mostrarStatus('Sincronizado', 'success');
-    } catch (e) {
-        console.error('Exceção Supabase:', e);
-    }
+function switchSub(tab){
+    document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.sub-content').forEach(c=>c.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('sub-'+tab).classList.add('active');
 }
+function togglePilar(id){document.getElementById(id).classList.toggle('open');}
 
-async function carregarSupabase() {
-    if (!useSupabase) return false;
-    try {
-        const { data, error } = await supabaseClient
-            .from('profissional_dados')
-            .select('*')
-            .eq('user_id', USER_ID)
-            .maybeSingle();
-
-        if (error) {
-            if (error.code === '42P01') {
-                console.log('Tabela profissional_dados nao existe ainda');
-                return false;
-            }
-            console.error('Erro ao carregar:', error);
-            return false;
-        }
-
-        if (data?.dados) {
-            D = { ...vazio, ...data.dados };
-            Object.keys(vazio).forEach(k=>{if(!D[k])D[k]=vazio[k];});
-            localStorage.setItem(KEY, JSON.stringify(D));
-            mostrarStatus('Dados carregados', 'success');
-            return true;
-        }
-        return false;
-    } catch (e) {
-        console.error('Exceção:', e);
-        return false;
-    }
-}
-
-function mostrarStatus(msg, tipo) {
-    let status = document.getElementById('syncStatus');
-    if (!status) {
-        status = document.createElement('div');
-        status.id = 'syncStatus';
-        document.body.appendChild(status);
-    }
-    status.textContent = msg;
-    status.style.background = tipo === 'success' ? 'rgba(39, 174, 96, 0.95)' : 'rgba(231, 76, 60, 0.95)';
-    status.style.opacity = '1';
-    setTimeout(() => { status.style.opacity = '0'; }, 3000);
-}
-
-function mudarAba(a,b){document.querySelectorAll('.sub-tabs>.sub-tab-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.sub-content').forEach(x=>x.classList.remove('active'));document.getElementById('aba-'+a).classList.add('active');}
+// ==========================================
+// EMPRESA-PERSONA
+// ==========================================
+function salvarCampo(k,v){D.campos[k]=v;saveEP();}
+function carregarCampos(){Object.keys(D.campos).forEach(k=>{const el=document.getElementById('campo_'+k);if(el)el.value=D.campos[k]||'';});}
 function abrirModal(id){document.getElementById(id).classList.add('active');}
 function fecharModal(id){document.getElementById(id).classList.remove('active');}
-function fmtData(d){if(!d)return'-';const[a,m,dia]=d.split('-');return dia+'/'+m+'/'+a;}
-function diasRest(d){if(!d)return 0;const h=new Date();h.setHours(0,0,0,0);const p=new Date(d+'T00:00:00');return Math.ceil((p-h)/(1000*60*60*24));}
-function salvarConfig(){D.config.dataInscricao=document.getElementById('dataInscricao').value;D.config.dataInicio=document.getElementById('dataInicio').value;D.config.dataProva=document.getElementById('dataProva').value;salvar();calcDias();}
-function calcDias(){const h=new Date();h.setHours(0,0,0,0);if(D.config.dataProva){const p=new Date(D.config.dataProva+'T00:00:00');const df=Math.ceil((p-h)/(1000*60*60*24));document.getElementById('diasRestantes').textContent=df>0?df:0;}else{document.getElementById('diasRestantes').textContent='-';}let t=0;D.disciplinas.forEach(d=>t+=d.dias||0);document.getElementById('diasEstudados').textContent=t;}
-function atualizarSelects(){const ops=D.disciplinas.map(d=>'<option value="'+d.nome+'">'+d.nome+'</option>').join('');['atMateria','exMateria'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=ops||'<option>-</option>';});}
-let timers={};
-function fmtTempo(ms){const s=Math.floor(ms/1000);const h=Math.floor(s/3600);const m=Math.floor((s%3600)/60);const sec=s%60;return h.toString().padStart(2,'0')+':'+m.toString().padStart(2,'0')+':'+sec.toString().padStart(2,'0');}
-function renderDisc(){const c=document.getElementById('listaDisciplinas');if(!D.disciplinas.length){c.innerHTML='<div class="empty-state"><p>Nenhuma disciplina.</p></div>';return;}
-const diasTotais=diasRest(D.config.dataProva);
-c.innerHTML=D.disciplinas.map(d=>{const prog=diasTotais>0?Math.min(100,Math.round((d.dias/diasTotais)*100)):0;const tm=D.timers[d.id]||{run:false,el:0};return '<div class="item-card"><div class="item-header"><div><div class="item-title">'+d.nome+'</div><div class="item-subtitle">'+d.dias+' dias estudados</div></div><div class="btn-group"><button class="btn-icon" onclick="editDisc(\''+d.id+'\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn-icon delete" onclick="delDisc(\''+d.id+'\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></div><div class="item-progress"><div class="progress-bar"><div class="progress-fill" style="width:'+prog+'%"></div></div><span class="item-progress-text">'+prog+'%</span></div><div class="item-footer"><div class="btn-group"><button class="btn-icon play" onclick="iniciarTimer(\''+d.id+'\')" id="play-'+d.id+'" '+(tm.run?'style="display:none"':'')+'><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21"/></svg></button><button class="btn-icon" onclick="pausarTimer(\''+d.id+'\')" id="pause-'+d.id+'" style="color:#f1c40f;'+(!tm.run?'display:none':'')+'"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></button><button class="btn btn-sm btn-secondary" onclick="finTimer(\''+d.id+'\')">Finalizar</button></div><div class="timer-display" id="timer-'+d.id+'">'+fmtTempo(tm.el)+'</div></div></div>';}).join('');}
-function editDisc(id){const d=D.disciplinas.find(x=>x.id===id);if(!d)return;document.getElementById('discId').value=id;document.getElementById('discNome').value=d.nome;document.getElementById('discDias').value=d.dias;abrirModal('modalDisciplina');}
-function salvarDisciplina(){const id=document.getElementById('discId').value;const nome=document.getElementById('discNome').value.trim();const dias=parseInt(document.getElementById('discDias').value)||0;if(!nome)return alert('Informe o nome.');if(id){const d=D.disciplinas.find(x=>x.id===id);if(d){d.nome=nome;d.dias=dias;}}else{D.disciplinas.push({id:Date.now().toString(),nome,dias});}salvar();renderDisc();calcDias();atualizarSelects();fecharModal('modalDisciplina');document.getElementById('discId').value='';document.getElementById('discNome').value='';document.getElementById('discDias').value='0';}
-function delDisc(id){if(!confirm('Excluir?'))return;D.disciplinas=D.disciplinas.filter(x=>x.id!==id);delete D.timers[id];salvar();renderDisc();calcDias();atualizarSelects();}
-function iniciarTimer(id){if(!D.timers[id])D.timers[id]={run:false,el:0,st:null};D.timers[id].run=true;D.timers[id].st=Date.now();salvar();document.getElementById('play-'+id).style.display='none';document.getElementById('pause-'+id).style.display='';timers[id]=setInterval(()=>{const tm=D.timers[id];const el=tm.el+(Date.now()-tm.st);document.getElementById('timer-'+id).textContent=fmtTempo(el);},1000);}
-function pausarTimer(id){const tm=D.timers[id];if(tm&&tm.run){tm.el+=Date.now()-tm.st;tm.run=false;tm.st=null;clearInterval(timers[id]);salvar();}document.getElementById('play-'+id).style.display='';document.getElementById('pause-'+id).style.display='none';}
-function finTimer(id){pausarTimer(id);const tm=D.timers[id];if(tm&&tm.el>0){const d=D.disciplinas.find(x=>x.id===id);if(d){d.dias=(d.dias||0)+1;tm.el=0;salvar();renderDisc();calcDias();}}}
-const diasSem=['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
-const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-const mesesFull=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-let semanaAtualIdx=0;
 
-function renderCron(){
-    const c=document.getElementById('cronogramaCalendario');
-    if(!D.cronogramas.length){
-        c.innerHTML='<div class="cronograma-empty"><div class="cronograma-empty-icon">📅</div><p>Nenhum cronograma criado</p><button class="btn btn-primary" onclick="abrirModal(\'modalSemana\')">Criar Primeira Semana</button></div>';
+function abrirModalProjeto(id){if(id){const p=D.projetos.find(x=>x.id===id);if(!p)return;document.getElementById('projetoId').value=p.id;document.getElementById('projetoNome').value=p.nome;document.getElementById('projetoObjetivo').value=p.objetivo;document.getElementById('projetoConexao').value=p.conexao;document.getElementById('projetoStatus').value=p.status;}else{document.getElementById('projetoId').value='';document.getElementById('projetoNome').value='';document.getElementById('projetoObjetivo').value='';document.getElementById('projetoConexao').value='';document.getElementById('projetoStatus').value='planejando';}abrirModal('modalProjeto');}
+function salvarProjeto(){const n=document.getElementById('projetoNome').value.trim();if(!n)return;const id=document.getElementById('projetoId').value;const o={nome:n,objetivo:document.getElementById('projetoObjetivo').value.trim(),conexao:document.getElementById('projetoConexao').value.trim(),status:document.getElementById('projetoStatus').value};if(id){Object.assign(D.projetos.find(x=>x.id===id),o);}else{o.id=Date.now().toString();D.projetos.push(o);}saveEP();renderProjetos();fecharModal('modalProjeto');toast('Projeto salvo');}
+function deletarProjeto(id){if(!confirm('Excluir?'))return;D.projetos=D.projetos.filter(x=>x.id!==id);saveEP();renderProjetos();}
+function renderProjetos(){const c=document.getElementById('projetosLista');if(!D.projetos.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhum projeto.</div>';return;}const sl={ativo:'Ativo',planejando:'Planejando',pausado:'Pausado',concluido:'Concluído'};c.innerHTML=D.projetos.map(p=>`<div class="projeto-card"><div class="projeto-header"><span class="projeto-nome">${p.nome}</span><span class="projeto-status ${p.status}">${sl[p.status]}</span></div>${p.objetivo?`<div class="projeto-meta">${p.objetivo}</div>`:''}${p.conexao?`<div class="projeto-conexao">&#8627; ${p.conexao}</div>`:''}<div class="projeto-acoes"><button class="btn-mini" onclick="abrirModalProjeto('${p.id}')">Editar</button><button class="btn-mini delete" onclick="deletarProjeto('${p.id}')">Excluir</button></div></div>`).join('');}
+
+function abrirModalFeedback(){document.getElementById('feedbackTexto').value='';document.getElementById('feedbackTipo').value='positivo';document.getElementById('feedbackData').value=new Date().toISOString().split('T')[0];abrirModal('modalFeedback');}
+function salvarFeedback(){const t=document.getElementById('feedbackTexto').value.trim();if(!t)return;D.feedbacks.unshift({id:Date.now().toString(),texto:t,tipo:document.getElementById('feedbackTipo').value,data:document.getElementById('feedbackData').value});D.feedbacks=D.feedbacks.slice(0,50);saveEP();renderFeedbacks();fecharModal('modalFeedback');toast('Feedback registrado');}
+function deletarFeedback(id){D.feedbacks=D.feedbacks.filter(x=>x.id!==id);saveEP();renderFeedbacks();}
+function renderFeedbacks(){const c=document.getElementById('feedbacksLista');if(!D.feedbacks.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhum feedback.</div>';return;}const tl={positivo:'Positivo',ajuste:'Ajuste',critico:'Crítico'};c.innerHTML=D.feedbacks.slice(0,15).map(f=>{const d=new Date(f.data+'T12:00:00');const ds=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});return`<div class="feedback-card"><div style="display:flex;justify-content:space-between;"><span class="feedback-data">${ds}</span><button class="btn-mini delete" onclick="deletarFeedback('${f.id}')" style="padding:2px 6px;font-size:.7em;">x</button></div><div class="feedback-texto">${f.texto}</div><span class="feedback-tipo ${f.tipo}">${tl[f.tipo]}</span></div>`;}).join('');}
+
+function abrirModalMeta(id){if(id){const m=D.metas.find(x=>x.id===id);if(!m)return;document.getElementById('metaId').value=m.id;document.getElementById('metaTexto').value=m.texto;document.getElementById('metaPrazo').value=m.prazo;document.getElementById('metaProgresso').value=m.progresso;document.getElementById('metaProgVal').textContent=m.progresso+'%';document.getElementById('metaPilar').value=m.pilar;}else{document.getElementById('metaId').value='';document.getElementById('metaTexto').value='';document.getElementById('metaPrazo').value='3m';document.getElementById('metaProgresso').value=0;document.getElementById('metaProgVal').textContent='0%';document.getElementById('metaPilar').value='geral';}abrirModal('modalMeta');}
+function salvarMeta(){const t=document.getElementById('metaTexto').value.trim();if(!t)return;const id=document.getElementById('metaId').value;const o={texto:t,prazo:document.getElementById('metaPrazo').value,progresso:parseInt(document.getElementById('metaProgresso').value),pilar:document.getElementById('metaPilar').value};if(id){Object.assign(D.metas.find(x=>x.id===id),o);}else{o.id=Date.now().toString();D.metas.push(o);}saveEP();renderMetas();fecharModal('modalMeta');toast('Meta salva');}
+function deletarMeta(id){if(!confirm('Excluir?'))return;D.metas=D.metas.filter(x=>x.id!==id);saveEP();renderMetas();}
+function renderMetas(){const c=document.getElementById('metasLista');if(!D.metas.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhuma meta.</div>';return;}const pl={'1m':'1 mês','3m':'3 meses','6m':'6 meses','1a':'1 ano'};const pil={identidade:'Identidade',posicionamento:'Posicion.',projetos:'Projetos',reputacao:'Reputação',geral:'Geral'};c.innerHTML=D.metas.map(m=>`<div class="meta-card"><div class="meta-header"><span class="meta-texto">${m.texto}</span><span class="meta-prazo">${pl[m.prazo]||m.prazo}</span></div><div style="display:flex;justify-content:space-between;margin-top:6px;"><span style="font-size:.7em;color:rgba(212,175,125,.5);">${pil[m.pilar]||''}</span><span style="font-size:.8em;color:#d4af7d;">${m.progresso}%</span></div><div class="meta-barra"><div class="meta-fill" style="width:${m.progresso}%"></div></div><div class="projeto-acoes" style="margin-top:8px;"><button class="btn-mini" onclick="abrirModalMeta('${m.id}')">Editar</button><button class="btn-mini delete" onclick="deletarMeta('${m.id}')">Excluir</button></div></div>`).join('');}
+
+// ==========================================
+// ROLETA — MÉTODO DÚZIAS E COLUNAS
+// ==========================================
+const VERMELHOS=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+
+function corNum(n){if(n===0)return 'z';return VERMELHOS.includes(n)?'v':'p';}
+function duzia(n){if(n===0)return 0;if(n<=12)return 1;if(n<=24)return 2;return 3;}
+function coluna(n){if(n===0)return 0;return ((n-1)%3)+1;}
+
+function buildMesa(){
+    const mesa=document.getElementById('mesaNumeros');
+    let html='';
+    // Números 1-36 em layout de mesa (3 colunas: col3, col2, col1 por linha)
+    for(let row=0;row<12;row++){
+        const n1=row*3+3; // coluna 3
+        const n2=row*3+2; // coluna 2
+        const n3=row*3+1; // coluna 1
+        html+=`<button class="mesa-btn ${corNum(n3)}" onclick="addNum(${n3})">${n3}</button>`;
+        html+=`<button class="mesa-btn ${corNum(n2)}" onclick="addNum(${n2})">${n2}</button>`;
+        html+=`<button class="mesa-btn ${corNum(n1)}" onclick="addNum(${n1})">${n1}</button>`;
+    }
+    mesa.innerHTML=html;
+}
+
+function addNum(n){
+    R.historico.push(n);
+    if(R.historico.length>200)R.historico=R.historico.slice(-200);
+    saveR();
+    renderRoleta();
+}
+
+function desfazerUltimo(){
+    if(R.historico.length===0)return;
+    R.historico.pop();saveR();renderRoleta();
+}
+
+function limparHistorico(){
+    if(!confirm('Limpar todo o histórico?'))return;
+    R.historico=[];saveR();renderRoleta();
+}
+
+function renderRoleta(){
+    const h=R.historico;
+    const total=h.length;
+
+    // Últimos números (mostrar últimos 30)
+    const ult=h.slice(-30);
+    document.getElementById('ultimosNums').innerHTML=ult.map(n=>`<div class="ultimo-num ${corNum(n)}">${n}</div>`).join('');
+
+    if(total<3){
+        document.getElementById('analiseDuzias').innerHTML='<p style="color:rgba(255,255,255,.3);font-size:.82em;">Dados insuficientes</p>';
+        document.getElementById('analiseColunas').innerHTML='<p style="color:rgba(255,255,255,.3);font-size:.82em;">Dados insuficientes</p>';
+        document.getElementById('estatisticasGerais').innerHTML='';
         return;
     }
-    
-    // Garantir índice válido
-    if(semanaAtualIdx<0)semanaAtualIdx=0;
-    if(semanaAtualIdx>=D.cronogramas.length)semanaAtualIdx=D.cronogramas.length-1;
-    
-    const s=D.cronogramas[semanaAtualIdx];
-    const inicio=new Date(s.inicio+'T00:00:00');
-    const numSemana=s.numero||semanaAtualIdx+1;
-    const hoje=new Date();hoje.setHours(0,0,0,0);
-    
-    let html='<div class="cronograma-header">';
-    html+='<div><div class="cronograma-titulo">SEMANA '+String(numSemana).padStart(2,'0')+'</div>';
-    html+='<div class="cronograma-semana">'+fmtData(s.inicio)+' a '+fmtData(s.fim)+'</div></div>';
-    html+='<div class="cronograma-nav">';
-    html+='<button class="cronograma-nav-btn" onclick="navSemana(-1)" '+(semanaAtualIdx===0?'disabled':'')+' title="Semana anterior"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>';
-    html+='<button class="cronograma-nav-btn" onclick="irParaSemanaAtual()" title="Ir para semana atual" style="font-size:0.7em;font-weight:bold;width:auto;padding:0 10px;">HOJE</button>';
-    html+='<button class="cronograma-nav-btn" onclick="navSemana(1)" '+(semanaAtualIdx>=D.cronogramas.length-1?'disabled':'')+' title="Próxima semana"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>';
-    html+='<button class="btn-icon delete" onclick="delSem(\''+s.id+'\')" title="Excluir semana"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>';
-    html+='</div></div>';
-    
-    html+='<div class="calendario-grid">';
-    for(let i=0;i<7;i++){
-        const diaData=new Date(inicio);
-        diaData.setDate(inicio.getDate()+i);
-        const diaNum=diaData.getDate();
-        const mesNome=meses[diaData.getMonth()];
-        const isHoje=diaData.getTime()===hoje.getTime();
-        const ats=(s.atividades||[]).filter(a=>a.dia===i);
-        const diaContador=i+1;
-        
-        // Agrupar atividades por matéria
-        const materias={};
-        ats.forEach(a=>{
-            if(!materias[a.materia])materias[a.materia]=[];
-            materias[a.materia].push(a);
-        });
-        
-        html+='<div class="dia-card'+(isHoje?' hoje':'')+'">';
-        html+='<div class="dia-badge"><span class="dia-badge-num">'+String(diaNum).padStart(2,'0')+'</span><span class="dia-badge-mes">'+mesNome+'</span></div>';
-        html+='<div class="dia-card-header">';
-        html+='<div class="dia-header-left">';
-        html+='<button class="dia-add-btn" onclick="abrirAt(\''+s.id+'\','+i+')" title="Adicionar atividade"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>';
-        html+='<div class="dia-info"><div class="dia-nome-cal">'+diasSem[i].toUpperCase()+'</div><div class="dia-contador">DIA '+String(diaContador).padStart(2,'0')+'</div></div>';
-        html+='</div>';
-        html+='</div>';
-        
-        html+='<div class="dia-card-body">';
-        if(Object.keys(materias).length){
-            Object.keys(materias).forEach(mat=>{
-                html+='<div class="materia-grupo">';
-                html+='<div class="materia-titulo">'+mat+'</div>';
-                materias[mat].forEach(a=>{
-                    html+='<div class="assunto-item'+(a.ok?' concluido':'')+'">';
-                    html+='<input type="checkbox" class="assunto-check" '+(a.ok?'checked':'')+' onchange="toggleAt(\''+s.id+'\',\''+a.id+'\',this.checked)">';
-                    html+='<div class="assunto-content">';
-                    html+='<span class="assunto-texto">'+(a.assunto||a.tipo)+'</span>';
-                    html+='<div class="assunto-acoes">';
-                    html+='<button class="assunto-btn" onclick="editAt(\''+s.id+'\',\''+a.id+'\')" title="Editar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>';
-                    html+='<button class="assunto-btn delete" onclick="delAt(\''+s.id+'\',\''+a.id+'\')" title="Excluir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>';
-                    html+='</div></div></div>';
-                });
-                html+='</div>';
-            });
-        }else{
-            html+='<div class="dia-vazio">Sem atividades</div>';
-        }
-        html+='</div>';
-        html+='</div>';
+
+    // Análise sobre os últimos N (usar até 50)
+    const amostra=h.slice(-Math.min(50,total));
+    const T=amostra.length;
+    const semZero=amostra.filter(n=>n!==0);
+    const TsZ=semZero.length||1;
+
+    // Dúzias
+    const dz=[0,0,0];
+    semZero.forEach(n=>{dz[duzia(n)-1]++;});
+    const dzPct=dz.map(d=>Math.round((d/TsZ)*100));
+
+    // Colunas
+    const cl=[0,0,0];
+    semZero.forEach(n=>{cl[coluna(n)-1]++;});
+    const clPct=cl.map(c=>Math.round((c/TsZ)*100));
+
+    // Probabilidade teórica: 33.3% para cada dúzia/coluna
+    // Desvio = quanto abaixo de 33.3% → mais "fria" → teoria da regressão à média
+    const dzNomes=['1ª (1-12)','2ª (13-24)','3ª (25-36)'];
+    const clNomes=['Col 1 (1,4,7...)','Col 2 (2,5,8...)','Col 3 (3,6,9...)'];
+
+    function renderBarras(container,nomes,pcts){
+        document.getElementById(container).innerHTML=nomes.map((nome,i)=>{
+            const pct=pcts[i];
+            const classe=pct>38?'quente':pct<28?'frio':'morno';
+            return`<div class="barra-container"><div class="barra-label"><span class="barra-nome">${nome}</span><span class="barra-pct">${pct}% (${i===0?dz[0]||cl[0]:i===1?dz[1]||cl[1]:dz[2]||cl[2]}x)</span></div><div class="barra-track"><div class="barra-fill ${classe}" style="width:${pct}%"></div></div></div>`;
+        }).join('');
     }
-    html+='</div>';
-    c.innerHTML=html;
-}
 
-function navSemana(dir){
-    semanaAtualIdx+=dir;
-    renderCron();
-}
+    // Fix: pass correct counts
+    document.getElementById('analiseDuzias').innerHTML=dzNomes.map((nome,i)=>{
+        const pct=dzPct[i];const classe=pct>38?'quente':pct<28?'frio':'morno';
+        return`<div class="barra-container"><div class="barra-label"><span class="barra-nome">${nome}</span><span class="barra-pct">${pct}% (${dz[i]}x)</span></div><div class="barra-track"><div class="barra-fill ${classe}" style="width:${pct}%"></div></div></div>`;
+    }).join('');
 
-function irParaSemanaAtual(){
-    semanaAtualIdx=encontrarSemanaAtual();
-    renderCron();
-}
+    document.getElementById('analiseColunas').innerHTML=clNomes.map((nome,i)=>{
+        const pct=clPct[i];const classe=pct>38?'quente':pct<28?'frio':'morno';
+        return`<div class="barra-container"><div class="barra-label"><span class="barra-nome">${nome}</span><span class="barra-pct">${pct}% (${cl[i]}x)</span></div><div class="barra-track"><div class="barra-fill ${classe}" style="width:${pct}%"></div></div></div>`;
+    }).join('');
 
-function novaSemana(){
-    if(!D.cronogramas.length){
-        // Primeira semana - abrir modal para escolher datas
-        abrirModal('modalSemana');
-    }else{
-        // Gerar próxima semana automaticamente
-        const ultima=D.cronogramas[D.cronogramas.length-1];
-        const fimUltima=new Date(ultima.fim+'T00:00:00');
-        const novoInicio=new Date(fimUltima);
-        novoInicio.setDate(fimUltima.getDate()+1);
-        const novoFim=new Date(novoInicio);
-        novoFim.setDate(novoInicio.getDate()+6);
-        
-        const fmtISO=d=>{
-            const y=d.getFullYear();
-            const m=String(d.getMonth()+1).padStart(2,'0');
-            const day=String(d.getDate()).padStart(2,'0');
-            return y+'-'+m+'-'+day;
-        };
-        
-        const numSemana=D.cronogramas.length+1;
-        D.cronogramas.push({
-            id:Date.now().toString(),
-            inicio:fmtISO(novoInicio),
-            fim:fmtISO(novoFim),
-            numero:numSemana,
-            atividades:[]
-        });
-        semanaAtualIdx=D.cronogramas.length-1;
-        salvar();
-        renderCron();
+    // Recomendação: as 2 dúzias/colunas com MENOR frequência (mais "frias")
+    const dzRank=[...dzPct.map((p,i)=>({i,p,nome:dzNomes[i]}))].sort((a,b)=>a.p-b.p);
+    const clRank=[...clPct.map((p,i)=>({i,p,nome:clNomes[i]}))].sort((a,b)=>a.p-b.p);
+
+    const recBox=document.getElementById('recomendacaoBox');
+    if(total>=10){
+        const dz1=dzRank[0],dz2=dzRank[1];
+        const cl1=clRank[0],cl2=clRank[1];
+        // Confiança baseada no desvio da média
+        const desvioMedio=Math.abs(33.3-dz1.p)+Math.abs(33.3-dz2.p);
+        const confianca=Math.min(85,Math.round(50+desvioMedio));
+
+        recBox.innerHTML=`
+            <div class="rec-titulo">ENTRADA SUGERIDA</div>
+            <div style="margin-bottom:10px;">
+                <div style="font-size:.75em;color:rgba(255,255,255,.4);margin-bottom:6px;">DÚZIAS (apostar nas 2 mais frias)</div>
+                <div class="rec-duzias">
+                    <span class="rec-badge alta">${dz1.nome}</span>
+                    <span class="rec-badge alta">${dz2.nome}</span>
+                </div>
+            </div>
+            <div>
+                <div style="font-size:.75em;color:rgba(255,255,255,.4);margin-bottom:6px;">COLUNAS (apostar nas 2 mais frias)</div>
+                <div class="rec-duzias">
+                    <span class="rec-badge media">${cl1.nome.split(' ')[0]} ${cl1.nome.split(' ')[1]}</span>
+                    <span class="rec-badge media">${cl2.nome.split(' ')[0]} ${cl2.nome.split(' ')[1]}</span>
+                </div>
+            </div>
+            <div class="rec-confianca">Amostra: ${T} números | Confiança: ${confianca}%</div>
+        `;
+    } else {
+        recBox.innerHTML=`<div class="rec-titulo">AGUARDANDO DADOS</div><p style="font-size:.8em;color:rgba(255,255,255,.4);">Insira pelo menos 10 números (${total}/10)</p>`;
     }
+
+    // Estatísticas gerais
+    const zeros=h.filter(n=>n===0).length;
+    const verm=h.filter(n=>VERMELHOS.includes(n)).length;
+    const pret=total-zeros-verm;
+    document.getElementById('estatisticasGerais').innerHTML=`
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
+            <div><div style="font-size:.7em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.2em;color:#d4af7d;">${total}</div></div>
+            <div><div style="font-size:.7em;color:rgba(200,30,30,.7);">Vermelho</div><div style="font-size:1.2em;">${verm}</div></div>
+            <div><div style="font-size:.7em;color:rgba(255,255,255,.5);">Preto</div><div style="font-size:1.2em;">${pret}</div></div>
+        </div>
+    `;
 }
 
-function criarSemana(){
-    const i=document.getElementById('semInicio').value;
-    const f=document.getElementById('semFim').value;
-    if(!i||!f)return alert('Preencha as datas de início e fim.');
-    const numSemana=D.cronogramas.length+1;
-    D.cronogramas.push({id:Date.now().toString(),inicio:i,fim:f,numero:numSemana,atividades:[]});
-    semanaAtualIdx=D.cronogramas.length-1;
-    salvar();
-    renderCron();
-    fecharModal('modalSemana');
-    document.getElementById('semInicio').value='';
-    document.getElementById('semFim').value='';
+// ==========================================
+// GESTÃO DE BANCA
+// ==========================================
+function salvarBanca(){
+    B.inicial=parseFloat(document.getElementById('inputBancaInicial').value)||0;
+    B.apostaBase=parseFloat(document.getElementById('inputApostaBase').value)||5;
+    B.stopLoss=parseFloat(document.getElementById('inputStopLoss').value)||30;
+    B.stopWin=parseFloat(document.getElementById('inputStopWin').value)||20;
+    if(B.resultados.length===0)B.atual=B.inicial;
+    saveB();renderBanca();
 }
 
-function reorganizarCronograma(){
-    const inicioStr=document.getElementById('reorgInicio').value;
-    const fimStr=document.getElementById('reorgFim').value;
-    if(!inicioStr||!fimStr)return alert('Preencha as datas de início e fim.');
+function registrarResultado(){
+    const v=parseFloat(document.getElementById('inputResultado').value);
+    if(isNaN(v))return;
+    B.resultados.push({valor:v,data:new Date().toISOString()});
+    B.atual=(B.atual||B.inicial)+v;
+    saveB();renderBanca();
+    document.getElementById('inputResultado').value='';
+    toast(v>=0?'Lucro registrado':'Perda registrada');
 
-    const inicio=new Date(inicioStr+'T00:00:00');
-    const fim=new Date(fimStr+'T00:00:00');
-    if(fim<=inicio)return alert('A data final deve ser depois da data inicial.');
+    // Check stops
+    const lp=B.atual-B.inicial;
+    const pctLP=B.inicial>0?(lp/B.inicial)*100:0;
+    if(pctLP<=-B.stopLoss)toast('STOP LOSS ATINGIDO! SAIA AGORA.');
+    if(pctLP>=B.stopWin)toast('STOP WIN ATINGIDO! SAIA COM LUCRO.');
+}
 
-    const simFreq=parseInt(document.getElementById('reorgSimFreq').value)||0;
-    const simDia=parseInt(document.getElementById('reorgSimDia').value);
-    const simLeve=parseInt(document.getElementById('reorgSimLeve').value)||0;
+function renderBanca(){
+    document.getElementById('inputBancaInicial').value=B.inicial||'';
+    document.getElementById('inputApostaBase').value=B.apostaBase||'';
+    document.getElementById('inputStopLoss').value=B.stopLoss||'';
+    document.getElementById('inputStopWin').value=B.stopWin||'';
 
-    // Pegar disciplinas cadastradas
-    const disciplinas=D.disciplinas.map(d=>d.nome);
-    if(disciplinas.length===0)return alert('Cadastre disciplinas primeiro antes de reorganizar.');
+    const fmt=v=>'R$ '+v.toFixed(2).replace('.',',');
+    document.getElementById('bancaAtual').textContent=fmt(B.atual||0);
+    document.getElementById('bancaInicial').textContent=B.inicial?fmt(B.inicial):'-';
 
-    // Peso OAB: matérias que mais caem aparecem com mais frequência
-    const pesoOAB={
-        'Direito Constitucional':5,'Direito Civil':5,'Direito Penal':4,
-        'Processo Civil':4,'Processo Penal':3,'Ética Profissional':4,
-        'Direito do Trabalho':3,'Processo do Trabalho':2,'Direito Administrativo':3,
-        'Direito Tributário':2,'Direito Empresarial':2,'Direito do Consumidor':2,
-        'ECA':1,'Direito Ambiental':1,'Direitos Humanos':2,'Direito Internacional':1
+    const lp=(B.atual||0)-(B.inicial||0);
+    const lpEl=document.getElementById('bancaLP');
+    lpEl.textContent=B.inicial?fmt(lp):'-';
+    lpEl.className='banca-stat-val '+(lp>=0?'positivo':'negativo');
+
+    const sl=B.inicial?fmt(B.inicial*(1-B.stopLoss/100)):'-';
+    const sw=B.inicial?fmt(B.inicial*(1+B.stopWin/100)):'-';
+    document.getElementById('bancaSL').textContent=sl;
+    document.getElementById('bancaSW').textContent=sw;
+
+    // Histórico
+    const hist=document.getElementById('historicoResultados');
+    const last=B.resultados.slice(-10).reverse();
+    if(last.length===0){hist.innerHTML='';return;}
+    hist.innerHTML=last.map(r=>{
+        const d=new Date(r.data);
+        const ds=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+        return`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.82em;"><span style="color:rgba(255,255,255,.4);">${ds}</span><span style="color:${r.valor>=0?'#2ecc71':'#e74c3c'};font-weight:600;">${r.valor>=0?'+':''}${fmt(r.valor)}</span></div>`;
+    }).join('');
+}
+
+// ==========================================
+// DISCIPLINA
+// ==========================================
+const CHECKLIST_DISC=[
+    'Estou calmo e focado',
+    'Defini stop loss e stop win',
+    'Tenho método definido para esta sessão',
+    'Não estou tentando recuperar perda',
+    'Timer de 30min ativado',
+    'Banca separada do dinheiro pessoal'
+];
+
+function renderDisciplina(){
+    const hoje=new Date().toDateString();
+    if(!R.checklistHoje||R.checklistData!==hoje){R.checklistHoje={};R.checklistData=hoje;}
+    const c=document.getElementById('checklistDisciplina');
+    const svg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+    c.innerHTML=CHECKLIST_DISC.map((texto,i)=>{
+        const done=R.checklistHoje[i]||false;
+        return`<div class="regra-item"><div class="regra-check ${done?'done':''}" onclick="toggleCheck(${i})">${svg}</div><span class="regra-texto">${texto}</span></div>`;
+    }).join('');
+}
+
+function toggleCheck(i){
+    const hoje=new Date().toDateString();
+    if(R.checklistData!==hoje){R.checklistHoje={};R.checklistData=hoje;}
+    R.checklistHoje[i]=!R.checklistHoje[i];
+    saveR();renderDisciplina();
+}
+
+function setEstado(e){
+    const msgs={
+        calmo:'<span style="color:#2ecc71;">Bom estado. Pode jogar com disciplina.</span>',
+        ansioso:'<span style="color:#f1c40f;">Atenção. Ansiedade leva a decisões impulsivas. Respire antes.</span>',
+        frustrado:'<span style="color:#e74c3c;">NÃO JOGUE. Frustração é o maior destruidor de banca.</span>',
+        confiante:'<span style="color:#3498db;">Cuidado. Excesso de confiança = aumento de aposta = perda.</span>'
     };
-
-    // Criar pool de matérias ponderado pelo peso
-    function criarPool(){
-        const pool=[];
-        disciplinas.forEach(nome=>{
-            // Encontrar peso: buscar match parcial ou default 2
-            let peso=2;
-            Object.keys(pesoOAB).forEach(k=>{
-                if(nome.toLowerCase().includes(k.toLowerCase().split(' ').pop()) || 
-                   k.toLowerCase().includes(nome.toLowerCase().split(' ').pop())){
-                    peso=pesoOAB[k];
-                }
-            });
-            for(let i=0;i<peso;i++) pool.push(nome);
-        });
-        return pool;
-    }
-
-    // Tipos de estudo por ciclo para OAB
-    const tiposEstudo=['Estudo','Lei Seca','Revisão','Questões','Vídeo Aula'];
-
-    const fmtISO=d=>{
-        const y=d.getFullYear();
-        const m=String(d.getMonth()+1).padStart(2,'0');
-        const day=String(d.getDate()).padStart(2,'0');
-        return y+'-'+m+'-'+day;
-    };
-
-    // Calcular total de dias
-    const totalDias=Math.ceil((fim-inicio)/(1000*60*60*24))+1;
-    const totalSemanas=Math.ceil(totalDias/7);
-
-    // Gerar distribuição inteligente
-    const novosCronogramas=[];
-    let cursor=new Date(inicio);
-    let numSemana=1;
-    let poolMaterias=criarPool();
-    let poolIdx=0;
-    let diaGlobal=0;
-    let tipoIdx=0;
-
-    // Shuffle do pool para variar
-    function shuffle(arr){
-        const a=[...arr];
-        for(let i=a.length-1;i>0;i--){
-            const j=Math.floor(Math.random()*(i+1));
-            [a[i],a[j]]=[a[j],a[i]];
-        }
-        return a;
-    }
-    poolMaterias=shuffle(poolMaterias);
-
-    function pegarMateria(){
-        if(poolIdx>=poolMaterias.length){
-            poolMaterias=shuffle(criarPool());
-            poolIdx=0;
-        }
-        return poolMaterias[poolIdx++];
-    }
-
-    function pegarTipo(){
-        const t=tiposEstudo[tipoIdx%tiposEstudo.length];
-        tipoIdx++;
-        return t;
-    }
-
-    function gerarId(){
-        return Date.now().toString()+Math.random().toString(36).substr(2,6);
-    }
-
-    while(cursor<=fim){
-        const semInicio=new Date(cursor);
-        const semFim=new Date(cursor);
-        semFim.setDate(cursor.getDate()+6);
-        if(semFim>fim)semFim.setTime(fim.getTime());
-
-        const atividades=[];
-        let simLeveColocados=0;
-
-        for(let d=0;d<7;d++){
-            const diaData=new Date(semInicio);
-            diaData.setDate(semInicio.getDate()+d);
-            if(diaData>fim)break;
-
-            diaGlobal++;
-            const ehDiaSimCompleto=(simFreq>0 && d===simDia && ((numSemana-1)%Math.round(simFreq/7))===0);
-
-            if(ehDiaSimCompleto){
-                // DIA DE SIMULADO COMPLETO — isolado, sem matérias
-                atividades.push({
-                    id:gerarId(),dia:d,
-                    materia:'Simulado',tipo:'Simulado',
-                    assunto:'Simulado Completo (80 questões)',ok:false
-                });
-                atividades.push({
-                    id:gerarId(),dia:d,
-                    materia:'Simulado',tipo:'Revisão',
-                    assunto:'Correção e análise dos erros',ok:false
-                });
-            } else {
-                // Verificar se cabe simulado leve neste dia
-                const colocarSimLeve=(simLeve>0 && simLeveColocados<simLeve && d>=3 && d!==simDia);
-
-                if(colocarSimLeve){
-                    // DIA COM SIMULADO LEVE + 2 MATÉRIAS
-                    const mat1=pegarMateria();
-                    let mat2=pegarMateria();
-                    // Evitar repetir matéria no mesmo dia
-                    let tentativas=0;
-                    while(mat2===mat1 && tentativas<10 && disciplinas.length>1){
-                        mat2=pegarMateria();
-                        tentativas++;
-                    }
-
-                    atividades.push({id:gerarId(),dia:d,materia:mat1,tipo:pegarTipo(),assunto:mat1,ok:false});
-                    atividades.push({id:gerarId(),dia:d,materia:mat2,tipo:pegarTipo(),assunto:mat2,ok:false});
-                    atividades.push({
-                        id:gerarId(),dia:d,
-                        materia:'Simulado',tipo:'Questões',
-                        assunto:'Simulado Leve (20-30 questões)',ok:false
-                    });
-                    simLeveColocados++;
-                } else {
-                    // DIA NORMAL — máximo 2 matérias
-                    const mat1=pegarMateria();
-                    let mat2=pegarMateria();
-                    let tentativas=0;
-                    while(mat2===mat1 && tentativas<10 && disciplinas.length>1){
-                        mat2=pegarMateria();
-                        tentativas++;
-                    }
-
-                    const tipo1=pegarTipo();
-                    const tipo2=pegarTipo();
-
-                    atividades.push({id:gerarId(),dia:d,materia:mat1,tipo:tipo1,assunto:mat1+' – '+tipo1,ok:false});
-                    
-                    if(disciplinas.length>1 || mat2!==mat1){
-                        atividades.push({id:gerarId(),dia:d,materia:mat2,tipo:tipo2,assunto:mat2+' – '+tipo2,ok:false});
-                    }
-                }
-            }
-        }
-
-        novosCronogramas.push({
-            id:Date.now().toString()+numSemana,
-            inicio:fmtISO(semInicio),
-            fim:fmtISO(semFim>fim?fim:semFim),
-            numero:numSemana,
-            atividades:atividades
-        });
-
-        numSemana++;
-        cursor.setDate(cursor.getDate()+7);
-    }
-
-    if(!confirm(
-        'Reorganizar cronograma OAB?\n\n'+
-        'Período: '+fmtData(inicioStr)+' a '+fmtData(fimStr)+'\n'+
-        totalSemanas+' semanas | '+disciplinas.length+' disciplinas\n\n'+
-        'Regras aplicadas:\n'+
-        '• Máximo 2 matérias por dia\n'+
-        '• Simulado completo em dia isolado'+(simFreq>0?' (a cada '+(simFreq/7)+' sem)':' (desativado)')+'\n'+
-        '• Simulado leve'+(simLeve>0?' ('+simLeve+'x/sem com matérias)':' (desativado)')+'\n'+
-        '• Matérias de maior peso OAB com mais frequência\n\n'+
-        'O cronograma atual será substituído.'
-    ))return;
-
-    D.cronogramas=novosCronogramas;
-    semanaAtualIdx=encontrarSemanaAtual();
-    salvar();
-    renderCron();
-    fecharModal('modalReorganizar');
-    mostrarStatus('Cronograma OAB reorganizado!','success');
+    document.getElementById('estadoMsg').innerHTML=msgs[e]||'';
 }
 
-function delSem(id){
-    if(!confirm('Excluir semana?'))return;
-    D.cronogramas=D.cronogramas.filter(x=>x.id!==id);
-    if(semanaAtualIdx>=D.cronogramas.length)semanaAtualIdx=Math.max(0,D.cronogramas.length-1);
-    salvar();
-    renderCron();
+// ==========================================
+// INIT
+// ==========================================
+function init(){
+    loadAll();
+    carregarCampos();
+    renderProjetos();renderFeedbacks();renderMetas();
+    buildMesa();renderRoleta();
+    renderBanca();renderDisciplina();
 }
-
-// Lista temporária de assuntos
-let assuntosTemp = [];
-
-function adicionarAssunto() {
-    const input = document.getElementById('atAssuntoInput');
-    const texto = input.value.trim();
-    if (!texto) return;
-    
-    // Verificar se já existe
-    if (!assuntosTemp.includes(texto)) {
-        assuntosTemp.push(texto);
-        renderAssuntosTemp();
-    }
-    input.value = '';
-    input.focus();
-}
-
-function removerAssunto(idx) {
-    assuntosTemp.splice(idx, 1);
-    renderAssuntosTemp();
-}
-
-function renderAssuntosTemp() {
-    const container = document.getElementById('listaAssuntos');
-    if (assuntosTemp.length === 0) {
-        container.innerHTML = '<span style="color:rgba(255,255,255,0.4);font-size:0.85em;">Nenhum assunto adicionado</span>';
-        return;
-    }
-    container.innerHTML = assuntosTemp.map((a, i) => 
-        `<span style="background:rgba(212,175,125,0.2);color:#d4af7d;padding:4px 8px;border-radius:4px;font-size:0.85em;display:flex;align-items:center;gap:4px;">
-            ${a}
-            <button type="button" onclick="removerAssunto(${i})" style="background:none;border:none;color:#d4af7d;cursor:pointer;padding:0;font-size:1.1em;">&times;</button>
-        </span>`
-    ).join('');
-}
-
-function abrirAt(sid,dia){
-    document.getElementById('atId').value='';
-    document.getElementById('atSemId').value=sid;
-    document.getElementById('atDia').value=dia;
-    document.getElementById('atAssuntoInput').value='';
-    document.getElementById('atMateria').selectedIndex=0;
-    // Limpar checkboxes e assuntos
-    document.querySelectorAll('.tipo-check').forEach(cb => cb.checked = false);
-    assuntosTemp = [];
-    renderAssuntosTemp();
-    abrirModal('modalAtividade');
-}
-
-function editAt(sid,aid){
-    const s=D.cronogramas.find(x=>x.id===sid);
-    const a=s?.atividades?.find(x=>x.id===aid);
-    if(!a)return;
-    document.getElementById('atId').value=aid;
-    document.getElementById('atSemId').value=sid;
-    document.getElementById('atDia').value=a.dia;
-    document.getElementById('atMateria').value=a.materia;
-    document.getElementById('atAssuntoInput').value='';
-    // Limpar e marcar o checkbox do tipo atual
-    document.querySelectorAll('.tipo-check').forEach(cb => {
-        cb.checked = (cb.value === a.tipo);
-    });
-    // Se tem assunto, adicionar na lista
-    assuntosTemp = a.assunto ? [a.assunto] : [];
-    renderAssuntosTemp();
-    abrirModal('modalAtividade');
-}
-
-function salvarAtividade(){
-    const id=document.getElementById('atId').value;
-    const sid=document.getElementById('atSemId').value;
-    const dia=parseInt(document.getElementById('atDia').value);
-    const mat=document.getElementById('atMateria').value;
-    
-    // Coletar tipos selecionados
-    const tiposSelecionados = [];
-    document.querySelectorAll('.tipo-check:checked').forEach(cb => {
-        tiposSelecionados.push(cb.value);
-    });
-    
-    // Usar assuntos da lista temporária
-    const assuntos = [...assuntosTemp];
-    
-    if(!mat)return alert('Selecione uma matéria.');
-    if(tiposSelecionados.length === 0 && assuntos.length === 0) return alert('Selecione pelo menos um tipo ou adicione um assunto.');
-    
-    const s=D.cronogramas.find(x=>x.id===sid);
-    if(!s)return;
-    if(!s.atividades)s.atividades=[];
-    
-    if(id){
-        // Editando - atualizar apenas este item
-        const a=s.atividades.find(x=>x.id===id);
-        if(a){
-            a.materia=mat;
-            a.assunto=assuntos[0] || '';
-            a.tipo=tiposSelecionados[0] || 'Estudo';
-            a.dia=dia;
-        }
-    }else{
-        // Novo - criar um item para cada tipo selecionado
-        tiposSelecionados.forEach(tipo => {
-            s.atividades.push({
-                id: Date.now().toString() + Math.random().toString(36).substr(2,5),
-                dia,
-                materia: mat,
-                assunto: '',
-                tipo: tipo,
-                ok: false
-            });
-        });
-        
-        // Criar um item para cada assunto adicionado
-        assuntos.forEach(assunto => {
-            s.atividades.push({
-                id: Date.now().toString() + Math.random().toString(36).substr(2,5),
-                dia,
-                materia: mat,
-                assunto: assunto,
-                tipo: 'Estudo',
-                ok: false
-            });
-        });
-    }
-    
-    salvar();
-    renderCron();
-    fecharModal('modalAtividade');
-    
-    // Limpar checkboxes
-    document.querySelectorAll('.tipo-check').forEach(cb => cb.checked = false);
-    document.getElementById('atAssunto').value = '';
-    document.getElementById('atId').value = '';
-}
-
-function delAt(sid,aid){
-    if(!confirm('Excluir atividade?'))return;
-    const s=D.cronogramas.find(x=>x.id===sid);
-    if(s)s.atividades=s.atividades.filter(x=>x.id!==aid);
-    salvar();
-    renderCron();
-}
-
-function toggleAt(sid,aid,ok){
-    const s=D.cronogramas.find(x=>x.id===sid);
-    const a=s?.atividades?.find(x=>x.id===aid);
-    if(a){a.ok=ok;salvar();renderCron();}
-}
-function renderTarefas(){const hoje=new Date().toISOString().split('T')[0];const ts=D.tarefas.filter(t=>t.data===hoje&&!t.ok);const c=document.getElementById('listaTarefas');if(!ts.length){c.innerHTML='<div class="empty-state"><p>Nenhuma tarefa para hoje.</p></div>';return;}
-c.innerHTML='<table><thead><tr><th>Hora</th><th>Tarefa</th><th>Cat</th><th>Acoes</th></tr></thead><tbody>'+ts.sort((a,b)=>(a.hora||'').localeCompare(b.hora||'')).map(t=>'<tr><td>'+(t.hora||'-')+'</td><td>'+t.desc+'</td><td><span class="status-badge pendente">'+t.cat+'</span></td><td><div class="btn-group"><button class="btn-icon play" onclick="concluirTar(\''+t.id+'\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></button><button class="btn-icon" onclick="editTar(\''+t.id+'\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn-icon delete" onclick="delTar(\''+t.id+'\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></td></tr>').join('')+'</tbody></table>';}
-function salvarTarefa(){const id=document.getElementById('tarId').value;const hora=document.getElementById('tarHora').value;const cat=document.getElementById('tarCat').value;const desc=document.getElementById('tarDesc').value.trim();if(!desc)return alert('Informe a descricao.');const hoje=new Date().toISOString().split('T')[0];if(id){const t=D.tarefas.find(x=>x.id===id);if(t){t.hora=hora;t.cat=cat;t.desc=desc;}}else{D.tarefas.push({id:Date.now().toString(),data:hoje,hora,cat,desc,ok:false});}salvar();renderTarefas();fecharModal('modalTarefa');document.getElementById('tarId').value='';document.getElementById('tarDesc').value='';}
-function editTar(id){const t=D.tarefas.find(x=>x.id===id);if(!t)return;document.getElementById('tarId').value=id;document.getElementById('tarHora').value=t.hora||'';document.getElementById('tarCat').value=t.cat;document.getElementById('tarDesc').value=t.desc;abrirModal('modalTarefa');}
-function concluirTar(id){const t=D.tarefas.find(x=>x.id===id);if(t){t.ok=true;salvar();renderTarefas();}}
-function delTar(id){D.tarefas=D.tarefas.filter(x=>x.id!==id);salvar();renderTarefas();}
-function renderSimulados(){const c=document.getElementById('listaSimulados');if(!D.simulados.length){c.innerHTML='<div class="empty-state"><p>Nenhum simulado.</p></div>';return;}
-c.innerHTML=D.simulados.slice().reverse().map(s=>'<div class="item-card"><div class="item-header"><div><div class="item-title">'+fmtData(s.data)+'</div><div class="item-subtitle">'+s.acertos+'/'+s.total+' acertos</div></div><div style="display:flex;align-items:center;gap:15px;"><span style="font-size:1.5em;color:#d4af7d;font-weight:600;">'+s.nota+'%</span><div class="btn-group"><button class="btn-icon" onclick="editSim(\''+s.id+'\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn-icon delete" onclick="delSim(\''+s.id+'\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></div></div>'+(s.obs?'<div style="margin-top:10px;font-size:0.85em;color:rgba(255,255,255,0.5);">'+s.obs+'</div>':'')+'</div>').join('');}
-function salvarSimulado(){const id=document.getElementById('simId').value;const data=document.getElementById('simData').value;const nota=parseInt(document.getElementById('simNota').value)||0;const total=parseInt(document.getElementById('simTotal').value)||80;const acertos=parseInt(document.getElementById('simAcertos').value)||0;const obs=document.getElementById('simObs').value;if(id){const s=D.simulados.find(x=>x.id===id);if(s){s.data=data;s.nota=nota;s.total=total;s.acertos=acertos;s.obs=obs;}}else{D.simulados.push({id:Date.now().toString(),data,nota,total,acertos,obs});}salvar();renderSimulados();fecharModal('modalSimulado');document.getElementById('simId').value='';document.getElementById('simData').value='';document.getElementById('simNota').value='';document.getElementById('simTotal').value='';document.getElementById('simAcertos').value='';document.getElementById('simObs').value='';}
-function editSim(id){const s=D.simulados.find(x=>x.id===id);if(!s)return;document.getElementById('simId').value=id;document.getElementById('simData').value=s.data;document.getElementById('simNota').value=s.nota;document.getElementById('simTotal').value=s.total;document.getElementById('simAcertos').value=s.acertos;document.getElementById('simObs').value=s.obs||'';abrirModal('modalSimulado');}
-function delSim(id){if(!confirm('Excluir?'))return;D.simulados=D.simulados.filter(x=>x.id!==id);salvar();renderSimulados();}
-function renderExercicios(){const c=document.getElementById('listaExercicios');if(!D.exercicios.length){c.innerHTML='<div class="empty-state"><p>Nenhum exercicio.</p></div>';return;}
-c.innerHTML=D.exercicios.slice().reverse().map(e=>{const tx=e.qtd>0?Math.round((e.acertos/e.qtd)*100):0;const cor=tx>=70?'#2ecc71':tx>=50?'#f1c40f':'#e74c3c';return '<div class="item-card"><div class="item-header"><div><div class="item-title">'+e.materia+'</div><div class="item-subtitle">'+fmtData(e.data)+' - '+(e.tempo||0)+' min</div></div><div style="display:flex;align-items:center;gap:15px;"><span style="font-size:1.2em;color:'+cor+';font-weight:600;">'+e.acertos+'/'+e.qtd+' ('+tx+'%)</span><div class="btn-group"><button class="btn-icon" onclick="editEx(\''+e.id+'\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn-icon delete" onclick="delEx(\''+e.id+'\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></div></div>'+(e.obs?'<div style="margin-top:10px;font-size:0.85em;color:rgba(255,255,255,0.5);">'+e.obs+'</div>':'')+'</div>';}).join('');}
-function salvarExercicio(){const id=document.getElementById('exId').value;const data=document.getElementById('exData').value;const materia=document.getElementById('exMateria').value;const qtd=parseInt(document.getElementById('exQtd').value)||0;const acertos=parseInt(document.getElementById('exAcertos').value)||0;const tempo=parseInt(document.getElementById('exTempo').value)||0;const obs=document.getElementById('exObs').value;if(id){const e=D.exercicios.find(x=>x.id===id);if(e){e.data=data;e.materia=materia;e.qtd=qtd;e.acertos=acertos;e.tempo=tempo;e.obs=obs;}}else{D.exercicios.push({id:Date.now().toString(),data,materia,qtd,acertos,tempo,obs});}salvar();renderExercicios();fecharModal('modalExercicio');document.getElementById('exId').value='';document.getElementById('exData').value='';document.getElementById('exQtd').value='';document.getElementById('exAcertos').value='';document.getElementById('exTempo').value='';document.getElementById('exObs').value='';}
-function editEx(id){const e=D.exercicios.find(x=>x.id===id);if(!e)return;document.getElementById('exId').value=id;document.getElementById('exData').value=e.data;document.getElementById('exMateria').value=e.materia;document.getElementById('exQtd').value=e.qtd;document.getElementById('exAcertos').value=e.acertos;document.getElementById('exTempo').value=e.tempo;document.getElementById('exObs').value=e.obs||'';abrirModal('modalExercicio');}
-function delEx(id){if(!confirm('Excluir?'))return;D.exercicios=D.exercicios.filter(x=>x.id!==id);salvar();renderExercicios();}
-
-async function inicializar(){
-    await carregarSupabase();
-    document.getElementById('dataInscricao').value=D.config.dataInscricao||'';
-    document.getElementById('dataInicio').value=D.config.dataInicio||'';
-    document.getElementById('dataProva').value=D.config.dataProva||'';
-    calcDias();
-    atualizarSelects();
-    renderDisc();
-    // Encontrar semana atual baseada na data de hoje
-    semanaAtualIdx=encontrarSemanaAtual();
-    renderCron();
-    renderSimulados();
-    renderExercicios();
-}
-// Função para encontrar o índice da semana que contém a data atual
-function encontrarSemanaAtual(){
-    if(!D.cronogramas.length)return 0;
-    const hoje=new Date();hoje.setHours(0,0,0,0);
-    for(let i=0;i<D.cronogramas.length;i++){
-        const s=D.cronogramas[i];
-        const inicio=new Date(s.inicio+'T00:00:00');
-        const fim=new Date(s.fim+'T23:59:59');
-        if(hoje>=inicio&&hoje<=fim)return i;
-    }
-    // Se não encontrar, verificar se é antes da primeira ou depois da última
-    const primeira=new Date(D.cronogramas[0].inicio+'T00:00:00');
-    if(hoje<primeira)return 0;
-    return D.cronogramas.length-1;
-}
-inicializar();
-    </script>
+init();
+</script>
 </body>
 </html>
