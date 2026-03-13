@@ -196,11 +196,12 @@
                     </div>
                 </div>
                 <!-- INDICADORES -->
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:8px;">
                     <div class="indicador-card"><div class="ind-label">CONFIANÇA</div><div class="ind-valor" id="indConfianca">—</div></div>
                     <div class="indicador-card"><div class="ind-label">ASSERTIVIDADE</div><div class="ind-valor" id="indAssert">—</div></div>
                     <div class="indicador-card"><div class="ind-label">MESA</div><div class="ind-valor" id="indMesa">—</div></div>
                 </div>
+                <div id="assertDetalhe" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;"></div>
                 <!-- ALERTA MESA -->
                 <div id="alertaMesa" style="display:none;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);border-radius:10px;padding:12px 18px;margin-bottom:20px;text-align:center;font-size:.85em;color:#e74c3c;"></div>
                 <div class="roleta-grid">
@@ -211,8 +212,6 @@
                             <div style="display:flex;gap:6px;margin-top:8px;">
                                 <button class="btn-mini" onclick="desfazerUltimo()">Desfazer</button>
                                 <button class="btn-mini delete" onclick="limparHistorico()">Limpar</button>
-                                <button class="btn-mini" onclick="registrarAcerto()" style="border-color:rgba(46,204,113,.5);color:#2ecc71;">✓ Acertou</button>
-                                <button class="btn-mini" onclick="registrarErro()" style="border-color:rgba(231,76,60,.5);color:#e74c3c;">✗ Errou</button>
                             </div>
                         </div>
                         <div class="analise-box">
@@ -406,18 +405,55 @@ function buildMesa(){
     m.innerHTML=html;
 }
 
+function getSugestaoAtual(){
+    // Calcula a sugestão ANTES de inserir o novo número
+    const h=R.historico;
+    const semZero=h.filter(n=>n!==0);
+    const T=semZero.length||1;
+    if(h.length<10) return null;
+
+    const dz=[0,0,0];semZero.forEach(n=>{dz[duzia(n)-1]++;});
+    const dzPct=dz.map(d=>Math.round((d/T)*100));
+    const cl=[0,0,0];semZero.forEach(n=>{cl[coluna(n)-1]++;});
+    const clPct=cl.map(c2=>Math.round((c2/T)*100));
+
+    // A mais quente de cada = excluída
+    const dzMax=dzPct.indexOf(Math.max(...dzPct));
+    const clMax=clPct.indexOf(Math.max(...clPct));
+
+    // As 2 frias = par sugerido (índices 0,1,2 de dúzia e coluna)
+    const dzPar=[0,1,2].filter(i=>i!==dzMax);
+    const clPar=[0,1,2].filter(i=>i!==clMax);
+
+    return {dzPar,clPar};
+}
+
 function addNum(n){
     if(n<0)return;
+
+    // Auto-assertividade: verificar se o número que acabou de sair está no par sugerido
+    const sug=getSugestaoAtual();
+    if(sug && n!==0){
+        const dzDoNum=duzia(n)-1; // 0,1,2
+        const clDoNum=coluna(n)-1;
+        if(!R.assertDz)R.assertDz={ac:0,er:0};
+        if(!R.assertCol)R.assertCol={ac:0,er:0};
+
+        // Dúzia: o número caiu no par sugerido?
+        if(sug.dzPar.includes(dzDoNum)) R.assertDz.ac++;
+        else R.assertDz.er++;
+
+        // Coluna: o número caiu no par sugerido?
+        if(sug.clPar.includes(clDoNum)) R.assertCol.ac++;
+        else R.assertCol.er++;
+    }
+
     R.historico.push(n);
     if(R.historico.length>200)R.historico=R.historico.slice(-200);
     saveR();renderRoleta();
 }
 function desfazerUltimo(){if(!R.historico.length)return;R.historico.pop();saveR();renderRoleta();}
-function limparHistorico(){if(!confirm('Limpar?'))return;R.historico=[];R.acertos=0;R.erros=0;saveR();renderRoleta();}
-
-// ASSERTIVIDADE
-function registrarAcerto(){if(!R.acertos)R.acertos=0;R.acertos++;saveR();renderRoleta();toast('Acerto registrado');}
-function registrarErro(){if(!R.erros)R.erros=0;R.erros++;saveR();renderRoleta();toast('Erro registrado');}
+function limparHistorico(){if(!confirm('Limpar?'))return;R.historico=[];R.assertDz={ac:0,er:0};R.assertCol={ac:0,er:0};saveR();renderRoleta();}
 
 function renderRoleta(){
     const h=R.historico;
@@ -544,12 +580,41 @@ function renderRoleta(){
         document.getElementById('indConfianca').style.color='rgba(255,255,255,.5)';
     }
 
-    // Assertividade
-    const ac=(R.acertos||0);const er=(R.erros||0);const totalAE=ac+er;
-    const assertPct=totalAE>0?Math.round((ac/totalAE)*100):0;
-    document.getElementById('indAssert').textContent=totalAE>0?assertPct+'%':'—';
-    document.getElementById('indAssert').style.color=assertPct>70?'#2ecc71':assertPct>50?'#f1c40f':'#e74c3c';
-    if(totalAE>0)document.getElementById('indAssert').title=ac+' acertos / '+er+' erros';
+    // Assertividade — automática, separada por dúzias e colunas
+    const aDz=R.assertDz||{ac:0,er:0};
+    const aCol=R.assertCol||{ac:0,er:0};
+    const totalDzAE=aDz.ac+aDz.er;
+    const totalColAE=aCol.ac+aCol.er;
+    const dzAssertPct=totalDzAE>0?Math.round((aDz.ac/totalDzAE)*100):0;
+    const colAssertPct=totalColAE>0?Math.round((aCol.ac/totalColAE)*100):0;
+    const totalAE=totalDzAE+totalColAE;
+    const avgAssert=totalAE>0?Math.round(((aDz.ac+aCol.ac)/totalAE)*100):0;
+
+    const indAssert=document.getElementById('indAssert');
+    indAssert.textContent=totalAE>0?avgAssert+'%':'—';
+    indAssert.style.color=avgAssert>65?'#2ecc71':avgAssert>50?'#f1c40f':totalAE>0?'#e74c3c':'rgba(255,255,255,.5)';
+    if(totalAE>0)indAssert.title='Dúzias: '+dzAssertPct+'% ('+aDz.ac+'/'+totalDzAE+') | Colunas: '+colAssertPct+'% ('+aCol.ac+'/'+totalColAE+')';
+
+    // Detalhe assertividade
+    const adEl=document.getElementById('assertDetalhe');
+    if(adEl){
+        if(totalAE>0){
+            const dzCor=dzAssertPct>65?'#2ecc71':dzAssertPct>50?'#f1c40f':'#e74c3c';
+            const clCor2=colAssertPct>65?'#2ecc71':colAssertPct>50?'#f1c40f':'#e74c3c';
+            adEl.innerHTML=`
+                <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:6px;padding:10px;display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:.72em;color:rgba(255,255,255,.4);">Dúzias</span>
+                    <span style="font-size:.9em;font-weight:600;color:${dzCor};">${dzAssertPct}% <span style="font-size:.7em;font-weight:400;color:rgba(255,255,255,.3);">(${aDz.ac}/${totalDzAE})</span></span>
+                </div>
+                <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:6px;padding:10px;display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:.72em;color:rgba(255,255,255,.4);">Colunas</span>
+                    <span style="font-size:.9em;font-weight:600;color:${clCor2};">${colAssertPct}% <span style="font-size:.7em;font-weight:400;color:rgba(255,255,255,.3);">(${aCol.ac}/${totalColAE})</span></span>
+                </div>
+            `;
+        } else {
+            adEl.innerHTML='';
+        }
+    }
 
     // Mesa estável/instável
     const alerta=document.getElementById('alertaMesa');
