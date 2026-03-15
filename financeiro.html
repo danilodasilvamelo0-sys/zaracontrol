@@ -7812,19 +7812,29 @@
         const receitaRecebidaSab = receitasMesSab.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0) + receitasVarSab.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
         const receitaPendente = totalReceita - receitaRecebidaSab;
         
-        // Despesas do mês
-        const totalDespesas = fixasMesSab.reduce((s, d) => s + d.valor, 0) + variaveisMes.reduce((s, d) => s + d.valor, 0) + avulsasMesSab.reduce((s, d) => s + d.valor, 0);
+        // Despesas do mês (incluindo empréstimos pagos)
+        const mesAnoSab = getMesAnoKey();
+        let empPagoSab = 0;
+        (financeiro.emprestimos || []).forEach(e => {
+            (e.historicoPagamentos || []).forEach(p => {
+                if (p.data && p.data.substring(0, 7) === mesAnoSab) {
+                    empPagoSab += (p.valor || 0);
+                }
+            });
+        });
+        const totalDespesas = fixasMesSab.reduce((s, d) => s + d.valor, 0) + variaveisMes.reduce((s, d) => s + d.valor, 0) + avulsasMesSab.reduce((s, d) => s + d.valor, 0) + empPagoSab;
         const despesasPagas = fixasMesSab.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) + 
                              variaveisMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) +
-                             avulsasMesSab.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+                             avulsasMesSab.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) +
+                             empPagoSab;
         const despesasPendentes = totalDespesas - despesasPagas;
         
         // TODAS as economias
         const totalEconomias = (financeiro.economias || []).reduce((s, e) => s + (e.saldo || e.valor || 0), 0);
         
         // TODAS as dívidas ativas
-        const emprestimosAtivos = (financeiro.emprestimos || []).filter(e => !e.quitado && !e.arquivado);
-        const totalDividas = emprestimosAtivos.reduce((s, e) => s + (e.saldoDevedor || e.valorTotal || 0), 0);
+        const emprestimosAtivos = (financeiro.emprestimos || []).filter(e => !e.arquivado);
+        const totalDividas = emprestimosAtivos.reduce((s, e) => s + (e.principal || 0), 0);
         
         // Indicadores
         const percentComprometido = totalReceita > 0 ? (totalDespesas / totalReceita) * 100 : 0;
@@ -7895,7 +7905,7 @@
                     titulo: 'Quite Suas Dívidas - Método Avalanche',
                     texto: `Você tem ${emprestimosAtivos.length} dívida${emprestimosAtivos.length > 1 ? 's' : ''} totalizando ${formatarMoeda(totalDividas)}. Foque em "${maiorDivida.descricao || 'a dívida principal'}" primeiro.`,
                     fonte: '"O rico domina sobre os pobres; quem toma emprestado é servo de quem empresta." — Provérbios 22:7',
-                    acao: `Pague ${formatarMoeda((maiorDivida.saldoDevedor || maiorDivida.valorTotal || 0) * 0.1)} extra este mês`
+                    acao: `Pague ${formatarMoeda((maiorDivida.principal || 0) * 0.1)} extra este mês`
                 });
             }
 
