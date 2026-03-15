@@ -6584,7 +6584,6 @@
         const totalAvulsasMes = avulsasMes.reduce((s, d) => s + d.valor, 0);
         
         // Empréstimos: somar juros pagos + amortizações feitas no mês atual
-        // Usa TODOS os empréstimos (incluindo arquivados) para capturar pagamentos do mês
         const mesAnoAtual = getMesAnoKey();
         let empJurosPagosMes = 0;
         let empAmortizadoMes = 0;
@@ -7764,7 +7763,7 @@
         renderizar();
     }
 
-    // Atualizar sugestões na renderização
+    // Conectar Sabedoria ao renderizar
     const originalRenderizar = renderizar;
     renderizar = function() {
         originalRenderizar();
@@ -7819,7 +7818,7 @@
         const receitaRecebidaSab = receitasMesSab.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0) + receitasVarSab.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
         const receitaPendente = totalReceita - receitaRecebidaSab;
         
-        // Despesas do mês (incluindo empréstimos pagos)
+        // Despesas do mês (incluindo emprestimos pagos)
         const mesAnoSab = getMesAnoKey();
         let empPagoSab = 0;
         (financeiro.emprestimos || []).forEach(e => {
@@ -8082,6 +8081,7 @@
             `).join('');
         }
     }
+
 
 
 </script>
