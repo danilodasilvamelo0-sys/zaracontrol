@@ -6584,10 +6584,11 @@
         const totalAvulsasMes = avulsasMes.reduce((s, d) => s + d.valor, 0);
         
         // Empréstimos: somar juros pagos + amortizações feitas no mês atual
+        // Usa TODOS os empréstimos (incluindo arquivados) para capturar pagamentos do mês
         const mesAnoAtual = getMesAnoKey();
         let empJurosPagosMes = 0;
         let empAmortizadoMes = 0;
-        emprestimosAtivos.forEach(e => {
+        (financeiro.emprestimos || []).forEach(e => {
             (e.historicoPagamentos || []).forEach(p => {
                 if (p.data && p.data.substring(0, 7) === mesAnoAtual) {
                     if (p.tipo === 'juros') {
