@@ -248,8 +248,8 @@
                         <div class="banca-grid-4">
                             <div class="banca-stat"><div class="banca-stat-label">Banca Inicial</div><div class="banca-stat-val" id="bancaInicial">—</div></div>
                             <div class="banca-stat"><div class="banca-stat-label">Lucro/Prejuízo</div><div class="banca-stat-val" id="bancaLP">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Stop Loss (20%)</div><div class="banca-stat-val" id="bancaSL">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Stop Win (30%)</div><div class="banca-stat-val" id="bancaSW">—</div></div>
+                            <div class="banca-stat"><div class="banca-stat-label">Stop Loss</div><div class="banca-stat-val" id="bancaSL">—</div></div>
+                            <div class="banca-stat"><div class="banca-stat-label">Stop Win</div><div class="banca-stat-val" id="bancaSW">—</div></div>
                             <div class="banca-stat"><div class="banca-stat-label">Unit</div><div class="banca-stat-val" id="bancaUnit">—</div></div>
                             <div class="banca-stat"><div class="banca-stat-label">Win Rate</div><div class="banca-stat-val" id="bancaWR">—</div></div>
                         </div>
@@ -258,6 +258,10 @@
                         <div style="font-size:.8em;color:#d4af7d;font-weight:500;margin-bottom:12px;">Configurar</div>
                         <div class="form-group" style="margin:0 0 10px;"><label>Banca Inicial</label><input type="number" id="inputBancaInicial" placeholder="500" onchange="salvarBanca()"></div>
                         <div class="form-group" style="margin:0 0 10px;"><label>Aposta Base</label><input type="number" id="inputApostaBase" placeholder="5" onchange="salvarBanca()"></div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                            <div class="form-group" style="margin:0;"><label>Stop Loss (%)</label><input type="number" id="inputSL" placeholder="20" onchange="salvarBanca()"></div>
+                            <div class="form-group" style="margin:0;"><label>Stop Win (%)</label><input type="number" id="inputSW" placeholder="30" onchange="salvarBanca()"></div>
+                        </div>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;font-size:.7em;text-align:center;">
                             <div style="background:rgba(46,204,113,.08);padding:6px;border-radius:4px;"><div style="color:rgba(255,255,255,.4);">Jogadas</div><div id="bancaJogadas" style="color:#fff;font-weight:600;">0</div></div>
                             <div style="background:rgba(212,175,125,.08);padding:6px;border-radius:4px;"><div style="color:rgba(255,255,255,.4);">ROI</div><div id="bancaROI" style="color:#d4af7d;font-weight:600;">—</div></div>
@@ -327,7 +331,7 @@ const BANCA_KEY='bancaZara';
 
 let D={campos:{},projetos:[],feedbacks:[],metas:[]};
 let R={historico:[],sessoes:[]};
-let B={inicial:0,atual:0,apostaBase:5,stopLoss:30,stopWin:20,resultados:[]};
+let B={inicial:0,atual:0,apostaBase:5,sl:20,sw:30,resultados:[]};
 
 function loadAll(){
     const ep=localStorage.getItem(EP_KEY);if(ep)D={...D,...JSON.parse(ep)};
@@ -945,6 +949,8 @@ function renderRoleta(){
 function salvarBanca(){
     B.inicial=parseFloat(document.getElementById('inputBancaInicial').value)||0;
     B.apostaBase=parseFloat(document.getElementById('inputApostaBase').value)||5;
+    B.sl=parseFloat(document.getElementById('inputSL').value)||20;
+    B.sw=parseFloat(document.getElementById('inputSW').value)||30;
     if(!B.atual)B.atual=B.inicial;
     saveB();renderBanca();
 }
@@ -976,6 +982,11 @@ function desfazerResultado(){
 function renderBanca(){
     const bi=document.getElementById('inputBancaInicial');if(bi)bi.value=B.inicial||'';
     const ab=document.getElementById('inputApostaBase');if(ab)ab.value=B.apostaBase||'';
+    const slIn=document.getElementById('inputSL');if(slIn)slIn.value=B.sl||20;
+    const swIn=document.getElementById('inputSW');if(swIn)swIn.value=B.sw||30;
+
+    const slPct=(B.sl||20)/100;
+    const swPct=(B.sw||30)/100;
 
     document.getElementById('bancaAtual').textContent=formatR(B.atual||0);
     document.getElementById('bancaInicial').textContent=formatR(B.inicial||0);
@@ -987,8 +998,8 @@ function renderBanca(){
 
     const bancaAtual=B.atual||0;
     const bancaIni=B.inicial||0;
-    document.getElementById('bancaSL').textContent='-'+formatR(bancaAtual*0.20);
-    document.getElementById('bancaSW').textContent='+'+formatR(bancaAtual*0.30);
+    document.getElementById('bancaSL').textContent='-'+formatR(bancaAtual*slPct);
+    document.getElementById('bancaSW').textContent='+'+formatR(bancaAtual*swPct);
     document.getElementById('bancaUnit').textContent=formatR(B.apostaBase||5);
 
     const res=B.resultados||[];
@@ -1011,8 +1022,8 @@ function renderBanca(){
     // ALERTAS Stop Loss / Stop Win
     const alertaEl=document.getElementById('bancaAlerta');
     if(bancaIni>0){
-        const perdaMax=bancaIni*0.20;
-        const ganhoAlvo=bancaIni*0.30;
+        const perdaMax=bancaIni*slPct;
+        const ganhoAlvo=bancaIni*swPct;
         if(lp<=-perdaMax){
             alertaEl.style.display='block';
             alertaEl.style.background='rgba(231,76,60,.15)';
@@ -1186,8 +1197,8 @@ function drawBancaChart(){
 
     // Stop Loss / Stop Win lines
     if(ini>0){
-        const slVal=ini-(ini*0.20);
-        const swVal=ini+(ini*0.30);
+        const slVal=ini-(ini*((B.sl||20)/100));
+        const swVal=ini+(ini*((B.sw||30)/100));
         const slY=pad.t+gH-(((slVal-min)/range)*gH);
         const swY=pad.t+gH-(((swVal-min)/range)*gH);
 
