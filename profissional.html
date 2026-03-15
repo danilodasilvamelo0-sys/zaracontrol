@@ -232,10 +232,6 @@
                             <div class="analise-titulo">Mesa — Toque no Número</div>
                             <div id="mesaRoleta" class="mesa-roleta"></div>
                         </div>
-                        <div class="analise-box">
-                            <div class="analise-titulo">1-18 / 19-36</div>
-                            <div id="analiseMetades"></div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -247,31 +243,22 @@
                         <div style="text-align:center;margin-bottom:15px;">
                             <div style="font-size:.7em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;">Banca Atual</div>
                             <div class="banca-valor" id="bancaAtual">R$ 0,00</div>
-                            <div id="bancaAlerta" style="display:none;margin-top:8px;padding:6px 14px;border-radius:6px;font-size:.75em;font-weight:600;"></div>
                         </div>
                         <div class="banca-grid-4">
                             <div class="banca-stat"><div class="banca-stat-label">Banca Inicial</div><div class="banca-stat-val" id="bancaInicial">—</div></div>
                             <div class="banca-stat"><div class="banca-stat-label">Lucro/Prejuízo</div><div class="banca-stat-val" id="bancaLP">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Stop Loss</div><div class="banca-stat-val" id="bancaSL">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Stop Win</div><div class="banca-stat-val" id="bancaSW">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Unit</div><div class="banca-stat-val" id="bancaUnit">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Win Rate</div><div class="banca-stat-val" id="bancaWR">—</div></div>
+                            <div class="banca-stat"><div class="banca-stat-label">Stop Loss (20%)</div><div class="banca-stat-val" id="bancaSL">—</div></div>
+                            <div class="banca-stat"><div class="banca-stat-label">Stop Win (30%)</div><div class="banca-stat-val" id="bancaSW">—</div></div>
+                            <div class="banca-stat"><div class="banca-stat-label">Unit (2%)</div><div class="banca-stat-val" id="bancaUnit">—</div></div>
+                            <div class="banca-stat"><div class="banca-stat-label">Sessões</div><div class="banca-stat-val" id="bancaSessoes">0</div></div>
                         </div>
                     </div>
                     <div class="banca-card">
                         <div style="font-size:.8em;color:#d4af7d;font-weight:500;margin-bottom:12px;">Configurar</div>
                         <div class="form-group" style="margin:0 0 10px;"><label>Banca Inicial</label><input type="number" id="inputBancaInicial" placeholder="500" onchange="salvarBanca()"></div>
-                        <div class="form-group" style="margin:0 0 10px;"><label>Aposta Base</label><input type="number" id="inputApostaBase" placeholder="5" onchange="salvarBanca()"></div>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                            <div class="form-group" style="margin:0;"><label>Stop Loss (%)</label><input type="number" id="inputSL" placeholder="20" onchange="salvarBanca()"></div>
-                            <div class="form-group" style="margin:0;"><label>Stop Win (%)</label><input type="number" id="inputSW" placeholder="30" onchange="salvarBanca()"></div>
-                        </div>
-                        <div style="display:grid;grid-template-columns:1fr;gap:6px;margin-top:8px;font-size:.7em;text-align:center;">
-                            <div style="background:rgba(46,204,113,.08);padding:6px;border-radius:4px;"><div style="color:rgba(255,255,255,.4);">Jogadas</div><div id="bancaJogadas" style="color:#fff;font-weight:600;">0</div></div>
-                        </div>
+                        <div class="form-group" style="margin:0;"><label>Aposta Base</label><input type="number" id="inputApostaBase" placeholder="5" onchange="salvarBanca()"></div>
                     </div>
                 </div>
-                <!-- REGISTRAR RESULTADO -->
                 <div class="banca-card">
                     <div style="font-size:.8em;color:#d4af7d;font-weight:500;margin-bottom:12px;">Registrar Resultado</div>
                     <p style="font-size:.75em;color:rgba(255,255,255,.4);margin-bottom:12px;">Aposta em 2 dúzias/colunas: <strong style="color:#2ecc71;">Acerto = +1 unit</strong> (apostou 2, recebeu 3) | <strong style="color:#e74c3c;">Erro = -2 units</strong> (perdeu as 2 fichas)</p>
@@ -323,36 +310,36 @@
 // ==========================================
 // STORAGE
 // ==========================================
-const EP_KEY='empresaPersona';
-const ROL_KEY='roletaZara';
-const BANCA_KEY='bancaZara';
+var EP_KEY='empresaPersona';
+var ROL_KEY='roletaZara';
+var BANCA_KEY='bancaZara';
 
-let D={campos:{},projetos:[],feedbacks:[],metas:[]};
-let R={historico:[],sessoes:[]};
-let B={inicial:0,atual:0,apostaBase:5,sl:20,sw:30,resultados:[]};
+var D={campos:{},projetos:[],feedbacks:[],metas:[]};
+var R={historico:[],assertDz:{ac:0,er:0,seq:[]},assertCol:{ac:0,er:0,seq:[]}};
+var B={inicial:0,atual:0,apostaBase:5,sl:20,sw:30,resultados:[]};
 
 function loadAll(){
-    const ep=localStorage.getItem(EP_KEY);if(ep)D={...D,...JSON.parse(ep)};
-    const ro=localStorage.getItem(ROL_KEY);if(ro)R={...R,...JSON.parse(ro)};
-    const ba=localStorage.getItem(BANCA_KEY);if(ba)B={...B,...JSON.parse(ba)};
+    var ep=localStorage.getItem(EP_KEY);if(ep)D=Object.assign({},D,JSON.parse(ep));
+    var ro=localStorage.getItem(ROL_KEY);if(ro)R=Object.assign({},R,JSON.parse(ro));
+    var ba=localStorage.getItem(BANCA_KEY);if(ba)B=Object.assign({},B,JSON.parse(ba));
 }
 function saveEP(){localStorage.setItem(EP_KEY,JSON.stringify(D));}
 function saveR(){localStorage.setItem(ROL_KEY,JSON.stringify(R));}
 function saveB(){localStorage.setItem(BANCA_KEY,JSON.stringify(B));}
-function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 
 // ==========================================
 // TABS
 // ==========================================
 function switchMain(tab){
-    document.querySelectorAll('.main-tab').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.main-tab-content').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('.main-tab').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.main-tab-content').forEach(function(c){c.classList.remove('active');});
     event.target.classList.add('active');
     document.getElementById('tab-'+tab).classList.add('active');
 }
 function switchSub(tab){
-    document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.sub-content').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('.sub-tab').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.sub-content').forEach(function(c){c.classList.remove('active');});
     event.target.classList.add('active');
     document.getElementById('sub-'+tab).classList.add('active');
 }
@@ -362,621 +349,308 @@ function togglePilar(id){document.getElementById(id).classList.toggle('open');}
 // EMPRESA-PERSONA
 // ==========================================
 function salvarCampo(k,v){D.campos[k]=v;saveEP();}
-function carregarCampos(){Object.keys(D.campos).forEach(k=>{const el=document.getElementById('campo_'+k);if(el)el.value=D.campos[k]||'';});}
+function carregarCampos(){Object.keys(D.campos).forEach(function(k){var el=document.getElementById('campo_'+k);if(el)el.value=D.campos[k]||'';});}
 function abrirModal(id){document.getElementById(id).classList.add('active');}
 function fecharModal(id){document.getElementById(id).classList.remove('active');}
 
-function abrirModalProjeto(id){if(id){const p=D.projetos.find(x=>x.id===id);if(!p)return;document.getElementById('projetoId').value=p.id;document.getElementById('projetoNome').value=p.nome;document.getElementById('projetoObjetivo').value=p.objetivo;document.getElementById('projetoConexao').value=p.conexao;document.getElementById('projetoStatus').value=p.status;}else{document.getElementById('projetoId').value='';document.getElementById('projetoNome').value='';document.getElementById('projetoObjetivo').value='';document.getElementById('projetoConexao').value='';document.getElementById('projetoStatus').value='planejando';}abrirModal('modalProjeto');}
-function salvarProjeto(){const n=document.getElementById('projetoNome').value.trim();if(!n)return;const id=document.getElementById('projetoId').value;const o={nome:n,objetivo:document.getElementById('projetoObjetivo').value.trim(),conexao:document.getElementById('projetoConexao').value.trim(),status:document.getElementById('projetoStatus').value};if(id){Object.assign(D.projetos.find(x=>x.id===id),o);}else{o.id=Date.now().toString();D.projetos.push(o);}saveEP();renderProjetos();fecharModal('modalProjeto');toast('Projeto salvo');}
-function deletarProjeto(id){if(!confirm('Excluir?'))return;D.projetos=D.projetos.filter(x=>x.id!==id);saveEP();renderProjetos();}
-function renderProjetos(){const c=document.getElementById('projetosLista');if(!D.projetos.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhum projeto.</div>';return;}const sl={ativo:'Ativo',planejando:'Planejando',pausado:'Pausado',concluido:'Concluído'};c.innerHTML=D.projetos.map(p=>`<div class="projeto-card"><div class="projeto-header"><span class="projeto-nome">${p.nome}</span><span class="projeto-status ${p.status}">${sl[p.status]}</span></div>${p.objetivo?`<div class="projeto-meta">${p.objetivo}</div>`:''}${p.conexao?`<div class="projeto-conexao">&#8627; ${p.conexao}</div>`:''}<div class="projeto-acoes"><button class="btn-mini" onclick="abrirModalProjeto('${p.id}')">Editar</button><button class="btn-mini delete" onclick="deletarProjeto('${p.id}')">Excluir</button></div></div>`).join('');}
+function abrirModalProjeto(id){if(id){var p=D.projetos.find(function(x){return x.id===id;});if(!p)return;document.getElementById('projetoId').value=p.id;document.getElementById('projetoNome').value=p.nome;document.getElementById('projetoObjetivo').value=p.objetivo;document.getElementById('projetoConexao').value=p.conexao;document.getElementById('projetoStatus').value=p.status;}else{document.getElementById('projetoId').value='';document.getElementById('projetoNome').value='';document.getElementById('projetoObjetivo').value='';document.getElementById('projetoConexao').value='';document.getElementById('projetoStatus').value='planejando';}abrirModal('modalProjeto');}
+function salvarProjeto(){var n=document.getElementById('projetoNome').value.trim();if(!n)return;var id=document.getElementById('projetoId').value;var o={nome:n,objetivo:document.getElementById('projetoObjetivo').value.trim(),conexao:document.getElementById('projetoConexao').value.trim(),status:document.getElementById('projetoStatus').value};if(id){Object.assign(D.projetos.find(function(x){return x.id===id;}),o);}else{o.id=Date.now().toString();D.projetos.push(o);}saveEP();renderProjetos();fecharModal('modalProjeto');toast('Projeto salvo');}
+function deletarProjeto(id){if(!confirm('Excluir?'))return;D.projetos=D.projetos.filter(function(x){return x.id!==id;});saveEP();renderProjetos();}
+function renderProjetos(){var c=document.getElementById('projetosLista');if(!D.projetos.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhum projeto.</div>';return;}var sl={ativo:'Ativo',planejando:'Planejando',pausado:'Pausado',concluido:'Concluido'};c.innerHTML=D.projetos.map(function(p){return '<div class="projeto-card"><div class="projeto-header"><span class="projeto-nome">'+p.nome+'</span><span class="projeto-status '+p.status+'">'+sl[p.status]+'</span></div>'+(p.objetivo?'<div class="projeto-meta">'+p.objetivo+'</div>':'')+(p.conexao?'<div class="projeto-conexao">&#8627; '+p.conexao+'</div>':'')+'<div class="projeto-acoes"><button class="btn-mini" onclick="abrirModalProjeto(\''+p.id+'\')">Editar</button><button class="btn-mini delete" onclick="deletarProjeto(\''+p.id+'\')">Excluir</button></div></div>';}).join('');}
 
 function abrirModalFeedback(){document.getElementById('feedbackTexto').value='';document.getElementById('feedbackTipo').value='positivo';document.getElementById('feedbackData').value=new Date().toISOString().split('T')[0];abrirModal('modalFeedback');}
-function salvarFeedback(){const t=document.getElementById('feedbackTexto').value.trim();if(!t)return;D.feedbacks.unshift({id:Date.now().toString(),texto:t,tipo:document.getElementById('feedbackTipo').value,data:document.getElementById('feedbackData').value});D.feedbacks=D.feedbacks.slice(0,50);saveEP();renderFeedbacks();fecharModal('modalFeedback');toast('Feedback registrado');}
-function deletarFeedback(id){D.feedbacks=D.feedbacks.filter(x=>x.id!==id);saveEP();renderFeedbacks();}
-function renderFeedbacks(){const c=document.getElementById('feedbacksLista');if(!D.feedbacks.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhum feedback.</div>';return;}const tl={positivo:'Positivo',ajuste:'Ajuste',critico:'Crítico'};c.innerHTML=D.feedbacks.slice(0,15).map(f=>{const d=new Date(f.data+'T12:00:00');const ds=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});return`<div class="feedback-card"><div style="display:flex;justify-content:space-between;"><span class="feedback-data">${ds}</span><button class="btn-mini delete" onclick="deletarFeedback('${f.id}')" style="padding:2px 6px;font-size:.7em;">x</button></div><div class="feedback-texto">${f.texto}</div><span class="feedback-tipo ${f.tipo}">${tl[f.tipo]}</span></div>`;}).join('');}
+function salvarFeedback(){var t=document.getElementById('feedbackTexto').value.trim();if(!t)return;D.feedbacks.unshift({id:Date.now().toString(),texto:t,tipo:document.getElementById('feedbackTipo').value,data:document.getElementById('feedbackData').value});D.feedbacks=D.feedbacks.slice(0,50);saveEP();renderFeedbacks();fecharModal('modalFeedback');toast('Feedback registrado');}
+function deletarFeedback(id){D.feedbacks=D.feedbacks.filter(function(x){return x.id!==id;});saveEP();renderFeedbacks();}
+function renderFeedbacks(){var c=document.getElementById('feedbacksLista');if(!D.feedbacks.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhum feedback.</div>';return;}var tl={positivo:'Positivo',ajuste:'Ajuste',critico:'Critico'};c.innerHTML=D.feedbacks.slice(0,15).map(function(f){var d=new Date(f.data+'T12:00:00');var ds=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});return '<div class="feedback-card"><div style="display:flex;justify-content:space-between;"><span class="feedback-data">'+ds+'</span><button class="btn-mini delete" onclick="deletarFeedback(\''+f.id+'\')" style="padding:2px 6px;font-size:.7em;">x</button></div><div class="feedback-texto">'+f.texto+'</div><span class="feedback-tipo '+f.tipo+'">'+tl[f.tipo]+'</span></div>';}).join('');}
 
-function abrirModalMeta(id){if(id){const m=D.metas.find(x=>x.id===id);if(!m)return;document.getElementById('metaId').value=m.id;document.getElementById('metaTexto').value=m.texto;document.getElementById('metaPrazo').value=m.prazo;document.getElementById('metaProgresso').value=m.progresso;document.getElementById('metaProgVal').textContent=m.progresso+'%';document.getElementById('metaPilar').value=m.pilar;}else{document.getElementById('metaId').value='';document.getElementById('metaTexto').value='';document.getElementById('metaPrazo').value='3m';document.getElementById('metaProgresso').value=0;document.getElementById('metaProgVal').textContent='0%';document.getElementById('metaPilar').value='geral';}abrirModal('modalMeta');}
-function salvarMeta(){const t=document.getElementById('metaTexto').value.trim();if(!t)return;const id=document.getElementById('metaId').value;const o={texto:t,prazo:document.getElementById('metaPrazo').value,progresso:parseInt(document.getElementById('metaProgresso').value),pilar:document.getElementById('metaPilar').value};if(id){Object.assign(D.metas.find(x=>x.id===id),o);}else{o.id=Date.now().toString();D.metas.push(o);}saveEP();renderMetas();fecharModal('modalMeta');toast('Meta salva');}
-function deletarMeta(id){if(!confirm('Excluir?'))return;D.metas=D.metas.filter(x=>x.id!==id);saveEP();renderMetas();}
-function renderMetas(){const c=document.getElementById('metasLista');if(!D.metas.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhuma meta.</div>';return;}const pl={'1m':'1 mês','3m':'3 meses','6m':'6 meses','1a':'1 ano'};const pil={identidade:'Identidade',posicionamento:'Posicion.',projetos:'Projetos',reputacao:'Reputação',geral:'Geral'};c.innerHTML=D.metas.map(m=>`<div class="meta-card"><div class="meta-header"><span class="meta-texto">${m.texto}</span><span class="meta-prazo">${pl[m.prazo]||m.prazo}</span></div><div style="display:flex;justify-content:space-between;margin-top:6px;"><span style="font-size:.7em;color:rgba(212,175,125,.5);">${pil[m.pilar]||''}</span><span style="font-size:.8em;color:#d4af7d;">${m.progresso}%</span></div><div class="meta-barra"><div class="meta-fill" style="width:${m.progresso}%"></div></div><div class="projeto-acoes" style="margin-top:8px;"><button class="btn-mini" onclick="abrirModalMeta('${m.id}')">Editar</button><button class="btn-mini delete" onclick="deletarMeta('${m.id}')">Excluir</button></div></div>`).join('');}
+function abrirModalMeta(id){if(id){var m=D.metas.find(function(x){return x.id===id;});if(!m)return;document.getElementById('metaId').value=m.id;document.getElementById('metaTexto').value=m.texto;document.getElementById('metaPrazo').value=m.prazo;document.getElementById('metaProgresso').value=m.progresso;document.getElementById('metaProgVal').textContent=m.progresso+'%';document.getElementById('metaPilar').value=m.pilar;}else{document.getElementById('metaId').value='';document.getElementById('metaTexto').value='';document.getElementById('metaPrazo').value='3m';document.getElementById('metaProgresso').value=0;document.getElementById('metaProgVal').textContent='0%';document.getElementById('metaPilar').value='geral';}abrirModal('modalMeta');}
+function salvarMeta(){var t=document.getElementById('metaTexto').value.trim();if(!t)return;var id=document.getElementById('metaId').value;var o={texto:t,prazo:document.getElementById('metaPrazo').value,progresso:parseInt(document.getElementById('metaProgresso').value),pilar:document.getElementById('metaPilar').value};if(id){Object.assign(D.metas.find(function(x){return x.id===id;}),o);}else{o.id=Date.now().toString();D.metas.push(o);}saveEP();renderMetas();fecharModal('modalMeta');toast('Meta salva');}
+function deletarMeta(id){if(!confirm('Excluir?'))return;D.metas=D.metas.filter(function(x){return x.id!==id;});saveEP();renderMetas();}
+function renderMetas(){var c=document.getElementById('metasLista');if(!D.metas.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhuma meta.</div>';return;}var pl={'1m':'1 mes','3m':'3 meses','6m':'6 meses','1a':'1 ano'};var pil={identidade:'Identidade',posicionamento:'Posicion.',projetos:'Projetos',reputacao:'Reputacao',geral:'Geral'};c.innerHTML=D.metas.map(function(m){return '<div class="meta-card"><div class="meta-header"><span class="meta-texto">'+m.texto+'</span><span class="meta-prazo">'+(pl[m.prazo]||m.prazo)+'</span></div><div style="display:flex;justify-content:space-between;margin-top:6px;"><span style="font-size:.7em;color:rgba(212,175,125,.5);">'+(pil[m.pilar]||'')+'</span><span style="font-size:.8em;color:#d4af7d;">'+m.progresso+'%</span></div><div class="meta-barra"><div class="meta-fill" style="width:'+m.progresso+'%"></div></div><div class="projeto-acoes" style="margin-top:8px;"><button class="btn-mini" onclick="abrirModalMeta(\''+m.id+'\')">Editar</button><button class="btn-mini delete" onclick="deletarMeta(\''+m.id+'\')">Excluir</button></div></div>';}).join('');}
 
 // ==========================================
-// ROLETA — ENGINE ESTATÍSTICA V2
+// ROLETA ENGINE V3
 // ==========================================
 const VERMELHOS=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-const P_DZ=12/37; // probabilidade teórica dúzia/coluna
-
-// Sequência real da roda europeia (sentido horário)
+const P_DZ=12/37;const P_HALF=18/37;
 const RODA=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
 
 function corNum(n){if(n===0)return'z';return VERMELHOS.includes(n)?'v':'p';}
 function duzia(n){if(n===0)return 0;if(n<=12)return 1;if(n<=24)return 2;return 3;}
 function coluna(n){if(n===0)return 0;return((n-1)%3)+1;}
 
-// ==========================================
-// MATH: Z-SCORE (binomial)
-// Z = (obs - n*p) / sqrt(n*p*(1-p))
-// ==========================================
-function zScore(obs, n, p){
-    const esp=n*p;const sd=Math.sqrt(n*p*(1-p));
-    return sd===0?0:(obs-esp)/sd;
-}
+function zScore(obs,n,p){var sd=Math.sqrt(n*p*(1-p));return sd===0?0:(obs-n*p)/sd;}
+function chiQuad(obs,n,p){var esp=n*p;if(esp===0)return 0;return obs.reduce(function(s,o){return s+Math.pow(o-esp,2)/esp;},0);}
+function chiSig(x){if(x>=9.21)return{nv:'p<0.01',f:3};if(x>=5.99)return{nv:'p<0.05',f:2};if(x>=4.60)return{nv:'p<0.10',f:1};return{nv:'n.s.',f:0};}
 
-// ==========================================
-// MATH: CHI-QUADRADO (Pearson, df=2)
-// Críticos: 4.60 (p<0.10), 5.99 (p<0.05), 9.21 (p<0.01)
-// ==========================================
-function chiQuadrado(obs,n,p){
-    const esp=n*p;if(esp===0)return 0;
-    return obs.reduce((s,o)=>s+Math.pow(o-esp,2)/esp,0);
-}
-function chiSig(chi2){
-    if(chi2>=9.21)return{nv:'p<0.01',f:3};
-    if(chi2>=5.99)return{nv:'p<0.05',f:2};
-    if(chi2>=4.60)return{nv:'p<0.10',f:1};
-    return{nv:'n.s.',f:0};
-}
-
-// ==========================================
-// MATH: GAPS — giros desde última aparição
-// Gap esperado ≈ 37/12 ≈ 3.08
-// ==========================================
-function calcGaps(hist){
-    const g={dz:[0,0,0],cl:[0,0,0]};
-    for(let k=0;k<3;k++){
-        let gap=0;
-        for(let i=hist.length-1;i>=0;i--){
-            const n=hist[i];if(n===0){gap++;continue;}
-            if(duzia(n)-1===k)break;gap++;
-        }
-        g.dz[k]=gap;
-    }
-    for(let k=0;k<3;k++){
-        let gap=0;
-        for(let i=hist.length-1;i>=0;i--){
-            const n=hist[i];if(n===0){gap++;continue;}
-            if(coluna(n)-1===k)break;gap++;
-        }
-        g.cl[k]=gap;
-    }
+function calcGaps(h){
+    var g={dz:[0,0,0],cl:[0,0,0]};
+    for(var k=0;k<3;k++){var gap=0;for(var i=h.length-1;i>=0;i--){var n=h[i];if(n===0){gap++;continue;}if(duzia(n)-1===k)break;gap++;}g.dz[k]=gap;}
+    for(var k2=0;k2<3;k2++){var gap2=0;for(var i2=h.length-1;i2>=0;i2--){var n2=h[i2];if(n2===0){gap2++;continue;}if(coluna(n2)-1===k2)break;gap2++;}g.cl[k2]=gap2;}
     return g;
 }
 
-// ==========================================
-// MATH: BAYESIAN — peso exponencial nos recentes
-// decay=0.97 → número 20 giros atrás pesa 54% do atual
-// ==========================================
-function bayesPcts(hist,tipo){
-    const h=hist.filter(n=>n!==0);
-    if(!h.length)return[33.3,33.3,33.3];
-    const cnt=[0,0,0];let tw=0;
-    h.forEach((n,idx)=>{
-        const w=Math.pow(0.97,h.length-1-idx);
-        const cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;
-        if(cat>=0)cnt[cat]+=w;tw+=w;
-    });
-    return tw===0?[33.3,33.3,33.3]:cnt.map(c=>(c/tw)*100);
+function bayesPcts(h,tipo){
+    var f=h.filter(function(n){return n!==0;});if(!f.length)return[33.3,33.3,33.3];
+    var cnt=[0,0,0];var tw=0;
+    f.forEach(function(n,i){var w=Math.pow(0.95,f.length-1-i);var cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;if(cat>=0)cnt[cat]+=w;tw+=w;});
+    return tw===0?[33.3,33.3,33.3]:cnt.map(function(c){return(c/tw)*100;});
 }
 
-// ==========================================
-// MATH: VOLATILIDADE — variância entre blocos de 10
-// ==========================================
-function calcVol(hist){
-    const h=hist.filter(n=>n!==0);
-    if(h.length<20)return{v:0,t:'—'};
-    const blocos=[];
-    for(let i=0;i<=h.length-10;i+=10){
-        const b=h.slice(i,i+10);const dz=[0,0,0];
-        b.forEach(n=>{dz[duzia(n)-1]++;});
-        blocos.push(dz.map(d=>d/10*100));
-    }
-    if(blocos.length<2)return{v:0,t:'—'};
-    let tv=0;
-    for(let d=0;d<3;d++){
-        const vals=blocos.map(b=>b[d]);
-        const m=vals.reduce((s,v)=>s+v,0)/vals.length;
-        tv+=vals.reduce((s,v)=>s+Math.pow(v-m,2),0)/vals.length;
-    }
-    const vol=Math.sqrt(tv/3);
-    if(vol>25)return{v:vol,t:'MUITO ALTA'};
-    if(vol>15)return{v:vol,t:'ALTA'};
-    if(vol>8)return{v:vol,t:'MODERADA'};
-    return{v:vol,t:'BAIXA'};
+function calcMom(h,tipo){
+    var f=h.filter(function(n){return n!==0;});if(f.length<16)return[0,0,0];
+    var r=f.slice(-8);var a=f.slice(-16,-8);var m=[0,0,0];
+    for(var k=0;k<3;k++){var cr=r.filter(function(n){return(tipo==='dz'?duzia(n)-1:coluna(n)-1)===k;}).length;var ca=a.filter(function(n){return(tipo==='dz'?duzia(n)-1:coluna(n)-1)===k;}).length;m[k]=(cr/8*100)-(ca/8*100);}
+    return m;
 }
 
-// ==========================================
-// NEW: MOMENTUM — aceleração/desaceleração
-// Compara frequência nos últimos 8 vs anteriores 8
-// Positivo = acelerando (ficando mais quente)
-// Negativo = desacelerando (esfriando)
-// ==========================================
-function calcMomentum(hist,tipo){
-    const h=hist.filter(n=>n!==0);
-    if(h.length<16)return[0,0,0];
-    const recent=h.slice(-8);
-    const anterior=h.slice(-16,-8);
-    const mom=[0,0,0];
-    for(let k=0;k<3;k++){
-        const cntR=recent.filter(n=>(tipo==='dz'?duzia(n)-1:coluna(n)-1)===k).length;
-        const cntA=anterior.filter(n=>(tipo==='dz'?duzia(n)-1:coluna(n)-1)===k).length;
-        mom[k]=(cntR/8*100)-(cntA/8*100); // diferença percentual
-    }
-    return mom;
+function janelaComp(h,tipo){
+    var f=h.filter(function(n){return n!==0;});if(f.length<15)return null;
+    var u=f.slice(-15);var c15=[0,0,0];var ca=[0,0,0];
+    u.forEach(function(n){var cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;if(cat>=0)c15[cat]++;});
+    f.forEach(function(n){var cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;if(cat>=0)ca[cat]++;});
+    return{pct15:c15.map(function(c){return c/15*100;}),pctAll:ca.map(function(c){return c/f.length*100;}),desvio:c15.map(function(c,i){return c/15*100-ca[i]/f.length*100;})};
 }
 
-// ==========================================
-// NEW: JANELA COMPARATIVA — últimos 15 vs geral
-// Desvio local = frequência recente diverge do geral
-// ==========================================
-function janelaComparativa(hist,tipo){
-    const h=hist.filter(n=>n!==0);
-    if(h.length<15)return null;
-    const ult15=h.slice(-15);
-    const cnt15=[0,0,0];
-    ult15.forEach(n=>{
-        const cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;
-        if(cat>=0)cnt15[cat]++;
-    });
-    const pct15=cnt15.map(c=>c/15*100);
-    const cntAll=[0,0,0];
-    h.forEach(n=>{
-        const cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;
-        if(cat>=0)cntAll[cat]++;
-    });
-    const pctAll=cntAll.map(c=>c/h.length*100);
-    return {pct15,pctAll,desvio:pct15.map((p,i)=>p-pctAll[i])};
+function calcVol(h){
+    var f=h.filter(function(n){return n!==0;});if(f.length<20)return{v:0,t:'--'};
+    var bl=[];for(var i=0;i<=f.length-10;i+=10){var b=f.slice(i,i+10);var d=[0,0,0];b.forEach(function(n){d[duzia(n)-1]++;});bl.push(d.map(function(x){return x/10*100;}));}
+    if(bl.length<2)return{v:0,t:'--'};
+    var tv=0;for(var dd=0;dd<3;dd++){var vals=bl.map(function(b2){return b2[dd];});var mm=vals.reduce(function(s,v){return s+v;},0)/vals.length;tv+=vals.reduce(function(s,v){return s+Math.pow(v-mm,2);},0)/vals.length;}
+    var vol=Math.sqrt(tv/3);
+    if(vol>25)return{v:vol,t:'MUITO ALTA'};if(vol>15)return{v:vol,t:'ALTA'};if(vol>8)return{v:vol,t:'MODERADA'};return{v:vol,t:'BAIXA'};
 }
 
-// ==========================================
-// NEW: CONVERGÊNCIA DE SINAIS
-// Cada indicador "vota" na excluída
-// Convergência = todos apontam mesma direção
-// ==========================================
-function calcConvergencia(dzZ,dzMom,dzBayes,dzGaps,dzJanela){
-    // Cada método vota no índice da "mais quente" (a excluir)
-    const votos=[0,0,0];
-    // Z-Score: maior Z = mais quente
-    votos[dzZ.indexOf(Math.max(...dzZ))]+=2;
-    // Momentum: maior momentum positivo = acelerando = quente
-    votos[dzMom.indexOf(Math.max(...dzMom))]+=1.5;
-    // Bayesian: maior % bayesiana = quente
-    votos[dzBayes.indexOf(Math.max(...dzBayes))]+=1.5;
-    // Gap: menor gap = apareceu recentemente = quente
-    const minGap=Math.min(...dzGaps);
-    votos[dzGaps.indexOf(minGap)]+=1;
-    // Janela: maior % nos últimos 15 = recentemente quente
-    if(dzJanela){
-        votos[dzJanela.pct15.indexOf(Math.max(...dzJanela.pct15))]+=1.5;
-    }
-    const maxVotos=Math.max(...votos);
-    const excluida=votos.indexOf(maxVotos);
-    const totalVotos=votos.reduce((s,v)=>s+v,0);
-    const consenso=totalVotos>0?maxVotos/totalVotos*100:0;
-    return {excluida,consenso,votos};
-}
-
-// ==========================================
-// NEW: SETORES DA RODA FÍSICA
-// Números vizinhos na roda tendem a correlacionar
-// com crupier constante (força similar)
-// ==========================================
-function getVizinhosRoda(n,range){
-    const idx=RODA.indexOf(n);
-    if(idx===-1)return[];
-    const viz=[];
-    for(let i=-range;i<=range;i++){
-        if(i===0)continue;
-        const pos=(idx+i+RODA.length)%RODA.length;
-        viz.push(RODA[pos]);
-    }
-    return viz;
-}
-
-function analisarSetores(hist){
-    if(hist.length<10)return null;
-    const ult5=hist.slice(-5).filter(n=>n!==0);
-    if(ult5.length<3)return null;
-
-    // Verificar se últimos números caem em setor próximo da roda
-    const setores={};
-    ult5.forEach(n=>{
-        const idx=RODA.indexOf(n);
-        // Setor = grupo de 5 vizinhos
-        const setorId=Math.floor(idx/5);
-        setores[setorId]=(setores[setorId]||0)+1;
-    });
-
-    const maxSetor=Math.max(...Object.values(setores));
-    const setorDominante=Object.keys(setores).find(k=>setores[k]===maxSetor);
-
-    if(maxSetor>=3){
-        // 3+ dos últimos 5 caíram no mesmo setor da roda
-        const setorIdx=parseInt(setorDominante)*5;
-        const numsSetor=[];
-        for(let i=Math.max(0,setorIdx-2);i<Math.min(RODA.length,setorIdx+7);i++){
-            numsSetor.push(RODA[i]);
-        }
-        return{ativo:true,nums:numsSetor,forca:maxSetor,msg:`Setor quente: ${maxSetor}/5 últimos caíram na mesma região da roda`};
-    }
+function analisarSetores(h){
+    if(h.length<10)return{ativo:false};var u=h.slice(-5).filter(function(n){return n!==0;});if(u.length<3)return{ativo:false};
+    var setores={};u.forEach(function(n){var idx=RODA.indexOf(n);var sid=Math.floor(idx/5);setores[sid]=(setores[sid]||0)+1;});
+    var mx=Math.max.apply(null,Object.values(setores));var sd=Object.keys(setores).find(function(k){return setores[k]===mx;});
+    if(mx>=3){var si=parseInt(sd)*5;var nums=[];for(var i=Math.max(0,si-2);i<Math.min(RODA.length,si+7);i++)nums.push(RODA[i]);return{ativo:true,nums:nums,forca:mx,msg:'Setor quente: '+mx+'/5 na mesma regiao'};}
     return{ativo:false};
 }
 
-// ==========================================
-// MESA REAL
-// ==========================================
+function calcCUSUM(h,tipo){
+    var f=h.filter(function(n){return n!==0;});if(f.length<10)return{pos:[0,0,0],neg:[0,0,0],alarme:false};
+    var pos=[0,0,0];var neg=[0,0,0];var alarme=false;
+    f.forEach(function(n){var cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;
+        for(var j=0;j<3;j++){var xi=(cat===j)?1:0;pos[j]=Math.max(0,pos[j]+(xi-1/3-0.05));neg[j]=Math.min(0,neg[j]+(xi-1/3+0.05));if(pos[j]>4||Math.abs(neg[j])>4)alarme=true;}
+    });return{pos:pos,neg:neg,alarme:alarme};
+}
+
+function calcStreak(aObj){
+    if(!aObj||!aObj.seq||!aObj.seq.length)return{atual:0};
+    var seq=aObj.seq;var atual=0;
+    for(var i=seq.length-1;i>=0;i--){
+        if(i===seq.length-1)atual=seq[i]==='l'?-1:1;
+        else if(seq[i]==='l'&&atual<0)atual--;
+        else if(seq[i]==='w'&&atual>0)atual++;
+        else break;
+    }return{atual:atual};
+}
+
+function calcConv(zArr,momArr,bayArr,gapArr,janObj,cusumPos){
+    var v=[0,0,0];
+    v[zArr.indexOf(Math.max.apply(null,zArr))]+=2.5;
+    v[momArr.indexOf(Math.max.apply(null,momArr))]+=1.5;
+    v[bayArr.indexOf(Math.max.apply(null,bayArr))]+=2;
+    v[gapArr.indexOf(Math.min.apply(null,gapArr))]+=1;
+    if(janObj)v[janObj.pct15.indexOf(Math.max.apply(null,janObj.pct15))]+=2;
+    v[cusumPos.indexOf(Math.max.apply(null,cusumPos))]+=1.5;
+    var mx=Math.max.apply(null,v);var tot=v.reduce(function(s,x){return s+x;},0);
+    return{excluida:v.indexOf(mx),consenso:tot>0?mx/tot*100:0,votos:v};
+}
+
+// MESA
 function buildMesa(){
-    const m=document.getElementById('mesaRoleta');if(!m)return;
-    let html='<table class="mesa-table">';
+    var m=document.getElementById('mesaRoleta');if(!m)return;
+    var html='<table class="mesa-table">';
     html+='<tr><td class="z" rowspan="3" onclick="addNum(0)" style="width:38px;font-size:1.2em;">0</td>';
-    for(let i=3;i<=36;i+=3)html+=`<td class="${corNum(i)}" onclick="addNum(${i})">${i}</td>`;
+    for(var i=3;i<=36;i+=3)html+='<td class="'+corNum(i)+'" onclick="addNum('+i+')">'+i+'</td>';
     html+='<td class="dz-label" style="cursor:default;">2:1</td></tr><tr>';
-    for(let i=2;i<=35;i+=3)html+=`<td class="${corNum(i)}" onclick="addNum(${i})">${i}</td>`;
+    for(var i2=2;i2<=35;i2+=3)html+='<td class="'+corNum(i2)+'" onclick="addNum('+i2+')">'+i2+'</td>';
     html+='<td class="dz-label" style="cursor:default;">2:1</td></tr><tr>';
-    for(let i=1;i<=34;i+=3)html+=`<td class="${corNum(i)}" onclick="addNum(${i})">${i}</td>`;
+    for(var i3=1;i3<=34;i3+=3)html+='<td class="'+corNum(i3)+'" onclick="addNum('+i3+')">'+i3+'</td>';
     html+='<td class="dz-label" style="cursor:default;">2:1</td></tr>';
-    html+='<tr><td class="dz-label" style="cursor:default;"></td>';
-    html+='<td class="dz-label" colspan="4" style="cursor:default;">1st 12</td>';
-    html+='<td class="dz-label" colspan="4" style="cursor:default;">2nd 12</td>';
-    html+='<td class="dz-label" colspan="4" style="cursor:default;">3rd 12</td>';
-    html+='<td class="dz-label" style="cursor:default;"></td></tr></table>';
+    html+='<tr><td class="dz-label" style="cursor:default;"></td><td class="dz-label" colspan="4" style="cursor:default;">1st 12</td><td class="dz-label" colspan="4" style="cursor:default;">2nd 12</td><td class="dz-label" colspan="4" style="cursor:default;">3rd 12</td><td class="dz-label" style="cursor:default;"></td></tr></table>';
     m.innerHTML=html;
 }
 
-// ==========================================
-// SUGESTÃO ATUAL (p/ assertividade auto)
-// ==========================================
+// SUGESTAO ATUAL (assertividade so fase 3)
 function getSugestaoAtual(){
-    const h=R.historico;const sz=h.filter(n=>n!==0);const T=sz.length;
-    if(T<10)return null;
-    const dz=[0,0,0];sz.forEach(n=>{dz[duzia(n)-1]++;});
-    const cl=[0,0,0];sz.forEach(n=>{cl[coluna(n)-1]++;});
-    const dzZ=dz.map(d=>zScore(d,T,P_DZ));
-    const clZ=cl.map(c2=>zScore(c2,T,P_DZ));
-
-    // Usar convergência quando possível
-    const gaps=calcGaps(h);
-    const momDz=calcMomentum(h,'dz');
-    const bayDz=bayesPcts(h,'dz');
-    const janDz=janelaComparativa(h,'dz');
-    const convDz=calcConvergencia(dzZ,momDz,bayDz,gaps.dz,janDz);
-
-    const momCl=calcMomentum(h,'cl');
-    const bayCl=bayesPcts(h,'cl');
-    const janCl=janelaComparativa(h,'cl');
-    const convCl=calcConvergencia(clZ,momCl,bayCl,gaps.cl,janCl);
-
-    return{
-        dzPar:[0,1,2].filter(i=>i!==convDz.excluida),
-        clPar:[0,1,2].filter(i=>i!==convCl.excluida)
-    };
+    var h=R.historico;var sz=h.filter(function(n){return n!==0;});var T=sz.length;
+    if(T<18)return null;
+    var dz=[0,0,0];sz.forEach(function(n){dz[duzia(n)-1]++;});var cl=[0,0,0];sz.forEach(function(n){cl[coluna(n)-1]++;});
+    var dzZ=dz.map(function(d){return zScore(d,T,P_DZ);});var clZ=cl.map(function(c){return zScore(c,T,P_DZ);});
+    var gaps=calcGaps(h);var cuD=calcCUSUM(h,'dz');var cuC=calcCUSUM(h,'cl');
+    var mD=calcMom(h,'dz');var mC=calcMom(h,'cl');var bD=bayesPcts(h,'dz');var bC=bayesPcts(h,'cl');
+    var jD=janelaComp(h,'dz');var jC=janelaComp(h,'cl');
+    var cvD=calcConv(dzZ,mD,bD,gaps.dz,jD,cuD.pos);var cvC=calcConv(clZ,mC,bC,gaps.cl,jC,cuC.pos);
+    return{dzPar:[0,1,2].filter(function(i){return i!==cvD.excluida;}),clPar:[0,1,2].filter(function(i){return i!==cvC.excluida;})};
 }
 
-// ==========================================
 // ENTRADA + AUTO-ASSERTIVIDADE
-// ==========================================
 function addNum(n){
     if(n<0)return;
-    const sug=getSugestaoAtual();
+    var sug=getSugestaoAtual();
     if(sug&&n!==0){
-        if(!R.assertDz)R.assertDz={ac:0,er:0};
-        if(!R.assertCol)R.assertCol={ac:0,er:0};
-        if(sug.dzPar.includes(duzia(n)-1))R.assertDz.ac++;else R.assertDz.er++;
-        if(sug.clPar.includes(coluna(n)-1))R.assertCol.ac++;else R.assertCol.er++;
+        if(!R.assertDz)R.assertDz={ac:0,er:0,seq:[]};if(!R.assertCol)R.assertCol={ac:0,er:0,seq:[]};
+        if(!R.assertDz.seq)R.assertDz.seq=[];if(!R.assertCol.seq)R.assertCol.seq=[];
+        if(sug.dzPar.includes(duzia(n)-1)){R.assertDz.ac++;R.assertDz.seq.push('w');}else{R.assertDz.er++;R.assertDz.seq.push('l');}
+        if(sug.clPar.includes(coluna(n)-1)){R.assertCol.ac++;R.assertCol.seq.push('w');}else{R.assertCol.er++;R.assertCol.seq.push('l');}
     }
-    R.historico.push(n);
-    if(R.historico.length>200)R.historico=R.historico.slice(-200);
+    R.historico.push(n);if(R.historico.length>200)R.historico=R.historico.slice(-200);
     saveR();renderRoleta();
 }
 function desfazerUltimo(){if(!R.historico.length)return;R.historico.pop();saveR();renderRoleta();}
-function limparHistorico(){if(!confirm('Limpar?'))return;R.historico=[];R.assertDz={ac:0,er:0};R.assertCol={ac:0,er:0};saveR();renderRoleta();}
+function limparHistorico(){if(!confirm('Limpar tudo?'))return;R.historico=[];R.assertDz={ac:0,er:0,seq:[]};R.assertCol={ac:0,er:0,seq:[]};saveR();renderRoleta();}
 
 // ==========================================
 // RENDER PRINCIPAL
 // ==========================================
 function renderRoleta(){
-    const h=R.historico;const total=h.length;
-    const sz=h.filter(n=>n!==0);const T=sz.length||1;
+    var h=R.historico;var total=h.length;var sz=h.filter(function(n){return n!==0;});var T=sz.length||1;
+    document.getElementById('ultimosNums').innerHTML=h.slice(-30).map(function(n){return '<div class="ultimo-num '+corNum(n)+'">'+n+'</div>';}).join('');
 
-    // Últimos números
-    document.getElementById('ultimosNums').innerHTML=h.slice(-30).map(n=>`<div class="ultimo-num ${corNum(n)}">${n}</div>`).join('');
+    var dz=[0,0,0];sz.forEach(function(n){dz[duzia(n)-1]++;});var dzPct=dz.map(function(d){return Math.round((d/T)*100);});
+    var cl=[0,0,0];sz.forEach(function(n){cl[coluna(n)-1]++;});var clPct=cl.map(function(c){return Math.round((c/T)*100);});
+    var dzN=['1a (1-12)','2a (13-24)','3a (25-36)'];var clN=['Col 1 (1,4,7...)','Col 2 (2,5,8...)','Col 3 (3,6,9...)'];
 
-    // Contagens
-    const dz=[0,0,0];sz.forEach(n=>{dz[duzia(n)-1]++;});
-    const dzPct=dz.map(d=>Math.round((d/T)*100));
-    const cl=[0,0,0];sz.forEach(n=>{cl[coluna(n)-1]++;});
-    const clPct=cl.map(c2=>Math.round((c2/T)*100));
+    var dzZ=dz.map(function(d){return zScore(d,T,P_DZ);});var clZ=cl.map(function(c){return zScore(c,T,P_DZ);});
+    var chiDz=chiQuad(dz,T,P_DZ);var chiCol=chiQuad(cl,T,P_DZ);
+    var sDz=chiSig(chiDz);var sCol=chiSig(chiCol);
+    var gaps=calcGaps(h);var bayDz=bayesPcts(h,'dz');var bayCl=bayesPcts(h,'cl');
+    var vol=calcVol(h);var momDz=calcMom(h,'dz');var momCl=calcMom(h,'cl');
+    var janDz=janelaComp(h,'dz');var janCl=janelaComp(h,'cl');
+    var cuDz=calcCUSUM(h,'dz');var cuCl=calcCUSUM(h,'cl');
+    var strkDz=calcStreak(R.assertDz);var strkCl=calcStreak(R.assertCol);
+    var setores=analisarSetores(h);
 
-    const dzN=['1ª (1-12)','2ª (13-24)','3ª (25-36)'];
-    const clN=['Col 1 (1,4,7...)','Col 2 (2,5,8...)','Col 3 (3,6,9...)'];
-
-    // Cálculos
-    const dzZ=dz.map(d=>zScore(d,T,P_DZ));
-    const clZ=cl.map(c2=>zScore(c2,T,P_DZ));
-    const chiDz=chiQuadrado(dz,T,P_DZ);const chiCol=chiQuadrado(cl,T,P_DZ);
-    const sDz=chiSig(chiDz);const sCol=chiSig(chiCol);
-    const gaps=calcGaps(h);
-    const bayDz=bayesPcts(h,'dz');const bayCl=bayesPcts(h,'cl');
-    const vol=calcVol(h);
-    const momDz=calcMomentum(h,'dz');const momCl=calcMomentum(h,'cl');
-    const janDz=janelaComparativa(h,'dz');const janCl=janelaComparativa(h,'cl');
-    const setores=analisarSetores(h);
-
-    // === BARRAS DE ANÁLISE ===
-    function renderBarras(container,nomes,pcts,counts,zArr,gapArr,bayArr,momArr,janObj){
-        const el=document.getElementById(container);if(!el)return;
-        el.innerHTML=nomes.map((nome,i)=>{
-            const pct=pcts[i];const z=zArr[i];const gap=gapArr[i];const bay=bayArr[i];const mom=momArr[i];
-            const classe=z>1.0?'quente':z<-1.0?'frio':'morno';
-            const zCor=z>1.5?'#e74c3c':z>0.5?'#f39c12':z<-1.5?'#2ecc71':z<-0.5?'#3498db':'rgba(255,255,255,.5)';
-            const momIcon=mom>10?'▲▲':mom>3?'▲':mom<-10?'▼▼':mom<-3?'▼':'—';
-            const momCor=mom>5?'#e74c3c':mom<-5?'#2ecc71':'rgba(255,255,255,.35)';
-            const janTxt=janObj?`${janObj.desvio[i]>0?'+':''}${janObj.desvio[i].toFixed(0)}%`:'—';
-            const janCor=janObj?(janObj.desvio[i]>8?'#e74c3c':janObj.desvio[i]<-8?'#2ecc71':'rgba(255,255,255,.35)'):'rgba(255,255,255,.35)';
-            return`<div class="barra-container">
-                <div class="barra-label"><span class="barra-nome">${nome}</span><span class="barra-pct">${pct}% (${counts[i]}x)</span></div>
-                <div class="barra-track"><div class="barra-fill ${classe}" style="width:${pct}%"></div></div>
-                <div style="display:flex;justify-content:space-between;margin-top:3px;font-size:.65em;">
-                    <span style="color:${zCor};">Z:${z>=0?'+':''}${z.toFixed(2)}</span>
-                    <span style="color:${momCor};">Mom:${momIcon}</span>
-                    <span style="color:rgba(255,255,255,.3);">Gap:${gap}</span>
-                    <span style="color:rgba(212,175,125,.4);">Bay:${bay.toFixed(0)}%</span>
-                    <span style="color:${janCor};">Ú15:${janTxt}</span>
-                </div>
-            </div>`;
+    // BARRAS
+    function renderBarras(ctn,nomes,pcts,counts,zArr,gapArr,bayArr,momArr,janObj){
+        var el=document.getElementById(ctn);if(!el)return;
+        el.innerHTML=nomes.map(function(nome,i){
+            var pct=pcts[i],z=zArr[i],gap=gapArr[i],bay=bayArr[i],mom=momArr[i];
+            var classe=z>1?'quente':z<-1?'frio':'morno';
+            var zCor=z>1.5?'#e74c3c':z>0.5?'#f39c12':z<-1.5?'#2ecc71':z<-0.5?'#3498db':'rgba(255,255,255,.5)';
+            var mI=mom>10?'^^':mom>3?'^':mom<-10?'vv':mom<-3?'v':'--';
+            var mC=mom>5?'#e74c3c':mom<-5?'#2ecc71':'rgba(255,255,255,.35)';
+            var jT=janObj?(janObj.desvio[i]>0?'+':'')+janObj.desvio[i].toFixed(0)+'%':'--';
+            var jC=janObj?(janObj.desvio[i]>8?'#e74c3c':janObj.desvio[i]<-8?'#2ecc71':'rgba(255,255,255,.35)'):'rgba(255,255,255,.35)';
+            return '<div class="barra-container"><div class="barra-label"><span class="barra-nome">'+nome+'</span><span class="barra-pct">'+pct+'% ('+counts[i]+'x)</span></div><div class="barra-track"><div class="barra-fill '+classe+'" style="width:'+pct+'%"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:3px;font-size:.63em;opacity:.7;"><span style="color:'+zCor+';">Z:'+(z>=0?'+':'')+z.toFixed(2)+'</span><span style="color:'+mC+';">Mom:'+mI+'</span><span style="color:rgba(255,255,255,.3);">Gap:'+gap+'</span><span style="color:rgba(212,175,125,.4);">Bay:'+bay.toFixed(0)+'%</span><span style="color:'+jC+';">U15:'+jT+'</span></div></div>';
         }).join('');
     }
     renderBarras('analiseDuzias',dzN,dzPct,dz,dzZ,gaps.dz,bayDz,momDz,janDz);
     renderBarras('analiseColunas',clN,clPct,cl,clZ,gaps.cl,bayCl,momCl,janCl);
 
-    // === ESTATÍSTICAS ===
-    const zeros=h.filter(n=>n===0).length;
-    const verms=sz.filter(n=>VERMELHOS.includes(n)).length;
-    const pretos=T-verms;
-    const estEl=document.getElementById('estatisticasGerais');
-    if(estEl) estEl.innerHTML=`
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:10px;">
-            <div><div style="font-size:.65em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.1em;font-weight:600;">${total}</div></div>
-            <div><div style="font-size:.65em;color:#c0392b;">Verm.</div><div style="font-size:1.1em;font-weight:600;color:#c0392b;">${verms}</div></div>
-            <div><div style="font-size:.65em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.1em;font-weight:600;">${pretos}</div></div>
-            <div><div style="font-size:.65em;color:#27ae60;">Zero</div><div style="font-size:1.1em;font-weight:600;color:#27ae60;">${zeros}</div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.7em;">
-            <div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;">
-                <div style="color:rgba(212,175,125,.5);margin-bottom:2px;">χ² Dúzias</div>
-                <div style="color:#fff;font-weight:600;">${chiDz.toFixed(2)} <span style="color:${sDz.f>=2?'#2ecc71':sDz.f>=1?'#f1c40f':'rgba(255,255,255,.4)'};">(${sDz.nv})</span></div>
-            </div>
-            <div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;">
-                <div style="color:rgba(212,175,125,.5);margin-bottom:2px;">χ² Colunas</div>
-                <div style="color:#fff;font-weight:600;">${chiCol.toFixed(2)} <span style="color:${sCol.f>=2?'#2ecc71':sCol.f>=1?'#f1c40f':'rgba(255,255,255,.4)'};">(${sCol.nv})</span></div>
-            </div>
-            <div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;">
-                <div style="color:rgba(212,175,125,.5);margin-bottom:2px;">Volatilidade</div>
-                <div style="color:${vol.t==='MUITO ALTA'||vol.t==='ALTA'?'#e74c3c':vol.t==='MODERADA'?'#f1c40f':'#2ecc71'};font-weight:600;">${vol.t}</div>
-            </div>
-            <div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;">
-                <div style="color:rgba(212,175,125,.5);margin-bottom:2px;">Amostra</div>
-                <div style="color:#fff;font-weight:600;">${T} spins</div>
-            </div>
-        </div>
-        ${setores&&setores.ativo?`<div style="margin-top:8px;background:rgba(241,196,15,.08);border:1px solid rgba(241,196,15,.3);border-radius:6px;padding:8px;font-size:.72em;color:#f1c40f;text-align:center;">🎯 ${setores.msg}<br><span style="font-size:.9em;color:#fff;">[${setores.nums.join(', ')}]</span></div>`:''}
-    `;
+    // ESTATISTICAS
+    var zeros=h.filter(function(n){return n===0;}).length;var verms=sz.filter(function(n){return VERMELHOS.includes(n);}).length;var pretos=T-verms;
+    var estEl=document.getElementById('estatisticasGerais');
+    if(estEl){
+        var clHtml=setores&&setores.ativo?'<div style="margin-top:8px;background:rgba(241,196,15,.08);border:1px solid rgba(241,196,15,.3);border-radius:6px;padding:8px;font-size:.72em;color:#f1c40f;text-align:center;">&#127919; '+setores.msg+'<br><span style="color:#fff;">['+setores.nums.join(', ')+']</span></div>':'';
+        estEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:10px;"><div><div style="font-size:.65em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.1em;font-weight:600;">'+total+'</div></div><div><div style="font-size:.65em;color:#c0392b;">Verm.</div><div style="font-size:1.1em;font-weight:600;color:#c0392b;">'+verms+'</div></div><div><div style="font-size:.65em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.1em;font-weight:600;">'+pretos+'</div></div><div><div style="font-size:.65em;color:#27ae60;">Zero</div><div style="font-size:1.1em;font-weight:600;color:#27ae60;">'+zeros+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.7em;"><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Duzias</div><div style="color:#fff;font-weight:600;">'+chiDz.toFixed(2)+' <span style="color:'+(sDz.f>=2?'#2ecc71':sDz.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';">('+sDz.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Colunas</div><div style="color:#fff;font-weight:600;">'+chiCol.toFixed(2)+' <span style="color:'+(sCol.f>=2?'#2ecc71':sCol.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';">('+sCol.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">Volatilidade</div><div style="color:'+(vol.t==='MUITO ALTA'||vol.t==='ALTA'?'#e74c3c':vol.t==='MODERADA'?'#f1c40f':'#2ecc71')+';font-weight:600;">'+vol.t+'</div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">CUSUM</div><div style="color:'+(cuDz.alarme||cuCl.alarme?'#e74c3c':'#2ecc71')+';font-weight:600;">'+(cuDz.alarme||cuCl.alarme?'REGIME MUDOU':'NORMAL')+'</div></div></div>'+clHtml;
+    }
 
-    // === 1-18 / 19-36 ===
-    const metEl=document.getElementById('analiseMetades');
+    // 1-18 / 19-36
+    var metEl=document.getElementById('analiseMetades');
     if(metEl&&T>3){
-        const baixo=sz.filter(n=>n>=1&&n<=18).length;
-        const alto=sz.filter(n=>n>=19&&n<=36).length;
-        const bPct=Math.round((baixo/T)*100);
-        const aPct=Math.round((alto/T)*100);
-        const bZ=zScore(baixo,T,18/37);
-        const aZ=zScore(alto,T,18/37);
-        const bClasse=bZ>1?'quente':bZ<-1?'frio':'morno';
-        const aClasse=aZ>1?'quente':aZ<-1?'frio':'morno';
-        const bZCor=bZ>1?'#e74c3c':bZ<-1?'#2ecc71':'rgba(255,255,255,.5)';
-        const aZCor=aZ>1?'#e74c3c':aZ<-1?'#2ecc71':'rgba(255,255,255,.5)';
+        var baixo=sz.filter(function(n){return n>=1&&n<=18;}).length;var alto=sz.filter(function(n){return n>=19&&n<=36;}).length;
+        var bP=Math.round((baixo/T)*100);var aP=Math.round((alto/T)*100);
+        var bZ=zScore(baixo,T,P_HALF);var aZ=zScore(alto,T,P_HALF);
+        var bCl2=bZ>1?'quente':bZ<-1?'frio':'morno';var aCl2=aZ>1?'quente':aZ<-1?'frio':'morno';
+        var bZC=bZ>1?'#e74c3c':bZ<-1?'#2ecc71':'rgba(255,255,255,.5)';var aZC=aZ>1?'#e74c3c':aZ<-1?'#2ecc71':'rgba(255,255,255,.5)';
+        var sig='';if(Math.abs(bZ)>1.3&&total>=18){var fria=bZ<0?'1-18':'19-36';var cnf=Math.abs(bZ)>1.8?'ALTA':'MODERADA';var cr=Math.abs(bZ)>1.8?'#2ecc71':'#f1c40f';sig='<div style="margin-top:10px;padding:8px;background:'+cr+'15;border:1px solid '+cr+'40;border-radius:6px;text-align:center;font-size:.78em;color:'+cr+';font-weight:600;">Apostar '+fria+' -- '+cnf+'</div>';}
+        metEl.innerHTML='<div class="barra-container"><div class="barra-label"><span class="barra-nome">1-18</span><span class="barra-pct">'+bP+'% ('+baixo+'x)</span></div><div class="barra-track"><div class="barra-fill '+bCl2+'" style="width:'+bP+'%"></div></div><div style="font-size:.63em;margin-top:3px;color:'+bZC+';">Z:'+(bZ>=0?'+':'')+bZ.toFixed(2)+'</div></div><div class="barra-container"><div class="barra-label"><span class="barra-nome">19-36</span><span class="barra-pct">'+aP+'% ('+alto+'x)</span></div><div class="barra-track"><div class="barra-fill '+aCl2+'" style="width:'+aP+'%"></div></div><div style="font-size:.63em;margin-top:3px;color:'+aZC+';">Z:'+(aZ>=0?'+':'')+aZ.toFixed(2)+'</div></div>'+sig;
+    } else if(metEl){metEl.innerHTML='<span style="color:rgba(255,255,255,.3);font-size:.82em;">Dados insuficientes</span>';}
 
-        let sinal='';
-        if(Math.abs(bZ)>1.3){
-            const fria=bZ<0?'1-18':'19-36';
-            const conf=Math.abs(bZ)>1.8?'ALTA':'MODERADA';
-            const cor=Math.abs(bZ)>1.8?'#2ecc71':'#f1c40f';
-            sinal=`<div style="margin-top:10px;padding:8px;background:${cor}15;border:1px solid ${cor}40;border-radius:6px;text-align:center;font-size:.78em;color:${cor};font-weight:600;">Apostar ${fria} — ${conf}</div>`;
-        }
+    // ======================================================
+    // SUGESTAO V3
+    // ======================================================
+    var recDuz=document.getElementById('recDuziasBody');var recCol=document.getElementById('recColunasBody');
+    var recDuzCard=document.getElementById('recDuzias');var recColCard=document.getElementById('recColunas');
 
-        metEl.innerHTML=`
-            <div class="barra-container">
-                <div class="barra-label"><span class="barra-nome">1-18 (Baixo)</span><span class="barra-pct">${bPct}% (${baixo}x)</span></div>
-                <div class="barra-track"><div class="barra-fill ${bClasse}" style="width:${bPct}%"></div></div>
-                <div style="font-size:.63em;margin-top:3px;color:${bZCor};">Z:${bZ>=0?'+':''}${bZ.toFixed(2)}</div>
-            </div>
-            <div class="barra-container">
-                <div class="barra-label"><span class="barra-nome">19-36 (Alto)</span><span class="barra-pct">${aPct}% (${alto}x)</span></div>
-                <div class="barra-track"><div class="barra-fill ${aClasse}" style="width:${aPct}%"></div></div>
-                <div style="font-size:.63em;margin-top:3px;color:${aZCor};">Z:${aZ>=0?'+':''}${aZ.toFixed(2)}</div>
-            </div>
-            ${sinal}
-        `;
-    } else if(metEl){
-        metEl.innerHTML='<span style="color:rgba(255,255,255,.3);font-size:.82em;">Dados insuficientes</span>';
+    function calcSug(zArr,mArr,bArr,gArr,jObj,cSig,cuObj,aObj,sObj,nms){
+        var conv=calcConv(zArr,mArr,bArr,gArr,jObj,cuObj.pos);
+        var excl=conv.excluida;var par=[0,1,2].filter(function(i){return i!==excl;});
+        var aL=aObj||{ac:0,er:0,seq:[]};var tL=aL.ac+aL.er;var aP2=tL>0?aL.ac/tL*100:66.7;
+
+        function mk(s,c,co,bd,re,sc,f){return{sinal:s,conf:c,cor:co,brd:bd,par:par,excl:excl,conv:conv,reason:re,score:sc,assertPct:aP2,tLive:tL,streakObj:sObj,fase:f};}
+
+        // FASE 1 (0-12)
+        if(total<12) return mk('OBSERVANDO','','rgba(255,255,255,.3)','rgba(255,255,255,.1)','Fase 1 ('+total+'/12)',0,1);
+        // FASE 2 (12-17)
+        if(total<18) return mk('ANALISANDO','','rgba(52,152,219,.5)','rgba(52,152,219,.25)','Fase 2 ('+total+'/18)',0,2);
+
+        // FASE 3 (18+) - BLOQUEIOS
+        if(sObj.atual<=-3) return mk('PARAR','','#e74c3c','rgba(231,76,60,.6)',Math.abs(sObj.atual)+' perdas seguidas',0,3);
+        if(tL>=8&&aP2<45) return mk('PARAR','','#e74c3c','rgba(231,76,60,.5)','Assert. '+aP2.toFixed(0)+'%',0,3);
+        if(zArr[excl]<0.8) return mk('AGUARDAR','','rgba(255,255,255,.4)','rgba(255,255,255,.15)','Z<0.8',0,3);
+
+        // SCORE
+        var sc=0;
+        sc+=Math.min(Math.max(0,(zArr[excl]-0.8)*20),25);
+        sc+=(cSig.f)*12;
+        if(conv.consenso>60)sc+=15;else if(conv.consenso>45)sc+=8;
+        if(mArr[excl]<-5)sc+=8;else if(mArr[excl]<0)sc+=4;else if(mArr[excl]>8)sc-=5;
+        if(bArr[excl]>38)sc+=10;else if(bArr[excl]>35)sc+=5;
+        sc+=Math.min(gArr[par[0]]+gArr[par[1]],20)*1.2;
+        if(jObj&&jObj.desvio[excl]>8)sc+=8;
+        if(total>30)sc+=8;else if(total>20)sc+=4;
+        if(cuObj.alarme)sc-=15;
+        if(tL>=6){if(aP2>=70)sc+=12;else if(aP2>=60)sc+=6;else if(aP2<50)sc-=20;}
+        if(sObj.atual<=-2)sc-=10;
+        if(sObj.atual>=3)sc+=5;
+        sc=Math.max(0,Math.round(sc));
+
+        var sinal,conf,cor,brd;
+        if(sc>=65&&conv.consenso>55){sinal='APOSTAR';conf='ALTA';cor='#2ecc71';brd='rgba(46,204,113,.7)';}
+        else if(sc>=45){sinal='APOSTAR';conf=conv.consenso>50?'MODERADA':'BAIXA';cor='#f1c40f';brd='rgba(241,196,15,.5)';}
+        else if(sc>=25){sinal='ATENCAO';conf='BAIXA';cor='#f39c12';brd='rgba(243,156,18,.3)';}
+        else{sinal='AGUARDAR';conf='';cor='rgba(255,255,255,.4)';brd='rgba(255,255,255,.15)';}
+
+        if(conv.consenso<40&&sinal==='APOSTAR'){sinal='ATENCAO';conf='BAIXA';cor='#f39c12';brd='rgba(243,156,18,.3)';}
+        return mk(sinal,conf,cor,brd,'',sc,3);
     }
 
-    // === SUGESTÃO — CONVERGÊNCIA DE SINAIS ===
-    const recDuz=document.getElementById('recDuziasBody');
-    const recCol=document.getElementById('recColunasBody');
-    const recDuzCard=document.getElementById('recDuzias');
-    const recColCard=document.getElementById('recColunas');
+    var sugDz=calcSug(dzZ,momDz,bayDz,gaps.dz,janDz,sDz,cuDz,R.assertDz,strkDz,dzN);
+    var sugCl=calcSug(clZ,momCl,bayCl,gaps.cl,janCl,sCol,cuCl,R.assertCol,strkCl,clN);
 
-    if(total<10){
-        recDuz.innerHTML='<span style="color:rgba(255,255,255,.4);font-size:.85em;">Min. 10 números</span>';
-        recCol.innerHTML='<span style="color:rgba(255,255,255,.4);font-size:.85em;">Min. 10 números</span>';
-        recDuzCard.style.borderColor='rgba(212,175,125,.3)';
-        recColCard.style.borderColor='rgba(212,175,125,.3)';
-    } else {
-        // DÚZIAS — Convergência
-        const convDz=calcConvergencia(dzZ,momDz,bayDz,gaps.dz,janDz);
-        const dzExcl=convDz.excluida;
-        const dzPar=[0,1,2].filter(i=>i!==dzExcl);
-
-        // Score composto com convergência + FEEDBACK DA ASSERTIVIDADE
-        const aDzLive=R.assertDz||{ac:0,er:0};
-        const tDzLive=aDzLive.ac+aDzLive.er;
-        const dzAssertLive=tDzLive>0?aDzLive.ac/tDzLive*100:66.7; // default = teórico 2/3
-
-        // Penalidade/bônus baseado na assertividade REAL
-        let dzAssertMod=0;
-        if(tDzLive>=8){
-            if(dzAssertLive>=75) dzAssertMod=15;      // acertando muito = bônus forte
-            else if(dzAssertLive>=65) dzAssertMod=8;   // acertando bem = bônus
-            else if(dzAssertLive>=55) dzAssertMod=0;   // normal
-            else if(dzAssertLive>=45) dzAssertMod=-15;  // abaixo do esperado = penalidade
-            else dzAssertMod=-30;                       // muito ruim = penalidade pesada
-        }
-
-        const dzScore=(
-            Math.max(0,dzZ[dzExcl])*25+
-            (sDz.f)*12+
-            Math.min(gaps.dz[dzPar[0]]+gaps.dz[dzPar[1]],20)*1.2+
-            (bayDz[dzExcl]>38?10:bayDz[dzExcl]>35?5:0)+
-            (momDz[dzExcl]>5?8:momDz[dzExcl]>0?4:0)+
-            (convDz.consenso>60?15:convDz.consenso>45?8:0)+
-            (janDz&&janDz.desvio[dzExcl]>8?8:0)+
-            (total>30?8:total>20?4:0)+
-            dzAssertMod  // feedback da assertividade
-        );
-
-        // Hard cut: se assertividade < 40% com 10+ entradas, NÃO ENTRAR
-        const dzForceStop = tDzLive>=10 && dzAssertLive<40;
-
-        let dzSinal,dzConf,dzCor,dzBrd;
-        if(dzForceStop){dzSinal='NÃO ENTRAR';dzConf='';dzCor='#e74c3c';dzBrd='rgba(231,76,60,.5)';}
-        else if(dzScore>=65&&convDz.consenso>55){dzSinal='APOSTAR';dzConf='ALTA';dzCor='#2ecc71';dzBrd='rgba(46,204,113,.7)';}
-        else if(dzScore>=45){dzSinal='APOSTAR';dzConf=convDz.consenso>50?'MODERADA':'BAIXA';dzCor='#f1c40f';dzBrd='rgba(241,196,15,.5)';}
-        else if(dzScore>=25){dzSinal='ATENÇÃO';dzConf='BAIXA';dzCor='#f39c12';dzBrd='rgba(243,156,18,.3)';}
-        else{dzSinal='AGUARDAR';dzConf='';dzCor='rgba(255,255,255,.4)';dzBrd='rgba(255,255,255,.15)';}
-
-        recDuzCard.style.borderColor=dzBrd;
-        const dzMomExcl=momDz[dzExcl];const dzDesacel=dzMomExcl<-3;
-        recDuz.innerHTML=`
-            <div style="font-size:.7em;color:${dzCor};font-weight:700;letter-spacing:1px;margin-bottom:6px;">${dzSinal}${dzConf?' — '+dzConf:''}</div>
-            <div style="display:flex;gap:8px;justify-content:center;">
-                <span class="rec-badge" style="background:${dzCor}22;border:1px solid ${dzCor};color:${dzCor};">${dzN[dzPar[0]]}</span>
-                <span class="rec-badge" style="background:${dzCor}22;border:1px solid ${dzCor};color:${dzCor};">${dzN[dzPar[1]]}</span>
-            </div>
-            <div style="font-size:.62em;color:rgba(255,255,255,.3);margin-top:6px;">
-                Excl: ${dzN[dzExcl]} (Z:${dzZ[dzExcl]>=0?'+':''}${dzZ[dzExcl].toFixed(2)}) | Conv: ${convDz.consenso.toFixed(0)}%${dzDesacel?' | ▼ Desacel.':''}
-            </div>
-            <div style="font-size:.58em;color:rgba(212,175,125,.35);margin-top:2px;">Score: ${dzScore.toFixed(0)} ${tDzLive>=5?'| Assert: '+dzAssertLive.toFixed(0)+'%':''}</div>
-            ${dzForceStop?'<div style="font-size:.65em;color:#e74c3c;margin-top:4px;">Modelo não está funcionando para dúzias nesta mesa</div>':''}
-        `;
-
-        // COLUNAS — mesma lógica + assertividade feedback
-        const convCl=calcConvergencia(clZ,momCl,bayCl,gaps.cl,janCl);
-        const clExcl=convCl.excluida;
-        const clParR=[0,1,2].filter(i=>i!==clExcl);
-
-        const aClLive=R.assertCol||{ac:0,er:0};
-        const tClLive=aClLive.ac+aClLive.er;
-        const clAssertLive=tClLive>0?aClLive.ac/tClLive*100:66.7;
-
-        let clAssertMod=0;
-        if(tClLive>=8){
-            if(clAssertLive>=75) clAssertMod=15;
-            else if(clAssertLive>=65) clAssertMod=8;
-            else if(clAssertLive>=55) clAssertMod=0;
-            else if(clAssertLive>=45) clAssertMod=-15;
-            else clAssertMod=-30;
-        }
-
-        const clScore=(
-            Math.max(0,clZ[clExcl])*25+
-            (sCol.f)*12+
-            Math.min(gaps.cl[clParR[0]]+gaps.cl[clParR[1]],20)*1.2+
-            (bayCl[clExcl]>38?10:bayCl[clExcl]>35?5:0)+
-            (momCl[clExcl]>5?8:momCl[clExcl]>0?4:0)+
-            (convCl.consenso>60?15:convCl.consenso>45?8:0)+
-            (janCl&&janCl.desvio[clExcl]>8?8:0)+
-            (total>30?8:total>20?4:0)+
-            clAssertMod
-        );
-
-        const clForceStop = tClLive>=10 && clAssertLive<40;
-
-        const clMomExcl=momCl[clExcl];
-        const clDesacel=clMomExcl<-3;
-
-        let clSinal,clConf,clCorr,clBrdC;
-        if(clForceStop){clSinal='NÃO ENTRAR';clConf='';clCorr='#e74c3c';clBrdC='rgba(231,76,60,.5)';}
-        else if(clScore>=65&&convCl.consenso>55){clSinal='APOSTAR';clConf='ALTA';clCorr='#2ecc71';clBrdC='rgba(46,204,113,.7)';}
-        else if(clScore>=45){clSinal='APOSTAR';clConf=convCl.consenso>50?'MODERADA':'BAIXA';clCorr='#f1c40f';clBrdC='rgba(241,196,15,.5)';}
-        else if(clScore>=25){clSinal='ATENÇÃO';clConf='BAIXA';clCorr='#f39c12';clBrdC='rgba(243,156,18,.3)';}
-        else{clSinal='AGUARDAR';clConf='';clCorr='rgba(255,255,255,.4)';clBrdC='rgba(255,255,255,.15)';}
-
-        recColCard.style.borderColor=clBrdC;
-        recCol.innerHTML=`
-            <div style="font-size:.7em;color:${clCorr};font-weight:700;letter-spacing:1px;margin-bottom:6px;">${clSinal}${clConf?' — '+clConf:''}</div>
-            <div style="display:flex;gap:8px;justify-content:center;">
-                <span class="rec-badge" style="background:${clCorr}22;border:1px solid ${clCorr};color:${clCorr};">${clN[clParR[0]]}</span>
-                <span class="rec-badge" style="background:${clCorr}22;border:1px solid ${clCorr};color:${clCorr};">${clN[clParR[1]]}</span>
-            </div>
-            <div style="font-size:.62em;color:rgba(255,255,255,.3);margin-top:6px;">
-                Excl: ${clN[clExcl]} (Z:${clZ[clExcl]>=0?'+':''}${clZ[clExcl].toFixed(2)}) | Conv: ${convCl.consenso.toFixed(0)}%${clDesacel?' | ▼ Desacel.':''}
-            </div>
-            <div style="font-size:.58em;color:rgba(212,175,125,.35);margin-top:2px;">Score: ${clScore.toFixed(0)} ${tClLive>=5?'| Assert: '+clAssertLive.toFixed(0)+'%':''}</div>
-            ${clForceStop?'<div style="font-size:.65em;color:#e74c3c;margin-top:4px;">Modelo não está funcionando para colunas nesta mesa</div>':''}
-        `;
+    function renderSug(elB,elC,sug,nms,zArr2){
+        elC.style.borderColor=sug.brd;
+        if(sug.fase===1){var pc=Math.round((total/12)*100);elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:8px;">'+sug.sinal+'</div><div style="font-size:.75em;color:rgba(255,255,255,.4);margin-bottom:8px;">'+sug.reason+'</div><div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;"><div style="height:100%;width:'+pc+'%;background:rgba(255,255,255,.2);border-radius:2px;"></div></div>';return;}
+        if(sug.fase===2){var pc2=Math.round(((total-12)/6)*100);elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:6px;">'+sug.sinal+'</div><div style="display:flex;gap:8px;justify-content:center;opacity:.4;margin-bottom:4px;"><span class="rec-badge" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);color:rgba(52,152,219,.5);">'+nms[sug.par[0]]+'</span><span class="rec-badge" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);color:rgba(52,152,219,.5);">'+nms[sug.par[1]]+'</span></div><div style="font-size:.6em;color:rgba(255,255,255,.25);">Previa -- nao apostar</div><div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;margin-top:6px;"><div style="height:100%;width:'+pc2+'%;background:rgba(52,152,219,.4);border-radius:2px;"></div></div>';return;}
+        var isStop=sug.sinal==='PARAR'||sug.sinal==='AGUARDAR';
+        var dsc=momDz[sug.excl]<-3;
+        elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:6px;">'+sug.sinal+(sug.conf?' -- '+sug.conf:'')+'</div>'+(isStop?'<div style="font-size:.72em;color:rgba(255,255,255,.4);margin:4px 0;">'+sug.reason+'</div>':'<div style="display:flex;gap:8px;justify-content:center;"><span class="rec-badge" style="background:'+sug.cor+'22;border:1px solid '+sug.cor+';color:'+sug.cor+';">'+nms[sug.par[0]]+'</span><span class="rec-badge" style="background:'+sug.cor+'22;border:1px solid '+sug.cor+';color:'+sug.cor+';">'+nms[sug.par[1]]+'</span></div><div style="font-size:.58em;color:rgba(255,255,255,.3);margin-top:6px;">Excl: '+nms[sug.excl]+' (Z:'+(zArr2[sug.excl]>=0?'+':'')+zArr2[sug.excl].toFixed(2)+') | Conv: '+sug.conv.consenso.toFixed(0)+'%'+(dsc?' | v':'')+'</div>')+'<div style="font-size:.54em;color:rgba(212,175,125,.3);margin-top:3px;">Score: '+sug.score+(sug.tLive>=5?' | Assert: '+sug.assertPct.toFixed(0)+'%':'')+(sug.streakObj.atual<=-2?' | Streak: '+sug.streakObj.atual:'')+'</div>';
     }
+    renderSug(recDuz,recDuzCard,sugDz,dzN,dzZ);
+    renderSug(recCol,recColCard,sugCl,clN,clZ);
 
-    // === INDICADORES ===
-    if(total>=10){
-        const avgMaxZ=(Math.max(...dzZ)+Math.max(...clZ))/2;
-        const confPct=Math.min(Math.max(Math.round(35+(avgMaxZ*12)+(sDz.f+sCol.f)*5+(total>30?8:0)),0),99);
-        document.getElementById('indConfianca').textContent=confPct+'%';
-        document.getElementById('indConfianca').style.color=confPct>65?'#2ecc71':confPct>45?'#f1c40f':'rgba(255,255,255,.5)';
-    } else {
-        document.getElementById('indConfianca').textContent='—';
-        document.getElementById('indConfianca').style.color='rgba(255,255,255,.5)';
-    }
+    // INDICADORES
+    var indConf=document.getElementById('indConfianca');
+    if(total<12){indConf.textContent='FASE 1';indConf.style.color='rgba(255,255,255,.3)';indConf.style.fontSize='.85em';}
+    else if(total<18){indConf.textContent='FASE 2';indConf.style.color='rgba(52,152,219,.6)';indConf.style.fontSize='.85em';}
+    else{var avgZ2=(Math.max.apply(null,dzZ)+Math.max.apply(null,clZ))/2;var cP=Math.min(Math.max(Math.round(35+(avgZ2*12)+(sDz.f+sCol.f)*5+(total>30?8:0)),0),99);indConf.textContent=cP+'%';indConf.style.color=cP>65?'#2ecc71':cP>45?'#f1c40f':'rgba(255,255,255,.5)';indConf.style.fontSize='';}
 
-    // Assertividade auto
-    const aDz=R.assertDz||{ac:0,er:0};const aCol=R.assertCol||{ac:0,er:0};
-    const tDzAE=aDz.ac+aDz.er;const tClAE=aCol.ac+aCol.er;
-    const dzAP=tDzAE>0?Math.round((aDz.ac/tDzAE)*100):0;
-    const clAP=tClAE>0?Math.round((aCol.ac/tClAE)*100):0;
-    const tAE=tDzAE+tClAE;const avgA=tAE>0?Math.round(((aDz.ac+aCol.ac)/tAE)*100):0;
+    // ASSERTIVIDADE
+    var aDz2=R.assertDz||{ac:0,er:0};var aCol2=R.assertCol||{ac:0,er:0};
+    var tDzA=aDz2.ac+aDz2.er;var tClA=aCol2.ac+aCol2.er;
+    var dzAP2=tDzA>0?Math.round((aDz2.ac/tDzA)*100):0;var clAP2=tClA>0?Math.round((aCol2.ac/tClA)*100):0;
+    var tAE2=tDzA+tClA;var avgA2=tAE2>0?Math.round(((aDz2.ac+aCol2.ac)/tAE2)*100):0;
+    var indA2=document.getElementById('indAssert');
+    indA2.textContent=tAE2>0?avgA2+'%':'--';
+    indA2.style.color=avgA2>65?'#2ecc71':avgA2>50?'#f1c40f':tAE2>0?'#e74c3c':'rgba(255,255,255,.5)';
+    var adEl2=document.getElementById('assertDetalhe');
+    if(adEl2&&tAE2>0){var dc2=dzAP2>65?'#2ecc71':dzAP2>50?'#f1c40f':'#e74c3c';var cc2=clAP2>65?'#2ecc71':clAP2>50?'#f1c40f':'#e74c3c';
+        adEl2.innerHTML='<div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:6px;padding:8px 10px;display:flex;justify-content:space-between;"><span style="font-size:.72em;color:rgba(255,255,255,.4);">Duzias'+(strkDz.atual<=-2?' !!!':'')+'</span><span style="font-size:.85em;font-weight:600;color:'+dc2+';">'+dzAP2+'% <span style="font-size:.68em;color:rgba(255,255,255,.3);">('+aDz2.ac+'/'+tDzA+')</span></span></div><div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:6px;padding:8px 10px;display:flex;justify-content:space-between;"><span style="font-size:.72em;color:rgba(255,255,255,.4);">Colunas'+(strkCl.atual<=-2?' !!!':'')+'</span><span style="font-size:.85em;font-weight:600;color:'+cc2+';">'+clAP2+'% <span style="font-size:.68em;color:rgba(255,255,255,.3);">('+aCol2.ac+'/'+tClA+')</span></span></div>';
+    } else if(adEl2){adEl2.innerHTML='';}
 
-    const indA=document.getElementById('indAssert');
-    indA.textContent=tAE>0?avgA+'%':'—';
-    indA.style.color=avgA>65?'#2ecc71':avgA>50?'#f1c40f':tAE>0?'#e74c3c':'rgba(255,255,255,.5)';
-
-    const adEl=document.getElementById('assertDetalhe');
-    if(adEl&&tAE>0){
-        const dc=dzAP>65?'#2ecc71':dzAP>50?'#f1c40f':'#e74c3c';
-        const cc=clAP>65?'#2ecc71':clAP>50?'#f1c40f':'#e74c3c';
-        adEl.innerHTML=`
-            <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:6px;padding:8px 10px;display:flex;justify-content:space-between;">
-                <span style="font-size:.72em;color:rgba(255,255,255,.4);">Dúzias</span>
-                <span style="font-size:.85em;font-weight:600;color:${dc};">${dzAP}% <span style="font-size:.68em;color:rgba(255,255,255,.3);">(${aDz.ac}/${tDzAE})</span></span>
-            </div>
-            <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:6px;padding:8px 10px;display:flex;justify-content:space-between;">
-                <span style="font-size:.72em;color:rgba(255,255,255,.4);">Colunas</span>
-                <span style="font-size:.85em;font-weight:600;color:${cc};">${clAP}% <span style="font-size:.68em;color:rgba(255,255,255,.3);">(${aCol.ac}/${tClAE})</span></span>
-            </div>`;
-    } else if(adEl){adEl.innerHTML='';}
-
-    // Mesa estável/instável
-    const alerta=document.getElementById('alertaMesa');
-    const indM=document.getElementById('indMesa');
-    if(total>=15){
-        const chiT=chiDz+chiCol;const zP=total>0?(zeros/total*100):0;
-        if(chiT>18||zP>8||vol.t==='MUITO ALTA'){
-            indM.textContent='ALERTA';indM.style.color='#e74c3c';alerta.style.display='block';
-            if(zP>8)alerta.textContent='⚠ Zero: '+zeros+'x ('+zP.toFixed(1)+'%). Anormal.';
-            else if(vol.t==='MUITO ALTA')alerta.textContent='⚠ Volatilidade extrema entre blocos.';
-            else alerta.textContent='⚠ χ² total: '+chiT.toFixed(1)+'. Distribuição irregular.';
-        }else if(chiT>10||vol.t==='ALTA'){indM.textContent='INSTÁVEL';indM.style.color='#f1c40f';alerta.style.display='none';}
-        else{indM.textContent='ESTÁVEL';indM.style.color='#2ecc71';alerta.style.display='none';}
-    }else{indM.textContent='—';indM.style.color='rgba(255,255,255,.5)';alerta.style.display='none';}
+    // MESA
+    var alerta2=document.getElementById('alertaMesa');var indM2=document.getElementById('indMesa');
+    if(total>=15){var chiT2=chiDz+chiCol;var zP2=total>0?(zeros/total*100):0;
+        if(chiT2>18||zP2>8||cuDz.alarme||cuCl.alarme){indM2.textContent='ALERTA';indM2.style.color='#e74c3c';alerta2.style.display='block';alerta2.textContent=cuDz.alarme||cuCl.alarme?'CUSUM: Regime mudou.':zP2>8?'Zero: '+zeros+'x ('+zP2.toFixed(1)+'%).':'X2: '+chiT2.toFixed(1);}
+        else if(chiT2>10||vol.t==='ALTA'){indM2.textContent='INSTAVEL';indM2.style.color='#f1c40f';alerta2.style.display='none';}
+        else{indM2.textContent='ESTAVEL';indM2.style.color='#2ecc71';alerta2.style.display='none';}
+    }else{indM2.textContent='--';indM2.style.color='rgba(255,255,255,.5)';alerta2.style.display='none';}
 }
 
 
@@ -986,8 +660,6 @@ function renderRoleta(){
 function salvarBanca(){
     B.inicial=parseFloat(document.getElementById('inputBancaInicial').value)||0;
     B.apostaBase=parseFloat(document.getElementById('inputApostaBase').value)||5;
-    B.sl=parseFloat(document.getElementById('inputSL').value)||20;
-    B.sw=parseFloat(document.getElementById('inputSW').value)||30;
     if(!B.atual)B.atual=B.inicial;
     saveB();renderBanca();
 }
@@ -1019,11 +691,6 @@ function desfazerResultado(){
 function renderBanca(){
     const bi=document.getElementById('inputBancaInicial');if(bi)bi.value=B.inicial||'';
     const ab=document.getElementById('inputApostaBase');if(ab)ab.value=B.apostaBase||'';
-    const slIn=document.getElementById('inputSL');if(slIn)slIn.value=B.sl||20;
-    const swIn=document.getElementById('inputSW');if(swIn)swIn.value=B.sw||30;
-
-    const slPct=(B.sl||20)/100;
-    const swPct=(B.sw||30)/100;
 
     document.getElementById('bancaAtual').textContent=formatR(B.atual||0);
     document.getElementById('bancaInicial').textContent=formatR(B.inicial||0);
@@ -1033,70 +700,23 @@ function renderBanca(){
     lpEl.textContent=(lp>=0?'+':'')+formatR(lp);
     lpEl.style.color=lp>=0?'#2ecc71':'#e74c3c';
 
-    const bancaAtual=B.atual||0;
-    const bancaIni=B.inicial||0;
-    document.getElementById('bancaSL').textContent='-'+formatR(bancaAtual*slPct);
-    document.getElementById('bancaSW').textContent='+'+formatR(bancaAtual*swPct);
+    document.getElementById('bancaSL').textContent='-'+formatR((B.atual||0)*0.20);
+    document.getElementById('bancaSW').textContent='+'+formatR((B.atual||0)*0.30);
     document.getElementById('bancaUnit').textContent=formatR(B.apostaBase||5);
+    document.getElementById('bancaSessoes').textContent=(B.resultados||[]).length;
 
-    const res=B.resultados||[];
-    const wins=res.filter(r=>r.tipo==='win').length;
-    const losses=res.filter(r=>r.tipo==='loss').length;
-    const totalJogadas=res.length;
-    const wr=totalJogadas>0?Math.round((wins/totalJogadas)*100):0;
-
-    document.getElementById('bancaWR').textContent=totalJogadas>0?wr+'%':'—';
-    document.getElementById('bancaWR').style.color=wr>60?'#2ecc71':wr>45?'#f1c40f':'#e74c3c';
-    document.getElementById('bancaJogadas').textContent=totalJogadas;
-
-    // ALERTAS Stop Loss / Stop Win
-    const alertaEl=document.getElementById('bancaAlerta');
-    if(bancaIni>0){
-        const perdaMax=bancaIni*slPct;
-        const ganhoAlvo=bancaIni*swPct;
-        if(lp<=-perdaMax){
-            alertaEl.style.display='block';
-            alertaEl.style.background='rgba(231,76,60,.15)';
-            alertaEl.style.border='1px solid rgba(231,76,60,.5)';
-            alertaEl.style.color='#e74c3c';
-            alertaEl.textContent='⛔ STOP LOSS ATINGIDO — PARE AGORA';
-        } else if(lp>=ganhoAlvo){
-            alertaEl.style.display='block';
-            alertaEl.style.background='rgba(46,204,113,.15)';
-            alertaEl.style.border='1px solid rgba(46,204,113,.5)';
-            alertaEl.style.color='#2ecc71';
-            alertaEl.textContent='✅ STOP WIN ATINGIDO — ENCERRE A SESSÃO';
-        } else if(lp<=-perdaMax*0.7){
-            alertaEl.style.display='block';
-            alertaEl.style.background='rgba(241,196,15,.1)';
-            alertaEl.style.border='1px solid rgba(241,196,15,.4)';
-            alertaEl.style.color='#f1c40f';
-            alertaEl.textContent='⚠ Próximo do Stop Loss — cautela';
-        } else {
-            alertaEl.style.display='none';
-        }
-    } else { alertaEl.style.display='none'; }
-
-    // HISTÓRICO badges
+    // Histórico
     const hEl=document.getElementById('historicoResultados');
     if(hEl){
-        const ultimos=res.slice(-30).reverse();
-        if(!ultimos.length){hEl.innerHTML='<span style="color:rgba(255,255,255,.3);font-size:.8em;">Nenhum resultado</span>';}
-        else{
-            const resumo=`<div style="display:flex;gap:15px;margin-bottom:10px;font-size:.8em;">
-                <span style="color:#2ecc71;font-weight:600;">${wins} acertos</span>
-                <span style="color:#e74c3c;font-weight:600;">${losses} erros</span>
-                <span style="color:rgba(255,255,255,.4);">${totalJogadas} jogadas</span>
-            </div>`;
-            hEl.innerHTML=resumo+'<div style="display:flex;flex-wrap:wrap;gap:4px;">'+ultimos.map(r=>{
-                const bg=r.tipo==='win'?'rgba(46,204,113,.15)':'rgba(231,76,60,.15)';
-                const cor=r.tipo==='win'?'#2ecc71':'#e74c3c';
-                const txt=r.tipo==='win'?'+1':'−2';
-                return`<span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:28px;background:${bg};border-radius:4px;font-size:.8em;font-weight:600;color:${cor};padding:0 6px;">${txt}</span>`;
-            }).join('')+'</div>';
-        }
+        const res=(B.resultados||[]).slice(-20).reverse();
+        if(!res.length){hEl.innerHTML='<span style="color:rgba(255,255,255,.3);font-size:.8em;">Nenhum resultado</span>';return;}
+        hEl.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:4px;">'+res.map(r=>{
+            const bg=r.tipo==='win'?'rgba(46,204,113,.15)':'rgba(231,76,60,.15)';
+            const cor=r.tipo==='win'?'#2ecc71':'#e74c3c';
+            const txt=r.tipo==='win'?'+1':'−2';
+            return`<span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:28px;background:${bg};border-radius:4px;font-size:.8em;font-weight:600;color:${cor};padding:0 6px;">${txt}</span>`;
+        }).join('')+'</div>';
     }
-
 }
 
 function formatR(v){return'R$ '+(v||0).toFixed(2).replace('.',',');}
