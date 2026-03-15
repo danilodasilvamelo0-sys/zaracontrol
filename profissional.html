@@ -262,9 +262,8 @@
                             <div class="form-group" style="margin:0;"><label>Stop Loss (%)</label><input type="number" id="inputSL" placeholder="20" onchange="salvarBanca()"></div>
                             <div class="form-group" style="margin:0;"><label>Stop Win (%)</label><input type="number" id="inputSW" placeholder="30" onchange="salvarBanca()"></div>
                         </div>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;font-size:.7em;text-align:center;">
+                        <div style="display:grid;grid-template-columns:1fr;gap:6px;margin-top:8px;font-size:.7em;text-align:center;">
                             <div style="background:rgba(46,204,113,.08);padding:6px;border-radius:4px;"><div style="color:rgba(255,255,255,.4);">Jogadas</div><div id="bancaJogadas" style="color:#fff;font-weight:600;">0</div></div>
-                            <div style="background:rgba(212,175,125,.08);padding:6px;border-radius:4px;"><div style="color:rgba(255,255,255,.4);">ROI</div><div id="bancaROI" style="color:#d4af7d;font-weight:600;">—</div></div>
                         </div>
                     </div>
                 </div>
@@ -1007,13 +1006,6 @@ function renderBanca(){
     document.getElementById('bancaWR').style.color=wr>60?'#2ecc71':wr>45?'#f1c40f':'#e74c3c';
     document.getElementById('bancaJogadas').textContent=totalJogadas;
 
-    // ROI = lucro / total investido
-    const totalInvestido=res.reduce((s,r)=>s+(r.tipo==='win'?(B.apostaBase||5)*2:(B.apostaBase||5)*2),0);
-    const roi=totalInvestido>0?((lp/totalInvestido)*100):0;
-    const roiEl=document.getElementById('bancaROI');
-    roiEl.textContent=totalJogadas>0?(roi>=0?'+':'')+roi.toFixed(1)+'%':'—';
-    roiEl.style.color=roi>0?'#2ecc71':roi<0?'#e74c3c':'#d4af7d';
-
     // ALERTAS Stop Loss / Stop Win
     const alertaEl=document.getElementById('bancaAlerta');
     if(bancaIni>0){
@@ -1048,7 +1040,12 @@ function renderBanca(){
         const ultimos=res.slice(-30).reverse();
         if(!ultimos.length){hEl.innerHTML='<span style="color:rgba(255,255,255,.3);font-size:.8em;">Nenhum resultado</span>';}
         else{
-            hEl.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:4px;">'+ultimos.map(r=>{
+            const resumo=`<div style="display:flex;gap:15px;margin-bottom:10px;font-size:.8em;">
+                <span style="color:#2ecc71;font-weight:600;">${wins} acertos</span>
+                <span style="color:#e74c3c;font-weight:600;">${losses} erros</span>
+                <span style="color:rgba(255,255,255,.4);">${totalJogadas} jogadas</span>
+            </div>`;
+            hEl.innerHTML=resumo+'<div style="display:flex;flex-wrap:wrap;gap:4px;">'+ultimos.map(r=>{
                 const bg=r.tipo==='win'?'rgba(46,204,113,.15)':'rgba(231,76,60,.15)';
                 const cor=r.tipo==='win'?'#2ecc71':'#e74c3c';
                 const txt=r.tipo==='win'?'+1':'−2';
