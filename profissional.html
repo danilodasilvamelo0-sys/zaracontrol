@@ -297,6 +297,15 @@
                     </div>
                     <div id="estadoMsg" style="margin-top:10px;font-size:.85em;"></div>
                 </div>
+                <div class="analise-box">
+                    <div class="analise-titulo">Relatório da Sessão</div>
+                    <p style="font-size:.82em;color:rgba(255,255,255,.5);margin-bottom:10px;">Gere o relatório ao final da sessão. Copie e envie para o Vlad calibrar os thresholds.</p>
+                    <button class="btn-resultado ganhou" onclick="gerarRelatorio()" style="width:100%;margin-bottom:12px;">Gerar Relatório</button>
+                    <div id="relatorioBox" style="display:none;">
+                        <textarea id="relatorioTexto" readonly style="width:100%;min-height:300px;background:#0a0a0a;border:1px solid rgba(212,175,125,.2);border-radius:8px;color:rgba(255,255,255,.7);font-family:'Courier New',monospace;font-size:.75em;padding:12px;resize:vertical;"></textarea>
+                        <button class="btn-mini" onclick="copiarRelatorio()" style="margin-top:8px;width:100%;border-color:rgba(212,175,125,.4);color:#d4af7d;">Copiar Relatório</button>
+                    </div>
+                </div>
             </div>
 </div>
     </div></div>
@@ -740,6 +749,116 @@ function setEstado(e){
 // ==========================================
 // CHECKLIST DISCIPLINA
 // ==========================================
+// ==========================================
+// RELATORIO DE SESSAO
+// ==========================================
+function gerarRelatorio(){
+    var h=R.historico;var total=h.length;
+    var sz=h.filter(function(n){return n!==0;});var T=sz.length;
+    var aDz=R.assertDz||{ac:0,er:0,seq:[]};var aCol=R.assertCol||{ac:0,er:0,seq:[]};
+    var tDz=aDz.ac+aDz.er;var tCol=aCol.ac+aCol.er;
+    var dzPct=tDz>0?Math.round(aDz.ac/tDz*100):0;
+    var colPct=tCol>0?Math.round(aCol.ac/tCol*100):0;
+    var avgPct=(tDz+tCol)>0?Math.round((aDz.ac+aCol.ac)/(tDz+tCol)*100):0;
+
+    // Contagens
+    var dz=[0,0,0];sz.forEach(function(n){dz[duzia(n)-1]++;});
+    var cl=[0,0,0];sz.forEach(function(n){cl[coluna(n)-1]++;});
+    var dzPcts=dz.map(function(d){return T>0?Math.round(d/T*100):0;});
+    var clPcts=cl.map(function(c){return T>0?Math.round(c/T*100):0;});
+    var dzZ=dz.map(function(d){return zScore(d,T,P_DZ);});
+    var clZ=cl.map(function(c){return zScore(c,T,P_DZ);});
+    var zeros=h.filter(function(n){return n===0;}).length;
+
+    // Streaks
+    var stDz=calcStreak(R.assertDz);var stCol=calcStreak(R.assertCol);
+    function maxStreak(seq,tipo){if(!seq||!seq.length)return 0;var mx=0;var cur=0;seq.forEach(function(s){if(s===tipo){cur++;if(cur>mx)mx=cur;}else cur=0;});return mx;}
+    var dzMaxWin=maxStreak(aDz.seq,'w');var dzMaxLoss=maxStreak(aDz.seq,'l');
+    var colMaxWin=maxStreak(aCol.seq,'w');var colMaxLoss=maxStreak(aCol.seq,'l');
+
+    // Banca
+    var res=B.resultados||[];var wins=res.filter(function(r){return r.tipo==='win';}).length;
+    var losses=res.filter(function(r){return r.tipo==='loss';}).length;
+    var bancaLP=(B.atual||0)-(B.inicial||0);
+
+    // Sequencia de numeros
+    var ultimos=h.slice(-50).join(', ');
+
+    var dt=new Date();
+    var dataStr=dt.toLocaleDateString('pt-BR')+' '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+
+    var r='';
+    r+='========================================\n';
+    r+='  RELATORIO DE SESSAO - ZARA ROLETA\n';
+    r+='  '+dataStr+'\n';
+    r+='========================================\n\n';
+
+    r+='--- AMOSTRA ---\n';
+    r+='Spins totais: '+total+'\n';
+    r+='Spins validos (sem zero): '+T+'\n';
+    r+='Zeros: '+zeros+' ('+(total>0?Math.round(zeros/total*100):0)+'%)\n\n';
+
+    r+='--- DISTRIBUICAO DUZIAS ---\n';
+    r+='1a (1-12):  '+dzPcts[0]+'% ('+dz[0]+'x) Z='+dzZ[0].toFixed(2)+'\n';
+    r+='2a (13-24): '+dzPcts[1]+'% ('+dz[1]+'x) Z='+dzZ[1].toFixed(2)+'\n';
+    r+='3a (25-36): '+dzPcts[2]+'% ('+dz[2]+'x) Z='+dzZ[2].toFixed(2)+'\n\n';
+
+    r+='--- DISTRIBUICAO COLUNAS ---\n';
+    r+='Col 1: '+clPcts[0]+'% ('+cl[0]+'x) Z='+clZ[0].toFixed(2)+'\n';
+    r+='Col 2: '+clPcts[1]+'% ('+cl[1]+'x) Z='+clZ[1].toFixed(2)+'\n';
+    r+='Col 3: '+clPcts[2]+'% ('+cl[2]+'x) Z='+clZ[2].toFixed(2)+'\n\n';
+
+    r+='--- ASSERTIVIDADE ---\n';
+    r+='Media geral: '+avgPct+'% ('+(aDz.ac+aCol.ac)+'/'+(tDz+tCol)+')\n';
+    r+='Duzias:  '+dzPct+'% ('+aDz.ac+'/'+tDz+')\n';
+    r+='Colunas: '+colPct+'% ('+aCol.ac+'/'+tCol+')\n\n';
+
+    r+='--- STREAKS ---\n';
+    r+='Duzias  - max win: '+dzMaxWin+' | max loss: '+dzMaxLoss+' | atual: '+stDz.atual+'\n';
+    r+='Colunas - max win: '+colMaxWin+' | max loss: '+colMaxLoss+' | atual: '+stCol.atual+'\n\n';
+
+    r+='--- BANCA ---\n';
+    r+='Inicial: R$ '+(B.inicial||0).toFixed(2)+'\n';
+    r+='Final:   R$ '+(B.atual||0).toFixed(2)+'\n';
+    r+='Lucro/Perda: '+(bancaLP>=0?'+':'')+bancaLP.toFixed(2)+'\n';
+    r+='Jogadas: '+res.length+' ('+wins+'W / '+losses+'L)\n';
+    r+='Win Rate banca: '+(res.length>0?Math.round(wins/res.length*100):0)+'%\n';
+    r+='Unit: R$ '+(B.apostaBase||5).toFixed(2)+'\n\n';
+
+    r+='--- SEQUENCIA ASSERTIVIDADE ---\n';
+    r+='Duzias:  '+(aDz.seq||[]).join('')+'\n';
+    r+='Colunas: '+(aCol.seq||[]).join('')+'\n\n';
+
+    r+='--- ULTIMOS '+Math.min(50,total)+' NUMEROS ---\n';
+    r+=ultimos+'\n\n';
+
+    r+='--- DIAGNOSTICO ---\n';
+    if(dzPct>=70&&colPct>=70) r+='Ambos acima de 70%. Engine calibrada.\n';
+    else if(dzPct>=65&&colPct<50) r+='Duzias OK, Colunas falhando. Considerar parar colunas.\n';
+    else if(colPct>=65&&dzPct<50) r+='Colunas OK, Duzias falhando. Considerar parar duzias.\n';
+    else if(dzPct<50&&colPct<50) r+='Ambos abaixo de 50%. Mesa desfavoravel ou engine descalibrada.\n';
+    else r+='Performance mista. Revisar thresholds.\n';
+
+    if(dzMaxLoss>=3||colMaxLoss>=3) r+='ALERTA: Streak de '+Math.max(dzMaxLoss,colMaxLoss)+' perdas consecutivas detectado.\n';
+    if(zeros>total*0.05&&total>20) r+='ALERTA: Zeros acima de 5% ('+zeros+'/'+total+').\n';
+
+    r+='\n========================================\n';
+    r+='  Envie este relatorio para o Vlad\n';
+    r+='  para calibracao de thresholds.\n';
+    r+='========================================\n';
+
+    document.getElementById('relatorioTexto').value=r;
+    document.getElementById('relatorioBox').style.display='block';
+    toast('Relatorio gerado');
+}
+
+function copiarRelatorio(){
+    var el=document.getElementById('relatorioTexto');
+    el.select();el.setSelectionRange(0,99999);
+    document.execCommand('copy');
+    toast('Relatorio copiado!');
+}
+
 function renderChecklist(){
     const el=document.getElementById('checklistDisciplina');if(!el)return;
     const items=['Estou calmo e racional','Defini stop loss para hoje','Defini stop win para hoje','Tenho tempo limitado','Não estou recuperando perda anterior','Banca está configurada'];
