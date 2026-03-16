@@ -257,6 +257,7 @@
                         <div style="font-size:.8em;color:#d4af7d;font-weight:500;margin-bottom:12px;">Configurar</div>
                         <div class="form-group" style="margin:0 0 10px;"><label>Banca Inicial</label><input type="number" id="inputBancaInicial" placeholder="500" onchange="salvarBanca()"></div>
                         <div class="form-group" style="margin:0;"><label>Aposta Base</label><input type="number" id="inputApostaBase" placeholder="5" onchange="salvarBanca()"></div>
+                        <button class="btn-mini delete" onclick="resetarBanca()" style="margin-top:12px;width:100%;">Zerar Banca</button>
                     </div>
                 </div>
                 <div class="banca-card">
@@ -686,6 +687,12 @@ function desfazerResultado(){
     const last=B.resultados.pop();
     B.atual=(B.atual||0)-last.valor;
     saveB();renderBanca();toast('Desfeito');
+}
+
+function resetarBanca(){
+    if(!confirm('Zerar banca e todo o historico?\n\nApaga resultados, win rate, tudo.'))return;
+    B={inicial:0,atual:0,apostaBase:5,sl:20,sw:30,resultados:[]};
+    saveB();renderBanca();toast('Banca zerada');
 }
 
 function renderBanca(){
