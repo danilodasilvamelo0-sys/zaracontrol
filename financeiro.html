@@ -7930,7 +7930,7 @@
 
             // 3. Se comprometimento alto
             if (percentComprometido > 60) {
-                const todasDespesas = [...fixasMes, ...variaveisMes];
+                const todasDespesas = [...fixasMesSab, ...variaveisMes];
                 const ruidos = todasDespesas.filter(d => ['Lazer', 'Assinaturas', 'Delivery', 'Streaming', 'Jogos', 'Outros'].includes(d.categoria));
                 const totalRuido = ruidos.reduce((s, d) => s + d.valor, 0);
                 
