@@ -121,6 +121,17 @@
         .regra-item{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(212,175,125,.05);border-radius:6px;font-size:.85em;color:rgba(255,255,255,.7)}
         .regra-num{color:#d4af7d;font-weight:600;min-width:22px;font-size:.9em}
         @media(max-width:768px){.rec-card-body{font-size:.85em}.banca-grid-4{grid-template-columns:repeat(2,1fr)}.indicador-card{padding:8px}.ind-valor{font-size:.9em}}
+
+        /* FUTEBOL */
+        .fut-section{display:none}.fut-section.active{display:block}
+        .fut-input{width:100%;padding:8px 10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.2);border-radius:6px;color:#fff;font-size:.85em;font-family:'Inter',sans-serif}
+        .fut-input:focus{border-color:#d4af7d;outline:none}
+        .fut-input-sm{width:100%;padding:6px 8px;background:#0a0a0a;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#fff;font-size:.8em;font-family:'Inter',sans-serif}
+        .fut-input-sm:focus{border-color:rgba(212,175,125,.4);outline:none}
+        .fut-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .fut-stat-item{display:flex;flex-direction:column;gap:3px}
+        .fut-stat-item label{font-size:.68em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
+        @media(max-width:768px){.fut-stat-grid{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
@@ -172,16 +183,182 @@
             </div>
 
             <!-- ESPORTES (SKELETON) -->
-            <div class="sub-content active" id="sub-esportes">
-                <div class="skeleton-box" style="margin-bottom:15px;">
-                    <h3>Análise Pré-Jogo — Futebol</h3>
-                    <p>Integração com dados de Betano / bet365. Análise estatística de confrontos, odds, tendências. Em desenvolvimento.</p>
+                                    <div class="sub-content active" id="sub-esportes">
+                <div style="display:flex;gap:5px;margin-bottom:15px;flex-wrap:wrap;">
+                    <button class="btn-mini active" onclick="switchFut(this,'fut-jogos')" style="border-color:#d4af7d;color:#d4af7d;">Jogos</button>
+                    <button class="btn-mini" onclick="switchFut(this,'fut-analise')">Analise Manual</button>
+                    <button class="btn-mini" onclick="switchFut(this,'fut-apostas')">Apostas</button>
+                    <button class="btn-mini" onclick="switchFut(this,'fut-historico')">Historico</button>
+                    <button class="btn-mini" onclick="switchFut(this,'fut-config')" style="margin-left:auto;font-size:.7em;">API</button>
                 </div>
-                <div class="skeleton-box">
-                    <h3>Análise Pré-Jogo — Basquete</h3>
-                    <p>Handicap, over/under, análise de ritmo. Dados de NBA, NBB, Euroliga. Em desenvolvimento.</p>
+
+                <!-- CONFIG API -->
+                <div class="fut-section" id="fut-config">
+                    <div class="analise-box">
+                        <div class="analise-titulo">Configurar API</div>
+                        <p style="font-size:.8em;color:rgba(255,255,255,.5);margin-bottom:12px;">Crie conta gratis em <strong style="color:#d4af7d;">the-odds-api.com</strong> e cole sua API key abaixo. 500 requests/mes gratis.</p>
+                        <div style="display:flex;gap:10px;margin-bottom:10px;">
+                            <input type="text" id="apiKeyInput" placeholder="Cole sua API key aqui" class="fut-input" style="flex:1;">
+                            <button class="btn-resultado ganhou" onclick="salvarApiKey()" style="white-space:nowrap;">Salvar</button>
+                        </div>
+                        <div id="apiStatus" style="font-size:.8em;color:rgba(255,255,255,.4);"></div>
+                        <div style="margin-top:15px;">
+                            <div style="font-size:.75em;color:rgba(212,175,125,.5);margin-bottom:8px;">Ligas ativas</div>
+                            <div style="display:flex;flex-wrap:wrap;gap:6px;" id="ligasAtivas">
+                                <label style="display:flex;align-items:center;gap:4px;font-size:.78em;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" value="soccer_brazil_campeonato" checked onchange="salvarLigas()"> Brasileirao</label>
+                                <label style="display:flex;align-items:center;gap:4px;font-size:.78em;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" value="soccer_brazil_serie_b" onchange="salvarLigas()"> Serie B</label>
+                                <label style="display:flex;align-items:center;gap:4px;font-size:.78em;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" value="soccer_epl" onchange="salvarLigas()"> Premier League</label>
+                                <label style="display:flex;align-items:center;gap:4px;font-size:.78em;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" value="soccer_spain_la_liga" onchange="salvarLigas()"> La Liga</label>
+                                <label style="display:flex;align-items:center;gap:4px;font-size:.78em;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" value="soccer_italy_serie_a" onchange="salvarLigas()"> Serie A Italia</label>
+                                <label style="display:flex;align-items:center;gap:4px;font-size:.78em;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" value="soccer_germany_bundesliga" onchange="salvarLigas()"> Bundesliga</label>
+                                <label style="display:flex;align-items:center;gap:4px;font-size:.78em;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" value="soccer_france_ligue_one" onchange="salvarLigas()"> Ligue 1</label>
+                                <label style="display:flex;align-items:center;gap:4px;font-size:.78em;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" value="soccer_uefa_champs_league" onchange="salvarLigas()"> Champions League</label>
+                                <label style="display:flex;align-items:center;gap:4px;font-size:.78em;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" value="soccer_conmebol_libertadores" onchange="salvarLigas()"> Libertadores</label>
+                                <label style="display:flex;align-items:center;gap:4px;font-size:.78em;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" value="soccer_copa_america" onchange="salvarLigas()"> Copa America</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JOGOS DO DIA (API) -->
+                <div class="fut-section active" id="fut-jogos">
+                    <div class="analise-box">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                            <div class="analise-titulo" style="margin:0;">Jogos do Dia</div>
+                            <div style="display:flex;gap:6px;">
+                                <button class="btn-mini" onclick="buscarJogos()" id="btnBuscar">Atualizar</button>
+                            </div>
+                        </div>
+                        <div id="jogosStatus" style="font-size:.8em;color:rgba(255,255,255,.4);margin-bottom:10px;"></div>
+                        <div id="jogosLista"></div>
+                    </div>
+                    <!-- ANALISE DO JOGO SELECIONADO -->
+                    <div id="jogoAnalise" style="display:none;">
+                        <div class="analise-box">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                                <div class="analise-titulo" style="margin:0;" id="jogoAnaliseTitulo">Analise</div>
+                                <button class="btn-mini" onclick="fecharAnaliseJogo()">Voltar</button>
+                            </div>
+                            <!-- Odds da API -->
+                            <div id="jogoOddsAPI" style="margin-bottom:15px;"></div>
+                            <!-- Inputs manuais para Poisson -->
+                            <div style="background:rgba(212,175,125,.05);border:1px solid rgba(212,175,125,.15);border-radius:8px;padding:15px;margin-bottom:12px;">
+                                <div style="font-size:.75em;color:rgba(212,175,125,.6);margin-bottom:10px;">Complete os dados para analise Poisson (pesquise no FlashScore)</div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                    <div>
+                                        <div id="jaTimeA" style="font-size:.85em;color:#fff;font-weight:600;margin-bottom:8px;text-align:center;"></div>
+                                        <div class="fut-stat-grid">
+                                            <div class="fut-stat-item"><label>Gols marcados/j</label><input type="number" id="jaGolsA" step="0.01" placeholder="1.5" class="fut-input-sm"></div>
+                                            <div class="fut-stat-item"><label>Gols sofridos/j</label><input type="number" id="jaSofA" step="0.01" placeholder="1.0" class="fut-input-sm"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div id="jaTimeB" style="font-size:.85em;color:#fff;font-weight:600;margin-bottom:8px;text-align:center;"></div>
+                                        <div class="fut-stat-grid">
+                                            <div class="fut-stat-item"><label>Gols marcados/j</label><input type="number" id="jaGolsB" step="0.01" placeholder="1.2" class="fut-input-sm"></div>
+                                            <div class="fut-stat-item"><label>Gols sofridos/j</label><input type="number" id="jaSofB" step="0.01" placeholder="1.3" class="fut-input-sm"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                                    <div class="fut-stat-item"><label>Media gols liga/jogo</label><input type="number" id="jaMediaLiga" step="0.01" value="2.5" class="fut-input-sm"></div>
+                                    <div class="fut-stat-item"><label>Forma Casa (ex: WDWLW)</label><input type="text" id="jaFormaA" placeholder="WDWLW" class="fut-input-sm" maxlength="5" style="text-transform:uppercase;"></div>
+                                </div>
+                                <button class="btn-resultado ganhou" onclick="analisarJogoAPI()" style="width:100%;margin-top:12px;">ANALISAR</button>
+                            </div>
+                            <!-- Resultados -->
+                            <div id="jaResultado" style="display:none;">
+                                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:15px;" id="jaProbs1x2"></div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px;">
+                                    <div><div style="font-size:.75em;color:rgba(212,175,125,.6);margin-bottom:8px;">Over/Under</div><div id="jaOverUnder"></div></div>
+                                    <div><div style="font-size:.75em;color:rgba(212,175,125,.6);margin-bottom:8px;">BTTS</div><div id="jaBTTS"></div></div>
+                                </div>
+                                <div style="margin-bottom:15px;"><div style="font-size:.75em;color:rgba(212,175,125,.6);margin-bottom:8px;">Matriz de Placares</div><div id="jaMatriz" style="overflow-x:auto;"></div></div>
+                                <div style="margin-bottom:15px;"><div style="font-size:.75em;color:rgba(212,175,125,.6);margin-bottom:8px;">Value Bets</div><div id="jaValue"></div></div>
+                                <div id="jaRecomendacao"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANALISE MANUAL (fallback) -->
+                <div class="fut-section" id="fut-analise">
+                    <div class="analise-box">
+                        <div class="analise-titulo">Analise Manual</div>
+                        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start;margin-bottom:15px;">
+                            <div>
+                                <input type="text" id="futTimeA" placeholder="Time da Casa" class="fut-input" style="font-weight:600;text-align:center;margin-bottom:8px;">
+                                <div class="fut-stat-grid">
+                                    <div class="fut-stat-item"><label>Gols marcados/j</label><input type="number" id="futGolsA" step="0.01" placeholder="1.5" class="fut-input-sm"></div>
+                                    <div class="fut-stat-item"><label>Gols sofridos/j</label><input type="number" id="futSofridosA" step="0.01" placeholder="1.0" class="fut-input-sm"></div>
+                                    <div class="fut-stat-item"><label>Forma (5 ultimos)</label><input type="text" id="futFormaA" placeholder="WDWLW" class="fut-input-sm" maxlength="5" style="text-transform:uppercase;"></div>
+                                </div>
+                            </div>
+                            <div style="text-align:center;padding-top:10px;"><div style="font-family:'Cinzel',serif;color:#d4af7d;font-size:1.1em;font-weight:600;">VS</div></div>
+                            <div>
+                                <input type="text" id="futTimeB" placeholder="Time Visitante" class="fut-input" style="font-weight:600;text-align:center;margin-bottom:8px;">
+                                <div class="fut-stat-grid">
+                                    <div class="fut-stat-item"><label>Gols marcados/j</label><input type="number" id="futGolsB" step="0.01" placeholder="1.2" class="fut-input-sm"></div>
+                                    <div class="fut-stat-item"><label>Gols sofridos/j</label><input type="number" id="futSofridosB" step="0.01" placeholder="1.3" class="fut-input-sm"></div>
+                                    <div class="fut-stat-item"><label>Forma (5 ultimos)</label><input type="text" id="futFormaB" placeholder="LLWDW" class="fut-input-sm" maxlength="5" style="text-transform:uppercase;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fut-stat-item" style="margin-bottom:12px;"><label>Media gols liga/jogo</label><input type="number" id="futMediaLiga" step="0.01" value="2.5" class="fut-input-sm"></div>
+                        <button class="btn-resultado ganhou" onclick="analisarJogoManual()" style="width:100%;">ANALISAR</button>
+                    </div>
+                    <div id="futResultado" style="display:none;">
+                        <div class="analise-box"><div class="analise-titulo">Probabilidades (Poisson)</div><div id="futProbs1x2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:15px;"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div><div style="font-size:.75em;color:rgba(212,175,125,.6);margin-bottom:8px;">Over/Under</div><div id="futOverUnder"></div></div><div><div style="font-size:.75em;color:rgba(212,175,125,.6);margin-bottom:8px;">BTTS</div><div id="futBTTS"></div></div></div></div>
+                        <div class="analise-box"><div class="analise-titulo">Matriz de Placares</div><div id="futMatriz" style="overflow-x:auto;"></div></div>
+                    </div>
+                </div>
+
+                <!-- APOSTAS TRACKER -->
+                <div class="fut-section" id="fut-apostas">
+                    <div class="analise-box">
+                        <div class="analise-titulo">Registrar Aposta</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                            <input type="text" id="betJogo" placeholder="Time A vs Time B" class="fut-input">
+                            <input type="text" id="betLiga" placeholder="Liga" class="fut-input">
+                        </div>
+                        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+                            <input type="text" id="betMercado" placeholder="Mercado (ex: Over 2.5)" class="fut-input">
+                            <input type="number" id="betOdd" step="0.01" placeholder="Odd" class="fut-input">
+                            <input type="number" id="betStake" step="0.01" placeholder="Stake R$" class="fut-input">
+                            <select id="betStatus" class="fut-input"><option value="pendente">Pendente</option><option value="green">Green</option><option value="red">Red</option><option value="void">Void</option></select>
+                        </div>
+                        <button class="btn-add" onclick="registrarBet()" style="width:100%;">Registrar Aposta</button>
+                    </div>
+                    <div class="analise-box">
+                        <div style="display:flex;justify-content:space-between;align-items:center;"><div class="analise-titulo" style="margin:0;">Apostas</div>
+                        <div style="display:flex;gap:5px;"><button class="btn-mini" onclick="filtroBet('todas')">Todas</button><button class="btn-mini" onclick="filtroBet('pendente')">Pend.</button><button class="btn-mini" onclick="filtroBet('green')" style="border-color:rgba(46,204,113,.4);color:#2ecc71;">G</button><button class="btn-mini" onclick="filtroBet('red')" style="border-color:rgba(231,76,60,.4);color:#e74c3c;">R</button></div></div>
+                        <div id="betLista" style="margin-top:12px;"></div>
+                    </div>
+                </div>
+
+                <!-- HISTORICO -->
+                <div class="fut-section" id="fut-historico">
+                    <div class="analise-box">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+                            <div class="analise-titulo" style="margin:0;">Performance Mensal</div>
+                            <div style="display:flex;gap:6px;align-items:center;"><button class="btn-mini" onclick="mudarMesBet(-1)">&lt;</button><span id="betMesLabel" style="font-size:.85em;color:#d4af7d;min-width:100px;text-align:center;"></span><button class="btn-mini" onclick="mudarMesBet(1)">&gt;</button></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px;">
+                            <div style="background:#0a0a0a;border:1px solid rgba(46,204,113,.15);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.4);text-transform:uppercase;">Lucro</div><div id="betLucro" style="font-size:1.1em;font-weight:600;color:#2ecc71;">R$ 0</div></div>
+                            <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.4);text-transform:uppercase;">ROI</div><div id="betROI" style="font-size:1.1em;font-weight:600;color:#d4af7d;">0%</div></div>
+                            <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.4);text-transform:uppercase;">Win Rate</div><div id="betWR" style="font-size:1.1em;font-weight:600;color:#fff;">0%</div></div>
+                            <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.4);text-transform:uppercase;">Apostas</div><div id="betTotal" style="font-size:1.1em;font-weight:600;color:#fff;">0</div></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+                            <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.08);border-radius:6px;padding:10px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.35);">Greens</div><div id="betGreens" style="font-size:1em;font-weight:600;color:#2ecc71;">0</div></div>
+                            <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.08);border-radius:6px;padding:10px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.35);">Reds</div><div id="betReds" style="font-size:1em;font-weight:600;color:#e74c3c;">0</div></div>
+                            <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.08);border-radius:6px;padding:10px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.35);">Odd Media</div><div id="betOddMedia" style="font-size:1em;font-weight:600;color:#d4af7d;">0</div></div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+
 
             <!-- MÉTODO: DÚZIAS E COLUNAS -->
             <div class="sub-content" id="sub-metodo">
@@ -935,6 +1112,350 @@ function renderControle(){
     }
 }
 
+// ==========================================
+// FUTEBOL — ENGINE
+// ==========================================
+// ==========================================
+// FUTEBOL ENGINE + API
+// ==========================================
+var FUT_KEY='futZara';
+var F={bets:[],apiKey:'',ligas:['soccer_brazil_campeonato'],jogosCache:[]};
+var betMesView='';var betFiltro='todas';var jogoSelecionado=null;
+
+function loadFut(){var s=localStorage.getItem(FUT_KEY);if(s)F=Object.assign({bets:[],apiKey:'',ligas:['soccer_brazil_campeonato'],jogosCache:[]},JSON.parse(s));}
+function saveFut(){localStorage.setItem(FUT_KEY,JSON.stringify(F));}
+
+function switchFut(btn,id){
+    document.querySelectorAll('.fut-section').forEach(function(s){s.classList.remove('active');});
+    document.querySelectorAll('#sub-esportes > div:first-child .btn-mini').forEach(function(b){b.classList.remove('active');b.style.borderColor='';b.style.color='';});
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');btn.style.borderColor='#d4af7d';btn.style.color='#d4af7d';
+}
+
+// API CONFIG
+function salvarApiKey(){
+    var key=document.getElementById('apiKeyInput').value.trim();
+    if(!key){alert('Cole a API key.');return;}
+    F.apiKey=key;saveFut();
+    document.getElementById('apiStatus').innerHTML='<span style="color:#2ecc71;">Key salva. Vá em Jogos e clique Atualizar.</span>';
+    toast('API key salva');
+}
+
+function salvarLigas(){
+    var checks=document.querySelectorAll('#ligasAtivas input[type=checkbox]');
+    F.ligas=[];checks.forEach(function(c){if(c.checked)F.ligas.push(c.value);});
+    saveFut();
+}
+
+function carregarConfigAPI(){
+    if(F.apiKey){document.getElementById('apiKeyInput').value=F.apiKey;document.getElementById('apiStatus').innerHTML='<span style="color:#2ecc71;">Key configurada.</span>';}
+    var checks=document.querySelectorAll('#ligasAtivas input[type=checkbox]');
+    checks.forEach(function(c){c.checked=F.ligas.indexOf(c.value)!==-1;});
+}
+
+// BUSCAR JOGOS
+async function buscarJogos(){
+    if(!F.apiKey){document.getElementById('jogosStatus').innerHTML='<span style="color:#e74c3c;">Configure sua API key primeiro (aba API).</span>';return;}
+    var btn=document.getElementById('btnBuscar');btn.textContent='Buscando...';btn.disabled=true;
+    document.getElementById('jogosStatus').innerHTML='<span style="color:#f1c40f;">Buscando jogos...</span>';
+
+    var todosJogos=[];
+    for(var i=0;i<F.ligas.length;i++){
+        var liga=F.ligas[i];
+        try{
+            var url='https://api.the-odds-api.com/v4/sports/'+liga+'/odds/?apiKey='+F.apiKey+'&regions=eu&markets=h2h,totals&oddsFormat=decimal&dateFormat=iso';
+            var resp=await fetch(url);
+            if(!resp.ok){
+                if(resp.status===401){document.getElementById('jogosStatus').innerHTML='<span style="color:#e74c3c;">API key invalida.</span>';btn.textContent='Atualizar';btn.disabled=false;return;}
+                continue;
+            }
+            var data=await resp.json();
+            data.forEach(function(j){j._liga=liga;});
+            todosJogos=todosJogos.concat(data);
+        }catch(e){console.error('Erro API:',liga,e);}
+    }
+
+    F.jogosCache=todosJogos;saveFut();
+    renderJogos();
+    btn.textContent='Atualizar';btn.disabled=false;
+    var remaining=document.getElementById('jogosStatus');
+    remaining.innerHTML='<span style="color:#2ecc71;">'+todosJogos.length+' jogos encontrados.</span>';
+}
+
+function renderJogos(){
+    var el=document.getElementById('jogosLista');if(!el)return;
+    var jogos=F.jogosCache||[];
+    if(!jogos.length){el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhum jogo. Clique Atualizar.</div>';return;}
+
+    // Agrupar por liga
+    var porLiga={};
+    jogos.forEach(function(j){
+        var ligaNome=j.sport_title||j._liga||'Outros';
+        if(!porLiga[ligaNome])porLiga[ligaNome]=[];
+        porLiga[ligaNome].push(j);
+    });
+
+    var html='';
+    Object.keys(porLiga).forEach(function(liga){
+        html+='<div style="font-size:.72em;color:rgba(212,175,125,.6);text-transform:uppercase;letter-spacing:1px;margin:12px 0 6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.04);">'+liga+'</div>';
+        porLiga[liga].forEach(function(j){
+            var dt=new Date(j.commence_time);
+            var hora=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+            // Pegar odds h2h do primeiro bookmaker
+            var odds1='',oddsX='',odds2='';
+            if(j.bookmakers&&j.bookmakers.length){
+                var bk=j.bookmakers[0];
+                var h2hMkt=bk.markets.find(function(m){return m.key==='h2h';});
+                if(h2hMkt&&h2hMkt.outcomes){
+                    h2hMkt.outcomes.forEach(function(o){
+                        if(o.name===j.home_team)odds1=o.price;
+                        else if(o.name===j.away_team)odds2=o.price;
+                        else oddsX=o.price;
+                    });
+                }
+            }
+            html+='<div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:6px;margin-bottom:4px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor=\'rgba(212,175,125,.3)\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,.04)\'" onclick=\'selecionarJogo('+JSON.stringify(j).replace(/'/g,"\\'")+')\'>';
+            html+='<div style="flex:1;"><div style="font-size:.88em;color:#fff;"><strong>'+j.home_team+'</strong> vs <strong>'+j.away_team+'</strong></div>';
+            html+='<div style="font-size:.7em;color:rgba(255,255,255,.3);margin-top:2px;">'+hora+'</div></div>';
+            if(odds1){
+                html+='<div style="display:flex;gap:6px;font-size:.78em;">';
+                html+='<span style="padding:4px 8px;background:rgba(46,204,113,.1);border-radius:4px;color:#2ecc71;font-weight:600;">'+Number(odds1).toFixed(2)+'</span>';
+                html+='<span style="padding:4px 8px;background:rgba(241,196,15,.1);border-radius:4px;color:#f1c40f;font-weight:600;">'+(oddsX?Number(oddsX).toFixed(2):'-')+'</span>';
+                html+='<span style="padding:4px 8px;background:rgba(231,76,60,.1);border-radius:4px;color:#e74c3c;font-weight:600;">'+Number(odds2).toFixed(2)+'</span>';
+                html+='</div>';
+            }
+            html+='</div>';
+        });
+    });
+    el.innerHTML=html;
+}
+
+// SELECIONAR JOGO
+function selecionarJogo(jogo){
+    jogoSelecionado=jogo;
+    document.getElementById('jogoAnalise').style.display='block';
+    document.getElementById('jogoAnaliseTitulo').textContent=jogo.home_team+' vs '+jogo.away_team;
+    document.getElementById('jaTimeA').textContent=jogo.home_team;
+    document.getElementById('jaTimeB').textContent=jogo.away_team;
+
+    // Mostrar odds de todos os bookmakers
+    var oddsHtml='';
+    if(jogo.bookmakers&&jogo.bookmakers.length){
+        oddsHtml+='<div style="font-size:.72em;color:rgba(212,175,125,.5);margin-bottom:6px;">Odds disponiveis</div>';
+        oddsHtml+='<div style="display:grid;gap:4px;max-height:200px;overflow-y:auto;">';
+        jogo.bookmakers.slice(0,8).forEach(function(bk){
+            var h2h=bk.markets.find(function(m){return m.key==='h2h';});
+            if(!h2h)return;
+            var o={};h2h.outcomes.forEach(function(x){
+                if(x.name===jogo.home_team)o.home=x.price;
+                else if(x.name===jogo.away_team)o.away=x.price;
+                else o.draw=x.price;
+            });
+            oddsHtml+='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:rgba(255,255,255,.02);border-radius:4px;font-size:.8em;">';
+            oddsHtml+='<span style="color:rgba(255,255,255,.5);min-width:100px;">'+bk.title+'</span>';
+            oddsHtml+='<span style="color:#2ecc71;font-weight:600;min-width:50px;text-align:center;">'+(o.home||'-').toFixed?Number(o.home).toFixed(2):'-'+'</span>';
+            oddsHtml+='<span style="color:#f1c40f;font-weight:600;min-width:50px;text-align:center;">'+(o.draw?Number(o.draw).toFixed(2):'-')+'</span>';
+            oddsHtml+='<span style="color:#e74c3c;font-weight:600;min-width:50px;text-align:center;">'+(o.away?Number(o.away).toFixed(2):'-')+'</span>';
+            oddsHtml+='</div>';
+        });
+        oddsHtml+='</div>';
+    }
+    document.getElementById('jogoOddsAPI').innerHTML=oddsHtml;
+    document.getElementById('jaResultado').style.display='none';
+}
+
+function fecharAnaliseJogo(){
+    document.getElementById('jogoAnalise').style.display='none';
+    jogoSelecionado=null;
+}
+
+// POISSON CORE
+function factorial(n){if(n<=1)return 1;var r=1;for(var i=2;i<=n;i++)r*=i;return r;}
+function poissonP(lam,k){return(Math.pow(lam,k)*Math.exp(-lam))/factorial(k);}
+
+function runPoisson(golsA,sofA,golsB,sofB,mediaLiga,formaA,formaB){
+    var lgAvg=mediaLiga/2;
+    var atkA=golsA/lgAvg;var defA=sofA/lgAvg;var atkB=golsB/lgAvg;var defB=sofB/lgAvg;
+    var lamA=atkA*defB*lgAvg*1.1;var lamB=atkB*defA*lgAvg*0.9;
+
+    if(formaA&&formaA.length>=3){var pts=0;for(var i=0;i<formaA.length;i++){if(formaA[i]==='W')pts+=3;else if(formaA[i]==='D')pts+=1;}lamA*=(0.9+(pts/(formaA.length*3))*0.2);}
+    if(formaB&&formaB.length>=3){var pts2=0;for(var i2=0;i2<formaB.length;i2++){if(formaB[i2]==='W')pts2+=3;else if(formaB[i2]==='D')pts2+=1;}lamB*=(0.9+(pts2/(formaB.length*3))*0.2);}
+
+    lamA=Math.max(0.3,Math.min(lamA,4.5));lamB=Math.max(0.3,Math.min(lamB,4.5));
+
+    var mat=[];for(var a=0;a<=5;a++){mat[a]=[];for(var b=0;b<=5;b++)mat[a][b]=poissonP(lamA,a)*poissonP(lamB,b);}
+
+    var pH=0,pD=0,pA=0,pO15=0,pO25=0,pO35=0,pBT=0;
+    for(var a2=0;a2<=5;a2++){for(var b2=0;b2<=5;b2++){
+        if(a2>b2)pH+=mat[a2][b2];else if(a2===b2)pD+=mat[a2][b2];else pA+=mat[a2][b2];
+        if(a2+b2>1.5)pO15+=mat[a2][b2];if(a2+b2>2.5)pO25+=mat[a2][b2];if(a2+b2>3.5)pO35+=mat[a2][b2];
+        if(a2>=1&&b2>=1)pBT+=mat[a2][b2];
+    }}
+    return{lamA:lamA,lamB:lamB,mat:mat,pH:pH,pD:pD,pA:pA,pO15:pO15,pO25:pO25,pO35:pO35,pBT:pBT};
+}
+
+function renderPoissonResult(res,timeA,timeB,prefix,apiOdds){
+    function probCard(l,p,c){var fo=p>0?(1/p):0;return '<div style="background:#0a0a0a;border:1px solid '+c+'30;border-radius:8px;padding:15px;text-align:center;"><div style="font-size:.7em;color:rgba(255,255,255,.4);margin-bottom:4px;">'+l+'</div><div style="font-size:1.5em;font-weight:700;color:'+c+';">'+Math.round(p*100)+'%</div><div style="font-size:.7em;color:rgba(255,255,255,.3);margin-top:4px;">Fair: '+fo.toFixed(2)+'</div></div>';}
+    function ouBar(l,p){var c=p>0.6?'#2ecc71':p>0.45?'#f1c40f':'#e74c3c';return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.03);"><span style="font-size:.82em;color:rgba(255,255,255,.6);">'+l+'</span><span style="font-size:.85em;font-weight:600;color:'+c+';">'+Math.round(p*100)+'% <span style="font-size:.75em;color:rgba(255,255,255,.3);">('+((1/p).toFixed(2))+')</span></span></div>';}
+
+    var p1x2=document.getElementById(prefix+'Probs1x2');
+    if(p1x2)p1x2.innerHTML=probCard(timeA,res.pH,'#2ecc71')+probCard('Empate',res.pD,'#f1c40f')+probCard(timeB,res.pA,'#e74c3c');
+
+    var ou=document.getElementById(prefix+'OverUnder');
+    if(ou)ou.innerHTML=ouBar('Over 1.5',res.pO15)+ouBar('Under 1.5',1-res.pO15)+ouBar('Over 2.5',res.pO25)+ouBar('Under 2.5',1-res.pO25)+ouBar('Over 3.5',res.pO35)+ouBar('Under 3.5',1-res.pO35);
+
+    var bt=document.getElementById(prefix+'BTTS');
+    if(bt)bt.innerHTML=ouBar('BTTS Sim',res.pBT)+ouBar('BTTS Nao',1-res.pBT);
+
+    // Matriz
+    var mE=document.getElementById(prefix+'Matriz');
+    if(mE){
+        var mH='<table style="border-collapse:collapse;width:100%;font-size:.73em;"><tr><td style="padding:5px;color:#d4af7d;font-weight:600;">'+timeA+' \\ '+timeB+'</td>';
+        for(var c2=0;c2<=5;c2++)mH+='<td style="padding:5px;text-align:center;color:rgba(255,255,255,.4);font-weight:600;">'+c2+'</td>';
+        mH+='</tr>';
+        for(var r=0;r<=5;r++){mH+='<tr><td style="padding:5px;color:rgba(255,255,255,.4);font-weight:600;">'+r+'</td>';
+            for(var c3=0;c3<=5;c3++){var pp=Math.round(res.mat[r][c3]*1000)/10;var bg=pp>8?'rgba(46,204,113,.2)':pp>5?'rgba(241,196,15,.12)':pp>2?'rgba(255,255,255,.04)':'transparent';var tc=pp>8?'#2ecc71':pp>5?'#f1c40f':pp>2?'rgba(255,255,255,.6)':'rgba(255,255,255,.2)';
+                mH+='<td style="padding:5px;text-align:center;background:'+bg+';color:'+tc+';border:1px solid rgba(255,255,255,.03);">'+pp.toFixed(1)+'%</td>';}
+            mH+='</tr>';}
+        mH+='</table><div style="margin-top:6px;font-size:.72em;color:rgba(255,255,255,.3);">xG Casa: '+res.lamA.toFixed(2)+' | xG Fora: '+res.lamB.toFixed(2)+' | Total: '+(res.lamA+res.lamB).toFixed(2)+'</div>';
+        mE.innerHTML=mH;
+    }
+
+    // Value bets (se tem odds da API)
+    var vE=document.getElementById(prefix+'Value');
+    if(vE&&apiOdds){
+        var mercados=[{l:timeA+' (1)',p:res.pH,o:apiOdds.home},{l:'Empate (X)',p:res.pD,o:apiOdds.draw},{l:timeB+' (2)',p:res.pA,o:apiOdds.away}];
+        var vH='';var bestV=null;
+        mercados.forEach(function(m){
+            if(!m.o)return;
+            var ev=(m.p*m.o)-1;var isV=ev>0.05;var fo=m.p>0?(1/m.p):0;
+            if(isV&&(!bestV||ev>bestV.ev))bestV={l:m.l,ev:ev,o:m.o,p:m.p};
+            var cr=isV?'#2ecc71':'#e74c3c';var bg2=isV?'rgba(46,204,113,.08)':'rgba(231,76,60,.05)';
+            vH+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:'+bg2+';border:1px solid '+cr+'25;border-radius:6px;margin-bottom:4px;"><div><span style="font-size:.85em;color:#fff;">'+m.l+'</span><span style="font-size:.7em;color:rgba(255,255,255,.3);margin-left:8px;">P:'+Math.round(m.p*100)+'% Fair:'+fo.toFixed(2)+'</span></div><div style="text-align:right;"><span style="font-size:.9em;font-weight:600;color:'+cr+';">EV:'+(ev>0?'+':'')+(ev*100).toFixed(1)+'%</span>'+(isV?'<span style="display:block;font-size:.65em;color:#2ecc71;">VALUE</span>':'')+'</div></div>';
+        });
+        vE.innerHTML=vH;
+
+        var rE=document.getElementById(prefix+'Recomendacao');
+        if(rE&&bestV){
+            rE.innerHTML='<div style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:8px;padding:15px;text-align:center;"><div style="font-size:.75em;color:#2ecc71;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Melhor Value</div><div style="font-size:1.2em;font-weight:600;color:#fff;margin-bottom:4px;">'+bestV.l+'</div><div style="font-size:.85em;color:rgba(255,255,255,.6);">Odd:'+bestV.o.toFixed(2)+' | P:'+Math.round(bestV.p*100)+'% | EV:+'+(bestV.ev*100).toFixed(1)+'%</div><div style="font-size:.7em;color:rgba(255,255,255,.35);margin-top:6px;">Aposte se EV > 5%. Max 3% da banca.</div></div>';
+        }
+    }
+}
+
+// ANALISAR JOGO DA API
+function analisarJogoAPI(){
+    var gA=parseFloat(document.getElementById('jaGolsA').value)||0;
+    var sA=parseFloat(document.getElementById('jaSofA').value)||0;
+    var gB=parseFloat(document.getElementById('jaGolsB').value)||0;
+    var sB=parseFloat(document.getElementById('jaSofB').value)||0;
+    var ml=parseFloat(document.getElementById('jaMediaLiga').value)||2.5;
+    var fA=(document.getElementById('jaFormaA').value||'').toUpperCase();
+    if(gA===0||gB===0){alert('Preencha gols marcados dos dois times.');return;}
+
+    var res=runPoisson(gA,sA,gB,sB,ml,fA,'');
+
+    // Extrair odds do jogo selecionado
+    var apiOdds=null;
+    if(jogoSelecionado&&jogoSelecionado.bookmakers&&jogoSelecionado.bookmakers.length){
+        var bk=jogoSelecionado.bookmakers[0];
+        var h2h=bk.markets.find(function(m){return m.key==='h2h';});
+        if(h2h){apiOdds={};h2h.outcomes.forEach(function(o){
+            if(o.name===jogoSelecionado.home_team)apiOdds.home=o.price;
+            else if(o.name===jogoSelecionado.away_team)apiOdds.away=o.price;
+            else apiOdds.draw=o.price;
+        });}
+    }
+
+    renderPoissonResult(res,jogoSelecionado?jogoSelecionado.home_team:'Casa',jogoSelecionado?jogoSelecionado.away_team:'Fora','ja',apiOdds);
+    document.getElementById('jaResultado').style.display='block';
+    toast('Analise concluida');
+}
+
+// ANALISAR MANUAL
+function analisarJogoManual(){
+    var tA=document.getElementById('futTimeA').value.trim()||'Casa';
+    var tB=document.getElementById('futTimeB').value.trim()||'Fora';
+    var gA=parseFloat(document.getElementById('futGolsA').value)||0;
+    var sA=parseFloat(document.getElementById('futSofridosA').value)||0;
+    var gB=parseFloat(document.getElementById('futGolsB').value)||0;
+    var sB=parseFloat(document.getElementById('futSofridosB').value)||0;
+    var ml=parseFloat(document.getElementById('futMediaLiga').value)||2.5;
+    var fA=(document.getElementById('futFormaA').value||'').toUpperCase();
+    var fB=(document.getElementById('futFormaB').value||'').toUpperCase();
+    if(gA===0||gB===0){alert('Preencha gols marcados.');return;}
+
+    var res=runPoisson(gA,sA,gB,sB,ml,fA,fB);
+    renderPoissonResult(res,tA,tB,'fut',null);
+    document.getElementById('futResultado').style.display='block';
+    toast('Analise concluida');
+}
+
+// BET TRACKER
+function registrarBet(){
+    var jogo=document.getElementById('betJogo').value.trim();
+    var liga=document.getElementById('betLiga').value.trim();
+    var mercado=document.getElementById('betMercado').value.trim();
+    var odd=parseFloat(document.getElementById('betOdd').value)||0;
+    var stake=parseFloat(document.getElementById('betStake').value)||0;
+    var status=document.getElementById('betStatus').value;
+    if(!jogo||!mercado||odd<=0||stake<=0)return alert('Preencha jogo, mercado, odd e stake.');
+    var dt=new Date();
+    F.bets.push({id:Date.now().toString(),jogo:jogo,liga:liga,mercado:mercado,odd:odd,stake:stake,status:status,data:dt.toISOString(),mes:dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0'),lucro:status==='green'?stake*(odd-1):status==='red'?-stake:0});
+    saveFut();document.getElementById('betJogo').value='';document.getElementById('betMercado').value='';document.getElementById('betOdd').value='';document.getElementById('betStake').value='';
+    renderBets();renderBetHist();toast('Aposta registrada');
+}
+
+function atualizarBetStatus(id,ns){var b=F.bets.find(function(x){return x.id===id;});if(!b)return;b.status=ns;b.lucro=ns==='green'?b.stake*(b.odd-1):ns==='red'?-b.stake:0;saveFut();renderBets();renderBetHist();}
+function deletarBet(id){F.bets=F.bets.filter(function(x){return x.id!==id;});saveFut();renderBets();renderBetHist();}
+function filtroBet(f){betFiltro=f;renderBets();}
+
+function renderBets(){
+    var el=document.getElementById('betLista');if(!el)return;
+    var bets=F.bets.slice().reverse();
+    if(betFiltro!=='todas')bets=bets.filter(function(b){return b.status===betFiltro;});
+    if(!bets.length){el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:20px;font-size:.85em;">Nenhuma aposta.</div>';return;}
+    var cores={green:'#2ecc71',red:'#e74c3c',pendente:'#f1c40f','void':'rgba(255,255,255,.4)'};
+    var labs={green:'GREEN',red:'RED',pendente:'PEND','void':'VOID'};
+    el.innerHTML=bets.slice(0,30).map(function(b){
+        var dt=new Date(b.data);var ds=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+        var cr=cores[b.status]||'#fff';var lt=b.status==='green'?'+R$ '+(b.stake*(b.odd-1)).toFixed(2):b.status==='red'?'-R$ '+b.stake.toFixed(2):'';
+        return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);"><div style="min-width:45px;text-align:center;"><span style="display:inline-block;padding:3px 6px;border-radius:4px;font-size:.68em;font-weight:600;background:'+cr+'18;color:'+cr+';border:1px solid '+cr+'40;">'+labs[b.status]+'</span></div><div style="flex:1;"><div style="font-size:.83em;color:#fff;">'+b.jogo+'</div><div style="font-size:.72em;color:rgba(255,255,255,.4);">'+b.mercado+' @'+b.odd.toFixed(2)+' | R$'+b.stake.toFixed(2)+'</div></div><div style="text-align:right;min-width:65px;"><div style="font-size:.8em;font-weight:600;color:'+cr+';">'+lt+'</div><div style="font-size:.63em;color:rgba(255,255,255,.3);">'+ds+'</div></div><div style="display:flex;gap:3px;">'+(b.status==='pendente'?'<button class="btn-mini" onclick="atualizarBetStatus(\''+b.id+'\',\'green\')" style="padding:2px 5px;font-size:.58em;color:#2ecc71;border-color:rgba(46,204,113,.3);">G</button><button class="btn-mini" onclick="atualizarBetStatus(\''+b.id+'\',\'red\')" style="padding:2px 5px;font-size:.58em;color:#e74c3c;border-color:rgba(231,76,60,.3);">R</button>':'')+'<button class="btn-mini delete" onclick="deletarBet(\''+b.id+'\')" style="padding:2px 5px;font-size:.58em;">x</button></div></div>';
+    }).join('');
+}
+
+// HISTORICO MENSAL
+function initBetHist(){var d=new Date();betMesView=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');renderBetHist();}
+function mudarMesBet(dir){var p=betMesView.split('-');var y=parseInt(p[0]);var m=parseInt(p[1])+dir;if(m<1){m=12;y--;}if(m>12){m=1;y++;}betMesView=y+'-'+String(m).padStart(2,'0');renderBetHist();}
+
+function renderBetHist(){
+    if(!betMesView){var d=new Date();betMesView=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+    var ms=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    var p=betMesView.split('-');var lbl=document.getElementById('betMesLabel');if(lbl)lbl.textContent=ms[parseInt(p[1])]+' '+p[0];
+    var bets=F.bets.filter(function(b){return b.mes===betMesView;});
+    var gs=bets.filter(function(b){return b.status==='green';});var rs=bets.filter(function(b){return b.status==='red';});
+    var tStake=bets.reduce(function(s,b){return s+(b.status!=='void'?b.stake:0);},0);
+    var lucro=bets.reduce(function(s,b){return s+(b.lucro||0);},0);
+    var roi=tStake>0?((lucro/tStake)*100):0;
+    var wr=(gs.length+rs.length)>0?(gs.length/(gs.length+rs.length)*100):0;
+    var om=bets.length>0?(bets.reduce(function(s,b){return s+b.odd;},0)/bets.length):0;
+    function fR(v){return 'R$ '+(v||0).toFixed(2).replace('.',',');}
+    var lE=document.getElementById('betLucro');if(lE){lE.textContent=(lucro>=0?'+':'')+fR(lucro);lE.style.color=lucro>=0?'#2ecc71':'#e74c3c';}
+    var rE=document.getElementById('betROI');if(rE){rE.textContent=(roi>=0?'+':'')+roi.toFixed(1)+'%';rE.style.color=roi>=0?'#2ecc71':'#e74c3c';}
+    var wE=document.getElementById('betWR');if(wE){wE.textContent=wr.toFixed(0)+'%';wE.style.color=wr>=60?'#2ecc71':wr>=45?'#f1c40f':'#e74c3c';}
+    var tE=document.getElementById('betTotal');if(tE)tE.textContent=bets.length;
+    var gE=document.getElementById('betGreens');if(gE)gE.textContent=gs.length;
+    var rdE=document.getElementById('betReds');if(rdE)rdE.textContent=rs.length;
+    var omE=document.getElementById('betOddMedia');if(omE)omE.textContent=om.toFixed(2);
+}
+
+function initFutebol(){
+    loadFut();carregarConfigAPI();renderBets();initBetHist();
+    if(F.jogosCache&&F.jogosCache.length)renderJogos();
+    else document.getElementById('jogosLista').innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">'+(F.apiKey?'Clique Atualizar para buscar jogos.':'Configure sua API key (aba API) para buscar jogos automaticamente.')+'</div>';
+}
+
+
+
 // CHECKLIST DISCIPLINA
 // ==========================================
 // ==========================================
@@ -1116,7 +1637,7 @@ function renderChecklist(){
 // ==========================================
 function initAll(){
     loadAll();carregarCampos();renderProjetos();renderFeedbacks();renderMetas();
-    buildMesa();renderRoleta();renderBanca();renderChecklist();initControle();
+    buildMesa();renderRoleta();renderBanca();renderChecklist();initControle();initFutebol();
 }
 initAll();
 
