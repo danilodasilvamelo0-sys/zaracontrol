@@ -167,6 +167,7 @@
                 <button class="sub-tab active" onclick="switchSub('esportes')">Esportes</button>
                 <button class="sub-tab" onclick="switchSub('metodo')">Método</button>
                 <button class="sub-tab" onclick="switchSub('banca')">Gestão de Banca</button>
+                <button class="sub-tab" onclick="switchSub('controle')">Controle</button>
                 <button class="sub-tab" onclick="switchSub('disciplina')">Disciplina</button>
             </div>
 
@@ -272,6 +273,73 @@
                 </div>
             </div>
 
+<!-- CONTROLE -->
+            <div class="sub-content" id="sub-controle">
+                <!-- RESUMO MENSAL -->
+                <div class="analise-box">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+                        <div class="analise-titulo" style="margin:0;">Resumo Mensal</div>
+                        <div style="display:flex;gap:6px;align-items:center;">
+                            <button class="btn-mini" onclick="mudarMesControle(-1)">&lt;</button>
+                            <span id="controleMesLabel" style="font-size:.85em;color:#d4af7d;min-width:100px;text-align:center;"></span>
+                            <button class="btn-mini" onclick="mudarMesControle(1)">&gt;</button>
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:15px;">
+                        <div style="background:#0a0a0a;border:1px solid rgba(46,204,113,.15);border-radius:8px;padding:12px;text-align:center;">
+                            <div style="font-size:.65em;color:rgba(255,255,255,.4);text-transform:uppercase;">Ganhos</div>
+                            <div id="ctrlGanhos" style="font-size:1.2em;font-weight:600;color:#2ecc71;">R$ 0</div>
+                        </div>
+                        <div style="background:#0a0a0a;border:1px solid rgba(231,76,60,.15);border-radius:8px;padding:12px;text-align:center;">
+                            <div style="font-size:.65em;color:rgba(255,255,255,.4);text-transform:uppercase;">Perdas</div>
+                            <div id="ctrlPerdas" style="font-size:1.2em;font-weight:600;color:#e74c3c;">R$ 0</div>
+                        </div>
+                        <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:8px;padding:12px;text-align:center;">
+                            <div style="font-size:.65em;color:rgba(255,255,255,.4);text-transform:uppercase;">Saldo</div>
+                            <div id="ctrlSaldo" style="font-size:1.2em;font-weight:600;color:#d4af7d;">R$ 0</div>
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+                        <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.08);border-radius:6px;padding:10px;text-align:center;">
+                            <div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;">Sessoes</div>
+                            <div id="ctrlSessoes" style="font-size:1em;font-weight:600;color:#fff;">0</div>
+                        </div>
+                        <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.08);border-radius:6px;padding:10px;text-align:center;">
+                            <div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;">Depositos</div>
+                            <div id="ctrlDepositos" style="font-size:1em;font-weight:600;color:#3498db;">R$ 0</div>
+                        </div>
+                        <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.08);border-radius:6px;padding:10px;text-align:center;">
+                            <div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;">Saques</div>
+                            <div id="ctrlSaques" style="font-size:1em;font-weight:600;color:#9b59b6;">R$ 0</div>
+                        </div>
+                        <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.08);border-radius:6px;padding:10px;text-align:center;">
+                            <div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;">Lucro Real</div>
+                            <div id="ctrlLucroReal" style="font-size:1em;font-weight:600;color:#d4af7d;">R$ 0</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- REGISTRAR -->
+                <div class="analise-box">
+                    <div class="analise-titulo">Registrar</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                        <select id="ctrlTipo" class="campo-textarea" style="min-height:auto;padding:8px;">
+                            <option value="sessao_win">Sessao +</option>
+                            <option value="sessao_loss">Sessao -</option>
+                            <option value="deposito">Deposito</option>
+                            <option value="saque">Saque</option>
+                        </select>
+                        <input type="number" id="ctrlValor" placeholder="Valor R$" class="campo-textarea" style="min-height:auto;padding:8px;" step="0.01">
+                    </div>
+                    <input type="text" id="ctrlNota" placeholder="Observacao (opcional)" class="campo-textarea" style="min-height:auto;padding:8px;margin-bottom:10px;">
+                    <button class="btn-add" onclick="registrarControle()" style="width:100%;">Registrar</button>
+                </div>
+                <!-- HISTORICO -->
+                <div class="analise-box">
+                    <div class="analise-titulo">Historico</div>
+                    <div id="ctrlHistorico"></div>
+                </div>
+            </div>
+
 <!-- DISCIPLINA -->
             <div class="sub-content" id="sub-disciplina">
                 <div class="analise-box">
@@ -323,19 +391,24 @@
 var EP_KEY='empresaPersona';
 var ROL_KEY='roletaZara';
 var BANCA_KEY='bancaZara';
+var CTRL_KEY='controleZara';
 
 var D={campos:{},projetos:[],feedbacks:[],metas:[]};
 var R={historico:[],assertDz:{ac:0,er:0,seq:[]},assertCol:{ac:0,er:0,seq:[]}};
 var B={inicial:0,atual:0,apostaBase:5,sl:20,sw:30,resultados:[]};
+var C={registros:[],mesAtual:''};
 
 function loadAll(){
     var ep=localStorage.getItem(EP_KEY);if(ep)D=Object.assign({},D,JSON.parse(ep));
     var ro=localStorage.getItem(ROL_KEY);if(ro)R=Object.assign({},R,JSON.parse(ro));
     var ba=localStorage.getItem(BANCA_KEY);if(ba)B=Object.assign({},B,JSON.parse(ba));
+    var ct=localStorage.getItem(CTRL_KEY);if(ct)C=Object.assign({},C,JSON.parse(ct));
+    if(!C.mesAtual){var d=new Date();C.mesAtual=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
 }
 function saveEP(){localStorage.setItem(EP_KEY,JSON.stringify(D));}
 function saveR(){localStorage.setItem(ROL_KEY,JSON.stringify(R));}
 function saveB(){localStorage.setItem(BANCA_KEY,JSON.stringify(B));}
+function saveC(){localStorage.setItem(CTRL_KEY,JSON.stringify(C));}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 
 // ==========================================
@@ -747,6 +820,121 @@ function setEstado(e){
 }
 
 // ==========================================
+// ==========================================
+// CONTROLE FINANCEIRO
+// ==========================================
+var controleMesView='';
+
+function initControle(){
+    var d=new Date();
+    controleMesView=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    renderControle();
+}
+
+function mudarMesControle(dir){
+    var parts=controleMesView.split('-');
+    var y=parseInt(parts[0]);var m=parseInt(parts[1])+dir;
+    if(m<1){m=12;y--;}if(m>12){m=1;y++;}
+    controleMesView=y+'-'+String(m).padStart(2,'0');
+    renderControle();
+}
+
+function registrarControle(){
+    var tipo=document.getElementById('ctrlTipo').value;
+    var valor=parseFloat(document.getElementById('ctrlValor').value)||0;
+    var nota=document.getElementById('ctrlNota').value.trim();
+    if(valor<=0)return alert('Informe o valor.');
+
+    var reg={
+        id:Date.now().toString(),
+        tipo:tipo,
+        valor:valor,
+        nota:nota,
+        data:new Date().toISOString(),
+        mes:new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0')
+    };
+    C.registros.push(reg);
+    saveC();
+    document.getElementById('ctrlValor').value='';
+    document.getElementById('ctrlNota').value='';
+    renderControle();
+    var labels={sessao_win:'Sessao + registrada',sessao_loss:'Sessao - registrada',deposito:'Deposito registrado',saque:'Saque registrado'};
+    toast(labels[tipo]||'Registrado');
+}
+
+function deletarControle(id){
+    C.registros=C.registros.filter(function(r){return r.id!==id;});
+    saveC();renderControle();
+}
+
+function renderControle(){
+    if(!controleMesView){var d=new Date();controleMesView=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+
+    // Label do mes
+    var parts=controleMesView.split('-');
+    var meses=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    var lbl=document.getElementById('controleMesLabel');
+    if(lbl)lbl.textContent=meses[parseInt(parts[1])]+' '+parts[0];
+
+    // Filtrar registros do mes
+    var regs=C.registros.filter(function(r){return r.mes===controleMesView;});
+
+    // Calculos
+    var ganhos=0;var perdas=0;var depositos=0;var saques=0;var sessoes=0;
+    regs.forEach(function(r){
+        if(r.tipo==='sessao_win'){ganhos+=r.valor;sessoes++;}
+        else if(r.tipo==='sessao_loss'){perdas+=r.valor;sessoes++;}
+        else if(r.tipo==='deposito'){depositos+=r.valor;}
+        else if(r.tipo==='saque'){saques+=r.valor;}
+    });
+    var saldo=ganhos-perdas;
+    var lucroReal=saldo-(depositos-saques); // lucro descontando o capital investido
+
+    function fmtR(v){return 'R$ '+(v||0).toFixed(2).replace('.',',');}
+
+    // Atualizar KPIs
+    var gEl=document.getElementById('ctrlGanhos');if(gEl)gEl.textContent=fmtR(ganhos);
+    var pEl=document.getElementById('ctrlPerdas');if(pEl)pEl.textContent=fmtR(perdas);
+    var sEl=document.getElementById('ctrlSaldo');
+    if(sEl){sEl.textContent=(saldo>=0?'+':'')+fmtR(saldo);sEl.style.color=saldo>=0?'#2ecc71':'#e74c3c';}
+    var ssEl=document.getElementById('ctrlSessoes');if(ssEl)ssEl.textContent=sessoes;
+    var dEl=document.getElementById('ctrlDepositos');if(dEl)dEl.textContent=fmtR(depositos);
+    var sqEl=document.getElementById('ctrlSaques');if(sqEl)sqEl.textContent=fmtR(saques);
+    var lrEl=document.getElementById('ctrlLucroReal');
+    if(lrEl){lrEl.textContent=(lucroReal>=0?'+':'')+fmtR(lucroReal);lrEl.style.color=lucroReal>=0?'#2ecc71':'#e74c3c';}
+
+    // Historico
+    var hEl=document.getElementById('ctrlHistorico');
+    if(hEl){
+        var sorted=regs.slice().sort(function(a,b){return new Date(b.data)-new Date(a.data);});
+        if(!sorted.length){
+            hEl.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:20px;font-size:.85em;">Nenhum registro neste mes.</div>';
+            return;
+        }
+        var icons={sessao_win:'&#9650;',sessao_loss:'&#9660;',deposito:'&#8593;',saque:'&#8595;'};
+        var cores={sessao_win:'#2ecc71',sessao_loss:'#e74c3c',deposito:'#3498db',saque:'#9b59b6'};
+        var labels={sessao_win:'Sessao +',sessao_loss:'Sessao -',deposito:'Deposito',saque:'Saque'};
+        hEl.innerHTML=sorted.map(function(r){
+            var dt=new Date(r.data);
+            var ds=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+            return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);">'+
+                '<span style="font-size:1em;color:'+cores[r.tipo]+';">'+icons[r.tipo]+'</span>'+
+                '<div style="flex:1;">'+
+                    '<div style="display:flex;justify-content:space-between;">'+
+                        '<span style="font-size:.82em;color:rgba(255,255,255,.7);">'+labels[r.tipo]+'</span>'+
+                        '<span style="font-size:.9em;font-weight:600;color:'+cores[r.tipo]+';">'+(r.tipo==='sessao_loss'||r.tipo==='saque'?'-':'+')+fmtR(r.valor)+'</span>'+
+                    '</div>'+
+                    '<div style="display:flex;justify-content:space-between;margin-top:2px;">'+
+                        '<span style="font-size:.7em;color:rgba(255,255,255,.3);">'+ds+'</span>'+
+                        (r.nota?'<span style="font-size:.7em;color:rgba(255,255,255,.35);">'+r.nota+'</span>':'')+
+                    '</div>'+
+                '</div>'+
+                '<button class="btn-mini delete" onclick="deletarControle(\''+r.id+'\')" style="padding:2px 6px;font-size:.65em;">x</button>'+
+            '</div>';
+        }).join('');
+    }
+}
+
 // CHECKLIST DISCIPLINA
 // ==========================================
 // ==========================================
@@ -833,14 +1021,72 @@ function gerarRelatorio(){
     r+=ultimos+'\n\n';
 
     r+='--- DIAGNOSTICO ---\n';
-    if(dzPct>=70&&colPct>=70) r+='Ambos acima de 70%. Engine calibrada.\n';
-    else if(dzPct>=65&&colPct<50) r+='Duzias OK, Colunas falhando. Considerar parar colunas.\n';
-    else if(colPct>=65&&dzPct<50) r+='Colunas OK, Duzias falhando. Considerar parar duzias.\n';
-    else if(dzPct<50&&colPct<50) r+='Ambos abaixo de 50%. Mesa desfavoravel ou engine descalibrada.\n';
-    else r+='Performance mista. Revisar thresholds.\n';
 
-    if(dzMaxLoss>=3||colMaxLoss>=3) r+='ALERTA: Streak de '+Math.max(dzMaxLoss,colMaxLoss)+' perdas consecutivas detectado.\n';
-    if(zeros>total*0.05&&total>20) r+='ALERTA: Zeros acima de 5% ('+zeros+'/'+total+').\n';
+    // 1. Assertividade por categoria
+    if(tDz>0){
+        if(dzPct>=70) r+='[OK] Duzias: '+dzPct+'% - engine lendo bem.\n';
+        else if(dzPct>=55) r+='[..] Duzias: '+dzPct+'% - funcional, sem destaque.\n';
+        else r+='[!!] Duzias: '+dzPct+'% - modelo falhando. NAO apostar duzias.\n';
+    }
+    if(tCol>0){
+        if(colPct>=70) r+='[OK] Colunas: '+colPct+'% - engine lendo bem.\n';
+        else if(colPct>=55) r+='[..] Colunas: '+colPct+'% - funcional, sem destaque.\n';
+        else r+='[!!] Colunas: '+colPct+'% - modelo falhando. NAO apostar colunas.\n';
+    }
+
+    // 2. Banca vs Assertividade
+    var totalAssert=tDz+tCol;
+    var totalBanca=res.length;
+    if(totalBanca>totalAssert+4){
+        var apostasCegas=totalBanca-totalAssert;
+        r+='\n[!!] APOSTAS CEGAS: '+apostasCegas+' jogadas na banca sem sugestao ativa.\n';
+        r+='     Voce apostou durante Fase 1/2 (antes de 18 spins).\n';
+        r+='     Isso prejudicou o resultado.\n';
+    }
+
+    // 3. Unit vs Banca
+    var unitPct=B.inicial>0?((B.apostaBase||5)/B.inicial*100):0;
+    if(unitPct>3){
+        r+='\n[!!] UNIT ALTA: R$'+(B.apostaBase||5).toFixed(2)+' = '+unitPct.toFixed(1)+'% da banca.\n';
+        r+='     Recomendado: maximo 2% (R$'+(B.inicial*0.02).toFixed(2)+').\n';
+    }
+
+    // 4. Win rate banca vs teorico
+    var wrBanca=totalBanca>0?Math.round(wins/totalBanca*100):0;
+    if(totalBanca>=10){
+        if(wrBanca<60) r+='\n[!!] WIN RATE '+wrBanca+'%: abaixo do teorico (65%). Apostas em momentos ruins.\n';
+        else if(wrBanca>=70) r+='[OK] WIN RATE '+wrBanca+'%: acima do teorico. Engine adicionando valor.\n';
+    }
+
+    // 5. Streaks perigosos
+    if(dzMaxLoss>=3) r+='\n[!!] STREAK DUZIAS: '+dzMaxLoss+' perdas seguidas. Se aconteceu em sequencia, dealer pode ter mudado.\n';
+    if(colMaxLoss>=3) r+='\n[!!] STREAK COLUNAS: '+colMaxLoss+' perdas seguidas.\n';
+
+    // 6. Zeros anormais
+    if(zeros>total*0.05&&total>20) r+='\n[!!] ZEROS: '+zeros+'x em '+total+' spins ('+Math.round(zeros/total*100)+'%). Esperado ~2.7%. Mesa suspeita.\n';
+
+    // 7. Distribuicao extrema
+    var maxDzZ=Math.max(Math.abs(dzZ[0]),Math.abs(dzZ[1]),Math.abs(dzZ[2]));
+    var maxClZ=Math.max(Math.abs(clZ[0]),Math.abs(clZ[1]),Math.abs(clZ[2]));
+    if(maxDzZ>2) r+='[!!] DESVIO EXTREMO duzias: Z='+maxDzZ.toFixed(2)+'. Distribuicao muito irregular.\n';
+    if(maxClZ>2) r+='[!!] DESVIO EXTREMO colunas: Z='+maxClZ.toFixed(2)+'. Distribuicao muito irregular.\n';
+
+    // 8. Amostra insuficiente
+    if(total<18) r+='\n[!!] AMOSTRA: '+total+' spins e insuficiente. Minimo 18 para operar.\n';
+    else if(total<25) r+='[..] AMOSTRA: '+total+' spins. Aceitavel, mas +30 seria ideal.\n';
+
+    // 9. Resultado financeiro
+    r+='\n--- VEREDICTO ---\n';
+    if(bancaLP>0&&avgPct>=65) r+='Sessao POSITIVA. Engine e disciplina funcionaram.\n';
+    else if(bancaLP>0&&avgPct<65) r+='Lucro com assertividade baixa. Sorte > metodo nessa sessao. Cuidado.\n';
+    else if(bancaLP<0&&avgPct>=65) r+='Prejuizo com boa assertividade. Provavel causa: apostas fora do sinal ou unit alta.\n';
+    else if(bancaLP<0&&avgPct<65&&avgPct>=50) r+='Prejuizo com assertividade mediana. Mesa dificil ou thresholds precisam subir.\n';
+    else if(bancaLP<0&&avgPct<50) r+='Prejuizo com engine falhando. Mesa desfavoravel. Trocar mesa ou parar.\n';
+    else if(bancaLP===0) r+='Sessao neutra.\n';
+    else r+='Dados insuficientes para veredicto.\n';
+
+    if(dzMaxLoss>=3||colMaxLoss>=3) r+='\n[!!] ALERTA: Streak de '+Math.max(dzMaxLoss,colMaxLoss)+' perdas consecutivas detectado.\n';
+    if(zeros>total*0.05&&total>20) r+='[!!] ALERTA: Zeros acima de 5% ('+zeros+'/'+total+').\n';
 
     r+='\n========================================\n';
     r+='  Envie este relatorio para o Vlad\n';
@@ -870,7 +1116,7 @@ function renderChecklist(){
 // ==========================================
 function initAll(){
     loadAll();carregarCampos();renderProjetos();renderFeedbacks();renderMetas();
-    buildMesa();renderRoleta();renderBanca();renderChecklist();
+    buildMesa();renderRoleta();renderBanca();renderChecklist();initControle();
 }
 initAll();
 
