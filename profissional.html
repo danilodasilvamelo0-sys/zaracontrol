@@ -416,37 +416,57 @@
 
 <!-- GESTÃO DE BANCA -->
             <div class="sub-content" id="sub-banca">
-                <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:20px;">
-                    <div class="banca-card">
-                        <div style="text-align:center;margin-bottom:15px;">
-                            <div style="font-size:.7em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;">Banca Atual</div>
-                            <div class="banca-valor" id="bancaAtual">R$ 0,00</div>
-                        </div>
-                        <div class="banca-grid-4">
-                            <div class="banca-stat"><div class="banca-stat-label">Banca Inicial</div><div class="banca-stat-val" id="bancaInicial">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Lucro/Prejuízo</div><div class="banca-stat-val" id="bancaLP">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Stop Loss (20%)</div><div class="banca-stat-val" id="bancaSL">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Stop Win (30%)</div><div class="banca-stat-val" id="bancaSW">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Unit (2%)</div><div class="banca-stat-val" id="bancaUnit">—</div></div>
-                            <div class="banca-stat"><div class="banca-stat-label">Sessões</div><div class="banca-stat-val" id="bancaSessoes">0</div></div>
-                        </div>
+                <!-- BANCA PRINCIPAL -->
+                <div class="analise-box" style="text-align:center;padding:25px 20px;">
+                    <div style="font-size:.65em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Banca Atual</div>
+                    <div id="bancaAtual" style="font-size:2.4em;font-weight:700;color:#d4af7d;font-family:'Cinzel',serif;letter-spacing:1px;">R$ 0,00</div>
+                    <div id="bancaLP" style="font-size:1em;margin-top:4px;font-weight:600;">R$ 0,00</div>
+                    <div id="bancaAlerta" style="display:none;margin-top:12px;padding:8px 16px;border-radius:8px;font-size:.8em;font-weight:600;"></div>
+                </div>
+                <!-- KPIs -->
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px;">
+                    <div class="analise-box" style="padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;">Inicial</div><div id="bancaInicial" style="font-size:1em;font-weight:600;color:#fff;margin-top:4px;">—</div></div>
+                    <div class="analise-box" style="padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;">Unit</div><div id="bancaUnit" style="font-size:1em;font-weight:600;color:#d4af7d;margin-top:4px;">—</div></div>
+                    <div class="analise-box" style="padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;">Win Rate</div><div id="bancaWR" style="font-size:1em;font-weight:600;margin-top:4px;">—</div></div>
+                    <div class="analise-box" style="padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;">Jogadas</div><div id="bancaJogadas" style="font-size:1em;font-weight:600;color:#fff;margin-top:4px;">0</div></div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px;">
+                    <div class="analise-box" style="padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;">Stop Loss</div><div id="bancaSL" style="font-size:.9em;font-weight:600;color:#e74c3c;margin-top:4px;">—</div></div>
+                    <div class="analise-box" style="padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;">Stop Win</div><div id="bancaSW" style="font-size:.9em;font-weight:600;color:#2ecc71;margin-top:4px;">—</div></div>
+                    <div class="analise-box" style="padding:12px;text-align:center;"><div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;">Acertos/Erros</div><div id="bancaAE" style="font-size:.9em;font-weight:600;color:#fff;margin-top:4px;">0/0</div></div>
+                </div>
+                <!-- REGISTRAR -->
+                <div class="analise-box">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                        <div class="analise-titulo" style="margin:0;">Resultado</div>
+                        <div style="font-size:.7em;color:rgba(255,255,255,.3);">+1 unit (green) | -2 units (red)</div>
                     </div>
-                    <div class="banca-card">
-                        <div style="font-size:.8em;color:#d4af7d;font-weight:500;margin-bottom:12px;">Configurar</div>
-                        <div class="form-group" style="margin:0 0 10px;"><label>Banca Inicial</label><input type="number" id="inputBancaInicial" placeholder="500" onchange="salvarBanca()"></div>
-                        <div class="form-group" style="margin:0;"><label>Aposta Base</label><input type="number" id="inputApostaBase" placeholder="5" onchange="salvarBanca()"></div>
-                        <button class="btn-mini delete" onclick="resetarBanca()" style="margin-top:12px;width:100%;">Zerar Banca</button>
+                    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;">
+                        <button onclick="registrarResultadoBanca('win')" style="padding:14px;background:rgba(46,204,113,.1);border:2px solid rgba(46,204,113,.4);border-radius:10px;color:#2ecc71;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;">GREEN</button>
+                        <button onclick="registrarResultadoBanca('loss')" style="padding:14px;background:rgba(231,76,60,.1);border:2px solid rgba(231,76,60,.4);border-radius:10px;color:#e74c3c;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;">RED</button>
+                        <button class="btn-mini" onclick="desfazerResultado()" style="align-self:center;">Desfazer</button>
                     </div>
                 </div>
-                <div class="banca-card">
-                    <div style="font-size:.8em;color:#d4af7d;font-weight:500;margin-bottom:12px;">Registrar Resultado</div>
-                    <p style="font-size:.75em;color:rgba(255,255,255,.4);margin-bottom:12px;">Aposta em 2 dúzias/colunas: <strong style="color:#2ecc71;">Acerto = +1 unit</strong> (apostou 2, recebeu 3) | <strong style="color:#e74c3c;">Erro = -2 units</strong> (perdeu as 2 fichas)</p>
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                        <button class="btn-resultado ganhou" onclick="registrarResultadoBanca('win')">GANHOU (+1 unit)</button>
-                        <button class="btn-resultado perdeu" onclick="registrarResultadoBanca('loss')">PERDEU (-2 units)</button>
-                        <button class="btn-mini" onclick="desfazerResultado()" style="margin-left:auto;">Desfazer</button>
+                <!-- HISTORICO -->
+                <div class="analise-box">
+                    <div class="analise-titulo">Historico</div>
+                    <div id="historicoResultados"></div>
+                </div>
+                <!-- CONFIG -->
+                <div class="analise-box" style="border:1px solid rgba(212,175,125,.1);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="document.getElementById('bancaConfig').style.display=document.getElementById('bancaConfig').style.display==='none'?'block':'none';">
+                        <span style="font-size:.8em;color:rgba(212,175,125,.5);">Configurar Banca</span>
+                        <span style="color:rgba(255,255,255,.3);font-size:.8em;">&#9660;</span>
                     </div>
-                    <div id="historicoResultados" style="margin-top:15px;"></div>
+                    <div id="bancaConfig" style="display:none;margin-top:12px;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+                            <div class="fut-stat-item"><label>Banca Inicial</label><input type="number" id="inputBancaInicial" placeholder="500" class="fut-input-sm" onchange="salvarBanca()"></div>
+                            <div class="fut-stat-item"><label>Unit (aposta)</label><input type="number" id="inputApostaBase" placeholder="5" class="fut-input-sm" onchange="salvarBanca()"></div>
+                            <div class="fut-stat-item"><label>Stop Loss %</label><input type="number" id="inputSL" placeholder="20" class="fut-input-sm" onchange="salvarBanca()"></div>
+                            <div class="fut-stat-item"><label>Stop Win %</label><input type="number" id="inputSW" placeholder="30" class="fut-input-sm" onchange="salvarBanca()"></div>
+                        </div>
+                        <button class="btn-mini delete" onclick="resetarBanca()" style="width:100%;">Zerar Banca e Historico</button>
+                    </div>
                 </div>
             </div>
 
@@ -629,7 +649,8 @@ function deletarMeta(id){if(!confirm('Excluir?'))return;D.metas=D.metas.filter(f
 function renderMetas(){var c=document.getElementById('metasLista');if(!D.metas.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhuma meta.</div>';return;}var pl={'1m':'1 mes','3m':'3 meses','6m':'6 meses','1a':'1 ano'};var pil={identidade:'Identidade',posicionamento:'Posicion.',projetos:'Projetos',reputacao:'Reputacao',geral:'Geral'};c.innerHTML=D.metas.map(function(m){return '<div class="meta-card"><div class="meta-header"><span class="meta-texto">'+m.texto+'</span><span class="meta-prazo">'+(pl[m.prazo]||m.prazo)+'</span></div><div style="display:flex;justify-content:space-between;margin-top:6px;"><span style="font-size:.7em;color:rgba(212,175,125,.5);">'+(pil[m.pilar]||'')+'</span><span style="font-size:.8em;color:#d4af7d;">'+m.progresso+'%</span></div><div class="meta-barra"><div class="meta-fill" style="width:'+m.progresso+'%"></div></div><div class="projeto-acoes" style="margin-top:8px;"><button class="btn-mini" onclick="abrirModalMeta(\''+m.id+'\')">Editar</button><button class="btn-mini delete" onclick="deletarMeta(\''+m.id+'\')">Excluir</button></div></div>';}).join('');}
 
 // ==========================================
-// ROLETA ENGINE V3
+// ROLETA ENGINE V5 — DUAL MODE
+// Garcia-Pelayo + Regression to Mean
 // ==========================================
 const VERMELHOS=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
 const P_DZ=12/37;const P_HALF=18/37;
@@ -639,6 +660,7 @@ function corNum(n){if(n===0)return'z';return VERMELHOS.includes(n)?'v':'p';}
 function duzia(n){if(n===0)return 0;if(n<=12)return 1;if(n<=24)return 2;return 3;}
 function coluna(n){if(n===0)return 0;return((n-1)%3)+1;}
 
+// MATH
 function zScore(obs,n,p){var sd=Math.sqrt(n*p*(1-p));return sd===0?0:(obs-n*p)/sd;}
 function chiQuad(obs,n,p){var esp=n*p;if(esp===0)return 0;return obs.reduce(function(s,o){return s+Math.pow(o-esp,2)/esp;},0);}
 function chiSig(x){if(x>=9.21)return{nv:'p<0.01',f:3};if(x>=5.99)return{nv:'p<0.05',f:2};if(x>=4.60)return{nv:'p<0.10',f:1};return{nv:'n.s.',f:0};}
@@ -653,10 +675,11 @@ function calcGaps(h){
 function bayesPcts(h,tipo){
     var f=h.filter(function(n){return n!==0;});if(!f.length)return[33.3,33.3,33.3];
     var cnt=[0,0,0];var tw=0;
-    f.forEach(function(n,i){var w=Math.pow(0.95,f.length-1-i);var cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;if(cat>=0)cnt[cat]+=w;tw+=w;});
+    f.forEach(function(n,i){var w=Math.pow(0.93,f.length-1-i);var cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;if(cat>=0)cnt[cat]+=w;tw+=w;});
     return tw===0?[33.3,33.3,33.3]:cnt.map(function(c){return(c/tw)*100;});
 }
 
+// MOMENTUM: ultimos 8 vs anteriores 8
 function calcMom(h,tipo){
     var f=h.filter(function(n){return n!==0;});if(f.length<16)return[0,0,0];
     var r=f.slice(-8);var a=f.slice(-16,-8);var m=[0,0,0];
@@ -664,12 +687,21 @@ function calcMom(h,tipo){
     return m;
 }
 
+// MOMENTUM CURTO: ultimos 5 vs anteriores 5
+function calcMomCurto(h,tipo){
+    var f=h.filter(function(n){return n!==0;});if(f.length<10)return[0,0,0];
+    var r=f.slice(-5);var a=f.slice(-10,-5);var m=[0,0,0];
+    for(var k=0;k<3;k++){var cr=r.filter(function(n){return(tipo==='dz'?duzia(n)-1:coluna(n)-1)===k;}).length;var ca=a.filter(function(n){return(tipo==='dz'?duzia(n)-1:coluna(n)-1)===k;}).length;m[k]=(cr/5*100)-(ca/5*100);}
+    return m;
+}
+
+// JANELA: ultimos 12 vs geral
 function janelaComp(h,tipo){
-    var f=h.filter(function(n){return n!==0;});if(f.length<15)return null;
-    var u=f.slice(-15);var c15=[0,0,0];var ca=[0,0,0];
-    u.forEach(function(n){var cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;if(cat>=0)c15[cat]++;});
+    var f=h.filter(function(n){return n!==0;});if(f.length<12)return null;
+    var u=f.slice(-12);var c12=[0,0,0];var ca=[0,0,0];
+    u.forEach(function(n){var cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;if(cat>=0)c12[cat]++;});
     f.forEach(function(n){var cat=tipo==='dz'?duzia(n)-1:coluna(n)-1;if(cat>=0)ca[cat]++;});
-    return{pct15:c15.map(function(c){return c/15*100;}),pctAll:ca.map(function(c){return c/f.length*100;}),desvio:c15.map(function(c,i){return c/15*100-ca[i]/f.length*100;})};
+    return{pct12:c12.map(function(c){return c/12*100;}),pctAll:ca.map(function(c){return c/f.length*100;}),desvio:c12.map(function(c,i){return c/12*100-ca[i]/f.length*100;})};
 }
 
 function calcVol(h){
@@ -679,14 +711,6 @@ function calcVol(h){
     var tv=0;for(var dd=0;dd<3;dd++){var vals=bl.map(function(b2){return b2[dd];});var mm=vals.reduce(function(s,v){return s+v;},0)/vals.length;tv+=vals.reduce(function(s,v){return s+Math.pow(v-mm,2);},0)/vals.length;}
     var vol=Math.sqrt(tv/3);
     if(vol>25)return{v:vol,t:'MUITO ALTA'};if(vol>15)return{v:vol,t:'ALTA'};if(vol>8)return{v:vol,t:'MODERADA'};return{v:vol,t:'BAIXA'};
-}
-
-function analisarSetores(h){
-    if(h.length<10)return{ativo:false};var u=h.slice(-5).filter(function(n){return n!==0;});if(u.length<3)return{ativo:false};
-    var setores={};u.forEach(function(n){var idx=RODA.indexOf(n);var sid=Math.floor(idx/5);setores[sid]=(setores[sid]||0)+1;});
-    var mx=Math.max.apply(null,Object.values(setores));var sd=Object.keys(setores).find(function(k){return setores[k]===mx;});
-    if(mx>=3){var si=parseInt(sd)*5;var nums=[];for(var i=Math.max(0,si-2);i<Math.min(RODA.length,si+7);i++)nums.push(RODA[i]);return{ativo:true,nums:nums,forca:mx,msg:'Setor quente: '+mx+'/5 na mesma regiao'};}
-    return{ativo:false};
 }
 
 function calcCUSUM(h,tipo){
@@ -708,16 +732,47 @@ function calcStreak(aObj){
     }return{atual:atual};
 }
 
-function calcConv(zArr,momArr,bayArr,gapArr,janObj,cusumPos){
-    var v=[0,0,0];
-    v[zArr.indexOf(Math.max.apply(null,zArr))]+=2.5;
-    v[momArr.indexOf(Math.max.apply(null,momArr))]+=1.5;
-    v[bayArr.indexOf(Math.max.apply(null,bayArr))]+=2;
-    v[gapArr.indexOf(Math.min.apply(null,gapArr))]+=1;
-    if(janObj)v[janObj.pct15.indexOf(Math.max.apply(null,janObj.pct15))]+=2;
-    v[cusumPos.indexOf(Math.max.apply(null,cusumPos))]+=1.5;
-    var mx=Math.max.apply(null,v);var tot=v.reduce(function(s,x){return s+x;},0);
-    return{excluida:v.indexOf(mx),consenso:tot>0?mx/tot*100:0,votos:v};
+function analisarSetores(h){
+    if(h.length<10)return{ativo:false};var u=h.slice(-5).filter(function(n){return n!==0;});if(u.length<3)return{ativo:false};
+    var setores={};u.forEach(function(n){var idx=RODA.indexOf(n);var sid=Math.floor(idx/5);setores[sid]=(setores[sid]||0)+1;});
+    var mx=Math.max.apply(null,Object.values(setores));
+    if(mx>=3){return{ativo:true,forca:mx,msg:'Setor quente: '+mx+'/5 na mesma regiao'};}
+    return{ativo:false};
+}
+
+// ==========================================
+// DUAL MODE DETECTION
+// Modo 1: REGRESSION (apostar contra a quente)
+// Modo 2: EXPLOITATION (nao apostar, ou apostar COM)
+// ==========================================
+function detectarModo(zArr,momArr,momCurto,janObj,cusumObj){
+    // Para cada categoria, determinar se o desvio e real ou ruido
+    var modos=[]; // 'real', 'ruido', 'neutro' para cada
+    for(var i=0;i<3;i++){
+        var z=zArr[i];
+        var mom=momArr[i];
+        var momC=momCurto[i];
+        var jan=janObj?janObj.desvio[i]:0;
+        var cusum=cusumObj.pos[i];
+
+        if(Math.abs(z)>2.0 && mom>0 && momC>0 && cusum>3){
+            // Z alto + momentum positivo + momentum curto positivo + CUSUM alto
+            // = BIAS REAL — esta acelerando, nao e ruido
+            modos.push('real');
+        } else if(Math.abs(z)>1.5 && mom<-5){
+            // Z alto mas momentum negativo = esta desacelerando
+            // = REGRESSAO — agora e hora de apostar contra
+            modos.push('regressao');
+        } else if(Math.abs(z)>1.0 && mom<0 && momC<0){
+            // Z moderado + ambos momentum negativos = esfriando
+            modos.push('regressao');
+        } else if(Math.abs(z)<0.5){
+            modos.push('neutro');
+        } else {
+            modos.push('indefinido');
+        }
+    }
+    return modos;
 }
 
 // MESA
@@ -735,17 +790,37 @@ function buildMesa(){
     m.innerHTML=html;
 }
 
-// SUGESTAO ATUAL (assertividade so fase 3)
+// SUGESTAO ATUAL (p/ assertividade auto — so fase 3)
 function getSugestaoAtual(){
     var h=R.historico;var sz=h.filter(function(n){return n!==0;});var T=sz.length;
     if(T<18)return null;
     var dz=[0,0,0];sz.forEach(function(n){dz[duzia(n)-1]++;});var cl=[0,0,0];sz.forEach(function(n){cl[coluna(n)-1]++;});
     var dzZ=dz.map(function(d){return zScore(d,T,P_DZ);});var clZ=cl.map(function(c){return zScore(c,T,P_DZ);});
-    var gaps=calcGaps(h);var cuD=calcCUSUM(h,'dz');var cuC=calcCUSUM(h,'cl');
-    var mD=calcMom(h,'dz');var mC=calcMom(h,'cl');var bD=bayesPcts(h,'dz');var bC=bayesPcts(h,'cl');
-    var jD=janelaComp(h,'dz');var jC=janelaComp(h,'cl');
-    var cvD=calcConv(dzZ,mD,bD,gaps.dz,jD,cuD.pos);var cvC=calcConv(clZ,mC,bC,gaps.cl,jC,cuC.pos);
-    return{dzPar:[0,1,2].filter(function(i){return i!==cvD.excluida;}),clPar:[0,1,2].filter(function(i){return i!==cvC.excluida;})};
+    var momDz=calcMom(h,'dz');var momCl=calcMom(h,'cl');
+    var momDzC=calcMomCurto(h,'dz');var momClC=calcMomCurto(h,'cl');
+    var cuDz=calcCUSUM(h,'dz');var cuCl=calcCUSUM(h,'cl');
+    var janDz=janelaComp(h,'dz');var janCl=janelaComp(h,'cl');
+
+    var modosDz=detectarModo(dzZ,momDz,momDzC,janDz,cuDz);
+    var modosCl=detectarModo(clZ,momCl,momClC,janCl,cuCl);
+
+    // Encontrar a mais quente
+    var dzMax=dzZ.indexOf(Math.max.apply(null,dzZ));
+    var clMax=clZ.indexOf(Math.max.apply(null,clZ));
+
+    // Se a mais quente tem bias REAL, nao apostar contra ela
+    var dzPar,clPar;
+    if(modosDz[dzMax]==='real'){
+        dzPar=null; // sinal: nao apostar duzias
+    } else {
+        dzPar=[0,1,2].filter(function(i){return i!==dzMax;});
+    }
+    if(modosCl[clMax]==='real'){
+        clPar=null;
+    } else {
+        clPar=[0,1,2].filter(function(i){return i!==clMax;});
+    }
+    return{dzPar:dzPar,clPar:clPar};
 }
 
 // ENTRADA + AUTO-ASSERTIVIDADE
@@ -755,8 +830,13 @@ function addNum(n){
     if(sug&&n!==0){
         if(!R.assertDz)R.assertDz={ac:0,er:0,seq:[]};if(!R.assertCol)R.assertCol={ac:0,er:0,seq:[]};
         if(!R.assertDz.seq)R.assertDz.seq=[];if(!R.assertCol.seq)R.assertCol.seq=[];
-        if(sug.dzPar.includes(duzia(n)-1)){R.assertDz.ac++;R.assertDz.seq.push('w');}else{R.assertDz.er++;R.assertDz.seq.push('l');}
-        if(sug.clPar.includes(coluna(n)-1)){R.assertCol.ac++;R.assertCol.seq.push('w');}else{R.assertCol.er++;R.assertCol.seq.push('l');}
+        // So rastreia se tinha par sugerido (nao null)
+        if(sug.dzPar){
+            if(sug.dzPar.includes(duzia(n)-1)){R.assertDz.ac++;R.assertDz.seq.push('w');}else{R.assertDz.er++;R.assertDz.seq.push('l');}
+        }
+        if(sug.clPar){
+            if(sug.clPar.includes(coluna(n)-1)){R.assertCol.ac++;R.assertCol.seq.push('w');}else{R.assertCol.er++;R.assertCol.seq.push('l');}
+        }
     }
     R.historico.push(n);if(R.historico.length>200)R.historico=R.historico.slice(-200);
     saveR();renderRoleta();
@@ -779,34 +859,43 @@ function renderRoleta(){
     var chiDz=chiQuad(dz,T,P_DZ);var chiCol=chiQuad(cl,T,P_DZ);
     var sDz=chiSig(chiDz);var sCol=chiSig(chiCol);
     var gaps=calcGaps(h);var bayDz=bayesPcts(h,'dz');var bayCl=bayesPcts(h,'cl');
-    var vol=calcVol(h);var momDz=calcMom(h,'dz');var momCl=calcMom(h,'cl');
+    var vol=calcVol(h);
+    var momDz=calcMom(h,'dz');var momCl=calcMom(h,'cl');
+    var momDzC=calcMomCurto(h,'dz');var momClC=calcMomCurto(h,'cl');
     var janDz=janelaComp(h,'dz');var janCl=janelaComp(h,'cl');
     var cuDz=calcCUSUM(h,'dz');var cuCl=calcCUSUM(h,'cl');
     var strkDz=calcStreak(R.assertDz);var strkCl=calcStreak(R.assertCol);
     var setores=analisarSetores(h);
+    var modosDz=detectarModo(dzZ,momDz,momDzC,janDz,cuDz);
+    var modosCl=detectarModo(clZ,momCl,momClC,janCl,cuCl);
 
     // BARRAS
-    function renderBarras(ctn,nomes,pcts,counts,zArr,gapArr,bayArr,momArr,janObj){
+    function renderBarras(ctn,nomes,pcts,counts,zArr,gapArr,bayArr,momArr,momCArr,janObj,modosArr){
         var el=document.getElementById(ctn);if(!el)return;
         el.innerHTML=nomes.map(function(nome,i){
-            var pct=pcts[i],z=zArr[i],gap=gapArr[i],bay=bayArr[i],mom=momArr[i];
+            var pct=pcts[i],z=zArr[i],gap=gapArr[i],bay=bayArr[i],mom=momArr[i],momC=momCArr[i];
+            var modo=modosArr[i];
             var classe=z>1?'quente':z<-1?'frio':'morno';
             var zCor=z>1.5?'#e74c3c':z>0.5?'#f39c12':z<-1.5?'#2ecc71':z<-0.5?'#3498db':'rgba(255,255,255,.5)';
             var mI=mom>10?'^^':mom>3?'^':mom<-10?'vv':mom<-3?'v':'--';
-            var mC=mom>5?'#e74c3c':mom<-5?'#2ecc71':'rgba(255,255,255,.35)';
+            var mC2=mom>5?'#e74c3c':mom<-5?'#2ecc71':'rgba(255,255,255,.35)';
+            var mCI=momC>10?'^^':momC>0?'^':momC<-10?'vv':momC<0?'v':'--';
             var jT=janObj?(janObj.desvio[i]>0?'+':'')+janObj.desvio[i].toFixed(0)+'%':'--';
             var jC=janObj?(janObj.desvio[i]>8?'#e74c3c':janObj.desvio[i]<-8?'#2ecc71':'rgba(255,255,255,.35)'):'rgba(255,255,255,.35)';
-            return '<div class="barra-container"><div class="barra-label"><span class="barra-nome">'+nome+'</span><span class="barra-pct">'+pct+'% ('+counts[i]+'x)</span></div><div class="barra-track"><div class="barra-fill '+classe+'" style="width:'+pct+'%"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:3px;font-size:.63em;opacity:.7;"><span style="color:'+zCor+';">Z:'+(z>=0?'+':'')+z.toFixed(2)+'</span><span style="color:'+mC+';">Mom:'+mI+'</span><span style="color:rgba(255,255,255,.3);">Gap:'+gap+'</span><span style="color:rgba(212,175,125,.4);">Bay:'+bay.toFixed(0)+'%</span><span style="color:'+jC+';">U15:'+jT+'</span></div></div>';
+            // Modo badge
+            var modoCor=modo==='real'?'#e74c3c':modo==='regressao'?'#2ecc71':modo==='neutro'?'rgba(255,255,255,.3)':'#f1c40f';
+            var modoTxt=modo==='real'?'BIAS':modo==='regressao'?'REG':modo==='neutro'?'--':'?';
+            return '<div class="barra-container"><div class="barra-label"><span class="barra-nome">'+nome+'</span><span class="barra-pct">'+pct+'% ('+counts[i]+'x)</span></div><div class="barra-track"><div class="barra-fill '+classe+'" style="width:'+pct+'%"></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;font-size:.62em;opacity:.7;"><span style="color:'+zCor+';">Z:'+(z>=0?'+':'')+z.toFixed(2)+'</span><span style="color:'+mC2+';">M:'+mI+'</span><span style="color:rgba(255,255,255,.3);">G:'+gap+'</span><span style="color:rgba(212,175,125,.4);">B:'+bay.toFixed(0)+'%</span><span style="color:'+jC+';">U12:'+jT+'</span><span style="padding:1px 4px;border-radius:3px;background:'+modoCor+'20;color:'+modoCor+';font-weight:600;">'+modoTxt+'</span></div></div>';
         }).join('');
     }
-    renderBarras('analiseDuzias',dzN,dzPct,dz,dzZ,gaps.dz,bayDz,momDz,janDz);
-    renderBarras('analiseColunas',clN,clPct,cl,clZ,gaps.cl,bayCl,momCl,janCl);
+    renderBarras('analiseDuzias',dzN,dzPct,dz,dzZ,gaps.dz,bayDz,momDz,momDzC,janDz,modosDz);
+    renderBarras('analiseColunas',clN,clPct,cl,clZ,gaps.cl,bayCl,momCl,momClC,janCl,modosCl);
 
     // ESTATISTICAS
     var zeros=h.filter(function(n){return n===0;}).length;var verms=sz.filter(function(n){return VERMELHOS.includes(n);}).length;var pretos=T-verms;
     var estEl=document.getElementById('estatisticasGerais');
     if(estEl){
-        var clHtml=setores&&setores.ativo?'<div style="margin-top:8px;background:rgba(241,196,15,.08);border:1px solid rgba(241,196,15,.3);border-radius:6px;padding:8px;font-size:.72em;color:#f1c40f;text-align:center;">&#127919; '+setores.msg+'<br><span style="color:#fff;">['+setores.nums.join(', ')+']</span></div>':'';
+        var clHtml=setores&&setores.ativo?'<div style="margin-top:8px;background:rgba(241,196,15,.08);border:1px solid rgba(241,196,15,.3);border-radius:6px;padding:8px;font-size:.72em;color:#f1c40f;text-align:center;">'+setores.msg+'</div>':'';
         estEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:10px;"><div><div style="font-size:.65em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.1em;font-weight:600;">'+total+'</div></div><div><div style="font-size:.65em;color:#c0392b;">Verm.</div><div style="font-size:1.1em;font-weight:600;color:#c0392b;">'+verms+'</div></div><div><div style="font-size:.65em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.1em;font-weight:600;">'+pretos+'</div></div><div><div style="font-size:.65em;color:#27ae60;">Zero</div><div style="font-size:1.1em;font-weight:600;color:#27ae60;">'+zeros+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.7em;"><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Duzias</div><div style="color:#fff;font-weight:600;">'+chiDz.toFixed(2)+' <span style="color:'+(sDz.f>=2?'#2ecc71':sDz.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';">('+sDz.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Colunas</div><div style="color:#fff;font-weight:600;">'+chiCol.toFixed(2)+' <span style="color:'+(sCol.f>=2?'#2ecc71':sCol.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';">('+sCol.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">Volatilidade</div><div style="color:'+(vol.t==='MUITO ALTA'||vol.t==='ALTA'?'#e74c3c':vol.t==='MODERADA'?'#f1c40f':'#2ecc71')+';font-weight:600;">'+vol.t+'</div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">CUSUM</div><div style="color:'+(cuDz.alarme||cuCl.alarme?'#e74c3c':'#2ecc71')+';font-weight:600;">'+(cuDz.alarme||cuCl.alarme?'REGIME MUDOU':'NORMAL')+'</div></div></div>'+clHtml;
     }
 
@@ -823,67 +912,115 @@ function renderRoleta(){
     } else if(metEl){metEl.innerHTML='<span style="color:rgba(255,255,255,.3);font-size:.82em;">Dados insuficientes</span>';}
 
     // ======================================================
-    // SUGESTAO V3
+    // SUGESTAO V5 — DUAL MODE
     // ======================================================
     var recDuz=document.getElementById('recDuziasBody');var recCol=document.getElementById('recColunasBody');
     var recDuzCard=document.getElementById('recDuzias');var recColCard=document.getElementById('recColunas');
 
-    function calcSug(zArr,mArr,bArr,gArr,jObj,cSig,cuObj,aObj,sObj,nms){
-        var conv=calcConv(zArr,mArr,bArr,gArr,jObj,cuObj.pos);
-        var excl=conv.excluida;var par=[0,1,2].filter(function(i){return i!==excl;});
+    function calcSug(zArr,mArr,mCArr,bArr,gArr,jObj,cSig,cuObj,aObj,sObj,nms,modosArr){
+        var maxIdx=zArr.indexOf(Math.max.apply(null,zArr));
+        var par=[0,1,2].filter(function(i){return i!==maxIdx;});
         var aL=aObj||{ac:0,er:0,seq:[]};var tL=aL.ac+aL.er;var aP2=tL>0?aL.ac/tL*100:66.7;
+        var modoQuente=modosArr[maxIdx];
 
-        function mk(s,c,co,bd,re,sc,f){return{sinal:s,conf:c,cor:co,brd:bd,par:par,excl:excl,conv:conv,reason:re,score:sc,assertPct:aP2,tLive:tL,streakObj:sObj,fase:f};}
+        function mk(s,c,co,bd,re,sc){return{sinal:s,conf:c,cor:co,brd:bd,par:par,excl:maxIdx,reason:re,score:sc,assertPct:aP2,tLive:tL,streakObj:sObj,modo:modoQuente};}
 
-        // FASE 1 (0-12)
-        if(total<12) return mk('OBSERVANDO','','rgba(255,255,255,.3)','rgba(255,255,255,.1)','Fase 1 ('+total+'/12)',0,1);
-        // FASE 2 (12-17)
-        if(total<18) return mk('ANALISANDO','','rgba(52,152,219,.5)','rgba(52,152,219,.25)','Fase 2 ('+total+'/18)',0,2);
+        // FASES
+        if(total<12) return mk('OBSERVANDO','','rgba(255,255,255,.3)','rgba(255,255,255,.1)','Fase 1 ('+total+'/12)',0);
+        if(total<18) return mk('ANALISANDO','','rgba(52,152,219,.5)','rgba(52,152,219,.25)','Fase 2 ('+total+'/18)',0);
 
-        // FASE 3 (18+) - BLOQUEIOS
-        if(sObj.atual<=-3) return mk('PARAR','','#e74c3c','rgba(231,76,60,.6)',Math.abs(sObj.atual)+' perdas seguidas',0,3);
-        if(tL>=8&&aP2<45) return mk('PARAR','','#e74c3c','rgba(231,76,60,.5)','Assert. '+aP2.toFixed(0)+'%',0,3);
-        if(zArr[excl]<0.8) return mk('AGUARDAR','','rgba(255,255,255,.4)','rgba(255,255,255,.15)','Z<0.8',0,3);
+        // BLOQUEIOS
+        if(sObj.atual<=-3) return mk('PARAR','','#e74c3c','rgba(231,76,60,.6)',Math.abs(sObj.atual)+' perdas seguidas',0);
+        if(tL>=8&&aP2<45) return mk('PARAR','','#e74c3c','rgba(231,76,60,.5)','Assert. '+aP2.toFixed(0)+'%',0);
 
-        // SCORE
-        var sc=0;
-        sc+=Math.min(Math.max(0,(zArr[excl]-0.8)*20),25);
-        sc+=(cSig.f)*12;
-        if(conv.consenso>60)sc+=15;else if(conv.consenso>45)sc+=8;
-        if(mArr[excl]<-5)sc+=8;else if(mArr[excl]<0)sc+=4;else if(mArr[excl]>8)sc-=5;
-        if(bArr[excl]>38)sc+=10;else if(bArr[excl]>35)sc+=5;
-        sc+=Math.min(gArr[par[0]]+gArr[par[1]],20)*1.2;
-        if(jObj&&jObj.desvio[excl]>8)sc+=8;
-        if(total>30)sc+=8;else if(total>20)sc+=4;
-        if(cuObj.alarme)sc-=15;
-        if(tL>=6){if(aP2>=70)sc+=12;else if(aP2>=60)sc+=6;else if(aP2<50)sc-=20;}
-        if(sObj.atual<=-2)sc-=10;
-        if(sObj.atual>=3)sc+=5;
-        sc=Math.max(0,Math.round(sc));
+        // ===== DUAL MODE =====
 
-        var sinal,conf,cor,brd;
-        if(sc>=65&&conv.consenso>55){sinal='APOSTAR';conf='ALTA';cor='#2ecc71';brd='rgba(46,204,113,.7)';}
-        else if(sc>=45){sinal='APOSTAR';conf=conv.consenso>50?'MODERADA':'BAIXA';cor='#f1c40f';brd='rgba(241,196,15,.5)';}
-        else if(sc>=25){sinal='ATENCAO';conf='BAIXA';cor='#f39c12';brd='rgba(243,156,18,.3)';}
-        else{sinal='AGUARDAR';conf='';cor='rgba(255,255,255,.4)';brd='rgba(255,255,255,.15)';}
+        // MODO BIAS REAL: a quente tem Z>2, momentum positivo, CUSUM alto
+        // = NAO APOSTAR CONTRA. A quente vai continuar.
+        if(modoQuente==='real'){
+            return mk('BIAS DETECTADO','','#e74c3c','rgba(231,76,60,.4)','Bias real em '+nms[maxIdx]+' (Z:'+zArr[maxIdx].toFixed(2)+') — NAO apostar contra',0);
+        }
 
-        if(conv.consenso<40&&sinal==='APOSTAR'){sinal='ATENCAO';conf='BAIXA';cor='#f39c12';brd='rgba(243,156,18,.3)';}
-        return mk(sinal,conf,cor,brd,'',sc,3);
+        // MODO REGRESSAO: a quente tem Z alto mas momentum negativo
+        // = Agora e hora de apostar contra (esfriando)
+        if(modoQuente==='regressao'){
+            // Calcular score
+            var sc=0;
+            sc+=Math.min(Math.max(0,(zArr[maxIdx]-0.8)*20),25);
+            sc+=(cSig.f)*12;
+            // Momentum negativo da quente = bonus (confirmacao)
+            if(mArr[maxIdx]<-8)sc+=15;else if(mArr[maxIdx]<-3)sc+=10;else if(mArr[maxIdx]<0)sc+=5;
+            // Momentum curto negativo = bonus extra
+            if(mCArr[maxIdx]<-10)sc+=10;else if(mCArr[maxIdx]<0)sc+=5;
+            // Bayesian
+            if(bArr[maxIdx]>38)sc+=8;else if(bArr[maxIdx]>35)sc+=4;
+            // Gaps das frias
+            sc+=Math.min(gArr[par[0]]+gArr[par[1]],16)*0.8;
+            // Janela
+            if(jObj&&jObj.desvio[maxIdx]>8)sc+=6;
+            // CUSUM
+            if(cuObj.alarme)sc-=10;
+            // Amostra
+            if(total>30)sc+=8;else if(total>20)sc+=4;
+            // Assertividade feedback
+            if(tL>=6){if(aP2>=70)sc+=12;else if(aP2>=60)sc+=6;else if(aP2<50)sc-=20;}
+            if(sObj.atual<=-2)sc-=10;if(sObj.atual>=3)sc+=5;
+            sc=Math.max(0,Math.round(sc));
+
+            var sinal,conf,cor,brd;
+            if(sc>=65){sinal='APOSTAR';conf='ALTA';cor='#2ecc71';brd='rgba(46,204,113,.7)';}
+            else if(sc>=45){sinal='APOSTAR';conf='MODERADA';cor='#f1c40f';brd='rgba(241,196,15,.5)';}
+            else if(sc>=25){sinal='ATENCAO';conf='BAIXA';cor='#f39c12';brd='rgba(243,156,18,.3)';}
+            else{sinal='AGUARDAR';conf='';cor='rgba(255,255,255,.4)';brd='rgba(255,255,255,.15)';}
+
+            return mk(sinal,conf,cor,brd,'',sc);
+        }
+
+        // MODO NEUTRO/INDEFINIDO: sem desvio claro
+        if(zArr[maxIdx]<0.8) return mk('AGUARDAR','','rgba(255,255,255,.4)','rgba(255,255,255,.15)','Sem desvio significativo',0);
+
+        // Fallback: calcular score normal
+        var sc2=0;
+        sc2+=Math.min(Math.max(0,(zArr[maxIdx]-0.8)*15),20);
+        sc2+=(cSig.f)*8;
+        if(mArr[maxIdx]<0)sc2+=5;
+        if(bArr[maxIdx]>36)sc2+=5;
+        sc2+=Math.min(gArr[par[0]]+gArr[par[1]],12)*0.5;
+        if(total>25)sc2+=5;
+        if(tL>=6){if(aP2>=65)sc2+=8;else if(aP2<50)sc2-=15;}
+        if(sObj.atual<=-2)sc2-=8;
+        sc2=Math.max(0,Math.round(sc2));
+
+        var sinal2,conf2,cor2,brd2;
+        if(sc2>=55){sinal2='APOSTAR';conf2='MODERADA';cor2='#f1c40f';brd2='rgba(241,196,15,.5)';}
+        else if(sc2>=30){sinal2='ATENCAO';conf2='BAIXA';cor2='#f39c12';brd2='rgba(243,156,18,.3)';}
+        else{sinal2='AGUARDAR';conf2='';cor2='rgba(255,255,255,.4)';brd2='rgba(255,255,255,.15)';}
+        return mk(sinal2,conf2,cor2,brd2,'',sc2);
     }
 
-    var sugDz=calcSug(dzZ,momDz,bayDz,gaps.dz,janDz,sDz,cuDz,R.assertDz,strkDz,dzN);
-    var sugCl=calcSug(clZ,momCl,bayCl,gaps.cl,janCl,sCol,cuCl,R.assertCol,strkCl,clN);
+    var sugDz=calcSug(dzZ,momDz,momDzC,bayDz,gaps.dz,janDz,sDz,cuDz,R.assertDz,strkDz,dzN,modosDz);
+    var sugCl=calcSug(clZ,momCl,momClC,bayCl,gaps.cl,janCl,sCol,cuCl,R.assertCol,strkCl,clN,modosCl);
 
-    function renderSug(elB,elC,sug,nms,zArr2){
+    function renderSug(elB,elC,sug,nms,zArr2,momA){
         elC.style.borderColor=sug.brd;
-        if(sug.fase===1){var pc=Math.round((total/12)*100);elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:8px;">'+sug.sinal+'</div><div style="font-size:.75em;color:rgba(255,255,255,.4);margin-bottom:8px;">'+sug.reason+'</div><div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;"><div style="height:100%;width:'+pc+'%;background:rgba(255,255,255,.2);border-radius:2px;"></div></div>';return;}
-        if(sug.fase===2){var pc2=Math.round(((total-12)/6)*100);elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:6px;">'+sug.sinal+'</div><div style="display:flex;gap:8px;justify-content:center;opacity:.4;margin-bottom:4px;"><span class="rec-badge" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);color:rgba(52,152,219,.5);">'+nms[sug.par[0]]+'</span><span class="rec-badge" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);color:rgba(52,152,219,.5);">'+nms[sug.par[1]]+'</span></div><div style="font-size:.6em;color:rgba(255,255,255,.25);">Previa -- nao apostar</div><div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;margin-top:6px;"><div style="height:100%;width:'+pc2+'%;background:rgba(52,152,219,.4);border-radius:2px;"></div></div>';return;}
+        // Fase 1
+        if(sug.sinal==='OBSERVANDO'){var pc=Math.round((total/12)*100);elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:8px;">'+sug.sinal+'</div><div style="font-size:.75em;color:rgba(255,255,255,.4);margin-bottom:8px;">'+sug.reason+'</div><div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;"><div style="height:100%;width:'+pc+'%;background:rgba(255,255,255,.2);border-radius:2px;"></div></div>';return;}
+        // Fase 2
+        if(sug.sinal==='ANALISANDO'){var pc2=Math.round(((total-12)/6)*100);elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:6px;">'+sug.sinal+'</div><div style="display:flex;gap:8px;justify-content:center;opacity:.4;margin-bottom:4px;"><span class="rec-badge" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);color:rgba(52,152,219,.5);">'+nms[sug.par[0]]+'</span><span class="rec-badge" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);color:rgba(52,152,219,.5);">'+nms[sug.par[1]]+'</span></div><div style="font-size:.6em;color:rgba(255,255,255,.25);">Previa -- nao apostar</div><div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;margin-top:6px;"><div style="height:100%;width:'+pc2+'%;background:rgba(52,152,219,.4);border-radius:2px;"></div></div>';return;}
+
+        // Bias detectado
+        if(sug.sinal==='BIAS DETECTADO'){
+            elB.innerHTML='<div style="font-size:.72em;color:#e74c3c;font-weight:700;letter-spacing:1px;margin-bottom:6px;">BIAS DETECTADO</div><div style="font-size:.8em;color:rgba(255,255,255,.5);margin:6px 0;">'+sug.reason+'</div><div style="font-size:.68em;color:rgba(255,255,255,.3);">A quente continua dominando. Espere desacelerar.</div>';
+            return;
+        }
+
+        // Stop/Aguardar
         var isStop=sug.sinal==='PARAR'||sug.sinal==='AGUARDAR';
-        var dsc=momDz[sug.excl]<-3;
-        elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:6px;">'+sug.sinal+(sug.conf?' -- '+sug.conf:'')+'</div>'+(isStop?'<div style="font-size:.72em;color:rgba(255,255,255,.4);margin:4px 0;">'+sug.reason+'</div>':'<div style="display:flex;gap:8px;justify-content:center;"><span class="rec-badge" style="background:'+sug.cor+'22;border:1px solid '+sug.cor+';color:'+sug.cor+';">'+nms[sug.par[0]]+'</span><span class="rec-badge" style="background:'+sug.cor+'22;border:1px solid '+sug.cor+';color:'+sug.cor+';">'+nms[sug.par[1]]+'</span></div><div style="font-size:.58em;color:rgba(255,255,255,.3);margin-top:6px;">Excl: '+nms[sug.excl]+' (Z:'+(zArr2[sug.excl]>=0?'+':'')+zArr2[sug.excl].toFixed(2)+') | Conv: '+sug.conv.consenso.toFixed(0)+'%'+(dsc?' | v':'')+'</div>')+'<div style="font-size:.54em;color:rgba(212,175,125,.3);margin-top:3px;">Score: '+sug.score+(sug.tLive>=5?' | Assert: '+sug.assertPct.toFixed(0)+'%':'')+(sug.streakObj.atual<=-2?' | Streak: '+sug.streakObj.atual:'')+'</div>';
+        var dsc=momA[sug.excl]<-3;
+        elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:6px;">'+sug.sinal+(sug.conf?' -- '+sug.conf:'')+'</div>'+(isStop?'<div style="font-size:.72em;color:rgba(255,255,255,.4);margin:4px 0;">'+sug.reason+'</div>':'<div style="display:flex;gap:8px;justify-content:center;"><span class="rec-badge" style="background:'+sug.cor+'22;border:1px solid '+sug.cor+';color:'+sug.cor+';">'+nms[sug.par[0]]+'</span><span class="rec-badge" style="background:'+sug.cor+'22;border:1px solid '+sug.cor+';color:'+sug.cor+';">'+nms[sug.par[1]]+'</span></div><div style="font-size:.58em;color:rgba(255,255,255,.3);margin-top:6px;">Excl: '+nms[sug.excl]+' (Z:'+(zArr2[sug.excl]>=0?'+':'')+zArr2[sug.excl].toFixed(2)+') '+(sug.modo==='regressao'?'REG ':'')+(dsc?'v ':'')+' </div>')+'<div style="font-size:.54em;color:rgba(212,175,125,.3);margin-top:3px;">Score: '+sug.score+(sug.tLive>=5?' | Assert: '+sug.assertPct.toFixed(0)+'%':'')+(sug.streakObj.atual<=-2?' | Streak: '+sug.streakObj.atual:'')+'</div>';
     }
-    renderSug(recDuz,recDuzCard,sugDz,dzN,dzZ);
-    renderSug(recCol,recColCard,sugCl,clN,clZ);
+    renderSug(recDuz,recDuzCard,sugDz,dzN,dzZ,momDz);
+    renderSug(recCol,recColCard,sugCl,clN,clZ,momCl);
 
     // INDICADORES
     var indConf=document.getElementById('indConfianca');
@@ -913,75 +1050,119 @@ function renderRoleta(){
     }else{indM2.textContent='--';indM2.style.color='rgba(255,255,255,.5)';alerta2.style.display='none';}
 }
 
+// GESTAO DE BANCA
 
-// ==========================================
-// GESTÃO DE BANCA — 2:1
-// ==========================================
 function salvarBanca(){
     B.inicial=parseFloat(document.getElementById('inputBancaInicial').value)||0;
     B.apostaBase=parseFloat(document.getElementById('inputApostaBase').value)||5;
-    if(!B.atual)B.atual=B.inicial;
+    B.sl=parseFloat(document.getElementById('inputSL').value)||20;
+    B.sw=parseFloat(document.getElementById('inputSW').value)||30;
+    if(!B.atual||B.atual===0)B.atual=B.inicial;
     saveB();renderBanca();
 }
 
 function registrarResultadoBanca(tipo){
-    const unit=B.apostaBase||5;
-    let valor;
-    if(tipo==='win'){
-        // Apostou 2 units (2 dúzias/colunas), ganhou 3 de volta = +1 unit
-        valor=unit;
-    } else {
-        // Apostou 2 units, perdeu tudo = -2 units
-        valor=-(unit*2);
-    }
+    var unit=B.apostaBase||5;
+    var valor=tipo==='win'?unit:-(unit*2);
     B.atual=(B.atual||B.inicial)+valor;
     if(!B.resultados)B.resultados=[];
-    B.resultados.push({tipo,valor,ts:Date.now(),banca:B.atual});
+    B.resultados.push({tipo:tipo,valor:valor,ts:Date.now(),banca:B.atual});
     saveB();renderBanca();
-    toast(tipo==='win'?'+'+formatR(unit):''+formatR(valor));
+    toast(tipo==='win'?'GREEN +'+formatR(unit):'RED '+formatR(valor));
 }
 
 function desfazerResultado(){
     if(!B.resultados||!B.resultados.length)return;
-    const last=B.resultados.pop();
+    var last=B.resultados.pop();
     B.atual=(B.atual||0)-last.valor;
     saveB();renderBanca();toast('Desfeito');
 }
 
 function resetarBanca(){
-    if(!confirm('Zerar banca e todo o historico?\n\nApaga resultados, win rate, tudo.'))return;
+    if(!confirm('Zerar banca completa?\n\nApaga tudo: saldo, resultados, historico.'))return;
     B={inicial:0,atual:0,apostaBase:5,sl:20,sw:30,resultados:[]};
     saveB();renderBanca();toast('Banca zerada');
 }
 
 function renderBanca(){
-    const bi=document.getElementById('inputBancaInicial');if(bi)bi.value=B.inicial||'';
-    const ab=document.getElementById('inputApostaBase');if(ab)ab.value=B.apostaBase||'';
+    // Inputs
+    var bi=document.getElementById('inputBancaInicial');if(bi)bi.value=B.inicial||'';
+    var ab=document.getElementById('inputApostaBase');if(ab)ab.value=B.apostaBase||'';
+    var slI=document.getElementById('inputSL');if(slI)slI.value=B.sl||20;
+    var swI=document.getElementById('inputSW');if(swI)swI.value=B.sw||30;
 
-    document.getElementById('bancaAtual').textContent=formatR(B.atual||0);
-    document.getElementById('bancaInicial').textContent=formatR(B.inicial||0);
+    var bancaAtual=B.atual||0;
+    var bancaIni=B.inicial||0;
+    var lp=bancaAtual-bancaIni;
+    var slPct=(B.sl||20)/100;
+    var swPct=(B.sw||30)/100;
+    var res=B.resultados||[];
+    var wins=res.filter(function(r){return r.tipo==='win';}).length;
+    var losses=res.filter(function(r){return r.tipo==='loss';}).length;
+    var totalJ=res.length;
+    var wr=totalJ>0?Math.round((wins/totalJ)*100):0;
 
-    const lp=(B.atual||0)-(B.inicial||0);
-    const lpEl=document.getElementById('bancaLP');
-    lpEl.textContent=(lp>=0?'+':'')+formatR(lp);
-    lpEl.style.color=lp>=0?'#2ecc71':'#e74c3c';
+    // Banca atual
+    var baEl=document.getElementById('bancaAtual');
+    if(baEl){baEl.textContent=formatR(bancaAtual);baEl.style.color=bancaAtual>=bancaIni?'#d4af7d':'#e74c3c';}
 
-    document.getElementById('bancaSL').textContent='-'+formatR((B.atual||0)*0.20);
-    document.getElementById('bancaSW').textContent='+'+formatR((B.atual||0)*0.30);
-    document.getElementById('bancaUnit').textContent=formatR(B.apostaBase||5);
-    document.getElementById('bancaSessoes').textContent=(B.resultados||[]).length;
+    // Lucro/Prejuizo
+    var lpEl=document.getElementById('bancaLP');
+    if(lpEl){lpEl.textContent=(lp>=0?'+':'')+formatR(lp);lpEl.style.color=lp>=0?'#2ecc71':'#e74c3c';}
 
-    // Histórico
-    const hEl=document.getElementById('historicoResultados');
+    // KPIs
+    var iniEl=document.getElementById('bancaInicial');if(iniEl)iniEl.textContent=formatR(bancaIni);
+    var unitEl=document.getElementById('bancaUnit');if(unitEl)unitEl.textContent=formatR(B.apostaBase||5);
+    var wrEl=document.getElementById('bancaWR');if(wrEl){wrEl.textContent=totalJ>0?wr+'%':'--';wrEl.style.color=wr>=65?'#2ecc71':wr>=50?'#f1c40f':totalJ>0?'#e74c3c':'rgba(255,255,255,.5)';}
+    var jEl=document.getElementById('bancaJogadas');if(jEl)jEl.textContent=totalJ;
+    var slEl=document.getElementById('bancaSL');if(slEl)slEl.textContent=bancaIni>0?formatR(bancaIni*slPct):'--';
+    var swEl=document.getElementById('bancaSW');if(swEl)swEl.textContent=bancaIni>0?formatR(bancaIni*swPct):'--';
+    var aeEl=document.getElementById('bancaAE');if(aeEl)aeEl.innerHTML='<span style="color:#2ecc71;">'+wins+'</span> / <span style="color:#e74c3c;">'+losses+'</span>';
+
+    // Alerta Stop Loss / Stop Win
+    var alertaEl=document.getElementById('bancaAlerta');
+    if(alertaEl&&bancaIni>0){
+        var perdaMax=bancaIni*slPct;
+        var ganhoAlvo=bancaIni*swPct;
+        if(lp<=-perdaMax){
+            alertaEl.style.display='block';alertaEl.style.background='rgba(231,76,60,.15)';alertaEl.style.border='1px solid rgba(231,76,60,.5)';alertaEl.style.color='#e74c3c';alertaEl.textContent='STOP LOSS ATINGIDO - PARE AGORA';
+        } else if(lp>=ganhoAlvo){
+            alertaEl.style.display='block';alertaEl.style.background='rgba(46,204,113,.15)';alertaEl.style.border='1px solid rgba(46,204,113,.5)';alertaEl.style.color='#2ecc71';alertaEl.textContent='STOP WIN ATINGIDO - ENCERRE A SESSAO';
+        } else if(lp<=-perdaMax*0.7){
+            alertaEl.style.display='block';alertaEl.style.background='rgba(241,196,15,.1)';alertaEl.style.border='1px solid rgba(241,196,15,.4)';alertaEl.style.color='#f1c40f';alertaEl.textContent='Proximo do Stop Loss - cautela';
+        } else {alertaEl.style.display='none';}
+    } else if(alertaEl){alertaEl.style.display='none';}
+
+    // Historico com saldo progressivo
+    var hEl=document.getElementById('historicoResultados');
     if(hEl){
-        const res=(B.resultados||[]).slice(-20).reverse();
-        if(!res.length){hEl.innerHTML='<span style="color:rgba(255,255,255,.3);font-size:.8em;">Nenhum resultado</span>';return;}
-        hEl.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:4px;">'+res.map(r=>{
-            const bg=r.tipo==='win'?'rgba(46,204,113,.15)':'rgba(231,76,60,.15)';
-            const cor=r.tipo==='win'?'#2ecc71':'#e74c3c';
-            const txt=r.tipo==='win'?'+1':'−2';
-            return`<span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:28px;background:${bg};border-radius:4px;font-size:.8em;font-weight:600;color:${cor};padding:0 6px;">${txt}</span>`;
-        }).join('')+'</div>';
+        if(!res.length){hEl.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.2);padding:20px;font-size:.85em;">Nenhum resultado registrado.</div>';return;}
+
+        // Resumo
+        var resumo='<div style="display:flex;gap:15px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.06);font-size:.82em;"><span style="color:#2ecc71;font-weight:600;">'+wins+' greens</span><span style="color:#e74c3c;font-weight:600;">'+losses+' reds</span><span style="color:rgba(255,255,255,.4);">'+totalJ+' jogadas</span></div>';
+
+        // Lista ultimos 30 com saldo
+        var ultimos=res.slice(-30);
+        var lista=ultimos.map(function(r,idx){
+            var globalIdx=res.length-30+idx;if(globalIdx<0)globalIdx=idx;
+            var cor=r.tipo==='win'?'#2ecc71':'#e74c3c';
+            var bg=r.tipo==='win'?'rgba(46,204,113,.06)':'rgba(231,76,60,.06)';
+            var icon=r.tipo==='win'?'&#9650;':'&#9660;';
+            var valTxt=r.tipo==='win'?'+'+formatR(r.valor):formatR(r.valor);
+            var dt=new Date(r.ts);
+            var hora=dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+            var saldo=r.banca||0;
+            var saldoCor=saldo>=bancaIni?'#2ecc71':'#e74c3c';
+
+            return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);background:'+bg+';padding:8px 10px;border-radius:4px;margin-bottom:2px;">'+
+                '<span style="color:'+cor+';font-size:.9em;">'+icon+'</span>'+
+                '<span style="font-size:.82em;font-weight:600;color:'+cor+';min-width:70px;">'+valTxt+'</span>'+
+                '<span style="font-size:.82em;font-weight:600;color:'+saldoCor+';flex:1;text-align:right;">'+formatR(saldo)+'</span>'+
+                '<span style="font-size:.65em;color:rgba(255,255,255,.25);min-width:40px;text-align:right;">'+hora+'</span>'+
+            '</div>';
+        }).reverse().join('');
+
+        hEl.innerHTML=resumo+lista;
     }
 }
 
