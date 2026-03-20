@@ -24,16 +24,6 @@
         /* SUB-TABS */
         .sub-tabs{display:flex;gap:5px;padding:12px 15px;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(212,175,125,.08);flex-wrap:wrap}.sub-tab{padding:8px 14px;background:transparent;border:1px solid rgba(212,175,125,.15);color:rgba(255,255,255,.4);font-size:.78em;cursor:pointer;border-radius:6px;transition:all .3s}.sub-tab:hover,.sub-tab.active{background:rgba(212,175,125,.1);border-color:#d4af7d;color:#d4af7d}.sub-content{display:none;padding:20px}.sub-content.active{display:block}
 
-        /* EMPRESA-PERSONA */
-        .pilar{padding:25px;border-bottom:1px solid rgba(212,175,125,.08)}.pilar:last-child{border-bottom:none}
-        .pilar-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;cursor:pointer;user-select:none}.pilar-icon{width:40px;height:40px;background:rgba(212,175,125,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}.pilar-icon svg{width:20px;height:20px;stroke:#d4af7d}.pilar-titulo{font-family:'Cinzel',serif;font-size:1em;color:#d4af7d;letter-spacing:2px;text-transform:uppercase;flex:1}.pilar-toggle{color:rgba(212,175,125,.5);transition:transform .3s}.pilar.open .pilar-toggle{transform:rotate(180deg)}.pilar-desc{font-size:.82em;color:rgba(255,255,255,.4);margin-bottom:18px;line-height:1.6}.pilar-body{display:none}.pilar.open .pilar-body{display:block}
-        .campo-grupo{margin-bottom:15px}.campo-label{font-size:.72em;color:rgba(212,175,125,.7);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}.campo-textarea{width:100%;padding:12px;background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:8px;color:#fff;font-size:.88em;font-family:'Inter',sans-serif;resize:vertical;min-height:60px;line-height:1.6}.campo-textarea:focus{outline:none;border-color:#d4af7d}.campo-textarea::placeholder{color:rgba(255,255,255,.2)}
-        .projeto-card{background:#0a0a0a;border:1px solid rgba(212,175,125,.12);border-radius:10px;padding:15px;margin-bottom:10px}.projeto-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.projeto-nome{font-size:.95em;color:#fff;font-weight:500}.projeto-status{font-size:.7em;padding:3px 10px;border-radius:12px}.projeto-status.ativo{background:rgba(46,204,113,.15);color:#2ecc71}.projeto-status.planejando{background:rgba(241,196,15,.15);color:#f1c40f}.projeto-status.pausado{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}.projeto-status.concluido{background:rgba(52,152,219,.15);color:#3498db}.projeto-meta{font-size:.8em;color:rgba(255,255,255,.5);margin-top:8px;line-height:1.5}.projeto-conexao{font-size:.75em;color:rgba(212,175,125,.6);margin-top:6px;font-style:italic}.projeto-acoes{display:flex;gap:6px;margin-top:10px}
-        .btn-mini{padding:5px 10px;font-size:.75em;background:transparent;border:1px solid rgba(212,175,125,.2);border-radius:5px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .3s}.btn-mini:hover{border-color:#d4af7d;color:#d4af7d}.btn-mini.delete:hover{border-color:#e74c3c;color:#e74c3c}
-        .feedback-card{background:#0a0a0a;border-left:3px solid rgba(212,175,125,.3);border-radius:0 8px 8px 0;padding:12px 15px;margin-bottom:8px}.feedback-data{font-size:.7em;color:rgba(255,255,255,.3)}.feedback-texto{font-size:.85em;color:rgba(255,255,255,.7);margin-top:4px;line-height:1.5}.feedback-tipo{font-size:.65em;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px}.feedback-tipo.positivo{background:rgba(46,204,113,.15);color:#2ecc71}.feedback-tipo.ajuste{background:rgba(241,196,15,.15);color:#f1c40f}.feedback-tipo.critico{background:rgba(231,76,60,.15);color:#e74c3c}
-        .meta-card{background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:10px;padding:15px;margin-bottom:10px}.meta-header{display:flex;justify-content:space-between;align-items:center}.meta-texto{font-size:.9em;color:rgba(255,255,255,.8);flex:1}.meta-prazo{font-size:.75em;color:rgba(212,175,125,.6)}.meta-barra{height:4px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:10px;overflow:hidden}.meta-fill{height:100%;background:linear-gradient(90deg,#d4af7d,#c9a066);border-radius:2px}
-        .btn-add{display:flex;align-items:center;gap:8px;padding:10px 18px;background:transparent;border:1px dashed rgba(212,175,125,.25);border-radius:8px;color:rgba(212,175,125,.6);font-size:.82em;cursor:pointer;width:100%;justify-content:center;margin-top:12px}.btn-add:hover{border-color:#d4af7d;color:#d4af7d}.btn-add svg{width:16px;height:16px}
-
         /* ==================== ROLETA ==================== */
         .roleta-grid{display:block}
         @media(max-width:768px){.roleta-grid{display:block}}
@@ -179,6 +169,34 @@
             <!-- ESPORTES (SKELETON) -->
             <!-- MÉTODO: DÚZIAS E COLUNAS -->
             <div class="sub-content active" id="sub-metodo">
+                <!-- PAINEL DE SESSAO -->
+                <div id="painelSessao" style="background:#0a0a0a;border:2px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;margin-bottom:20px;">
+                    <div style="display:grid;grid-template-columns:auto 1fr auto;gap:15px;align-items:center;">
+                        <!-- SEMAFORO -->
+                        <div id="semaforo" style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.05);border:3px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;transition:all .5s;">
+                            <svg id="semaforoIcon" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
+                        <!-- INFO -->
+                        <div>
+                            <div id="sessaoStatus" style="font-size:.9em;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px;">SESSAO INATIVA</div>
+                            <div style="display:flex;gap:15px;margin-top:4px;">
+                                <span style="font-size:.7em;color:rgba(255,255,255,.3);">Timer: <strong id="sessaoTimer" style="color:rgba(255,255,255,.5);">--:--</strong></span>
+                                <span style="font-size:.7em;color:rgba(255,255,255,.3);">Apostas: <strong id="sessaoApostas" style="color:rgba(255,255,255,.5);">0</strong></span>
+                                <span style="font-size:.7em;color:rgba(255,255,255,.3);">P&L: <strong id="sessaoPL" style="color:rgba(255,255,255,.5);">R$ 0</strong></span>
+                            </div>
+                        </div>
+                        <!-- BOTAO -->
+                        <button id="btnSessao" onclick="toggleSessao()" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(46,204,113,.4);background:rgba(46,204,113,.1);color:#2ecc71;font-size:.78em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">INICIAR</button>
+                    </div>
+                </div>
+                <!-- RESUMO DE ENTRADA -->
+                <div id="resumoEntrada" style="display:none;background:rgba(46,204,113,.04);border:1px solid rgba(46,204,113,.2);border-radius:12px;padding:16px;margin-bottom:16px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <span style="font-size:.7em;color:#2ecc71;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">Entrada Disponivel</span>
+                        <span id="resumoRisco" style="font-size:.72em;color:rgba(255,255,255,.4);"></span>
+                    </div>
+                    <div id="resumoBody"></div>
+                </div>
                 <!-- ENTRADA SUGERIDA — 2 CARDS -->
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px;">
                     <div class="rec-card" id="recDuzias">
@@ -214,6 +232,12 @@
                         <div class="analise-box">
                             <div class="analise-titulo">Mesa — Toque no Número</div>
                             <div id="mesaRoleta" class="mesa-roleta"></div>
+                        </div>
+                        <!-- RODA VISUAL -->
+                        <div class="analise-box">
+                            <div class="analise-titulo">Setor da Roda</div>
+                            <div id="rodaVisual" style="display:flex;justify-content:center;padding:10px 0;"></div>
+                            <div id="rodaInfo" style="text-align:center;font-size:.72em;color:rgba(255,255,255,.3);margin-top:6px;"></div>
                         </div>
                         <!-- DUZIAS + COLUNAS LADO A LADO -->
                         <div class="freq-grid">
@@ -266,8 +290,8 @@
                         <div style="font-size:.7em;color:rgba(255,255,255,.3);">+1 unit (green) | -2 units (red)</div>
                     </div>
                     <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;">
-                        <button onclick="registrarResultadoBanca('win')" style="padding:14px;background:rgba(46,204,113,.1);border:2px solid rgba(46,204,113,.4);border-radius:10px;color:#2ecc71;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;">GREEN</button>
-                        <button onclick="registrarResultadoBanca('loss')" style="padding:14px;background:rgba(231,76,60,.1);border:2px solid rgba(231,76,60,.4);border-radius:10px;color:#e74c3c;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;">RED</button>
+                        <button id="btnGreen" onclick="registrarResultadoBanca('win')" style="padding:14px;background:rgba(46,204,113,.1);border:2px solid rgba(46,204,113,.4);border-radius:10px;color:#2ecc71;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;">GREEN</button>
+                        <button id="btnRed" onclick="registrarResultadoBanca('loss')" style="padding:14px;background:rgba(231,76,60,.1);border:2px solid rgba(231,76,60,.4);border-radius:10px;color:#e74c3c;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;">RED</button>
                         <button class="btn-mini" onclick="desfazerResultado()" style="align-self:center;">Desfazer</button>
                     </div>
                 </div>
@@ -502,26 +526,24 @@
 // ==========================================
 // STORAGE
 // ==========================================
-var EP_KEY='empresaPersona';
+// Storage keys
 var ROL_KEY='roletaZara';
 var BANCA_KEY='bancaZara';
 var CTRL_KEY='controleZara';
 
-var D={campos:{},projetos:[],feedbacks:[],metas:[]};
+
 var R={historico:[],assertDz:{ac:0,er:0,seq:[]},assertCol:{ac:0,er:0,seq:[]}};
 var B={inicial:0,atual:0,apostaBase:5,sl:20,sw:30,resultados:[]};
 var C={registros:[],mesAtual:''};
 
 function loadAll(){
     try{
-    var ep=localStorage.getItem(EP_KEY);if(ep)D=Object.assign({},D,JSON.parse(ep));
     var ro=localStorage.getItem(ROL_KEY);if(ro)R=Object.assign({},R,JSON.parse(ro));
     var ba=localStorage.getItem(BANCA_KEY);if(ba)B=Object.assign({},B,JSON.parse(ba));
     var ct=localStorage.getItem(CTRL_KEY);if(ct)C=Object.assign({},C,JSON.parse(ct));
     }catch(e){console.error('loadAll error:',e);}
     if(!C.mesAtual){var d=new Date();C.mesAtual=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
 }
-function saveEP(){try{localStorage.setItem(EP_KEY,JSON.stringify(D));}catch(e){}}
 function saveR(){try{localStorage.setItem(ROL_KEY,JSON.stringify(R));}catch(e){}}
 function saveB(){try{localStorage.setItem(BANCA_KEY,JSON.stringify(B));}catch(e){}}
 function saveC(){try{localStorage.setItem(CTRL_KEY,JSON.stringify(C));}catch(e){}}
@@ -544,30 +566,6 @@ function switchSub(tab){
     event.target.classList.add('active');
     document.getElementById('sub-'+tab).classList.add('active');
 }
-function togglePilar(id){document.getElementById(id).classList.toggle('open');}
-
-// ==========================================
-// EMPRESA-PERSONA
-// ==========================================
-function salvarCampo(k,v){D.campos[k]=v;saveEP();}
-function carregarCampos(){Object.keys(D.campos).forEach(function(k){var el=document.getElementById('campo_'+k);if(el)el.value=D.campos[k]||'';});}
-function abrirModal(id){document.getElementById(id).classList.add('active');}
-function fecharModal(id){document.getElementById(id).classList.remove('active');}
-
-function abrirModalProjeto(id){if(id){var p=D.projetos.find(function(x){return x.id===id;});if(!p)return;document.getElementById('projetoId').value=p.id;document.getElementById('projetoNome').value=p.nome;document.getElementById('projetoObjetivo').value=p.objetivo;document.getElementById('projetoConexao').value=p.conexao;document.getElementById('projetoStatus').value=p.status;}else{document.getElementById('projetoId').value='';document.getElementById('projetoNome').value='';document.getElementById('projetoObjetivo').value='';document.getElementById('projetoConexao').value='';document.getElementById('projetoStatus').value='planejando';}abrirModal('modalProjeto');}
-function salvarProjeto(){var n=document.getElementById('projetoNome').value.trim();if(!n)return;var id=document.getElementById('projetoId').value;var o={nome:n,objetivo:document.getElementById('projetoObjetivo').value.trim(),conexao:document.getElementById('projetoConexao').value.trim(),status:document.getElementById('projetoStatus').value};if(id){Object.assign(D.projetos.find(function(x){return x.id===id;}),o);}else{o.id=Date.now().toString();D.projetos.push(o);}saveEP();renderProjetos();fecharModal('modalProjeto');toast('Projeto salvo');}
-function deletarProjeto(id){if(!confirm('Excluir?'))return;D.projetos=D.projetos.filter(function(x){return x.id!==id;});saveEP();renderProjetos();}
-function renderProjetos(){var c=document.getElementById('projetosLista');if(!D.projetos.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhum projeto.</div>';return;}var sl={ativo:'Ativo',planejando:'Planejando',pausado:'Pausado',concluido:'Concluido'};c.innerHTML=D.projetos.map(function(p){return '<div class="projeto-card"><div class="projeto-header"><span class="projeto-nome">'+p.nome+'</span><span class="projeto-status '+p.status+'">'+sl[p.status]+'</span></div>'+(p.objetivo?'<div class="projeto-meta">'+p.objetivo+'</div>':'')+(p.conexao?'<div class="projeto-conexao">&#8627; '+p.conexao+'</div>':'')+'<div class="projeto-acoes"><button class="btn-mini" onclick="abrirModalProjeto(\''+p.id+'\')">Editar</button><button class="btn-mini delete" onclick="deletarProjeto(\''+p.id+'\')">Excluir</button></div></div>';}).join('');}
-
-function abrirModalFeedback(){document.getElementById('feedbackTexto').value='';document.getElementById('feedbackTipo').value='positivo';document.getElementById('feedbackData').value=new Date().toISOString().split('T')[0];abrirModal('modalFeedback');}
-function salvarFeedback(){var t=document.getElementById('feedbackTexto').value.trim();if(!t)return;D.feedbacks.unshift({id:Date.now().toString(),texto:t,tipo:document.getElementById('feedbackTipo').value,data:document.getElementById('feedbackData').value});D.feedbacks=D.feedbacks.slice(0,50);saveEP();renderFeedbacks();fecharModal('modalFeedback');toast('Feedback registrado');}
-function deletarFeedback(id){D.feedbacks=D.feedbacks.filter(function(x){return x.id!==id;});saveEP();renderFeedbacks();}
-function renderFeedbacks(){var c=document.getElementById('feedbacksLista');if(!D.feedbacks.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhum feedback.</div>';return;}var tl={positivo:'Positivo',ajuste:'Ajuste',critico:'Critico'};c.innerHTML=D.feedbacks.slice(0,15).map(function(f){var d=new Date(f.data+'T12:00:00');var ds=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});return '<div class="feedback-card"><div style="display:flex;justify-content:space-between;"><span class="feedback-data">'+ds+'</span><button class="btn-mini delete" onclick="deletarFeedback(\''+f.id+'\')" style="padding:2px 6px;font-size:.7em;">x</button></div><div class="feedback-texto">'+f.texto+'</div><span class="feedback-tipo '+f.tipo+'">'+tl[f.tipo]+'</span></div>';}).join('');}
-
-function abrirModalMeta(id){if(id){var m=D.metas.find(function(x){return x.id===id;});if(!m)return;document.getElementById('metaId').value=m.id;document.getElementById('metaTexto').value=m.texto;document.getElementById('metaPrazo').value=m.prazo;document.getElementById('metaProgresso').value=m.progresso;document.getElementById('metaProgVal').textContent=m.progresso+'%';document.getElementById('metaPilar').value=m.pilar;}else{document.getElementById('metaId').value='';document.getElementById('metaTexto').value='';document.getElementById('metaPrazo').value='3m';document.getElementById('metaProgresso').value=0;document.getElementById('metaProgVal').textContent='0%';document.getElementById('metaPilar').value='geral';}abrirModal('modalMeta');}
-function salvarMeta(){var t=document.getElementById('metaTexto').value.trim();if(!t)return;var id=document.getElementById('metaId').value;var o={texto:t,prazo:document.getElementById('metaPrazo').value,progresso:parseInt(document.getElementById('metaProgresso').value),pilar:document.getElementById('metaPilar').value};if(id){Object.assign(D.metas.find(function(x){return x.id===id;}),o);}else{o.id=Date.now().toString();D.metas.push(o);}saveEP();renderMetas();fecharModal('modalMeta');toast('Meta salva');}
-function deletarMeta(id){if(!confirm('Excluir?'))return;D.metas=D.metas.filter(function(x){return x.id!==id;});saveEP();renderMetas();}
-function renderMetas(){var c=document.getElementById('metasLista');if(!D.metas.length){c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px;font-size:.85em;">Nenhuma meta.</div>';return;}var pl={'1m':'1 mes','3m':'3 meses','6m':'6 meses','1a':'1 ano'};var pil={identidade:'Identidade',posicionamento:'Posicion.',projetos:'Projetos',reputacao:'Reputacao',geral:'Geral'};c.innerHTML=D.metas.map(function(m){return '<div class="meta-card"><div class="meta-header"><span class="meta-texto">'+m.texto+'</span><span class="meta-prazo">'+(pl[m.prazo]||m.prazo)+'</span></div><div style="display:flex;justify-content:space-between;margin-top:6px;"><span style="font-size:.7em;color:rgba(212,175,125,.5);">'+(pil[m.pilar]||'')+'</span><span style="font-size:.8em;color:#d4af7d;">'+m.progresso+'%</span></div><div class="meta-barra"><div class="meta-fill" style="width:'+m.progresso+'%"></div></div><div class="projeto-acoes" style="margin-top:8px;"><button class="btn-mini" onclick="abrirModalMeta(\''+m.id+'\')">Editar</button><button class="btn-mini delete" onclick="deletarMeta(\''+m.id+'\')">Excluir</button></div></div>';}).join('');}
 
 // ==========================================
 // ROLETA ENGINE V5 — DUAL MODE
@@ -990,6 +988,210 @@ function renderRoleta(){
         else if(chiT2>10||vol.t==='ALTA'){indM2.textContent='INSTAVEL';indM2.style.color='#f1c40f';alerta2.style.display='none';}
         else{indM2.textContent='ESTAVEL';indM2.style.color='#2ecc71';alerta2.style.display='none';}
     }else{indM2.textContent='--';indM2.style.color='rgba(255,255,255,.5)';alerta2.style.display='none';}
+
+    // RODA VISUAL + RESUMO + SESSAO
+    renderRoda();
+    updateResumo(sugDz,sugCl,dzN,clN);
+    if(sessaoAtiva)updateSessaoPainel();
+}
+
+// ==========================================
+// SESSAO + SEMAFORO + BLOQUEIO
+// ==========================================
+var sessaoAtiva=false,sessaoStart=0,sessaoTimer=null,sessaoApostasCount=0,sessaoPLval=0,sessaoBancaInicio=0;
+
+function toggleSessao(){
+    if(!sessaoAtiva){
+        if(!B.inicial||B.inicial<=0){alert('Configure a banca primeiro.');return;}
+        sessaoAtiva=true;sessaoStart=Date.now();sessaoApostasCount=0;sessaoPLval=0;sessaoBancaInicio=B.atual||B.inicial;
+        sessaoTimer=setInterval(updateSessaoTimer,1000);
+        document.getElementById('btnSessao').textContent='PARAR';
+        document.getElementById('btnSessao').style.borderColor='rgba(231,76,60,.4)';
+        document.getElementById('btnSessao').style.background='rgba(231,76,60,.1)';
+        document.getElementById('btnSessao').style.color='#e74c3c';
+        toast('Sessao iniciada');
+    } else {
+        sessaoAtiva=false;clearInterval(sessaoTimer);sessaoTimer=null;
+        document.getElementById('btnSessao').textContent='INICIAR';
+        document.getElementById('btnSessao').style.borderColor='rgba(46,204,113,.4)';
+        document.getElementById('btnSessao').style.background='rgba(46,204,113,.1)';
+        document.getElementById('btnSessao').style.color='#2ecc71';
+        toast('Sessao encerrada | P&L: '+(sessaoPLval>=0?'+':'')+formatR(sessaoPLval));
+    }
+    updateSessaoPainel();
+}
+
+function updateSessaoTimer(){
+    if(!sessaoAtiva)return;
+    var elapsed=Math.floor((Date.now()-sessaoStart)/1000);
+    var min=Math.floor(elapsed/60);var sec=elapsed%60;
+    document.getElementById('sessaoTimer').textContent=String(min).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+    // Alerta 30min
+    if(min>=30&&min<31){
+        document.getElementById('sessaoTimer').style.color='#e74c3c';
+        if(elapsed===1800)toast('30 minutos! Considere encerrar.');
+    } else if(min>=25){
+        document.getElementById('sessaoTimer').style.color='#f1c40f';
+    } else {
+        document.getElementById('sessaoTimer').style.color='rgba(255,255,255,.5)';
+    }
+    updateSessaoPainel();
+}
+
+function updateSessaoPainel(){
+    var sem=document.getElementById('semaforo');
+    var status=document.getElementById('sessaoStatus');
+    var plEl=document.getElementById('sessaoPL');
+    var apEl=document.getElementById('sessaoApostas');
+
+    sessaoPLval=(B.atual||0)-sessaoBancaInicio;
+    if(plEl){plEl.textContent=(sessaoPLval>=0?'+':'')+formatR(sessaoPLval);plEl.style.color=sessaoPLval>=0?'#2ecc71':'#e74c3c';}
+    if(apEl)apEl.textContent=sessaoApostasCount;
+
+    if(!sessaoAtiva){
+        sem.style.borderColor='rgba(255,255,255,.1)';sem.style.background='rgba(255,255,255,.05)';
+        status.textContent='SESSAO INATIVA';status.style.color='rgba(255,255,255,.4)';
+        return;
+    }
+
+    // Calcular estado do semaforo
+    var bancaIni=B.inicial||1;var slPct=(B.sl||20)/100;var swPct=(B.sw||30)/100;
+    var perdaMax=bancaIni*slPct;var ganhoAlvo=bancaIni*swPct;
+    var lp=(B.atual||0)-(B.inicial||0);
+    var aDz=R.assertDz||{ac:0,er:0};var aCol=R.assertCol||{ac:0,er:0};
+    var tA=aDz.ac+aDz.er+aCol.ac+aCol.er;var avgA=tA>0?Math.round((aDz.ac+aCol.ac)/tA*100):0;
+    var elapsed=Math.floor((Date.now()-sessaoStart)/1000);
+
+    if(lp<=-perdaMax){
+        // VERMELHO - STOP LOSS
+        sem.style.borderColor='#e74c3c';sem.style.background='rgba(231,76,60,.2)';sem.style.boxShadow='0 0 20px rgba(231,76,60,.3)';
+        status.textContent='STOP LOSS — PARE';status.style.color='#e74c3c';
+        document.getElementById('semaforoIcon').outerHTML='<svg id="semaforoIcon" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2.5" width="24" height="24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+    } else if(lp>=ganhoAlvo){
+        // VERDE BRILHANTE - STOP WIN
+        sem.style.borderColor='#2ecc71';sem.style.background='rgba(46,204,113,.2)';sem.style.boxShadow='0 0 20px rgba(46,204,113,.3)';
+        status.textContent='STOP WIN — ENCERRE';status.style.color='#2ecc71';
+        document.getElementById('semaforoIcon').outerHTML='<svg id="semaforoIcon" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" width="24" height="24"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    } else if(tA>=6&&avgA<50){
+        // VERMELHO - ASSERTIVIDADE RUIM
+        sem.style.borderColor='#e74c3c';sem.style.background='rgba(231,76,60,.15)';sem.style.boxShadow='none';
+        status.textContent='ASSERT. BAIXA — PARE';status.style.color='#e74c3c';
+        document.getElementById('semaforoIcon').outerHTML='<svg id="semaforoIcon" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2" width="24" height="24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+    } else if(lp<=-perdaMax*0.7||elapsed>=1500){
+        // AMARELO - CAUTELA
+        sem.style.borderColor='#f1c40f';sem.style.background='rgba(241,196,15,.12)';sem.style.boxShadow='none';
+        status.textContent=elapsed>=1500?'25 MIN — FINALIZE':'PROXIMO DO SL';status.style.color='#f1c40f';
+        document.getElementById('semaforoIcon').outerHTML='<svg id="semaforoIcon" viewBox="0 0 24 24" fill="none" stroke="#f1c40f" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+    } else {
+        // VERDE - OPERANDO
+        sem.style.borderColor='#2ecc71';sem.style.background='rgba(46,204,113,.08)';sem.style.boxShadow='none';
+        status.textContent='OPERANDO';status.style.color='#2ecc71';
+        document.getElementById('semaforoIcon').outerHTML='<svg id="semaforoIcon" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="10"></circle><polyline points="16 12 12 8 8 12"></polyline><line x1="12" y1="16" x2="12" y2="8"></line></svg>';
+    }
+}
+
+// ==========================================
+// RODA VISUAL
+// ==========================================
+function renderRoda(){
+    var el=document.getElementById('rodaVisual');var info=document.getElementById('rodaInfo');
+    if(!el)return;
+    var h=R.historico;var ultimos=h.slice(-12).filter(function(n){return n!==0;});
+    if(ultimos.length<3){el.innerHTML='<div style="color:rgba(255,255,255,.15);font-size:.82em;">Minimo 3 numeros</div>';if(info)info.textContent='';return;}
+
+    var size=280;var cx=size/2;var cy=size/2;var r=size/2-20;var inner=r-28;
+    var nums=RODA;// [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26]
+    var total=nums.length;var angle=360/total;
+
+    var svg='<svg viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'">';
+    // Segmentos
+    for(var i=0;i<total;i++){
+        var n=nums[i];
+        var a1=(i*angle-90)*Math.PI/180;
+        var a2=((i+1)*angle-90)*Math.PI/180;
+        var x1o=cx+r*Math.cos(a1),y1o=cy+r*Math.sin(a1);
+        var x2o=cx+r*Math.cos(a2),y2o=cy+r*Math.sin(a2);
+        var x1i=cx+inner*Math.cos(a1),y1i=cy+inner*Math.sin(a1);
+        var x2i=cx+inner*Math.cos(a2),y2i=cy+inner*Math.sin(a2);
+        var fill=n===0?'#1a6b3a':VERMELHOS.includes(n)?'#8b1a1a':'#1a1a1a';
+        // Destaque se esta nos ultimos
+        var count=ultimos.filter(function(x){return x===n;}).length;
+        if(count>0)fill=n===0?'#27ae60':VERMELHOS.includes(n)?'#c0392b':'#444';
+        var op=count>0?1:0.4;
+        svg+='<path d="M'+x1i+','+y1i+' L'+x1o+','+y1o+' A'+r+','+r+' 0 0,1 '+x2o+','+y2o+' L'+x2i+','+y2i+' A'+inner+','+inner+' 0 0,0 '+x1i+','+y1i+'" fill="'+fill+'" stroke="rgba(255,255,255,.12)" stroke-width="0.5" opacity="'+op+'"/>';
+        // Numero
+        var mid=(a1+a2)/2;
+        var tr=(r+inner)/2;
+        var tx=cx+tr*Math.cos(mid);var ty=cy+tr*Math.sin(mid);
+        var fsize=count>1?'8':'6.5';var fw=count>0?'700':'400';var fc=count>0?'#fff':'rgba(255,255,255,.5)';
+        svg+='<text x="'+tx+'" y="'+ty+'" text-anchor="middle" dominant-baseline="central" fill="'+fc+'" font-size="'+fsize+'" font-weight="'+fw+'" font-family="Inter,sans-serif">'+n+'</text>';
+        // Dot para repeticoes
+        if(count>1){
+            var dr=inner-8;
+            var dx=cx+dr*Math.cos(mid);var dy=cy+dr*Math.sin(mid);
+            svg+='<circle cx="'+dx+'" cy="'+dy+'" r="3" fill="#d4af7d" opacity="0.8"/>';
+            if(count>2)svg+='<text x="'+dx+'" y="'+dy+'" text-anchor="middle" dominant-baseline="central" fill="#000" font-size="5" font-weight="700">'+count+'</text>';
+        }
+    }
+    // Centro
+    svg+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(inner-12)+'" fill="#0a0a0a" stroke="rgba(212,175,125,.15)" stroke-width="1"/>';
+    // Ultimo numero grande no centro
+    var last=h.length?h[h.length-1]:'-';
+    var lastColor=last===0?'#27ae60':VERMELHOS.includes(last)?'#e74c3c':'#fff';
+    svg+='<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" dominant-baseline="central" fill="'+lastColor+'" font-size="22" font-weight="700" font-family="Cinzel,serif">'+last+'</text>';
+    svg+='<text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="6" font-family="Inter,sans-serif">ULTIMO</text>';
+    svg+='</svg>';
+    el.innerHTML=svg;
+
+    // Info: detectar cluster
+    if(info&&ultimos.length>=5){
+        var setores={};ultimos.slice(-5).forEach(function(n){var idx=RODA.indexOf(n);var sid=Math.floor(idx/6);setores[sid]=(setores[sid]||0)+1;});
+        var maxS=Math.max.apply(null,Object.values(setores));
+        if(maxS>=3)info.innerHTML='<span style="color:#f1c40f;">Cluster detectado: '+maxS+'/5 no mesmo setor</span>';
+        else info.textContent='Distribuicao dispersa nos ultimos 5';
+    }
+}
+
+// ==========================================
+// RESUMO DE ENTRADA
+// ==========================================
+function updateResumo(sugDz,sugCl,dzN,clN){
+    var el=document.getElementById('resumoEntrada');var body=document.getElementById('resumoBody');var risco=document.getElementById('resumoRisco');
+    if(!el||!body)return;
+
+    var temSinalDz=sugDz.sinal==='APOSTAR';
+    var temSinalCl=sugCl.sinal==='APOSTAR';
+    if(!temSinalDz&&!temSinalCl){el.style.display='none';return;}
+
+    el.style.display='block';
+    var unit=B.apostaBase||5;
+    var bancaAtual=B.atual||0;
+    var slPct=(B.sl||20)/100;
+    var perdaMax=(B.inicial||0)*slPct;
+    var lp=bancaAtual-(B.inicial||0);
+    var distSL=perdaMax+lp;
+    var apostasAteSL=unit>0?Math.floor(distSL/(unit*2)):0;
+
+    if(risco)risco.textContent='Unit: '+formatR(unit)+' | Ate SL: '+apostasAteSL+' apostas | Risco: '+formatR(unit*2);
+
+    var h='';
+    if(temSinalDz){
+        h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;'+(temSinalCl?'border-bottom:1px solid rgba(255,255,255,.04);':'')+'">';
+        h+='<span style="font-size:.7em;color:rgba(212,175,125,.5);min-width:50px;">DUZIAS</span>';
+        h+='<span style="font-size:.85em;font-weight:600;color:'+sugDz.cor+';">'+sugDz.sinal+' — '+sugDz.conf+'</span>';
+        h+='<span style="font-size:.75em;color:rgba(255,255,255,.5);margin-left:auto;">'+dzN[sugDz.par[0]]+' + '+dzN[sugDz.par[1]]+'</span>';
+        h+='<span style="font-size:.65em;color:rgba(255,255,255,.3);">Score:'+sugDz.score+'</span>';
+        h+='</div>';
+    }
+    if(temSinalCl){
+        h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;">';
+        h+='<span style="font-size:.7em;color:rgba(212,175,125,.5);min-width:50px;">COLUNAS</span>';
+        h+='<span style="font-size:.85em;font-weight:600;color:'+sugCl.cor+';">'+sugCl.sinal+' — '+sugCl.conf+'</span>';
+        h+='<span style="font-size:.75em;color:rgba(255,255,255,.5);margin-left:auto;">'+clN[sugCl.par[0]]+' + '+clN[sugCl.par[1]]+'</span>';
+        h+='<span style="font-size:.65em;color:rgba(255,255,255,.3);">Score:'+sugCl.score+'</span>';
+        h+='</div>';
+    }
+    body.innerHTML=h;
 }
 
 // GESTAO DE BANCA
@@ -1004,12 +1206,22 @@ function salvarBanca(){
 }
 
 function registrarResultadoBanca(tipo){
+    // BLOQUEIO: verificar se pode apostar
+    var lp=(B.atual||0)-(B.inicial||0);
+    var slPct=(B.sl||20)/100;var perdaMax=(B.inicial||0)*slPct;
+    if(lp<=-perdaMax&&B.inicial>0){toast('BLOQUEADO — Stop Loss atingido');return;}
+    var swPct=(B.sw||30)/100;var ganhoAlvo=(B.inicial||0)*swPct;
+    if(lp>=ganhoAlvo&&B.inicial>0){toast('BLOQUEADO — Stop Win atingido');return;}
+
     var unit=B.apostaBase||5;
     var valor=tipo==='win'?unit:-(unit*2);
     B.atual=(B.atual||B.inicial)+valor;
     if(!B.resultados)B.resultados=[];
     B.resultados.push({tipo:tipo,valor:valor,ts:Date.now(),banca:B.atual});
+    // Sessao tracking
+    if(sessaoAtiva)sessaoApostasCount++;
     saveB();renderBanca();
+    if(sessaoAtiva)updateSessaoPainel();
     toast(tipo==='win'?'GREEN +'+formatR(unit):'RED '+formatR(valor));
 }
 
@@ -1105,6 +1317,24 @@ function renderBanca(){
         }).reverse().join('');
 
         hEl.innerHTML=resumo+lista;
+    }
+
+    // BLOQUEIO VISUAL
+    var btnG=document.getElementById('btnGreen');
+    var btnR=document.getElementById('btnRed');
+    if(btnG&&btnR){
+        var bloqueado=false;
+        if(bancaIni>0&&lp<=-bancaIni*slPct){bloqueado=true;}
+        if(bancaIni>0&&lp>=bancaIni*swPct){bloqueado=true;}
+        if(bloqueado){
+            btnG.disabled=true;btnR.disabled=true;
+            btnG.style.opacity='0.3';btnR.style.opacity='0.3';
+            btnG.style.cursor='not-allowed';btnR.style.cursor='not-allowed';
+        } else {
+            btnG.disabled=false;btnR.disabled=false;
+            btnG.style.opacity='1';btnR.style.opacity='1';
+            btnG.style.cursor='pointer';btnR.style.cursor='pointer';
+        }
     }
 }
 
@@ -1532,7 +1762,7 @@ function renderHistorico(){
 function initFutebol(){loadFut();spMesView=mesKey(new Date());renderTudo();}
 
 
-// CHECKLIST DISCIPLINA
+
 // ==========================================
 // ==========================================
 // RELATORIO DE SESSAO
@@ -1700,12 +1930,6 @@ function copiarRelatorio(){
     el.select();el.setSelectionRange(0,99999);
     document.execCommand('copy');
     toast('Relatorio copiado!');
-}
-
-function renderChecklist(){
-    const el=document.getElementById('checklistDisciplina');if(!el)return;
-    const items=['Estou calmo e racional','Defini stop loss para hoje','Defini stop win para hoje','Tenho tempo limitado','Não estou recuperando perda anterior','Banca está configurada'];
-    el.innerHTML=items.map((item,i)=>`<label style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;"><input type="checkbox" style="width:18px;height:18px;accent-color:#d4af7d;"><span style="font-size:.85em;color:rgba(255,255,255,.7);">${item}</span></label>`).join('');
 }
 
 // ==========================================
