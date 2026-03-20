@@ -232,30 +232,42 @@
                 <!-- CONTROLE DE GANHOS -->
                 <div class="analise-box">
                     <div class="analise-titulo">Controle de Ganhos</div>
-                    <!-- BANCA -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px;">
-                        <div>
-                            <div style="font-size:.65em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Banca Inicial</div>
-                            <input type="number" id="cgInicial" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:6px;color:#d4af7d;font-size:1em;font-weight:600;font-family:'Inter',sans-serif;">
-                        </div>
-                        <div>
-                            <div style="font-size:.65em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Banca Atual</div>
-                            <input type="number" id="cgAtual" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:6px;color:#fff;font-size:1em;font-weight:600;font-family:'Inter',sans-serif;">
-                        </div>
-                    </div>
-                    <!-- RESULTADO -->
-                    <div id="cgResultado" style="text-align:center;padding:12px;background:rgba(255,255,255,.02);border-radius:8px;margin-bottom:15px;"></div>
-                    <!-- SAQUE -->
-                    <div style="display:flex;gap:8px;margin-bottom:12px;align-items:flex-end;">
+                    <!-- DEPOSITO -->
+                    <div style="display:flex;gap:8px;margin-bottom:15px;align-items:flex-end;">
                         <div style="flex:1;">
-                            <div style="font-size:.65em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Saque</div>
-                            <input type="number" id="cgSaqueVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:8px;background:#0a0a0a;border:1px solid rgba(46,204,113,.15);border-radius:6px;color:#2ecc71;font-size:.9em;font-family:'Inter',sans-serif;">
+                            <div style="font-size:.6em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Depositar na Banca</div>
+                            <input type="number" id="cgDepVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:6px;color:#d4af7d;font-size:.9em;font-family:'Inter',sans-serif;">
                         </div>
-                        <button onclick="registrarSaque()" style="padding:8px 16px;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:6px;color:#2ecc71;font-size:.82em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;height:38px;">Sacar</button>
+                        <button onclick="registrarDeposito()" style="padding:10px 20px;background:rgba(212,175,125,.1);border:1px solid rgba(212,175,125,.3);border-radius:6px;color:#d4af7d;font-size:.82em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Depositar</button>
                     </div>
+                    <!-- PAINEL: Depositado | Banca Atual | Lucro -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:15px;">
+                        <div style="background:rgba(212,175,125,.04);border:1px solid rgba(212,175,125,.1);border-radius:8px;padding:12px;text-align:center;">
+                            <div style="font-size:.58em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;">Depositado</div>
+                            <div id="cgDepositado" style="font-size:1.2em;font-weight:700;color:#d4af7d;font-family:'Cinzel',serif;margin-top:4px;">R$ 0,00</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;text-align:center;">
+                            <div style="font-size:.58em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;">Banca Atual</div>
+                            <input type="number" id="cgAtual" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:2px 0;background:transparent;border:none;color:#fff;font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;text-align:center;outline:none;">
+                        </div>
+                        <div id="cgLucroBox" style="border-radius:8px;padding:12px;text-align:center;">
+                            <div style="font-size:.58em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;">Lucro</div>
+                            <div id="cgLucro" style="font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;margin-top:4px;">—</div>
+                        </div>
+                    </div>
+                    <!-- SAQUE -->
+                    <div style="display:flex;gap:8px;margin-bottom:15px;align-items:flex-end;">
+                        <div style="flex:1;">
+                            <div style="font-size:.6em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Sacar</div>
+                            <input type="number" id="cgSaqueVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(46,204,113,.12);border-radius:6px;color:#2ecc71;font-size:.9em;font-family:'Inter',sans-serif;">
+                        </div>
+                        <button onclick="registrarSaque()" style="padding:10px 20px;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:6px;color:#2ecc71;font-size:.82em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Sacar</button>
+                    </div>
+                    <!-- TOTAL SACADO -->
+                    <div id="cgTotalSacado" style="text-align:center;padding:10px;background:rgba(46,204,113,.04);border:1px solid rgba(46,204,113,.08);border-radius:8px;margin-bottom:15px;display:none;"></div>
                     <!-- SAQUES DO MES -->
                     <div id="cgSaques"></div>
-                    <!-- RESUMO MENSAL -->
+                    <!-- HISTORICO MENSAL -->
                     <div id="cgResumo" style="margin-top:12px;"></div>
                 </div>
 
@@ -939,48 +951,72 @@ function initFutebol(){loadFut();spMesView=mesKey(new Date());renderTudo();}
 // CONTROLE DE GANHOS
 // ==========================================
 var CG_KEY='controleGanhos';
-var CG={inicial:0,atual:0,saques:[]};
-function loadCG(){try{var s=localStorage.getItem(CG_KEY);if(s)CG=Object.assign({inicial:0,atual:0,saques:[]},JSON.parse(s));}catch(e){}}
+var CG={depositado:0,atual:0,saques:[],depositos:[]};
+function loadCG(){try{var s=localStorage.getItem(CG_KEY);if(s){var p=JSON.parse(s);CG=Object.assign({depositado:0,atual:0,saques:[],depositos:[]},p);if(p.inicial&&!p.depositado){CG.depositado=p.inicial;}}}catch(e){}}
 function saveCG(){try{localStorage.setItem(CG_KEY,JSON.stringify(CG));}catch(e){}}
 
 function salvarCG(){
-    CG.inicial=parseFloat(document.getElementById('cgInicial').value)||0;
     CG.atual=parseFloat(document.getElementById('cgAtual').value)||0;
     saveCG();renderCG();
+}
+
+function registrarDeposito(){
+    var val=parseFloat(document.getElementById('cgDepVal').value);
+    if(!val||val<=0)return;
+    CG.depositado+=val;
+    CG.atual+=val;
+    CG.depositos.push({valor:val,data:new Date().toISOString()});
+    document.getElementById('cgDepVal').value='';
+    document.getElementById('cgAtual').value=CG.atual.toFixed(2);
+    saveCG();renderCG();toast('Deposito de R$ '+val.toFixed(2));
 }
 
 function registrarSaque(){
     var val=parseFloat(document.getElementById('cgSaqueVal').value);
     if(!val||val<=0)return;
+    if(val>CG.atual){toast('Saldo insuficiente. Banca atual: R$ '+CG.atual.toFixed(2));return;}
     CG.saques.push({valor:val,data:new Date().toISOString()});
-    CG.atual=Math.max(0,CG.atual-val);
+    CG.atual-=val;
     document.getElementById('cgAtual').value=CG.atual.toFixed(2);
     document.getElementById('cgSaqueVal').value='';
-    saveCG();renderCG();toast('Saque de R$ '+val.toFixed(2)+' registrado');
+    saveCG();renderCG();toast('Saque de R$ '+val.toFixed(2));
 }
 
-function deletarSaque(idx){
-    CG.saques.splice(idx,1);saveCG();renderCG();
-}
+function deletarSaque(idx){CG.saques.splice(idx,1);saveCG();renderCG();}
 
 function renderCG(){
-    loadCG();
-    var iniEl=document.getElementById('cgInicial');
+    var depEl=document.getElementById('cgDepositado');
     var atuEl=document.getElementById('cgAtual');
-    if(iniEl&&CG.inicial)iniEl.value=CG.inicial.toFixed(2);
-    if(atuEl&&CG.atual)atuEl.value=CG.atual.toFixed(2);
+    if(depEl)depEl.textContent='R$ '+CG.depositado.toFixed(2);
+    if(atuEl)atuEl.value=CG.atual.toFixed(2);
 
-    // Resultado
-    var resEl=document.getElementById('cgResultado');
-    if(resEl){
-        var totalSaques=CG.saques.reduce(function(s,x){return s+x.valor;},0);
-        var lp=(CG.atual-CG.inicial)+totalSaques;
-        var lpCor=lp>=0?'#2ecc71':'#e74c3c';
-        var lpSinal=lp>=0?'+':'';
-        resEl.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+
-            '<div><div style="font-size:.6em;color:rgba(255,255,255,.3);text-transform:uppercase;">Lucro/Prejuizo</div><div style="font-size:1.4em;font-weight:700;color:'+lpCor+';font-family:\'Cinzel\',serif;margin-top:4px;">'+lpSinal+'R$ '+Math.abs(lp).toFixed(2)+'</div></div>'+
-            '<div><div style="font-size:.6em;color:rgba(255,255,255,.3);text-transform:uppercase;">Sacado</div><div style="font-size:1.4em;font-weight:700;color:#2ecc71;font-family:\'Cinzel\',serif;margin-top:4px;">R$ '+totalSaques.toFixed(2)+'</div></div>'+
-        '</div>';
+    var totalSaques=CG.saques.reduce(function(s,x){return s+x.valor;},0);
+    var lp=(CG.atual-CG.depositado)+totalSaques;
+    var lpCor=lp>=0?'#2ecc71':'#e74c3c';
+    var lpSinal=lp>=0?'+':'';
+
+    // Lucro
+    var lucroEl=document.getElementById('cgLucro');
+    var lucroBox=document.getElementById('cgLucroBox');
+    if(lucroEl){
+        if(CG.depositado>0){
+            lucroEl.textContent=lpSinal+'R$ '+Math.abs(lp).toFixed(2);
+            lucroEl.style.color=lpCor;
+            lucroBox.style.background=lp>=0?'rgba(46,204,113,.06)':'rgba(231,76,60,.06)';
+            lucroBox.style.border='1px solid '+(lp>=0?'rgba(46,204,113,.12)':'rgba(231,76,60,.12)');
+        }else{
+            lucroEl.textContent='—';lucroEl.style.color='rgba(255,255,255,.3)';
+            lucroBox.style.background='rgba(255,255,255,.02)';lucroBox.style.border='1px solid rgba(255,255,255,.04)';
+        }
+    }
+
+    // Total sacado
+    var tsEl=document.getElementById('cgTotalSacado');
+    if(tsEl){
+        if(totalSaques>0){
+            tsEl.style.display='block';
+            tsEl.innerHTML='<div style="font-size:.6em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;">Total Sacado</div><div style="font-size:1.3em;font-weight:700;color:#2ecc71;font-family:\'Cinzel\',serif;margin-top:4px;">R$ '+totalSaques.toFixed(2)+'</div>';
+        }else{tsEl.style.display='none';}
     }
 
     // Saques do mes
@@ -989,45 +1025,37 @@ function renderCG(){
         var agora=new Date();var mesKey=agora.getFullYear()+'-'+String(agora.getMonth()+1).padStart(2,'0');
         var saquesMes=CG.saques.filter(function(s){return s.data.startsWith(mesKey);});
         var totalMes=saquesMes.reduce(function(s,x){return s+x.valor;},0);
-
         if(!saquesMes.length){
             sqEl.innerHTML='<div style="font-size:.75em;color:rgba(255,255,255,.15);text-align:center;padding:8px;">Nenhum saque este mes.</div>';
         }else{
             sqEl.innerHTML='<div style="font-size:.65em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Saques do Mes — R$ '+totalMes.toFixed(2)+'</div>'+
-                saquesMes.map(function(s,i){
-                    var dt=new Date(s.data);
-                    var ds=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-                    var globalIdx=CG.saques.indexOf(s);
+                saquesMes.map(function(s){
+                    var dt=new Date(s.data);var ds=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+                    var gi=CG.saques.indexOf(s);
                     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);">'+
                         '<span style="font-size:.78em;color:rgba(255,255,255,.4);">'+ds+'</span>'+
                         '<span style="font-size:.85em;font-weight:600;color:#2ecc71;">R$ '+s.valor.toFixed(2)+'</span>'+
-                        '<button onclick="deletarSaque('+globalIdx+')" style="background:transparent;border:none;color:rgba(255,255,255,.12);cursor:pointer;font-size:.65em;">x</button>'+
+                        '<button onclick="deletarSaque('+gi+')" style="background:transparent;border:none;color:rgba(255,255,255,.12);cursor:pointer;font-size:.65em;">x</button>'+
                     '</div>';
                 }).join('');
         }
     }
 
-    // Resumo mensal
+    // Historico mensal
     var rmEl=document.getElementById('cgResumo');
     if(rmEl){
         var meses={};
-        CG.saques.forEach(function(s){
-            var mk=s.data.substring(0,7);
-            if(!meses[mk])meses[mk]=0;
-            meses[mk]+=s.valor;
-        });
+        CG.saques.forEach(function(s){var mk=s.data.substring(0,7);if(!meses[mk])meses[mk]=0;meses[mk]+=s.valor;});
         var keys=Object.keys(meses).sort().reverse();
         if(!keys.length){rmEl.innerHTML='';}
         else{
             var ms=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             rmEl.innerHTML='<div style="font-size:.65em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Historico do Mes</div>'+
                 keys.slice(0,6).map(function(k){
-                    var parts=k.split('-');
-                    var label=ms[parseInt(parts[1])]+' '+parts[0];
+                    var parts=k.split('-');var label=ms[parseInt(parts[1])]+' '+parts[0];
                     return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:.78em;">'+
                         '<span style="color:rgba(255,255,255,.4);">'+label+'</span>'+
-                        '<span style="color:#2ecc71;font-weight:600;">R$ '+meses[k].toFixed(2)+'</span>'+
-                    '</div>';
+                        '<span style="color:#2ecc71;font-weight:600;">R$ '+meses[k].toFixed(2)+'</span></div>';
                 }).join('');
         }
     }
