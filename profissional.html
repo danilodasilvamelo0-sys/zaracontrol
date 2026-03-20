@@ -232,27 +232,19 @@
                 <!-- CONTROLE DE GANHOS -->
                 <div class="analise-box">
                     <div class="analise-titulo">Controle de Ganhos</div>
-                    <!-- DEPOSITO -->
-                    <div style="display:flex;gap:8px;margin-bottom:15px;align-items:flex-end;">
-                        <div style="flex:1;">
-                            <div style="font-size:.6em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Depositar na Banca</div>
-                            <input type="number" id="cgDepVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:6px;color:#d4af7d;font-size:.9em;font-family:'Inter',sans-serif;">
-                        </div>
-                        <button onclick="registrarDeposito()" style="padding:10px 20px;background:rgba(212,175,125,.1);border:1px solid rgba(212,175,125,.3);border-radius:6px;color:#d4af7d;font-size:.82em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Depositar</button>
-                    </div>
-                    <!-- PAINEL: Depositado | Banca Atual | Lucro -->
+                    <!-- DEPOSITADO | BANCA ATUAL | LUCRO -->
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:15px;">
                         <div style="background:rgba(212,175,125,.04);border:1px solid rgba(212,175,125,.1);border-radius:8px;padding:12px;text-align:center;">
-                            <div style="font-size:.58em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;">Depositado</div>
-                            <div id="cgDepositado" style="font-size:1.2em;font-weight:700;color:#d4af7d;font-family:'Cinzel',serif;margin-top:4px;">R$ 0,00</div>
+                            <div style="font-size:.58em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Depositado</div>
+                            <input type="number" id="cgDep" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:2px 0;background:transparent;border:none;border-bottom:1px solid rgba(212,175,125,.15);color:#d4af7d;font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;text-align:center;outline:none;">
                         </div>
                         <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;text-align:center;">
-                            <div style="font-size:.58em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;">Banca Atual</div>
-                            <input type="number" id="cgAtual" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:2px 0;background:transparent;border:none;color:#fff;font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;text-align:center;outline:none;">
+                            <div style="font-size:.58em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Banca Atual</div>
+                            <input type="number" id="cgAtual" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:2px 0;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.08);color:#fff;font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;text-align:center;outline:none;">
                         </div>
-                        <div id="cgLucroBox" style="border-radius:8px;padding:12px;text-align:center;">
-                            <div style="font-size:.58em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;">Lucro</div>
-                            <div id="cgLucro" style="font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;margin-top:4px;">—</div>
+                        <div id="cgLucroBox" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px;padding:12px;text-align:center;">
+                            <div style="font-size:.58em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Lucro</div>
+                            <div id="cgLucro" style="font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;">—</div>
                         </div>
                     </div>
                     <!-- SAQUE -->
@@ -951,66 +943,54 @@ function initFutebol(){loadFut();spMesView=mesKey(new Date());renderTudo();}
 // CONTROLE DE GANHOS
 // ==========================================
 var CG_KEY='controleGanhos';
-var CG={depositado:0,atual:0,saques:[],depositos:[]};
-function loadCG(){try{var s=localStorage.getItem(CG_KEY);if(s){var p=JSON.parse(s);CG=Object.assign({depositado:0,atual:0,saques:[],depositos:[]},p);if(p.inicial&&!p.depositado){CG.depositado=p.inicial;}}}catch(e){}}
-function saveCG(){try{localStorage.setItem(CG_KEY,JSON.stringify(CG));}catch(e){}}
-
+var CG={dep:0,atual:0,saques:[]};
+function loadCG(){try{var s=localStorage.getItem(CG_KEY);if(s){var p=JSON.parse(s);CG={dep:p.dep||p.depositado||p.inicial||0,atual:p.atual||0,saques:p.saques||[]};}}catch(e){}}
 function salvarCG(){
+    CG.dep=parseFloat(document.getElementById('cgDep').value)||0;
     CG.atual=parseFloat(document.getElementById('cgAtual').value)||0;
-    saveCG();renderCG();
-}
-
-function registrarDeposito(){
-    var val=parseFloat(document.getElementById('cgDepVal').value);
-    if(!val||val<=0)return;
-    CG.depositado+=val;
-    CG.atual+=val;
-    CG.depositos.push({valor:val,data:new Date().toISOString()});
-    document.getElementById('cgDepVal').value='';
-    document.getElementById('cgAtual').value=CG.atual.toFixed(2);
-    saveCG();renderCG();toast('Deposito de R$ '+val.toFixed(2));
+    try{localStorage.setItem(CG_KEY,JSON.stringify(CG));}catch(e){}
+    renderCG();
 }
 
 function registrarSaque(){
     var val=parseFloat(document.getElementById('cgSaqueVal').value);
     if(!val||val<=0)return;
-    if(val>CG.atual){toast('Saldo insuficiente. Banca atual: R$ '+CG.atual.toFixed(2));return;}
-    CG.saques.push({valor:val,data:new Date().toISOString()});
+    if(val>CG.atual){toast('Saldo insuficiente. Banca: R$ '+CG.atual.toFixed(2));return;}
     CG.atual-=val;
+    CG.saques.push({valor:val,data:new Date().toISOString()});
     document.getElementById('cgAtual').value=CG.atual.toFixed(2);
     document.getElementById('cgSaqueVal').value='';
-    saveCG();renderCG();toast('Saque de R$ '+val.toFixed(2));
+    try{localStorage.setItem(CG_KEY,JSON.stringify(CG));}catch(e){}
+    renderCG();toast('Saque R$ '+val.toFixed(2));
 }
 
-function deletarSaque(idx){CG.saques.splice(idx,1);saveCG();renderCG();}
+function deletarSaque(idx){CG.saques.splice(idx,1);try{localStorage.setItem(CG_KEY,JSON.stringify(CG));}catch(e){}renderCG();}
 
 function renderCG(){
-    var depEl=document.getElementById('cgDepositado');
+    // Preencher campos
+    var depEl=document.getElementById('cgDep');
     var atuEl=document.getElementById('cgAtual');
-    if(depEl)depEl.textContent='R$ '+CG.depositado.toFixed(2);
-    if(atuEl)atuEl.value=CG.atual.toFixed(2);
+    if(depEl&&!document.activeElement||document.activeElement!==depEl)if(depEl)depEl.value=CG.dep||'';
+    if(atuEl&&document.activeElement!==atuEl)atuEl.value=CG.atual||'';
 
-    var totalSaques=CG.saques.reduce(function(s,x){return s+x.valor;},0);
-    var lp=(CG.atual-CG.depositado)+totalSaques;
-    var lpCor=lp>=0?'#2ecc71':'#e74c3c';
-    var lpSinal=lp>=0?'+':'';
-
-    // Lucro
+    // Lucro = Banca Atual - Depositado
+    var lucro=CG.atual-CG.dep;
     var lucroEl=document.getElementById('cgLucro');
     var lucroBox=document.getElementById('cgLucroBox');
     if(lucroEl){
-        if(CG.depositado>0){
-            lucroEl.textContent=lpSinal+'R$ '+Math.abs(lp).toFixed(2);
-            lucroEl.style.color=lpCor;
-            lucroBox.style.background=lp>=0?'rgba(46,204,113,.06)':'rgba(231,76,60,.06)';
-            lucroBox.style.border='1px solid '+(lp>=0?'rgba(46,204,113,.12)':'rgba(231,76,60,.12)');
+        if(CG.dep>0){
+            var sinal=lucro>=0?'+':'';
+            lucroEl.textContent=sinal+'R$ '+Math.abs(lucro).toFixed(2);
+            lucroEl.style.color=lucro>=0?'#2ecc71':'#e74c3c';
+            if(lucroBox){lucroBox.style.background=lucro>=0?'rgba(46,204,113,.06)':'rgba(231,76,60,.06)';lucroBox.style.border='1px solid '+(lucro>=0?'rgba(46,204,113,.12)':'rgba(231,76,60,.12)');}
         }else{
             lucroEl.textContent='—';lucroEl.style.color='rgba(255,255,255,.3)';
-            lucroBox.style.background='rgba(255,255,255,.02)';lucroBox.style.border='1px solid rgba(255,255,255,.04)';
+            if(lucroBox){lucroBox.style.background='rgba(255,255,255,.02)';lucroBox.style.border='1px solid rgba(255,255,255,.04)';}
         }
     }
 
     // Total sacado
+    var totalSaques=CG.saques.reduce(function(s,x){return s+x.valor;},0);
     var tsEl=document.getElementById('cgTotalSacado');
     if(tsEl){
         if(totalSaques>0){
