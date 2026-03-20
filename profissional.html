@@ -51,8 +51,7 @@
         .recomendacao{background:linear-gradient(135deg,rgba(212,175,125,.15),rgba(0,0,0,.3));border:1px solid rgba(212,175,125,.3);border-radius:12px;padding:20px;text-align:center;margin-bottom:15px}
         .rec-titulo{font-family:'Cinzel',serif;font-size:.9em;color:#d4af7d;letter-spacing:1px;margin-bottom:12px}
         .rec-duzias{display:flex;gap:10px;justify-content:center;margin-bottom:8px}
-        .rec-badge{padding:8px 18px;border-radius:8px;font-weight:600;font-size:.9em}
-        .rec-badge.alta{background:rgba(46,204,113,.2);color:#2ecc71;border:1px solid rgba(46,204,113,.4)}
+                .rec-badge.alta{background:rgba(46,204,113,.2);color:#2ecc71;border:1px solid rgba(46,204,113,.4)}
         .rec-badge.media{background:rgba(241,196,15,.15);color:#f1c40f;border:1px solid rgba(241,196,15,.3)}
         .rec-confianca{font-size:.75em;color:rgba(255,255,255,.4);margin-top:8px}
 
@@ -76,18 +75,12 @@
         @media(max-width:480px){.header h1{font-size:1.3em}.main-tab{font-size:.75em;padding:10px 6px}.mesa-table td{font-size:.9em;height:42px}}
 
         /* RECOMENDAÇÃO CARDS */
-        .rec-card{background:linear-gradient(135deg,#141414,#0f0f0f);border:2px solid rgba(212,175,125,.3);border-radius:12px;overflow:hidden;text-align:center}
-        .rec-card-header{background:rgba(212,175,125,.12);padding:10px;font-family:'Cinzel',serif;font-size:.8em;color:#d4af7d;letter-spacing:2px}
-        .rec-card-body{padding:15px;font-size:.95em;color:#fff;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
-        .rec-badge{display:inline-block;padding:5px 16px;border-radius:20px;font-weight:600;font-size:.95em;letter-spacing:1px}
+                                .rec-badge{display:inline-block;padding:5px 16px;border-radius:20px;font-weight:600;font-size:.95em;letter-spacing:1px}
         .rec-badge.hot{background:rgba(231,76,60,.2);border:1px solid rgba(231,76,60,.5);color:#e74c3c}
         .rec-badge.warm{background:rgba(241,196,15,.15);border:1px solid rgba(241,196,15,.4);color:#f1c40f}
         .rec-badge.neutral{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5)}
         /* INDICADORES */
-        .indicador-card{background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:8px;padding:12px;text-align:center}
-        .ind-label{font-size:.65em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
-        .ind-valor{font-size:1.1em;font-weight:600;color:#d4af7d}
-        /* MESA ROLETA REAL */
+                                /* MESA ROLETA REAL */
         .mesa-roleta{padding-bottom:8px}
         .mesa-table{border-collapse:collapse;width:100%;table-layout:fixed}
         .mesa-table td{padding:0;text-align:center;cursor:pointer;font-weight:700;font-size:1.1em;height:52px;border:1px solid rgba(255,255,255,.15);transition:all .15s;user-select:none}
@@ -154,26 +147,45 @@
         <div class="main-tab-content active" id="tab-roleta">
             <div style="padding:20px;">
 
-                <!-- SUGESTOES -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px;">
-                    <div class="rec-card" id="recDuzias">
-                        <div class="rec-card-header">DÚZIAS</div>
-                        <div class="rec-card-body" id="recDuziasBody">Aguardando dados...</div>
+                <!-- ACERTOS / ERROS -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+                    <div style="background:#0a0a0a;border:1px solid rgba(46,204,113,.15);border-radius:10px;padding:14px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:.7em;color:rgba(46,204,113,.6);text-transform:uppercase;letter-spacing:1px;">Acertos</span>
+                            <div style="display:flex;gap:6px;">
+                                <button onclick="marcarAcerto()" style="padding:8px 18px;background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.4);border-radius:6px;color:#2ecc71;font-size:.85em;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">+</button>
+                            </div>
+                        </div>
+                        <div id="acertosVal" style="font-size:1.8em;font-weight:700;color:#2ecc71;margin-top:6px;font-family:'Cinzel',serif;">0</div>
                     </div>
-                    <div class="rec-card" id="recColunas">
-                        <div class="rec-card-header">COLUNAS</div>
-                        <div class="rec-card-body" id="recColunasBody">Aguardando dados...</div>
+                    <div style="background:#0a0a0a;border:1px solid rgba(231,76,60,.15);border-radius:10px;padding:14px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:.7em;color:rgba(231,76,60,.6);text-transform:uppercase;letter-spacing:1px;">Erros</span>
+                            <div style="display:flex;gap:6px;">
+                                <button onclick="marcarErro()" style="padding:8px 18px;background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.4);border-radius:6px;color:#e74c3c;font-size:.85em;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">+</button>
+                            </div>
+                        </div>
+                        <div id="errosVal" style="font-size:1.8em;font-weight:700;color:#e74c3c;margin-top:6px;font-family:'Cinzel',serif;">0</div>
                     </div>
                 </div>
-
-                <!-- INDICADORES -->
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:8px;">
-                    <div class="indicador-card"><div class="ind-label">CONFIANÇA</div><div class="ind-valor" id="indConfianca">—</div></div>
-                    <div class="indicador-card"><div class="ind-label">ASSERTIVIDADE</div><div class="ind-valor" id="indAssert">—</div></div>
-                    <div class="indicador-card"><div class="ind-label">MESA</div><div class="ind-valor" id="indMesa">—</div></div>
+                <!-- ASSERTIVIDADE BARRA -->
+                <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:10px;padding:14px;margin-bottom:20px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <span style="font-size:.72em;color:rgba(212,175,125,.5);letter-spacing:1px;">ASSERTIVIDADE</span>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span id="assertPct" style="font-size:1em;font-weight:700;color:rgba(255,255,255,.5);">—</span>
+                            <button onclick="desfazerEntrada()" style="padding:4px 10px;background:transparent;border:1px solid rgba(255,255,255,.08);border-radius:5px;color:rgba(255,255,255,.25);font-size:.65em;cursor:pointer;font-family:'Inter',sans-serif;">Desfazer</button>
+                            <button onclick="resetarEntradas()" style="padding:4px 10px;background:transparent;border:1px solid rgba(231,76,60,.15);border-radius:5px;color:rgba(231,76,60,.3);font-size:.65em;cursor:pointer;font-family:'Inter',sans-serif;">Zerar</button>
+                        </div>
+                    </div>
+                    <div style="height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;">
+                        <div id="assertBar" style="height:100%;width:0%;border-radius:3px;transition:width .3s;"></div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                        <span id="assertDetalhe2" style="font-size:.65em;color:rgba(255,255,255,.25);"></span>
+                        <span id="assertSeq" style="font-size:.65em;color:rgba(255,255,255,.25);"></span>
+                    </div>
                 </div>
-                <div id="assertDetalhe" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;"></div>
-                <div id="alertaMesa" style="display:none;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);border-radius:10px;padding:12px 18px;margin-bottom:20px;text-align:center;font-size:.85em;color:#e74c3c;"></div>
 
                 <!-- ULTIMOS NUMEROS -->
                 <div class="analise-box" style="margin-bottom:15px;">
@@ -479,51 +491,6 @@ function analisarSetores(h){
 // Modo 1: REGRESSION (apostar contra a quente)
 // Modo 2: EXPLOITATION (nao apostar, ou apostar COM)
 // ==========================================
-function detectarModo(zArr,momArr,momCurto,janObj,cusumObj){
-    var modos=[];
-    for(var i=0;i<3;i++){
-        var z=Math.abs(zArr[i]);
-        var mom=momArr[i];
-        var momC=momCurto[i];
-        var jan=janObj?janObj.desvio[i]:0;
-        var cusum=cusumObj.pos[i];
-
-        // Contar sinais de confirmacao de bias
-        var sinais=0;
-        if(mom>0)sinais++;
-        if(momC>0)sinais++;
-        if(cusum>2.5)sinais++;
-        if(jan>5)sinais++;
-
-        // Contar sinais de desaceleracao
-        var desacel=0;
-        if(mom<-3)desacel++;
-        if(momC<-3)desacel++;
-        if(jan<-3)desacel++;
-
-        if(z>1.8 && sinais>=2){
-            // Z alto + 2+ confirmacoes = BIAS REAL
-            modos.push('real');
-        } else if(z>1.2 && sinais>=3){
-            // Z moderado mas 3+ confirmacoes = tambem real
-            modos.push('real');
-        } else if(z>1.0 && mom>5 && momC>5){
-            // Acelerando rapido = esta ficando quente, nao apostar contra
-            modos.push('aquecendo');
-        } else if(z>1.2 && desacel>=2){
-            // Z alto com 2+ sinais de desaceleracao = REGRESSAO
-            modos.push('regressao');
-        } else if(z>1.0 && desacel>=1 && sinais===0){
-            // Z moderado, nenhum sinal de bias, pelo menos 1 desaceleracao
-            modos.push('regressao');
-        } else if(z<0.8){
-            modos.push('neutro');
-        } else {
-            modos.push('indefinido');
-        }
-    }
-    return modos;
-}
 
 // MESA
 function buildMesa(){
@@ -541,53 +508,10 @@ function buildMesa(){
 }
 
 // SUGESTAO ATUAL (p/ assertividade auto — so fase 3)
-function getSugestaoAtual(){
-    var h=R.historico;var sz=h.filter(function(n){return n!==0;});var T=sz.length;
-    if(T<18)return null;
-    var dz=[0,0,0];sz.forEach(function(n){dz[duzia(n)-1]++;});var cl=[0,0,0];sz.forEach(function(n){cl[coluna(n)-1]++;});
-    var dzZ=dz.map(function(d){return zScore(d,T,P_DZ);});var clZ=cl.map(function(c){return zScore(c,T,P_DZ);});
-    var momDz=calcMom(h,'dz');var momCl=calcMom(h,'cl');
-    var momDzC=calcMomCurto(h,'dz');var momClC=calcMomCurto(h,'cl');
-    var cuDz=calcCUSUM(h,'dz');var cuCl=calcCUSUM(h,'cl');
-    var janDz=janelaComp(h,'dz');var janCl=janelaComp(h,'cl');
 
-    var modosDz=detectarModo(dzZ,momDz,momDzC,janDz,cuDz);
-    var modosCl=detectarModo(clZ,momCl,momClC,janCl,cuCl);
 
-    // Encontrar a mais quente
-    var dzMax=dzZ.indexOf(Math.max.apply(null,dzZ));
-    var clMax=clZ.indexOf(Math.max.apply(null,clZ));
-
-    // Se a mais quente tem bias REAL, nao apostar contra ela
-    var dzPar,clPar;
-    if(modosDz[dzMax]==='real'){
-        dzPar=null; // sinal: nao apostar duzias
-    } else {
-        dzPar=[0,1,2].filter(function(i){return i!==dzMax;});
-    }
-    if(modosCl[clMax]==='real'){
-        clPar=null;
-    } else {
-        clPar=[0,1,2].filter(function(i){return i!==clMax;});
-    }
-    return{dzPar:dzPar,clPar:clPar};
-}
-
-// ENTRADA + AUTO-ASSERTIVIDADE
 function addNum(n){
     if(n<0)return;
-    var sug=getSugestaoAtual();
-    if(sug&&n!==0){
-        if(!R.assertDz)R.assertDz={ac:0,er:0,seq:[]};if(!R.assertCol)R.assertCol={ac:0,er:0,seq:[]};
-        if(!R.assertDz.seq)R.assertDz.seq=[];if(!R.assertCol.seq)R.assertCol.seq=[];
-        // So rastreia se tinha par sugerido (nao null)
-        if(sug.dzPar){
-            if(sug.dzPar.includes(duzia(n)-1)){R.assertDz.ac++;R.assertDz.seq.push('w');}else{R.assertDz.er++;R.assertDz.seq.push('l');}
-        }
-        if(sug.clPar){
-            if(sug.clPar.includes(coluna(n)-1)){R.assertCol.ac++;R.assertCol.seq.push('w');}else{R.assertCol.er++;R.assertCol.seq.push('l');}
-        }
-    }
     R.historico.push(n);if(R.historico.length>200)R.historico=R.historico.slice(-200);
     saveR();renderRoleta();
 }
@@ -616,8 +540,6 @@ function renderRoleta(){
     var cuDz=calcCUSUM(h,'dz');var cuCl=calcCUSUM(h,'cl');
     var strkDz=calcStreak(R.assertDz);var strkCl=calcStreak(R.assertCol);
     var setores=analisarSetores(h);
-    var modosDz=detectarModo(dzZ,momDz,momDzC,janDz,cuDz);
-    var modosCl=detectarModo(clZ,momCl,momClC,janCl,cuCl);
 
     // BARRAS
     function renderBarras(ctn,nomes,pcts,counts,zArr,gapArr,bayArr,momArr,momCArr,janObj,modosArr){
@@ -638,173 +560,29 @@ function renderRoleta(){
             return '<div class="barra-container"><div class="barra-label"><span class="barra-nome">'+nome+'</span><span class="barra-pct">'+pct+'% ('+counts[i]+'x)</span></div><div class="barra-track"><div class="barra-fill '+classe+'" style="width:'+pct+'%"></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;font-size:.62em;opacity:.7;"><span style="color:'+zCor+';">Z:'+(z>=0?'+':'')+z.toFixed(2)+'</span><span style="color:'+mC2+';">M:'+mI+'</span><span style="color:rgba(255,255,255,.3);">G:'+gap+'</span><span style="color:rgba(212,175,125,.4);">B:'+bay.toFixed(0)+'%</span><span style="color:'+jC+';">U12:'+jT+'</span><span style="padding:1px 4px;border-radius:3px;background:'+modoCor+'20;color:'+modoCor+';font-weight:600;">'+modoTxt+'</span></div></div>';
         }).join('');
     }
-    renderBarras('analiseDuzias',dzN,dzPct,dz,dzZ,gaps.dz,bayDz,momDz,momDzC,janDz,modosDz);
-    renderBarras('analiseColunas',clN,clPct,cl,clZ,gaps.cl,bayCl,momCl,momClC,janCl,modosCl);
+    renderBarras('analiseDuzias',dzN,dzPct,dz,dzZ,gaps.dz,bayDz,momDz,momDzC,janDz,[]);
+    renderBarras('analiseColunas',clN,clPct,cl,clZ,gaps.cl,bayCl,momCl,momClC,janCl,[]);
+}
 
-    // ESTATISTICAS
-    var zeros=h.filter(function(n){return n===0;}).length;var verms=sz.filter(function(n){return VERMELHOS.includes(n);}).length;var pretos=T-verms;
-    var estEl=document.getElementById('estatisticasGerais');
-    if(estEl){
-        var clHtml=setores&&setores.ativo?'<div style="margin-top:8px;background:rgba(241,196,15,.08);border:1px solid rgba(241,196,15,.3);border-radius:6px;padding:8px;font-size:.72em;color:#f1c40f;text-align:center;">'+setores.msg+'</div>':'';
-        estEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:10px;"><div><div style="font-size:.65em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.1em;font-weight:600;">'+total+'</div></div><div><div style="font-size:.65em;color:#c0392b;">Verm.</div><div style="font-size:1.1em;font-weight:600;color:#c0392b;">'+verms+'</div></div><div><div style="font-size:.65em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.1em;font-weight:600;">'+pretos+'</div></div><div><div style="font-size:.65em;color:#27ae60;">Zero</div><div style="font-size:1.1em;font-weight:600;color:#27ae60;">'+zeros+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.7em;"><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Duzias</div><div style="color:#fff;font-weight:600;">'+chiDz.toFixed(2)+' <span style="color:'+(sDz.f>=2?'#2ecc71':sDz.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';">('+sDz.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Colunas</div><div style="color:#fff;font-weight:600;">'+chiCol.toFixed(2)+' <span style="color:'+(sCol.f>=2?'#2ecc71':sCol.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';">('+sCol.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">Volatilidade</div><div style="color:'+(vol.t==='MUITO ALTA'||vol.t==='ALTA'?'#e74c3c':vol.t==='MODERADA'?'#f1c40f':'#2ecc71')+';font-weight:600;">'+vol.t+'</div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">CUSUM</div><div style="color:'+(cuDz.alarme||cuCl.alarme?'#e74c3c':'#2ecc71')+';font-weight:600;">'+(cuDz.alarme||cuCl.alarme?'REGIME MUDOU':'NORMAL')+'</div></div></div>'+clHtml;
-    }
-
-    // 1-18 / 19-36
-    var metEl=document.getElementById('analiseMetades');
-    if(metEl&&T>3){
-        var baixo=sz.filter(function(n){return n>=1&&n<=18;}).length;var alto=sz.filter(function(n){return n>=19&&n<=36;}).length;
-        var bP=Math.round((baixo/T)*100);var aP=Math.round((alto/T)*100);
-        var bZ=zScore(baixo,T,P_HALF);var aZ=zScore(alto,T,P_HALF);
-        var bCl2=bZ>1?'quente':bZ<-1?'frio':'morno';var aCl2=aZ>1?'quente':aZ<-1?'frio':'morno';
-        var bZC=bZ>1?'#e74c3c':bZ<-1?'#2ecc71':'rgba(255,255,255,.5)';var aZC=aZ>1?'#e74c3c':aZ<-1?'#2ecc71':'rgba(255,255,255,.5)';
-        var sig='';if(Math.abs(bZ)>1.3&&total>=18){var fria=bZ<0?'1-18':'19-36';var cnf=Math.abs(bZ)>1.8?'ALTA':'MODERADA';var cr=Math.abs(bZ)>1.8?'#2ecc71':'#f1c40f';sig='<div style="margin-top:10px;padding:8px;background:'+cr+'15;border:1px solid '+cr+'40;border-radius:6px;text-align:center;font-size:.78em;color:'+cr+';font-weight:600;">Apostar '+fria+' -- '+cnf+'</div>';}
-        metEl.innerHTML='<div class="barra-container"><div class="barra-label"><span class="barra-nome">1-18</span><span class="barra-pct">'+bP+'% ('+baixo+'x)</span></div><div class="barra-track"><div class="barra-fill '+bCl2+'" style="width:'+bP+'%"></div></div><div style="font-size:.63em;margin-top:3px;color:'+bZC+';">Z:'+(bZ>=0?'+':'')+bZ.toFixed(2)+'</div></div><div class="barra-container"><div class="barra-label"><span class="barra-nome">19-36</span><span class="barra-pct">'+aP+'% ('+alto+'x)</span></div><div class="barra-track"><div class="barra-fill '+aCl2+'" style="width:'+aP+'%"></div></div><div style="font-size:.63em;margin-top:3px;color:'+aZC+';">Z:'+(aZ>=0?'+':'')+aZ.toFixed(2)+'</div></div>'+sig;
-    } else if(metEl){metEl.innerHTML='<span style="color:rgba(255,255,255,.3);font-size:.82em;">Dados insuficientes</span>';}
-
-    // ======================================================
-    // SUGESTAO V5 — DUAL MODE
-    // ======================================================
-    var recDuz=document.getElementById('recDuziasBody');var recCol=document.getElementById('recColunasBody');
-    var recDuzCard=document.getElementById('recDuzias');var recColCard=document.getElementById('recColunas');
-
-    function calcSug(zArr,mArr,mCArr,bArr,gArr,jObj,cSig,cuObj,aObj,sObj,nms,modosArr){
-        var maxIdx=zArr.indexOf(Math.max.apply(null,zArr));
-        var par=[0,1,2].filter(function(i){return i!==maxIdx;});
-        var aL=aObj||{ac:0,er:0,seq:[]};var tL=aL.ac+aL.er;var aP2=tL>0?aL.ac/tL*100:66.7;
-        var modoQuente=modosArr[maxIdx];
-
-        function mk(s,c,co,bd,re,sc){return{sinal:s,conf:c,cor:co,brd:bd,par:par,excl:maxIdx,reason:re,score:sc,assertPct:aP2,tLive:tL,streakObj:sObj,modo:modoQuente};}
-
-        // FASES
-        if(total<12) return mk('OBSERVANDO','','rgba(255,255,255,.3)','rgba(255,255,255,.1)','Fase 1 ('+total+'/12)',0);
-        if(total<18) return mk('ANALISANDO','','rgba(52,152,219,.5)','rgba(52,152,219,.25)','Fase 2 ('+total+'/18)',0);
-
-        // BLOQUEIOS
-        if(sObj.atual<=-3) return mk('PARAR','','#e74c3c','rgba(231,76,60,.6)',Math.abs(sObj.atual)+' perdas seguidas',0);
-        if(tL>=8&&aP2<45) return mk('PARAR','','#e74c3c','rgba(231,76,60,.5)','Assert. '+aP2.toFixed(0)+'% — engine nao funciona nessa mesa',0);
-        if(tL>=6&&aP2<50) return mk('PARAR','','#e74c3c','rgba(231,76,60,.4)','Assert. '+aP2.toFixed(0)+'% apos '+tL+' entradas',0);
-
-        // ===== DUAL MODE =====
-
-        // BIAS REAL — quente continua dominando
-        if(modoQuente==='real'){
-            return mk('BIAS DETECTADO','','#e74c3c','rgba(231,76,60,.4)','Bias em '+nms[maxIdx]+' (Z:'+zArr[maxIdx].toFixed(2)+') — NAO apostar contra',0);
-        }
-
-        // AQUECENDO — quente esta subindo, ainda nao confirmado
-        if(modoQuente==='aquecendo'){
-            return mk('AGUARDAR','','#f39c12','rgba(243,156,18,.3)',nms[maxIdx]+' acelerando. Espere confirmar ou desacelerar.',0);
-        }
-
-        // INDEFINIDO com Z alto — sinal misto, nao apostar
-        if(modoQuente==='indefinido'&&zArr[maxIdx]>1.5){
-            return mk('AGUARDAR','','rgba(255,255,255,.4)','rgba(255,255,255,.15)','Sinal misto em '+nms[maxIdx]+'. Sem confirmacao.',0);
-        }
-
-        // REGRESSAO — quente desacelerando, hora de apostar contra
-        if(modoQuente==='regressao'){
-            var sc=0;
-            sc+=Math.min(Math.max(0,(zArr[maxIdx]-0.8)*20),25);
-            sc+=(cSig.f)*12;
-            if(mArr[maxIdx]<-8)sc+=15;else if(mArr[maxIdx]<-3)sc+=10;else if(mArr[maxIdx]<0)sc+=5;
-            if(mCArr[maxIdx]<-10)sc+=10;else if(mCArr[maxIdx]<0)sc+=5;
-            if(bArr[maxIdx]>38)sc+=8;else if(bArr[maxIdx]>35)sc+=4;
-            sc+=Math.min(gArr[par[0]]+gArr[par[1]],16)*0.8;
-            if(jObj&&jObj.desvio[maxIdx]>8)sc+=6;
-            if(cuObj.alarme)sc-=15;
-            if(total>30)sc+=8;else if(total>20)sc+=4;
-            // Assertividade feedback — MAIS AGRESSIVO
-            if(tL>=5){
-                if(aP2>=75)sc+=15;
-                else if(aP2>=65)sc+=8;
-                else if(aP2>=55)sc+=0; // neutro
-                else if(aP2>=50)sc-=10; // penalidade leve
-                else sc-=25; // penalidade pesada
-            }
-            if(sObj.atual<=-2)sc-=12;if(sObj.atual>=3)sc+=5;
-            sc=Math.max(0,Math.round(sc));
-
-            var sinal,conf,cor,brd;
-            if(sc>=65){sinal='APOSTAR';conf='ALTA';cor='#2ecc71';brd='rgba(46,204,113,.7)';}
-            else if(sc>=45){sinal='APOSTAR';conf='MODERADA';cor='#f1c40f';brd='rgba(241,196,15,.5)';}
-            else if(sc>=25){sinal='ATENCAO';conf='BAIXA';cor='#f39c12';brd='rgba(243,156,18,.3)';}
-            else{sinal='AGUARDAR';conf='';cor='rgba(255,255,255,.4)';brd='rgba(255,255,255,.15)';}
-
-            return mk(sinal,conf,cor,brd,'',sc);
-        }
-
-        // NEUTRO — sem desvio claro
-        if(zArr[maxIdx]<0.8) return mk('AGUARDAR','','rgba(255,255,255,.4)','rgba(255,255,255,.15)','Distribuicao equilibrada',0);
-
-        // FALLBACK — desvio leve sem modo claro, ser conservador
-        var sc2=0;
-        sc2+=Math.min(Math.max(0,(zArr[maxIdx]-0.8)*12),15);
-        sc2+=(cSig.f)*6;
-        if(mArr[maxIdx]<-3)sc2+=5;
-        if(bArr[maxIdx]>36)sc2+=3;
-        if(total>30)sc2+=4;
-        if(tL>=5){if(aP2>=65)sc2+=6;else if(aP2<55)sc2-=12;}
-        if(sObj.atual<=-2)sc2-=10;
-        sc2=Math.max(0,Math.round(sc2));
-
-        var sinal2,conf2,cor2,brd2;
-        if(sc2>=50){sinal2='ATENCAO';conf2='BAIXA';cor2='#f39c12';brd2='rgba(243,156,18,.3)';}
-        else{sinal2='AGUARDAR';conf2='';cor2='rgba(255,255,255,.4)';brd2='rgba(255,255,255,.15)';}
-        return mk(sinal2,conf2,cor2,brd2,'',sc2);
-    }
-
-    var sugDz=calcSug(dzZ,momDz,momDzC,bayDz,gaps.dz,janDz,sDz,cuDz,R.assertDz,strkDz,dzN,modosDz);
-    var sugCl=calcSug(clZ,momCl,momClC,bayCl,gaps.cl,janCl,sCol,cuCl,R.assertCol,strkCl,clN,modosCl);
-
-    function renderSug(elB,elC,sug,nms,zArr2,momA){
-        elC.style.borderColor=sug.brd;
-        // Fase 1
-        if(sug.sinal==='OBSERVANDO'){var pc=Math.round((total/12)*100);elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:8px;">'+sug.sinal+'</div><div style="font-size:.75em;color:rgba(255,255,255,.4);margin-bottom:8px;">'+sug.reason+'</div><div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;"><div style="height:100%;width:'+pc+'%;background:rgba(255,255,255,.2);border-radius:2px;"></div></div>';return;}
-        // Fase 2
-        if(sug.sinal==='ANALISANDO'){var pc2=Math.round(((total-12)/6)*100);elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:6px;">'+sug.sinal+'</div><div style="display:flex;gap:8px;justify-content:center;opacity:.4;margin-bottom:4px;"><span class="rec-badge" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);color:rgba(52,152,219,.5);">'+nms[sug.par[0]]+'</span><span class="rec-badge" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);color:rgba(52,152,219,.5);">'+nms[sug.par[1]]+'</span></div><div style="font-size:.6em;color:rgba(255,255,255,.25);">Previa -- nao apostar</div><div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;margin-top:6px;"><div style="height:100%;width:'+pc2+'%;background:rgba(52,152,219,.4);border-radius:2px;"></div></div>';return;}
-
-        // Bias detectado
-        if(sug.sinal==='BIAS DETECTADO'){
-            elB.innerHTML='<div style="font-size:.72em;color:#e74c3c;font-weight:700;letter-spacing:1px;margin-bottom:6px;">BIAS DETECTADO</div><div style="font-size:.8em;color:rgba(255,255,255,.5);margin:6px 0;">'+sug.reason+'</div><div style="font-size:.68em;color:rgba(255,255,255,.3);">A quente continua dominando. Espere desacelerar.</div>';
-            return;
-        }
-
-        // Stop/Aguardar
-        var isStop=sug.sinal==='PARAR'||sug.sinal==='AGUARDAR';
-        var dsc=momA[sug.excl]<-3;
-        elB.innerHTML='<div style="font-size:.72em;color:'+sug.cor+';font-weight:700;letter-spacing:1px;margin-bottom:6px;">'+sug.sinal+(sug.conf?' -- '+sug.conf:'')+'</div>'+(isStop?'<div style="font-size:.72em;color:rgba(255,255,255,.4);margin:4px 0;">'+sug.reason+'</div>':'<div style="display:flex;gap:8px;justify-content:center;"><span class="rec-badge" style="background:'+sug.cor+'22;border:1px solid '+sug.cor+';color:'+sug.cor+';">'+nms[sug.par[0]]+'</span><span class="rec-badge" style="background:'+sug.cor+'22;border:1px solid '+sug.cor+';color:'+sug.cor+';">'+nms[sug.par[1]]+'</span></div><div style="font-size:.58em;color:rgba(255,255,255,.3);margin-top:6px;">Excl: '+nms[sug.excl]+' (Z:'+(zArr2[sug.excl]>=0?'+':'')+zArr2[sug.excl].toFixed(2)+') '+(sug.modo==='regressao'?'REG ':'')+(dsc?'v ':'')+' </div>')+'<div style="font-size:.54em;color:rgba(212,175,125,.3);margin-top:3px;">Score: '+sug.score+(sug.tLive>=5?' | Assert: '+sug.assertPct.toFixed(0)+'%':'')+(sug.streakObj.atual<=-2?' | Streak: '+sug.streakObj.atual:'')+'</div>';
-    }
-    renderSug(recDuz,recDuzCard,sugDz,dzN,dzZ,momDz);
-    renderSug(recCol,recColCard,sugCl,clN,clZ,momCl);
-
-    // INDICADORES
-    var indConf=document.getElementById('indConfianca');
-    if(total<12){indConf.textContent='FASE 1';indConf.style.color='rgba(255,255,255,.3)';indConf.style.fontSize='.85em';}
-    else if(total<18){indConf.textContent='FASE 2';indConf.style.color='rgba(52,152,219,.6)';indConf.style.fontSize='.85em';}
-    else{var avgZ2=(Math.max.apply(null,dzZ)+Math.max.apply(null,clZ))/2;var cP=Math.min(Math.max(Math.round(35+(avgZ2*12)+(sDz.f+sCol.f)*5+(total>30?8:0)),0),99);indConf.textContent=cP+'%';indConf.style.color=cP>65?'#2ecc71':cP>45?'#f1c40f':'rgba(255,255,255,.5)';indConf.style.fontSize='';}
-
-    // ASSERTIVIDADE
-    var aDz2=R.assertDz||{ac:0,er:0};var aCol2=R.assertCol||{ac:0,er:0};
-    var tDzA=aDz2.ac+aDz2.er;var tClA=aCol2.ac+aCol2.er;
-    var dzAP2=tDzA>0?Math.round((aDz2.ac/tDzA)*100):0;var clAP2=tClA>0?Math.round((aCol2.ac/tClA)*100):0;
-    var tAE2=tDzA+tClA;var avgA2=tAE2>0?Math.round(((aDz2.ac+aCol2.ac)/tAE2)*100):0;
-    var indA2=document.getElementById('indAssert');
-    indA2.textContent=tAE2>0?avgA2+'%':'--';
-    indA2.style.color=avgA2>65?'#2ecc71':avgA2>50?'#f1c40f':tAE2>0?'#e74c3c':'rgba(255,255,255,.5)';
-    var adEl2=document.getElementById('assertDetalhe');
-    if(adEl2&&tAE2>0){var dc2=dzAP2>65?'#2ecc71':dzAP2>50?'#f1c40f':'#e74c3c';var cc2=clAP2>65?'#2ecc71':clAP2>50?'#f1c40f':'#e74c3c';
-        adEl2.innerHTML='<div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:6px;padding:8px 10px;display:flex;justify-content:space-between;"><span style="font-size:.72em;color:rgba(255,255,255,.4);">Duzias'+(strkDz.atual<=-2?' !!!':'')+'</span><span style="font-size:.85em;font-weight:600;color:'+dc2+';">'+dzAP2+'% <span style="font-size:.68em;color:rgba(255,255,255,.3);">('+aDz2.ac+'/'+tDzA+')</span></span></div><div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:6px;padding:8px 10px;display:flex;justify-content:space-between;"><span style="font-size:.72em;color:rgba(255,255,255,.4);">Colunas'+(strkCl.atual<=-2?' !!!':'')+'</span><span style="font-size:.85em;font-weight:600;color:'+cc2+';">'+clAP2+'% <span style="font-size:.68em;color:rgba(255,255,255,.3);">('+aCol2.ac+'/'+tClA+')</span></span></div>';
-    } else if(adEl2){adEl2.innerHTML='';}
-
-    // MESA
-    var alerta2=document.getElementById('alertaMesa');var indM2=document.getElementById('indMesa');
-    if(total>=15){var chiT2=chiDz+chiCol;var zP2=total>0?(zeros/total*100):0;
-        if(chiT2>18||zP2>8||cuDz.alarme||cuCl.alarme){indM2.textContent='ALERTA';indM2.style.color='#e74c3c';alerta2.style.display='block';alerta2.textContent=cuDz.alarme||cuCl.alarme?'CUSUM: Regime mudou.':zP2>8?'Zero: '+zeros+'x ('+zP2.toFixed(1)+'%).':'X2: '+chiT2.toFixed(1);}
-        else if(chiT2>10||vol.t==='ALTA'){indM2.textContent='INSTAVEL';indM2.style.color='#f1c40f';alerta2.style.display='none';}
-        else{indM2.textContent='ESTAVEL';indM2.style.color='#2ecc71';alerta2.style.display='none';}
-    }else{indM2.textContent='--';indM2.style.color='rgba(255,255,255,.5)';alerta2.style.display='none';}
-
-    // RODA VISUAL + RESUMO + SESSAO
+// ACERTOS / ERROS MANUAL
+function marcarAcerto(){if(!R.entradas)R.entradas=[];R.entradas.push({tipo:'ac',ts:Date.now()});saveR();renderEntradas();}
+function marcarErro(){if(!R.entradas)R.entradas=[];R.entradas.push({tipo:'er',ts:Date.now()});saveR();renderEntradas();}
+function desfazerEntrada(){if(!R.entradas||!R.entradas.length)return;R.entradas.pop();saveR();renderEntradas();}
+function resetarEntradas(){if(!confirm('Zerar acertos e erros?'))return;R.entradas=[];saveR();renderEntradas();}
+function renderEntradas(){
+    if(!R.entradas)R.entradas=[];
+    var ac=R.entradas.filter(function(e){return e.tipo==='ac';}).length;
+    var er=R.entradas.filter(function(e){return e.tipo==='er';}).length;
+    var t=ac+er;var pct=t>0?Math.round(ac/t*100):0;
+    var acEl=document.getElementById('acertosVal');if(acEl)acEl.textContent=ac;
+    var erEl=document.getElementById('errosVal');if(erEl)erEl.textContent=er;
+    var pctEl=document.getElementById('assertPct');
+    var barEl=document.getElementById('assertBar');
+    if(pctEl){pctEl.textContent=t>0?pct+'%':'—';pctEl.style.color=t>0?(pct>=65?'#2ecc71':pct>=50?'#f1c40f':'#e74c3c'):'rgba(255,255,255,.5)';}
+    if(barEl){barEl.style.width=t>0?pct+'%':'0%';barEl.style.background=pct>=65?'#2ecc71':pct>=50?'#f1c40f':'#e74c3c';}
+    var detEl=document.getElementById('assertDetalhe2');if(detEl)detEl.textContent=t>0?ac+' acertos / '+er+' erros':'';
+    var seqEl=document.getElementById('assertSeq');
+    if(seqEl&&R.entradas.length>0){var seq=0;var last=R.entradas[R.entradas.length-1].tipo;for(var i=R.entradas.length-1;i>=0;i--){if(R.entradas[i].tipo===last)seq++;else break;}seqEl.textContent=last==='ac'?'+'+seq+' seguidos':'-'+seq+' seguidos';seqEl.style.color=last==='ac'?'rgba(46,204,113,.5)':'rgba(231,76,60,.5)';}else if(seqEl){seqEl.textContent='';}
 }
 
 // FUTEBOL — ENGINE
@@ -1287,7 +1065,7 @@ function copiarRelatorio(){
 // ==========================================
 function initAll(){
     loadAll();
-    buildMesa();renderRoleta();initFutebol();
+    buildMesa();renderRoleta();renderEntradas();initFutebol();
 }
 initAll();
 
