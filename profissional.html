@@ -229,15 +229,34 @@
                     <div id="estatisticasGerais"></div>
                 </div>
 
-                <!-- RELATORIO -->
+                <!-- CONTROLE DE GANHOS -->
                 <div class="analise-box">
-                    <div class="analise-titulo">Relatório da Sessão</div>
-                    <p style="font-size:.78em;color:rgba(255,255,255,.4);margin-bottom:10px;">Gere ao final da sessão. Copie e envie para calibração.</p>
-                    <button class="btn-resultado ganhou" onclick="gerarRelatorio()" style="width:100%;margin-bottom:10px;">Gerar Relatório</button>
-                    <div id="relatorioBox" style="display:none;">
-                        <textarea id="relatorioTexto" readonly style="width:100%;min-height:280px;background:#0a0a0a;border:1px solid rgba(212,175,125,.2);border-radius:8px;color:rgba(255,255,255,.7);font-family:'Courier New',monospace;font-size:.72em;padding:12px;resize:vertical;"></textarea>
-                        <button class="btn-mini" onclick="copiarRelatorio()" style="margin-top:8px;width:100%;border-color:rgba(212,175,125,.4);color:#d4af7d;">Copiar</button>
+                    <div class="analise-titulo">Controle de Ganhos</div>
+                    <!-- BANCA -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px;">
+                        <div>
+                            <div style="font-size:.65em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Banca Inicial</div>
+                            <input type="number" id="cgInicial" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:6px;color:#d4af7d;font-size:1em;font-weight:600;font-family:'Inter',sans-serif;">
+                        </div>
+                        <div>
+                            <div style="font-size:.65em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Banca Atual</div>
+                            <input type="number" id="cgAtual" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:6px;color:#fff;font-size:1em;font-weight:600;font-family:'Inter',sans-serif;">
+                        </div>
                     </div>
+                    <!-- RESULTADO -->
+                    <div id="cgResultado" style="text-align:center;padding:12px;background:rgba(255,255,255,.02);border-radius:8px;margin-bottom:15px;"></div>
+                    <!-- SAQUE -->
+                    <div style="display:flex;gap:8px;margin-bottom:12px;align-items:flex-end;">
+                        <div style="flex:1;">
+                            <div style="font-size:.65em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Saque</div>
+                            <input type="number" id="cgSaqueVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:8px;background:#0a0a0a;border:1px solid rgba(46,204,113,.15);border-radius:6px;color:#2ecc71;font-size:.9em;font-family:'Inter',sans-serif;">
+                        </div>
+                        <button onclick="registrarSaque()" style="padding:8px 16px;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:6px;color:#2ecc71;font-size:.82em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;height:38px;">Sacar</button>
+                    </div>
+                    <!-- SAQUES DO MES -->
+                    <div id="cgSaques"></div>
+                    <!-- RESUMO MENSAL -->
+                    <div id="cgResumo" style="margin-top:12px;"></div>
                 </div>
 
             </div>
@@ -373,7 +392,6 @@
 // ==========================================
 // Storage keys
 var ROL_KEY='roletaZara';
-var B={inicial:0,atual:0,apostaBase:5,sl:20,sw:30,resultados:[]};
 var R={historico:[],assertDz:{ac:0,er:0,seq:[]},assertCol:{ac:0,er:0,seq:[]}};
 
 function loadAll(){
@@ -555,13 +573,39 @@ function renderRoleta(){
             var jT=janObj?(janObj.desvio[i]>0?'+':'')+janObj.desvio[i].toFixed(0)+'%':'--';
             var jC=janObj?(janObj.desvio[i]>8?'#e74c3c':janObj.desvio[i]<-8?'#2ecc71':'rgba(255,255,255,.35)'):'rgba(255,255,255,.35)';
             // Modo badge
-            var modoCor=modo==='real'?'#e74c3c':modo==='regressao'?'#2ecc71':modo==='aquecendo'?'#f39c12':modo==='neutro'?'rgba(255,255,255,.3)':'#f1c40f';
-            var modoTxt=modo==='real'?'BIAS':modo==='regressao'?'REG':modo==='aquecendo'?'SOBE':modo==='neutro'?'--':'?';
-            return '<div class="barra-container"><div class="barra-label"><span class="barra-nome">'+nome+'</span><span class="barra-pct">'+pct+'% ('+counts[i]+'x)</span></div><div class="barra-track"><div class="barra-fill '+classe+'" style="width:'+pct+'%"></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;font-size:.62em;opacity:.7;"><span style="color:'+zCor+';">Z:'+(z>=0?'+':'')+z.toFixed(2)+'</span><span style="color:'+mC2+';">M:'+mI+'</span><span style="color:rgba(255,255,255,.3);">G:'+gap+'</span><span style="color:rgba(212,175,125,.4);">B:'+bay.toFixed(0)+'%</span><span style="color:'+jC+';">U12:'+jT+'</span><span style="padding:1px 4px;border-radius:3px;background:'+modoCor+'20;color:'+modoCor+';font-weight:600;">'+modoTxt+'</span></div></div>';
+            var modoCor='rgba(255,255,255,.3)';var modoTxt='';
+            return '<div class="barra-container"><div class="barra-label"><span class="barra-nome">'+nome+'</span><span class="barra-pct">'+pct+'% ('+counts[i]+'x)</span></div><div class="barra-track"><div class="barra-fill '+classe+'" style="width:'+pct+'%"></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;font-size:.62em;opacity:.7;"><span style="color:'+zCor+';">Z:'+(z>=0?'+':'')+z.toFixed(2)+'</span><span style="color:'+mC2+';">M:'+mI+'</span><span style="color:rgba(255,255,255,.3);">G:'+gap+'</span><span style="color:rgba(212,175,125,.4);">B:'+bay.toFixed(0)+'%</span><span style="color:'+jC+';">U12:'+jT+'</span></div></div>';
         }).join('');
     }
     renderBarras('analiseDuzias',dzN,dzPct,dz,dzZ,gaps.dz,bayDz,momDz,momDzC,janDz,[]);
     renderBarras('analiseColunas',clN,clPct,cl,clZ,gaps.cl,bayCl,momCl,momClC,janCl,[]);
+
+    // 1-18 / 19-36
+    var zeros=h.filter(function(n){return n===0;}).length;
+    var verms=h.filter(function(n){return VERMELHOS.includes(n);}).length;
+    var pretos=total-zeros-verms;
+    var baixo=sz.filter(function(n){return n>=1&&n<=18;}).length;
+    var alto=sz.filter(function(n){return n>=19&&n<=36;}).length;
+    var bP=T>0?Math.round(baixo/T*100):0;var aP=T>0?Math.round(alto/T*100):0;
+    var bZ=zScore(baixo,T,0.5);var aZ=zScore(alto,T,0.5);
+    var bZC=bZ>1?'#e74c3c':bZ<-1?'#2ecc71':'rgba(255,255,255,.4)';
+    var aZC=aZ>1?'#e74c3c':aZ<-1?'#2ecc71':'rgba(255,255,255,.4)';
+    var bCl2=bZ>0.5?'quente':bZ<-0.5?'frio':'morno';
+    var aCl2=aZ>0.5?'quente':aZ<-0.5?'frio':'morno';
+    var metEl=document.getElementById('analiseMetades');
+    if(metEl){
+        var sig='';
+        if(Math.abs(bZ)>1.3&&total>=18){var fria=bZ<0?'1-18':'19-36';var cnf=Math.abs(bZ)>1.8?'ALTA':'MODERADA';sig='<div style="margin-top:10px;padding:8px 12px;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.15);border-radius:6px;font-size:.75em;color:rgba(46,204,113,.7);">'+fria+' fria (Z:'+(bZ<0?bZ.toFixed(2):aZ.toFixed(2))+') — Confianca '+cnf+'</div>';}
+        metEl.innerHTML='<div class="barra-container"><div class="barra-label"><span class="barra-nome">1-18</span><span class="barra-pct">'+bP+'% ('+baixo+'x)</span></div><div class="barra-track"><div class="barra-fill '+bCl2+'" style="width:'+bP+'%"></div></div><div style="font-size:.63em;margin-top:3px;color:'+bZC+';">Z:'+(bZ>=0?'+':'')+bZ.toFixed(2)+'</div></div><div class="barra-container"><div class="barra-label"><span class="barra-nome">19-36</span><span class="barra-pct">'+aP+'% ('+alto+'x)</span></div><div class="barra-track"><div class="barra-fill '+aCl2+'" style="width:'+aP+'%"></div></div><div style="font-size:.63em;margin-top:3px;color:'+aZC+';">Z:'+(aZ>=0?'+':'')+aZ.toFixed(2)+'</div></div>'+sig;
+    }
+
+    // ESTATISTICAS
+    var estEl=document.getElementById('estatisticasGerais');
+    if(estEl){
+        var clHtml='';
+        if(setores&&setores.ativo){clHtml='<div style="margin-top:8px;background:rgba(241,196,15,.08);border:1px solid rgba(241,196,15,.15);border-radius:6px;padding:8px 10px;font-size:.72em;color:rgba(241,196,15,.7);">Cluster: setor '+setores.setor+' ('+setores.count+'/'+setores.janela+' ultimos)</div>';}
+        estEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:10px;"><div><div style="font-size:.65em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.1em;font-weight:600;">'+total+'</div></div><div><div style="font-size:.65em;color:#c0392b;">Verm.</div><div style="font-size:1.1em;font-weight:600;color:#c0392b;">'+verms+'</div></div><div><div style="font-size:.65em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.1em;font-weight:600;">'+pretos+'</div></div><div><div style="font-size:.65em;color:#27ae60;">Zero</div><div style="font-size:1.1em;font-weight:600;color:#27ae60;">'+zeros+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.7em;"><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Duzias</div><div style="color:#fff;font-weight:600;">'+chiDz.toFixed(2)+' <span style="color:'+(sDz.f>=2?'#2ecc71':sDz.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';"> ('+sDz.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Colunas</div><div style="color:#fff;font-weight:600;">'+chiCol.toFixed(2)+' <span style="color:'+(sCol.f>=2?'#2ecc71':sCol.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';"> ('+sCol.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">Volatilidade</div><div style="color:'+(vol.t==='MUITO ALTA'||vol.t==='ALTA'?'#e74c3c':vol.t==='MODERADA'?'#f1c40f':'#2ecc71')+';font-weight:600;">'+vol.t+'</div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">CUSUM</div><div style="color:'+(cuDz.alarme||cuCl.alarme?'#e74c3c':'#2ecc71')+';font-weight:600;">'+(cuDz.alarme||cuCl.alarme?'REGIME MUDOU':'NORMAL')+'</div></div></div>'+clHtml;
+    }
 }
 
 // ACERTOS / ERROS MANUAL
@@ -892,180 +936,112 @@ function initFutebol(){loadFut();spMesView=mesKey(new Date());renderTudo();}
 
 
 // ==========================================
+// CONTROLE DE GANHOS
 // ==========================================
-// RELATORIO DE SESSAO
-// ==========================================
-function gerarRelatorio(){
-    var h=R.historico;var total=h.length;
-    var sz=h.filter(function(n){return n!==0;});var T=sz.length;
-    var aDz=R.assertDz||{ac:0,er:0,seq:[]};var aCol=R.assertCol||{ac:0,er:0,seq:[]};
-    var tDz=aDz.ac+aDz.er;var tCol=aCol.ac+aCol.er;
-    var dzPct=tDz>0?Math.round(aDz.ac/tDz*100):0;
-    var colPct=tCol>0?Math.round(aCol.ac/tCol*100):0;
-    var avgPct=(tDz+tCol)>0?Math.round((aDz.ac+aCol.ac)/(tDz+tCol)*100):0;
+var CG_KEY='controleGanhos';
+var CG={inicial:0,atual:0,saques:[]};
+function loadCG(){try{var s=localStorage.getItem(CG_KEY);if(s)CG=Object.assign({inicial:0,atual:0,saques:[]},JSON.parse(s));}catch(e){}}
+function saveCG(){try{localStorage.setItem(CG_KEY,JSON.stringify(CG));}catch(e){}}
 
-    // Contagens
-    var dz=[0,0,0];sz.forEach(function(n){dz[duzia(n)-1]++;});
-    var cl=[0,0,0];sz.forEach(function(n){cl[coluna(n)-1]++;});
-    var dzPcts=dz.map(function(d){return T>0?Math.round(d/T*100):0;});
-    var clPcts=cl.map(function(c){return T>0?Math.round(c/T*100):0;});
-    var dzZ=dz.map(function(d){return zScore(d,T,P_DZ);});
-    var clZ=cl.map(function(c){return zScore(c,T,P_DZ);});
-    var zeros=h.filter(function(n){return n===0;}).length;
-
-    // Streaks
-    var stDz=calcStreak(R.assertDz);var stCol=calcStreak(R.assertCol);
-    function maxStreak(seq,tipo){if(!seq||!seq.length)return 0;var mx=0;var cur=0;seq.forEach(function(s){if(s===tipo){cur++;if(cur>mx)mx=cur;}else cur=0;});return mx;}
-    var dzMaxWin=maxStreak(aDz.seq,'w');var dzMaxLoss=maxStreak(aDz.seq,'l');
-    var colMaxWin=maxStreak(aCol.seq,'w');var colMaxLoss=maxStreak(aCol.seq,'l');
-
-    // Banca
-    var res=B.resultados||[];var wins=res.filter(function(r){return r.tipo==='win';}).length;
-    var losses=res.filter(function(r){return r.tipo==='loss';}).length;
-    var bancaLP=(B.atual||0)-(B.inicial||0);
-
-    // Sequencia de numeros
-    var ultimos=h.slice(-50).join(', ');
-
-    var dt=new Date();
-    var dataStr=dt.toLocaleDateString('pt-BR')+' '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-
-    var r='';
-    r+='========================================\n';
-    r+='  RELATORIO DE SESSAO - ZARA ROLETA\n';
-    r+='  '+dataStr+'\n';
-    r+='========================================\n\n';
-
-    r+='--- AMOSTRA ---\n';
-    r+='Spins totais: '+total+'\n';
-    r+='Spins validos (sem zero): '+T+'\n';
-    r+='Zeros: '+zeros+' ('+(total>0?Math.round(zeros/total*100):0)+'%)\n\n';
-
-    r+='--- DISTRIBUICAO DUZIAS ---\n';
-    r+='1a (1-12):  '+dzPcts[0]+'% ('+dz[0]+'x) Z='+dzZ[0].toFixed(2)+'\n';
-    r+='2a (13-24): '+dzPcts[1]+'% ('+dz[1]+'x) Z='+dzZ[1].toFixed(2)+'\n';
-    r+='3a (25-36): '+dzPcts[2]+'% ('+dz[2]+'x) Z='+dzZ[2].toFixed(2)+'\n\n';
-
-    r+='--- DISTRIBUICAO COLUNAS ---\n';
-    r+='Col 1: '+clPcts[0]+'% ('+cl[0]+'x) Z='+clZ[0].toFixed(2)+'\n';
-    r+='Col 2: '+clPcts[1]+'% ('+cl[1]+'x) Z='+clZ[1].toFixed(2)+'\n';
-    r+='Col 3: '+clPcts[2]+'% ('+cl[2]+'x) Z='+clZ[2].toFixed(2)+'\n\n';
-
-    r+='--- ASSERTIVIDADE ---\n';
-    r+='Media geral: '+avgPct+'% ('+(aDz.ac+aCol.ac)+'/'+(tDz+tCol)+')\n';
-    r+='Duzias:  '+dzPct+'% ('+aDz.ac+'/'+tDz+')\n';
-    r+='Colunas: '+colPct+'% ('+aCol.ac+'/'+tCol+')\n\n';
-
-    r+='--- STREAKS ---\n';
-    r+='Duzias  - max win: '+dzMaxWin+' | max loss: '+dzMaxLoss+' | atual: '+stDz.atual+'\n';
-    r+='Colunas - max win: '+colMaxWin+' | max loss: '+colMaxLoss+' | atual: '+stCol.atual+'\n\n';
-
-    r+='--- BANCA ---\n';
-    r+='Inicial: R$ '+(B.inicial||0).toFixed(2)+'\n';
-    r+='Final:   R$ '+(B.atual||0).toFixed(2)+'\n';
-    r+='Lucro/Perda: '+(bancaLP>=0?'+':'')+bancaLP.toFixed(2)+'\n';
-    r+='Jogadas: '+res.length+' ('+wins+'W / '+losses+'L)\n';
-    r+='Win Rate banca: '+(res.length>0?Math.round(wins/res.length*100):0)+'%\n';
-    r+='Unit: R$ '+(B.apostaBase||5).toFixed(2)+'\n\n';
-
-    r+='--- SEQUENCIA ASSERTIVIDADE ---\n';
-    r+='Duzias:  '+(aDz.seq||[]).join('')+'\n';
-    r+='Colunas: '+(aCol.seq||[]).join('')+'\n\n';
-
-    r+='--- ULTIMOS '+Math.min(50,total)+' NUMEROS ---\n';
-    r+=ultimos+'\n\n';
-
-    r+='--- DIAGNOSTICO ---\n';
-
-    // 1. Assertividade por categoria
-    if(tDz>0){
-        if(dzPct>=70) r+='[OK] Duzias: '+dzPct+'% - engine lendo bem.\n';
-        else if(dzPct>=55) r+='[..] Duzias: '+dzPct+'% - funcional, sem destaque.\n';
-        else r+='[!!] Duzias: '+dzPct+'% - modelo falhando. NAO apostar duzias.\n';
-    }
-    if(tCol>0){
-        if(colPct>=70) r+='[OK] Colunas: '+colPct+'% - engine lendo bem.\n';
-        else if(colPct>=55) r+='[..] Colunas: '+colPct+'% - funcional, sem destaque.\n';
-        else r+='[!!] Colunas: '+colPct+'% - modelo falhando. NAO apostar colunas.\n';
-    }
-
-    // 2. Banca vs Assertividade
-    var totalAssert=tDz+tCol;
-    var totalBanca=res.length;
-    if(totalBanca>totalAssert+4){
-        var apostasCegas=totalBanca-totalAssert;
-        r+='\n[!!] APOSTAS CEGAS: '+apostasCegas+' jogadas na banca sem sugestao ativa.\n';
-        r+='     Voce apostou durante Fase 1/2 (antes de 18 spins).\n';
-        r+='     Isso prejudicou o resultado.\n';
-    }
-
-    // 3. Unit vs Banca
-    var unitPct=B.inicial>0?((B.apostaBase||5)/B.inicial*100):0;
-    if(unitPct>3){
-        r+='\n[!!] UNIT ALTA: R$'+(B.apostaBase||5).toFixed(2)+' = '+unitPct.toFixed(1)+'% da banca.\n';
-        r+='     Recomendado: maximo 2% (R$'+(B.inicial*0.02).toFixed(2)+').\n';
-    }
-
-    // 4. Win rate banca vs teorico
-    var wrBanca=totalBanca>0?Math.round(wins/totalBanca*100):0;
-    if(totalBanca>=10){
-        if(wrBanca<60) r+='\n[!!] WIN RATE '+wrBanca+'%: abaixo do teorico (65%). Apostas em momentos ruins.\n';
-        else if(wrBanca>=70) r+='[OK] WIN RATE '+wrBanca+'%: acima do teorico. Engine adicionando valor.\n';
-    }
-
-    // 5. Streaks perigosos
-    if(dzMaxLoss>=3) r+='\n[!!] STREAK DUZIAS: '+dzMaxLoss+' perdas seguidas. Se aconteceu em sequencia, dealer pode ter mudado.\n';
-    if(colMaxLoss>=3) r+='\n[!!] STREAK COLUNAS: '+colMaxLoss+' perdas seguidas.\n';
-
-    // 6. Zeros anormais
-    if(zeros>total*0.05&&total>20) r+='\n[!!] ZEROS: '+zeros+'x em '+total+' spins ('+Math.round(zeros/total*100)+'%). Esperado ~2.7%. Mesa suspeita.\n';
-
-    // 7. Distribuicao extrema
-    var maxDzZ=Math.max(Math.abs(dzZ[0]),Math.abs(dzZ[1]),Math.abs(dzZ[2]));
-    var maxClZ=Math.max(Math.abs(clZ[0]),Math.abs(clZ[1]),Math.abs(clZ[2]));
-    if(maxDzZ>2) r+='[!!] DESVIO EXTREMO duzias: Z='+maxDzZ.toFixed(2)+'. Distribuicao muito irregular.\n';
-    if(maxClZ>2) r+='[!!] DESVIO EXTREMO colunas: Z='+maxClZ.toFixed(2)+'. Distribuicao muito irregular.\n';
-
-    // 8. Amostra insuficiente
-    if(total<18) r+='\n[!!] AMOSTRA: '+total+' spins e insuficiente. Minimo 18 para operar.\n';
-    else if(total<25) r+='[..] AMOSTRA: '+total+' spins. Aceitavel, mas +30 seria ideal.\n';
-
-    // 9. Resultado financeiro
-    r+='\n--- VEREDICTO ---\n';
-    if(bancaLP>0&&avgPct>=65) r+='Sessao POSITIVA. Engine e disciplina funcionaram.\n';
-    else if(bancaLP>0&&avgPct<65) r+='Lucro com assertividade baixa. Sorte > metodo nessa sessao. Cuidado.\n';
-    else if(bancaLP<0&&avgPct>=65) r+='Prejuizo com boa assertividade. Provavel causa: apostas fora do sinal ou unit alta.\n';
-    else if(bancaLP<0&&avgPct<65&&avgPct>=50) r+='Prejuizo com assertividade mediana. Mesa dificil ou thresholds precisam subir.\n';
-    else if(bancaLP<0&&avgPct<50) r+='Prejuizo com engine falhando. Mesa desfavoravel. Trocar mesa ou parar.\n';
-    else if(bancaLP===0) r+='Sessao neutra.\n';
-    else r+='Dados insuficientes para veredicto.\n';
-
-    if(dzMaxLoss>=3||colMaxLoss>=3) r+='\n[!!] ALERTA: Streak de '+Math.max(dzMaxLoss,colMaxLoss)+' perdas consecutivas detectado.\n';
-    if(zeros>total*0.05&&total>20) r+='[!!] ALERTA: Zeros acima de 5% ('+zeros+'/'+total+').\n';
-
-    r+='\n========================================\n';
-    r+='  Envie este relatorio para o Vlad\n';
-    r+='  para calibracao de thresholds.\n';
-    r+='========================================\n';
-
-    document.getElementById('relatorioTexto').value=r;
-    document.getElementById('relatorioBox').style.display='block';
-    toast('Relatorio gerado');
+function salvarCG(){
+    CG.inicial=parseFloat(document.getElementById('cgInicial').value)||0;
+    CG.atual=parseFloat(document.getElementById('cgAtual').value)||0;
+    saveCG();renderCG();
 }
 
-function copiarRelatorio(){
-    var el=document.getElementById('relatorioTexto');
-    el.select();el.setSelectionRange(0,99999);
-    document.execCommand('copy');
-    toast('Relatorio copiado!');
+function registrarSaque(){
+    var val=parseFloat(document.getElementById('cgSaqueVal').value);
+    if(!val||val<=0)return;
+    CG.saques.push({valor:val,data:new Date().toISOString()});
+    CG.atual=Math.max(0,CG.atual-val);
+    document.getElementById('cgAtual').value=CG.atual.toFixed(2);
+    document.getElementById('cgSaqueVal').value='';
+    saveCG();renderCG();toast('Saque de R$ '+val.toFixed(2)+' registrado');
 }
+
+function deletarSaque(idx){
+    CG.saques.splice(idx,1);saveCG();renderCG();
+}
+
+function renderCG(){
+    loadCG();
+    var iniEl=document.getElementById('cgInicial');
+    var atuEl=document.getElementById('cgAtual');
+    if(iniEl&&CG.inicial)iniEl.value=CG.inicial.toFixed(2);
+    if(atuEl&&CG.atual)atuEl.value=CG.atual.toFixed(2);
+
+    // Resultado
+    var resEl=document.getElementById('cgResultado');
+    if(resEl){
+        var totalSaques=CG.saques.reduce(function(s,x){return s+x.valor;},0);
+        var lp=(CG.atual-CG.inicial)+totalSaques;
+        var lpCor=lp>=0?'#2ecc71':'#e74c3c';
+        var lpSinal=lp>=0?'+':'';
+        var roi=CG.inicial>0?((lp/CG.inicial)*100).toFixed(1):0;
+        resEl.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">'+
+            '<div><div style="font-size:.6em;color:rgba(255,255,255,.3);text-transform:uppercase;">Lucro/Prejuizo</div><div style="font-size:1.4em;font-weight:700;color:'+lpCor+';font-family:\'Cinzel\',serif;margin-top:4px;">'+lpSinal+'R$ '+Math.abs(lp).toFixed(2)+'</div></div>'+
+            '<div><div style="font-size:.6em;color:rgba(255,255,255,.3);text-transform:uppercase;">Sacado</div><div style="font-size:1.4em;font-weight:700;color:#2ecc71;font-family:\'Cinzel\',serif;margin-top:4px;">R$ '+totalSaques.toFixed(2)+'</div></div>'+
+            '<div><div style="font-size:.6em;color:rgba(255,255,255,.3);text-transform:uppercase;">ROI</div><div style="font-size:1.4em;font-weight:700;color:'+lpCor+';font-family:\'Cinzel\',serif;margin-top:4px;">'+lpSinal+roi+'%</div></div>'+
+        '</div>';
+    }
+
+    // Saques do mes
+    var sqEl=document.getElementById('cgSaques');
+    if(sqEl){
+        var agora=new Date();var mesKey=agora.getFullYear()+'-'+String(agora.getMonth()+1).padStart(2,'0');
+        var saquesMes=CG.saques.filter(function(s){return s.data.startsWith(mesKey);});
+        var totalMes=saquesMes.reduce(function(s,x){return s+x.valor;},0);
+
+        if(!saquesMes.length){
+            sqEl.innerHTML='<div style="font-size:.75em;color:rgba(255,255,255,.15);text-align:center;padding:8px;">Nenhum saque este mes.</div>';
+        }else{
+            sqEl.innerHTML='<div style="font-size:.65em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Saques do Mes — R$ '+totalMes.toFixed(2)+'</div>'+
+                saquesMes.map(function(s,i){
+                    var dt=new Date(s.data);
+                    var ds=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+                    var globalIdx=CG.saques.indexOf(s);
+                    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);">'+
+                        '<span style="font-size:.78em;color:rgba(255,255,255,.4);">'+ds+'</span>'+
+                        '<span style="font-size:.85em;font-weight:600;color:#2ecc71;">R$ '+s.valor.toFixed(2)+'</span>'+
+                        '<button onclick="deletarSaque('+globalIdx+')" style="background:transparent;border:none;color:rgba(255,255,255,.12);cursor:pointer;font-size:.65em;">x</button>'+
+                    '</div>';
+                }).join('');
+        }
+    }
+
+    // Resumo mensal
+    var rmEl=document.getElementById('cgResumo');
+    if(rmEl){
+        var meses={};
+        CG.saques.forEach(function(s){
+            var mk=s.data.substring(0,7);
+            if(!meses[mk])meses[mk]=0;
+            meses[mk]+=s.valor;
+        });
+        var keys=Object.keys(meses).sort().reverse();
+        if(!keys.length){rmEl.innerHTML='';}
+        else{
+            var ms=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            rmEl.innerHTML='<div style="font-size:.65em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Historico de Saques</div>'+
+                keys.slice(0,6).map(function(k){
+                    var parts=k.split('-');
+                    var label=ms[parseInt(parts[1])]+' '+parts[0];
+                    return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:.78em;">'+
+                        '<span style="color:rgba(255,255,255,.4);">'+label+'</span>'+
+                        '<span style="color:#2ecc71;font-weight:600;">R$ '+meses[k].toFixed(2)+'</span>'+
+                    '</div>';
+                }).join('');
+        }
+    }
+}
+
 
 // ==========================================
 // INIT
 // ==========================================
 function initAll(){
-    loadAll();
-    buildMesa();renderRoleta();renderEntradas();initFutebol();
+    loadAll();loadCG();
+    buildMesa();renderRoleta();renderEntradas();renderCG();initFutebol();
 }
 initAll();
 
