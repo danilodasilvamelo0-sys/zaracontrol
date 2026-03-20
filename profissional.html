@@ -977,11 +977,9 @@ function renderCG(){
         var lp=(CG.atual-CG.inicial)+totalSaques;
         var lpCor=lp>=0?'#2ecc71':'#e74c3c';
         var lpSinal=lp>=0?'+':'';
-        var roi=CG.inicial>0?((lp/CG.inicial)*100).toFixed(1):0;
-        resEl.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">'+
+        resEl.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+
             '<div><div style="font-size:.6em;color:rgba(255,255,255,.3);text-transform:uppercase;">Lucro/Prejuizo</div><div style="font-size:1.4em;font-weight:700;color:'+lpCor+';font-family:\'Cinzel\',serif;margin-top:4px;">'+lpSinal+'R$ '+Math.abs(lp).toFixed(2)+'</div></div>'+
             '<div><div style="font-size:.6em;color:rgba(255,255,255,.3);text-transform:uppercase;">Sacado</div><div style="font-size:1.4em;font-weight:700;color:#2ecc71;font-family:\'Cinzel\',serif;margin-top:4px;">R$ '+totalSaques.toFixed(2)+'</div></div>'+
-            '<div><div style="font-size:.6em;color:rgba(255,255,255,.3);text-transform:uppercase;">ROI</div><div style="font-size:1.4em;font-weight:700;color:'+lpCor+';font-family:\'Cinzel\',serif;margin-top:4px;">'+lpSinal+roi+'%</div></div>'+
         '</div>';
     }
 
@@ -1022,7 +1020,7 @@ function renderCG(){
         if(!keys.length){rmEl.innerHTML='';}
         else{
             var ms=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-            rmEl.innerHTML='<div style="font-size:.65em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Historico de Saques</div>'+
+            rmEl.innerHTML='<div style="font-size:.65em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Historico do Mes</div>'+
                 keys.slice(0,6).map(function(k){
                     var parts=k.split('-');
                     var label=ms[parseInt(parts[1])]+' '+parts[0];
