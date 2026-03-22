@@ -181,45 +181,7 @@
     <div class="main-tab-content active" id="tab-roleta">
         <div class="tab-padding">
 
-            <!-- ACERTOS / ERROS -->
-            <div class="grid-2" style="margin-bottom:20px;">
-                <div style="background:#0a0a0a;border:1px solid rgba(46,204,113,.15);border-radius:10px;padding:14px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <span style="font-size:.7em;color:rgba(46,204,113,.6);text-transform:uppercase;letter-spacing:1px;">Acertos</span>
-                        <div style="display:flex;gap:6px;">
-                            <button onclick="marcarAcerto()" style="padding:8px 18px;background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.4);border-radius:6px;color:#2ecc71;font-size:.85em;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">+</button>
-                        </div>
-                    </div>
-                    <div id="acertosVal" style="font-size:1.8em;font-weight:700;color:#2ecc71;margin-top:6px;font-family:'Cinzel',serif;">0</div>
-                </div>
-                <div style="background:#0a0a0a;border:1px solid rgba(231,76,60,.15);border-radius:10px;padding:14px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <span style="font-size:.7em;color:rgba(231,76,60,.6);text-transform:uppercase;letter-spacing:1px;">Erros</span>
-                        <div style="display:flex;gap:6px;">
-                            <button onclick="marcarErro()" style="padding:8px 18px;background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.4);border-radius:6px;color:#e74c3c;font-size:.85em;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">+</button>
-                        </div>
-                    </div>
-                    <div id="errosVal" style="font-size:1.8em;font-weight:700;color:#e74c3c;margin-top:6px;font-family:'Cinzel',serif;">0</div>
-                </div>
-            </div>
-            <!-- ASSERTIVIDADE BARRA -->
-            <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.1);border-radius:10px;padding:14px;margin-bottom:20px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                    <span style="font-size:.72em;color:rgba(212,175,125,.5);letter-spacing:1px;">ASSERTIVIDADE</span>
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <span id="assertPct" style="font-size:1em;font-weight:700;color:rgba(255,255,255,.5);">—</span>
-                        <button onclick="desfazerEntrada()" style="padding:4px 10px;background:transparent;border:1px solid rgba(255,255,255,.08);border-radius:5px;color:rgba(255,255,255,.25);font-size:.65em;cursor:pointer;font-family:'Inter',sans-serif;">Desfazer</button>
-                        <button onclick="resetarEntradas()" style="padding:4px 10px;background:transparent;border:1px solid rgba(231,76,60,.15);border-radius:5px;color:rgba(231,76,60,.3);font-size:.65em;cursor:pointer;font-family:'Inter',sans-serif;">Zerar</button>
-                    </div>
-                </div>
-                <div style="height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;">
-                    <div id="assertBar" style="height:100%;width:0%;border-radius:3px;transition:width .3s;"></div>
-                </div>
-                <div style="display:flex;justify-content:space-between;margin-top:6px;">
-                    <span id="assertDetalhe2" style="font-size:.65em;color:rgba(255,255,255,.25);"></span>
-                    <span id="assertSeq" style="font-size:.65em;color:rgba(255,255,255,.25);"></span>
-                </div>
-            </div>
+
 
             <!-- ULTIMOS NUMEROS -->
             <div class="analise-box" style="margin-bottom:15px;">
@@ -290,8 +252,12 @@
                         </div>
                         <button onclick="registrarSaque()" style="padding:10px 16px;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:6px;color:#2ecc71;font-size:.82em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Sacar</button>
                     </div>
-                    <div style="display:flex;align-items:flex-end;">
-                        <button onclick="quebrarBanca()" style="width:100%;padding:10px 16px;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.25);border-radius:6px;color:#e74c3c;font-size:.82em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Quebrei a Banca</button>
+                    <div style="display:flex;gap:6px;align-items:flex-end;">
+                        <div style="flex:1;">
+                            <div style="font-size:.6em;color:rgba(231,76,60,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Perda</div>
+                            <input type="number" id="cgPerdaVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(231,76,60,.12);border-radius:6px;color:#e74c3c;font-size:.9em;font-family:'Inter',sans-serif;">
+                        </div>
+                        <button onclick="registrarPerda()" style="padding:10px 16px;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.25);border-radius:6px;color:#e74c3c;font-size:.82em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Perdi</button>
                     </div>
                 </div>
                 <!-- TOTAL SACADO -->
@@ -715,27 +681,6 @@ function renderRoleta(){
     }
 }
 
-// ACERTOS / ERROS MANUAL
-function marcarAcerto(){if(!R.entradas)R.entradas=[];R.entradas.push({tipo:'ac',ts:Date.now()});saveR();renderEntradas();}
-function marcarErro(){if(!R.entradas)R.entradas=[];R.entradas.push({tipo:'er',ts:Date.now()});saveR();renderEntradas();}
-function desfazerEntrada(){if(!R.entradas||!R.entradas.length)return;R.entradas.pop();saveR();renderEntradas();}
-function resetarEntradas(){if(!confirm('Zerar acertos e erros?'))return;R.entradas=[];saveR();renderEntradas();}
-function renderEntradas(){
-    if(!R.entradas)R.entradas=[];
-    var ac=R.entradas.filter(function(e){return e.tipo==='ac';}).length;
-    var er=R.entradas.filter(function(e){return e.tipo==='er';}).length;
-    var t=ac+er;var pct=t>0?Math.round(ac/t*100):0;
-    var acEl=document.getElementById('acertosVal');if(acEl)acEl.textContent=ac;
-    var erEl=document.getElementById('errosVal');if(erEl)erEl.textContent=er;
-    var pctEl=document.getElementById('assertPct');
-    var barEl=document.getElementById('assertBar');
-    if(pctEl){pctEl.textContent=t>0?pct+'%':'—';pctEl.style.color=t>0?(pct>=65?'#2ecc71':pct>=50?'#f1c40f':'#e74c3c'):'rgba(255,255,255,.5)';}
-    if(barEl){barEl.style.width=t>0?pct+'%':'0%';barEl.style.background=pct>=65?'#2ecc71':pct>=50?'#f1c40f':'#e74c3c';}
-    var detEl=document.getElementById('assertDetalhe2');if(detEl)detEl.textContent=t>0?ac+' acertos / '+er+' erros':'';
-    var seqEl=document.getElementById('assertSeq');
-    if(seqEl&&R.entradas.length>0){var seq=0;var last=R.entradas[R.entradas.length-1].tipo;for(var i=R.entradas.length-1;i>=0;i--){if(R.entradas[i].tipo===last)seq++;else break;}seqEl.textContent=last==='ac'?'+'+seq+' seguidos':'-'+seq+' seguidos';seqEl.style.color=last==='ac'?'rgba(46,204,113,.5)':'rgba(231,76,60,.5)';}else if(seqEl){seqEl.textContent='';}
-}
-
 // FUTEBOL — ENGINE
 // ==========================================
 // ==========================================
@@ -1068,16 +1013,12 @@ function registrarSaque(){
     _saveCG();renderCG();toast('Saque R$ '+val.toFixed(2));
 }
 
-function quebrarBanca(){
-    if(CG.atual<=0&&CG.dep<=0){toast('Nenhuma banca ativa.');return;}
-    if(!confirm('Confirma que quebrou a banca?\n\nBanca atual (R$ '+CG.atual.toFixed(2)+') sera zerada e a perda registrada no historico.'))return;
-    var perdido=CG.atual;
-    CG.movs.push({tipo:'quebra',valor:CG.dep,perdido:perdido,data:new Date().toISOString()});
-    CG.atual=0;
-    CG.dep=0;
-    document.getElementById('cgAtual').value='0.00';
-    document.getElementById('cgDep').value='0.00';
-    _saveCG();renderCG();toast('Banca zerada. Perda registrada.');
+function registrarPerda(){
+    var val=parseFloat(document.getElementById('cgPerdaVal').value);
+    if(!val||val<=0)return;
+    CG.movs.push({tipo:'perda',valor:val,data:new Date().toISOString()});
+    document.getElementById('cgPerdaVal').value='';
+    _saveCG();renderCG();toast('Perda de R$ '+val.toFixed(2)+' registrada');
 }
 
 function deletarSaque(idx){CG.saques.splice(idx,1);_saveCG();renderCG();}
@@ -1120,7 +1061,7 @@ function renderCG(){
     if(sqEl){
         var agora=new Date();var mesKey=agora.getFullYear()+'-'+String(agora.getMonth()+1).padStart(2,'0');
         var saquesMes=CG.saques.filter(function(s){return s.data.startsWith(mesKey);});
-        var quebrasMes=CG.movs.filter(function(m){return m.tipo==='quebra'&&m.data.startsWith(mesKey);});
+        var quebrasMes=CG.movs.filter(function(m){return m.tipo==='perda'||m.tipo==='quebra'&&m.data.startsWith(mesKey);});
         var totalSaqMes=saquesMes.reduce(function(s,x){return s+x.valor;},0);
         var totalQuebraMes=quebrasMes.reduce(function(s,x){return s+x.valor;},0);
 
@@ -1138,7 +1079,7 @@ function renderCG(){
             }).join('');
         }
         if(quebrasMes.length){
-            html+='<div style="font-size:.65em;color:rgba(231,76,60,.5);text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px;">Quebras do Mes — R$ '+totalQuebraMes.toFixed(2)+' perdido</div>';
+            html+='<div style="font-size:.65em;color:rgba(231,76,60,.5);text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px;">Perdas do Mes — R$ '+totalQuebraMes.toFixed(2)+' perdido</div>';
             html+=quebrasMes.map(function(m){
                 var dt=new Date(m.data);var ds=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
                 var gi=CG.movs.indexOf(m);
@@ -1158,7 +1099,7 @@ function renderCG(){
     if(rmEl){
         var meses={};
         CG.saques.forEach(function(s){var mk=s.data.substring(0,7);if(!meses[mk])meses[mk]=0;meses[mk]+=s.valor;});
-        CG.movs.filter(function(m){return m.tipo==='quebra';}).forEach(function(m){var mk=m.data.substring(0,7);if(!meses[mk])meses[mk]=0;meses[mk]-=m.valor;});
+        CG.movs.filter(function(m){return m.tipo==='perda'||m.tipo==='quebra';}).forEach(function(m){var mk=m.data.substring(0,7);if(!meses[mk])meses[mk]=0;meses[mk]-=m.valor;});
         var keys=Object.keys(meses).sort().reverse();
         if(!keys.length){rmEl.innerHTML='';}
         else{
@@ -1182,7 +1123,7 @@ function renderCG(){
 async function initAll(){
     await carregarSupabase();
     loadAll();loadCG();loadFut();
-    buildMesa();renderRoleta();renderEntradas();renderCG();initFutebol();
+    buildMesa();renderRoleta();renderCG();initFutebol();
 }
 initAll();
 
