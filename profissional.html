@@ -621,7 +621,7 @@ function addNum(n){
     saveR();renderRoleta();
 }
 function desfazerUltimo(){if(!R.historico.length)return;R.historico.pop();saveR();renderRoleta();}
-function limparHistorico(){var op=prompt('1 = Limpar TUDO\n2 = Limpar apenas assertividade (manter numeros)\nCancelar = nao limpar');if(op==='1'){R.historico=[];R.assertDz={ac:0,er:0,seq:[]};R.assertCol={ac:0,er:0,seq:[]};saveR();renderRoleta();toast('Tudo limpo');}else if(op==='2'){R.assertDz={ac:0,er:0,seq:[]};R.assertCol={ac:0,er:0,seq:[]};saveR();renderRoleta();toast('Assertividade zerada, numeros mantidos');}}
+function limparHistorico(){R.historico=[];R.assertDz={ac:0,er:0,seq:[]};R.assertCol={ac:0,er:0,seq:[]};saveR();renderRoleta();toast('Tudo limpo');}
 
 // ==========================================
 // RENDER PRINCIPAL
