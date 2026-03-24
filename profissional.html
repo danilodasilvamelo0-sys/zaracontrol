@@ -57,7 +57,33 @@
 
     /* TABS PRINCIPAIS */
     .main-tabs{display:flex;background:#1a1a1a;border-bottom:1px solid rgba(212,175,125,.15)}.main-tab{flex:1;padding:14px;text-align:center;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:.85em;cursor:pointer;transition:all .3s;border-bottom:2px solid transparent;font-family:'Inter',sans-serif}.main-tab:hover{color:rgba(255,255,255,.7)}.main-tab.active{color:#d4af7d;border-bottom-color:#d4af7d;background:rgba(212,175,125,.05)}.main-tab-content{display:none}.main-tab-content.active{display:block}
-    /* SUB-TABS */
+
+    /* BUTTONS */
+    .zara-btn{padding:12px 20px;border-radius:8px;font-family:'Inter',sans-serif;font-size:.85em;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid;letter-spacing:.5px}
+    .zara-btn:active{transform:scale(0.97)}
+    .zara-btn.gold{background:linear-gradient(135deg,rgba(212,175,125,.15),rgba(212,175,125,.08));border-color:rgba(212,175,125,.35);color:#d4af7d}
+    .zara-btn.gold:hover{background:linear-gradient(135deg,rgba(212,175,125,.25),rgba(212,175,125,.12))}
+    .zara-btn.green{background:rgba(46,204,113,.1);border-color:rgba(46,204,113,.3);color:#2ecc71}
+    .zara-btn.green:hover{background:rgba(46,204,113,.18)}
+    .zara-btn.red{background:rgba(231,76,60,.08);border-color:rgba(231,76,60,.25);color:#e74c3c}
+    .zara-btn.red:hover{background:rgba(231,76,60,.15)}
+    .zara-btn.ghost{background:transparent;border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.4)}
+    .zara-btn.ghost:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)}
+    .zara-btn.full{width:100%}
+    .zara-btn.sm{padding:6px 12px;font-size:.75em;border-radius:6px}
+
+    /* TABS ESPORTES */
+    .zara-tab{padding:10px 20px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.35);font-size:.8em;font-weight:500;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;letter-spacing:.5px}
+    .zara-tab:hover{border-color:rgba(212,175,125,.2);color:rgba(255,255,255,.5)}
+    .zara-tab.active{background:rgba(212,175,125,.1);border-color:rgba(212,175,125,.35);color:#d4af7d}
+
+    /* BTN MINI (legacy) */
+    .btn-mini{padding:6px 12px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.35);font-size:.72em;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+    .btn-mini:hover{border-color:rgba(212,175,125,.3);color:rgba(212,175,125,.6)}
+    .btn-mini.active{border-color:rgba(212,175,125,.4);color:#d4af7d;background:rgba(212,175,125,.08)}
+    .btn-mini.delete{border-color:rgba(231,76,60,.2);color:rgba(231,76,60,.4)}
+    .btn-mini.delete:hover{background:rgba(231,76,60,.08)}
+
     
 
     /* ==================== ROLETA ==================== */
@@ -189,8 +215,8 @@
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div class="analise-titulo" style="margin:0;">Últimos Números</div>
                     <div style="display:flex;gap:4px;">
-                        <button class="btn-mini" onclick="desfazerUltimo()">Desfazer</button>
-                        <button class="btn-mini delete" onclick="limparHistorico()">Reset</button>
+                        <button class="zara-btn ghost sm" onclick="desfazerUltimo()">Desfazer</button>
+                        <button class="zara-btn red sm" onclick="limparHistorico()">Reset</button>
                     </div>
                 </div>
                 <div class="ultimos-numeros" id="ultimosNums" style="margin-top:8px;"></div>
@@ -251,14 +277,14 @@
                             <div style="font-size:.6em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Sacar</div>
                             <input type="number" id="cgSaqueVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(46,204,113,.12);border-radius:6px;color:#2ecc71;font-size:.9em;font-family:'Inter',sans-serif;">
                         </div>
-                        <button onclick="registrarSaque()" style="padding:10px 16px;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:6px;color:#2ecc71;font-size:.82em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Sacar</button>
+                        <button class="zara-btn green sm" onclick="registrarSaque()">Sacar</button>
                     </div>
                     <div style="display:flex;gap:6px;align-items:flex-end;">
                         <div style="flex:1;">
                             <div style="font-size:.6em;color:rgba(231,76,60,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Perda</div>
                             <input type="number" id="cgPerdaVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(231,76,60,.12);border-radius:6px;color:#e74c3c;font-size:.9em;font-family:'Inter',sans-serif;">
                         </div>
-                        <button onclick="registrarPerda()" style="padding:10px 16px;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.25);border-radius:6px;color:#e74c3c;font-size:.82em;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Perdi</button>
+                        <button class="zara-btn red sm" onclick="registrarPerda()">Perdi</button>
                     </div>
                 </div>
                 <!-- TOTAL SACADO -->
@@ -276,8 +302,8 @@
     <div class="main-tab-content" id="tab-esportes">
         <div class="tab-padding">
             <div style="display:flex;gap:5px;margin-bottom:15px;flex-wrap:wrap;">
-                <button class="btn-mini active" onclick="switchFut(this,'fut-bilhete')" style="border-color:#d4af7d;color:#d4af7d;">Bilhete</button>
-                <button class="btn-mini" onclick="switchFut(this,'fut-financeiro')">P&amp;L</button>
+                <button class="zara-tab active" onclick="switchFut(this,'fut-bilhete')">Bilhete</button>
+                <button class="zara-tab" onclick="switchFut(this,'fut-financeiro')">Controle</button>
             </div>
 
             <!-- ====== BILHETE ====== -->
@@ -285,14 +311,12 @@
                 <!-- REGISTRAR -->
                 <div class="analise-box">
                     <div class="analise-titulo">Novo Bilhete</div>
-                    <input type="text" id="betJogo" placeholder="Ex: Flamengo vs Palmeiras" class="fut-input" style="margin-bottom:8px;">
-                    <div class="grid-bet" style="margin-bottom:8px;">
-                        <input type="text" id="betMercado" placeholder="Mercado (Over 2.5, Casa, etc)" class="fut-input">
+                    <input type="text" id="betJogo" placeholder="Time / Jogo" class="fut-input" style="margin-bottom:8px;">
+                    <div class="grid-2" style="margin-bottom:10px;">
                         <input type="number" id="betOdd" step="0.01" placeholder="Odd" class="fut-input">
                         <input type="number" id="betStake" step="0.01" placeholder="Stake R$" class="fut-input">
                     </div>
-                    <input type="text" id="betNota" placeholder="Obs (opcional)" class="fut-input" style="margin-bottom:10px;">
-                    <button onclick="registrarBet()" style="width:100%;padding:14px;background:rgba(212,175,125,.1);border:2px solid rgba(212,175,125,.4);border-radius:10px;color:#d4af7d;font-size:.95em;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;">REGISTRAR</button>
+                    <button class="zara-btn gold full" onclick="registrarBet()">REGISTRAR</button>
                 </div>
                 <!-- PENDENTES -->
                 <div class="analise-box">
@@ -326,14 +350,14 @@
                         <div style="font-size:.7em;color:rgba(255,255,255,.35);margin-bottom:6px;">Depositar</div>
                         <div style="display:flex;gap:6px;">
                             <input type="number" id="spDeposito" step="0.01" placeholder="R$" class="fut-input-sm" style="flex:1;">
-                            <button class="btn-mini" onclick="spMovimentar('deposito')" style="color:#3498db;border-color:rgba(52,152,219,.4);">+</button>
+                            <button class="zara-btn gold sm" onclick="spMovimentar('deposito')">+</button>
                         </div>
                     </div>
                     <div class="analise-box" style="padding:12px;">
                         <div style="font-size:.7em;color:rgba(255,255,255,.35);margin-bottom:6px;">Sacar</div>
                         <div style="display:flex;gap:6px;">
                             <input type="number" id="spSaque" step="0.01" placeholder="R$" class="fut-input-sm" style="flex:1;">
-                            <button class="btn-mini" onclick="spMovimentar('saque')" style="color:#9b59b6;border-color:rgba(155,89,182,.4);">-</button>
+                            <button class="zara-btn ghost sm" onclick="spMovimentar('saque')">-</button>
                         </div>
                     </div>
                 </div>
@@ -715,9 +739,9 @@ function saveFut(){localStorage.setItem(FUT_KEY,JSON.stringify(F));triggerSync()
 
 function switchFut(btn,id){
     document.querySelectorAll('.fut-section').forEach(function(s){s.classList.remove('active');});
-    document.querySelectorAll('#tab-esportes .btn-mini').forEach(function(b){b.classList.remove('active');b.style.borderColor='';b.style.color='';});
+    document.querySelectorAll('#tab-esportes .zara-tab').forEach(function(b){b.classList.remove('active');});
     var el=document.getElementById(id);if(el)el.classList.add('active');
-    btn.classList.add('active');btn.style.borderColor='#d4af7d';btn.style.color='#d4af7d';
+    btn.classList.add('active');
 }
 
 function fmtR(v){return 'R$ '+(v||0).toFixed(2).replace('.',',');}
@@ -735,10 +759,10 @@ function inicioSemana(){
 // ==========================================
 function registrarBet(){
     var jogo=document.getElementById('betJogo').value.trim();
-    var mercado=document.getElementById('betMercado').value.trim();
+    var mercado='';
     var odd=parseFloat(document.getElementById('betOdd').value)||0;
     var stake=parseFloat(document.getElementById('betStake').value)||0;
-    var nota=document.getElementById('betNota').value.trim();
+    var nota='';
     if(!jogo)return alert('Informe o jogo.');
     if(odd<=1)return alert('Odd invalida.');
     if(stake<=0)return alert('Informe o stake.');
@@ -763,10 +787,8 @@ function registrarBet(){
 
     saveFut();
     document.getElementById('betJogo').value='';
-    document.getElementById('betMercado').value='';
     document.getElementById('betOdd').value='';
     document.getElementById('betStake').value='';
-    document.getElementById('betNota').value='';
     renderTudo();
     toast('Bilhete registrado — R$ '+stake.toFixed(2)+' da banca');
 }
