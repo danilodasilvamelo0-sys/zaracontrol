@@ -361,36 +361,57 @@
                         </div>
                     </div>
                 </div>
-                <!-- KPIs SEMANA -->
-                <div class="analise-box">
-                    <div class="analise-titulo">Semana Atual</div>
-                    <div class="grid-sp-kpi">
-                        <div style="text-align:center;"><div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">Lucro</div><div id="spSemLucro" style="font-size:1em;font-weight:700;margin-top:4px;">R$ 0</div></div>
-                        <div style="text-align:center;"><div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">Apostas</div><div id="spSemTotal" style="font-size:1em;font-weight:700;color:#fff;margin-top:4px;">0</div></div>
-                        <div style="text-align:center;"><div style="font-size:.55em;color:#2ecc71;text-transform:uppercase;">Greens</div><div id="spSemG" style="font-size:1em;font-weight:700;color:#2ecc71;margin-top:4px;">0</div></div>
-                        <div style="text-align:center;"><div style="font-size:.55em;color:#e74c3c;text-transform:uppercase;">Reds</div><div id="spSemR" style="font-size:1em;font-weight:700;color:#e74c3c;margin-top:4px;">0</div></div>
-                    </div>
-                </div>
                 <!-- KPIs MES -->
                 <div class="analise-box">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
                         <div class="analise-titulo" style="margin:0;">Mensal</div>
-                        <div style="display:flex;gap:6px;align-items:center;"><button class="btn-mini" onclick="mudarMesSP(-1)">&lt;</button><span id="spMesLabel" style="font-size:.85em;color:#d4af7d;min-width:90px;text-align:center;"></span><button class="btn-mini" onclick="mudarMesSP(1)">&gt;</button></div>
+                        <div style="display:flex;gap:6px;align-items:center;"><button class="zara-btn ghost sm" onclick="mudarMesSP(-1)">&lt;</button><span id="spMesLabel" style="font-size:.85em;color:#d4af7d;min-width:90px;text-align:center;"></span><button class="zara-btn ghost sm" onclick="mudarMesSP(1)">&gt;</button></div>
                     </div>
-                    <div class="grid-sp-2x2" style="margin-bottom:12px;">
-                        <div style="background:#0a0a0a;border:1px solid rgba(46,204,113,.12);border-radius:10px;padding:15px;text-align:center;"><div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;">Lucro/Prejuizo</div><div id="spMesLucro" style="font-size:1.6em;font-weight:700;margin-top:6px;">R$ 0</div></div>
-                        <div style="background:#0a0a0a;border:1px solid rgba(212,175,125,.12);border-radius:10px;padding:15px;text-align:center;"><div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;">ROI</div><div id="spMesROI" style="font-size:1.6em;font-weight:700;color:#d4af7d;margin-top:6px;">0%</div></div>
+                    <!-- LUCRO DESTAQUE -->
+                    <div style="text-align:center;padding:15px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:10px;margin-bottom:12px;">
+                        <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px;">Lucro / Prejuizo</div>
+                        <div id="spMesLucro" style="font-size:1.8em;font-weight:700;margin-top:6px;">R$ 0</div>
                     </div>
-                    <div class="grid-sp-kpi" style="margin-bottom:12px;">
-                        <div style="text-align:center;"><div style="font-size:.55em;color:rgba(255,255,255,.3);">Win Rate</div><div id="spMesWR" style="font-size:.95em;font-weight:600;margin-top:4px;">0%</div></div>
-                        <div style="text-align:center;"><div style="font-size:.55em;color:rgba(255,255,255,.3);">Apostas</div><div id="spMesTotal" style="font-size:.95em;font-weight:600;color:#fff;margin-top:4px;">0</div></div>
-                        <div style="text-align:center;"><div style="font-size:.55em;color:rgba(255,255,255,.3);">Depositos</div><div id="spMesDep" style="font-size:.95em;font-weight:600;color:#3498db;margin-top:4px;">R$ 0</div></div>
-                        <div style="text-align:center;"><div style="font-size:.55em;color:rgba(255,255,255,.3);">Saques</div><div id="spMesSaq" style="font-size:.95em;font-weight:600;color:#9b59b6;margin-top:4px;">R$ 0</div></div>
+                    <!-- GREENS | REDS | WIN RATE -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+                        <div style="background:rgba(46,204,113,.05);border:1px solid rgba(46,204,113,.1);border-radius:8px;padding:10px;text-align:center;">
+                            <div style="font-size:.55em;color:#2ecc71;text-transform:uppercase;">Greens</div>
+                            <div id="spMesG" style="font-size:1.2em;font-weight:700;color:#2ecc71;margin-top:4px;">0</div>
+                        </div>
+                        <div style="background:rgba(231,76,60,.05);border:1px solid rgba(231,76,60,.1);border-radius:8px;padding:10px;text-align:center;">
+                            <div style="font-size:.55em;color:#e74c3c;text-transform:uppercase;">Reds</div>
+                            <div id="spMesR" style="font-size:1.2em;font-weight:700;color:#e74c3c;margin-top:4px;">0</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px;text-align:center;">
+                            <div style="font-size:.55em;color:rgba(255,255,255,.35);text-transform:uppercase;">Win Rate</div>
+                            <div id="spMesWR" style="font-size:1.2em;font-weight:700;margin-top:4px;">0%</div>
+                        </div>
                     </div>
-                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-                        <div style="text-align:center;"><div style="font-size:.55em;color:#2ecc71;">Greens</div><div id="spMesG" style="font-size:.95em;font-weight:600;color:#2ecc71;margin-top:4px;">0</div></div>
-                        <div style="text-align:center;"><div style="font-size:.55em;color:#e74c3c;">Reds</div><div id="spMesR" style="font-size:.95em;font-weight:600;color:#e74c3c;margin-top:4px;">0</div></div>
-                        <div style="text-align:center;"><div style="font-size:.55em;color:rgba(255,255,255,.3);">Odd Media</div><div id="spMesOdd" style="font-size:.95em;font-weight:600;color:#d4af7d;margin-top:4px;">—</div></div>
+                    <!-- APOSTAS | ODD MEDIA | ROI -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+                        <div style="text-align:center;padding:8px;">
+                            <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">Apostas</div>
+                            <div id="spMesTotal" style="font-size:1em;font-weight:600;color:#fff;margin-top:4px;">0</div>
+                        </div>
+                        <div style="text-align:center;padding:8px;">
+                            <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">Odd Media</div>
+                            <div id="spMesOdd" style="font-size:1em;font-weight:600;color:#d4af7d;margin-top:4px;">—</div>
+                        </div>
+                        <div style="text-align:center;padding:8px;">
+                            <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">ROI</div>
+                            <div id="spMesROI" style="font-size:1em;font-weight:600;margin-top:4px;">0%</div>
+                        </div>
+                    </div>
+                    <!-- DEPOSITOS | SAQUES -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                        <div style="background:rgba(52,152,219,.05);border:1px solid rgba(52,152,219,.1);border-radius:8px;padding:10px;text-align:center;">
+                            <div style="font-size:.55em;color:#3498db;text-transform:uppercase;">Depositos</div>
+                            <div id="spMesDep" style="font-size:1em;font-weight:600;color:#3498db;margin-top:4px;">R$ 0</div>
+                        </div>
+                        <div style="background:rgba(155,89,182,.05);border:1px solid rgba(155,89,182,.1);border-radius:8px;padding:10px;text-align:center;">
+                            <div style="font-size:.55em;color:#9b59b6;text-transform:uppercase;">Saques</div>
+                            <div id="spMesSaq" style="font-size:1em;font-weight:600;color:#9b59b6;margin-top:4px;">R$ 0</div>
+                        </div>
                     </div>
                 </div>
                 <!-- MOVIMENTACOES -->
@@ -749,11 +770,6 @@ function mesKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,
 function diaKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 
 // Inicio da semana (segunda)
-function inicioSemana(){
-    var d=new Date();var dia=d.getDay();var diff=d.getDate()-dia+(dia===0?-6:1);
-    return new Date(d.getFullYear(),d.getMonth(),diff,0,0,0).toISOString();
-}
-
 // ==========================================
 // REGISTRAR BILHETE
 // ==========================================
@@ -926,17 +942,6 @@ function renderFinanceiro(){
     var lpEl=document.getElementById('spLP');
     if(lpEl){lpEl.textContent=(lp>=0?'+':'')+fmtR(lp);lpEl.style.color=lp>=0?'#2ecc71':'#e74c3c';}
 
-    // SEMANA
-    var iniSem=inicioSemana();
-    var semBets=F.bets.filter(function(b){return b.status!=='pendente'&&b.data>=iniSem;});
-    var semG=semBets.filter(function(b){return b.status==='green';});
-    var semR=semBets.filter(function(b){return b.status==='red';});
-    var semLucro=semG.reduce(function(s,b){return s+b.stake*(b.odd-1);},0)-semR.reduce(function(s,b){return s+b.stake;},0);
-    var slEl=document.getElementById('spSemLucro');if(slEl){slEl.textContent=(semLucro>=0?'+':'')+fmtR(semLucro);slEl.style.color=semLucro>=0?'#2ecc71':'#e74c3c';}
-    var stEl=document.getElementById('spSemTotal');if(stEl)stEl.textContent=semBets.length;
-    var sgEl=document.getElementById('spSemG');if(sgEl)sgEl.textContent=semG.length;
-    var srEl=document.getElementById('spSemR');if(srEl)srEl.textContent=semR.length;
-
     // MES
     if(!spMesView)spMesView=mesKey(new Date());
     var ms=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -1012,14 +1017,43 @@ function renderHistorico(){
         var lucroTxt=b.status==='green'?'+'+fmtR(b.stake*(b.odd-1)):b.status==='red'?'-'+fmtR(b.stake):'Void';
         var dt=new Date(b.data);
         var ds=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-        return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);">'+
+        return '<div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03);">'+
             '<span style="padding:3px 6px;border-radius:4px;font-size:.62em;font-weight:700;background:'+cr+'12;color:'+cr+';border:1px solid '+cr+'30;min-width:38px;text-align:center;">'+lab+'</span>'+
-            '<div style="flex:1;"><div style="font-size:.82em;color:#fff;">'+b.jogo+'</div><div style="font-size:.68em;color:rgba(255,255,255,.3);">'+b.mercado+' @'+b.odd.toFixed(2)+' | '+fmtR(b.stake)+(b.nota?' — '+b.nota:'')+'</div></div>'+
-            '<div style="text-align:right;min-width:65px;"><div style="font-size:.82em;font-weight:700;color:'+cr+';">'+lucroTxt+'</div><div style="font-size:.58em;color:rgba(255,255,255,.2);">'+ds+'</div></div></div>';
+            '<div style="flex:1;"><div style="font-size:.82em;color:#fff;">'+b.jogo+'</div><div style="font-size:.68em;color:rgba(255,255,255,.3);">@'+b.odd.toFixed(2)+' | '+fmtR(b.stake)+'</div></div>'+
+            '<div style="text-align:right;min-width:55px;"><div style="font-size:.82em;font-weight:700;color:'+cr+';">'+lucroTxt+'</div><div style="font-size:.58em;color:rgba(255,255,255,.2);">'+ds+'</div></div>'+
+            '<div style="display:flex;gap:4px;margin-left:4px;">'+
+                '<button onclick="editarBet(\''+b.id+'\')" style="padding:4px 6px;background:transparent;border:1px solid rgba(255,255,255,.06);border-radius:4px;color:rgba(255,255,255,.2);font-size:.6em;cursor:pointer;">&#9998;</button>'+
+                '<button onclick="deletarBetHist(\''+b.id+'\')" style="padding:4px 6px;background:transparent;border:1px solid rgba(231,76,60,.1);border-radius:4px;color:rgba(231,76,60,.3);font-size:.6em;cursor:pointer;">x</button>'+
+            '</div>'+
+        '</div>';
     }).join('');
 }
 
 function initFutebol(){loadFut();spMesView=mesKey(new Date());renderTudo();}
+
+function editarBet(id){
+    var b=F.bets.find(function(x){return x.id===id;});if(!b)return;
+    var novoJogo=prompt('Time / Jogo:',b.jogo);if(novoJogo===null)return;
+    var novaOdd=prompt('Odd:',b.odd);if(novaOdd===null)return;
+    var novoStake=prompt('Stake:',b.stake);if(novoStake===null)return;
+    var novoStatus=prompt('Status (green/red/void):',b.status);if(novoStatus===null)return;
+    if(novoJogo.trim())b.jogo=novoJogo.trim();
+    b.odd=parseFloat(novaOdd)||b.odd;
+    b.stake=parseFloat(novoStake)||b.stake;
+    if(['green','red','void','pendente'].indexOf(novoStatus)>=0)b.status=novoStatus;
+    saveFut();renderTudo();toast('Aposta editada');
+}
+
+function deletarBetHist(id){
+    var b=F.bets.find(function(x){return x.id===id;});
+    if(!b)return;
+    // Devolver stake se estava resolvida
+    if(b.status==='green')F.banca-=b.stake*(b.odd-1);
+    else if(b.status==='red')F.banca+=b.stake;
+    else if(b.status==='void'){}
+    F.bets=F.bets.filter(function(x){return x.id!==id;});
+    saveFut();renderTudo();toast('Aposta removida');
+}
 
 
 
