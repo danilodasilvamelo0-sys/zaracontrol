@@ -91,11 +91,11 @@
 
     /* Mesa de números */
     .mesa-numeros{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
-    .mesa-table{border-collapse:separate;border-spacing:2px;width:100%;table-layout:fixed}
+    .mesa-table{border-collapse:separate;border-spacing:3px;width:100%;table-layout:fixed}
     .mesa-table td{font-size:1.1em;font-weight:700;height:52px;text-align:center;cursor:pointer;transition:all .15s;font-family:'Open Sans',sans-serif;border-radius:4px;letter-spacing:1px}
     .mesa-table td:active{transform:scale(0.92);filter:brightness(1.3)}
     .mesa-table td.v{background:linear-gradient(145deg,rgba(180,30,30,.65),rgba(140,20,20,.7))}
-    .mesa-table td.p{background:linear-gradient(145deg,rgba(35,35,35,.85),rgba(20,20,20,.9));border:1px solid rgba(255,255,255,.06)}
+    .mesa-table td.p{background:linear-gradient(145deg,rgba(35,35,35,.85),rgba(20,20,20,.9))}
     .mesa-table td.z{background:linear-gradient(145deg,rgba(0,110,0,.65),rgba(0,80,0,.7))}
     .mesa-table td.dz-label{background:transparent;color:rgba(212,175,125,.3);font-size:.65em;cursor:default;letter-spacing:2px}
 
@@ -725,7 +725,7 @@ function renderRoleta(){
             var jT=janSx?(janSx.desvio[i]>0?'+':'')+janSx.desvio[i].toFixed(0)+'%':'--';
             var jC=janSx?(janSx.desvio[i]>8?'#e74c3c':janSx.desvio[i]<-8?'#2ecc71':'rgba(255,255,255,.35)'):'rgba(255,255,255,.35)';
             var gapAlert='';
-            if(gap>=8&&total>=15){gapAlert='<div style="margin-top:6px;padding:6px 14px;background:rgba(107,142,35,.08);border:1px solid rgba(107,142,35,.25);border-radius:4px;font-size:.78em;color:rgba(107,142,35,.9);font-weight:600;letter-spacing:.5px;">'+gap+' rodadas sem sair</div>';}
+            if(gap>=8&&total>=15){gapAlert='<div style="margin-top:6px;padding:6px 14px;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:4px;font-size:.78em;color:#2ecc71;font-weight:600;letter-spacing:.5px;">'+gap+' rodadas sem sair</div>';}
             return '<div class="barra-container">'+
                 '<div class="barra-label">'+
                     '<span class="barra-nome">'+nome+'</span>'+
@@ -744,7 +744,7 @@ function renderRoleta(){
 
     // SINALIZACAO NA MESA
     var mesaTds=document.querySelectorAll('.mesa-table td');
-    mesaTds.forEach(function(td){td.style.boxShadow='';td.style.border='';td.style.outline='';td.style.opacity='';});
+    mesaTds.forEach(function(td){td.style.boxShadow='';td.style.outline='';td.style.outlineOffset='';td.style.zIndex='';td.style.position='';});
     if(T>=10){
         var sxRank=sx.map(function(c,i){return{i:i,c:c};});
         sxRank.sort(function(a,b){return b.c-a.c;});
@@ -763,18 +763,22 @@ function renderRoleta(){
             var txt=td.textContent.trim();
             var num=parseInt(txt);
             if(isNaN(num)||num<1||num>36||txt!==String(num))return;
-            // FORA: azul escuro — intensifica quanto mais caem
+            // FORA: azul — intensifica
             if(foraSet[num]){
                 var op=0.5+fi*0.5;
-                td.style.border='3px solid rgba(30,60,120,'+op+')';
-                td.style.boxShadow='0 0 10px rgba(30,60,120,'+(op*0.6)+'), inset 0 0 12px rgba(20,40,80,'+(op*0.4)+')';
+                td.style.position='relative';td.style.zIndex='1';
+                td.style.outline='2px solid rgba(52,152,219,'+op+')';
+                td.style.outlineOffset='-2px';
+                td.style.boxShadow='inset 0 0 12px rgba(52,152,219,'+(op*0.3)+')';
                 return;
             }
-            // QUENTE: verde oliva
+            // QUENTE: verde
             var sxi=sextina(num);
             if(sxi>=0&&hotSx.indexOf(sxi)>=0){
-                td.style.border='3px solid rgba(107,142,35,.7)';
-                td.style.boxShadow='0 0 8px rgba(107,142,35,.35), inset 0 0 10px rgba(107,142,35,.15)';
+                td.style.position='relative';td.style.zIndex='1';
+                td.style.outline='2px solid rgba(46,204,113,.7)';
+                td.style.outlineOffset='-2px';
+                td.style.boxShadow='inset 0 0 10px rgba(46,204,113,.15)';
             }
         });
     }
