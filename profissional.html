@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -19,158 +18,155 @@
         @media(max-width:768px){body{padding:10px 10px 80px 10px}.sidebar{display:none}.mobile-nav{display:block}.fut-stat-grid{grid-template-columns:1fr}}
         .main-container{max-width:1200px;margin:0 auto}
 
-```
-    /* GRIDS RESPONSIVOS */
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .grid-bet{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
-    .grid-sp-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .grid-sp-2x2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+        /* GRIDS RESPONSIVOS */
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+        .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+        .grid-bet{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
+        .grid-sp-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+        .grid-sp-2x2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 
-    @media(max-width:600px){
-        .freq-grid{grid-template-columns:1fr}
-        .grid-3{grid-template-columns:1fr}
-        .grid-3>div{margin-bottom:0}
-        .grid-bet{grid-template-columns:1fr}
-        .grid-4{grid-template-columns:repeat(2,1fr)}
-        .grid-sp-kpi{grid-template-columns:repeat(2,1fr)}
-        .grid-sp-2x2{grid-template-columns:1fr}
-        .mesa-roleta{overflow-x:auto;-webkit-overflow-scrolling:touch}
-        .mesa-table{min-width:500px}
-        .analise-box{padding:12px}
-        .analise-titulo{font-size:.78em}
-    }
-    .tab-padding{padding:20px}
-    @media(max-width:480px){
-        .header h1{font-size:1.3em}
-        .main-tab{font-size:.72em;padding:10px 6px}
-        .mesa-table td{font-size:.85em;height:38px}
-        .grid-2{gap:8px}
-        .grid-3{gap:8px}
-        .ultimo-num{width:24px;height:24px;font-size:.6em}
-        .barra-container{margin-bottom:8px}
-        .tab-padding{padding:10px}
-    }
-    .container{background:#141414;border:1px solid rgba(212,175,125,.15);border-radius:20px;overflow:hidden;margin-bottom:25px}
-    .header{background:linear-gradient(135deg,#1a1a1a,#0f0f0f);border-bottom:1px solid rgba(212,175,125,.2);padding:25px;text-align:center}.header h1{font-family:'Cinzel',serif;font-size:1.8em;margin-bottom:8px;letter-spacing:4px;color:#d4af7d}.header p{font-size:.8em;color:rgba(255,255,255,.5);letter-spacing:2px}
+        @media(max-width:600px){
+            .freq-grid{grid-template-columns:1fr}
+            .grid-3{grid-template-columns:1fr}
+            .grid-3>div{margin-bottom:0}
+            .grid-bet{grid-template-columns:1fr}
+            .grid-4{grid-template-columns:repeat(2,1fr)}
+            .grid-sp-kpi{grid-template-columns:repeat(2,1fr)}
+            .grid-sp-2x2{grid-template-columns:1fr}
+            .mesa-roleta{overflow-x:auto;-webkit-overflow-scrolling:touch}
+            .mesa-table{min-width:500px}
+            .analise-box{padding:12px}
+            .analise-titulo{font-size:.78em}
+        }
+        .tab-padding{padding:20px}
+        @media(max-width:480px){
+            .header h1{font-size:1.3em}
+            .main-tab{font-size:.72em;padding:10px 6px}
+            .mesa-table td{font-size:.85em;height:38px}
+            .grid-2{gap:8px}
+            .grid-3{gap:8px}
+            .ultimo-num{width:24px;height:24px;font-size:.6em}
+            .barra-container{margin-bottom:8px}
+            .tab-padding{padding:10px}
+        }
+        .container{background:#141414;border:1px solid rgba(212,175,125,.15);border-radius:20px;overflow:hidden;margin-bottom:25px}
+        .header{background:linear-gradient(135deg,#1a1a1a,#0f0f0f);border-bottom:1px solid rgba(212,175,125,.2);padding:25px;text-align:center}.header h1{font-family:'Cinzel',serif;font-size:1.8em;margin-bottom:8px;letter-spacing:4px;color:#d4af7d}.header p{font-size:.8em;color:rgba(255,255,255,.5);letter-spacing:2px}
 
-    /* TABS PRINCIPAIS */
-    .main-tabs{display:flex;background:#1a1a1a;border-bottom:1px solid rgba(212,175,125,.15)}.main-tab{flex:1;padding:14px;text-align:center;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:.85em;cursor:pointer;transition:all .3s;border-bottom:2px solid transparent;font-family:'Inter',sans-serif}.main-tab:hover{color:rgba(255,255,255,.7)}.main-tab.active{color:#d4af7d;border-bottom-color:#d4af7d;background:rgba(212,175,125,.05)}.main-tab-content{display:none}.main-tab-content.active{display:block}
+        /* TABS PRINCIPAIS */
+        .main-tabs{display:flex;background:#1a1a1a;border-bottom:1px solid rgba(212,175,125,.15)}.main-tab{flex:1;padding:14px;text-align:center;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:.85em;cursor:pointer;transition:all .3s;border-bottom:2px solid transparent;font-family:'Inter',sans-serif}.main-tab:hover{color:rgba(255,255,255,.7)}.main-tab.active{color:#d4af7d;border-bottom-color:#d4af7d;background:rgba(212,175,125,.05)}.main-tab-content{display:none}.main-tab-content.active{display:block}
 
-    /* BUTTONS */
-    .zara-btn{padding:12px 20px;border-radius:8px;font-family:'Inter',sans-serif;font-size:.85em;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid;letter-spacing:.5px}
-    .zara-btn:active{transform:scale(0.97)}
-    .zara-btn.gold{background:linear-gradient(135deg,rgba(212,175,125,.15),rgba(212,175,125,.08));border-color:rgba(212,175,125,.35);color:#d4af7d}
-    .zara-btn.gold:hover{background:linear-gradient(135deg,rgba(212,175,125,.25),rgba(212,175,125,.12))}
-    .zara-btn.green{background:rgba(46,204,113,.1);border-color:rgba(46,204,113,.3);color:#2ecc71}
-    .zara-btn.green:hover{background:rgba(46,204,113,.18)}
-    .zara-btn.red{background:rgba(231,76,60,.08);border-color:rgba(231,76,60,.25);color:#e74c3c}
-    .zara-btn.red:hover{background:rgba(231,76,60,.15)}
-    .zara-btn.ghost{background:transparent;border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.4)}
-    .zara-btn.ghost:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)}
-    .zara-btn.full{width:100%}
-    .zara-btn.sm{padding:6px 12px;font-size:.75em;border-radius:6px}
+        /* BUTTONS */
+        .zara-btn{padding:12px 20px;border-radius:8px;font-family:'Inter',sans-serif;font-size:.85em;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid;letter-spacing:.5px}
+        .zara-btn:active{transform:scale(0.97)}
+        .zara-btn.gold{background:linear-gradient(135deg,rgba(212,175,125,.15),rgba(212,175,125,.08));border-color:rgba(212,175,125,.35);color:#d4af7d}
+        .zara-btn.gold:hover{background:linear-gradient(135deg,rgba(212,175,125,.25),rgba(212,175,125,.12))}
+        .zara-btn.green{background:rgba(46,204,113,.1);border-color:rgba(46,204,113,.3);color:#2ecc71}
+        .zara-btn.green:hover{background:rgba(46,204,113,.18)}
+        .zara-btn.red{background:rgba(231,76,60,.08);border-color:rgba(231,76,60,.25);color:#e74c3c}
+        .zara-btn.red:hover{background:rgba(231,76,60,.15)}
+        .zara-btn.ghost{background:transparent;border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.4)}
+        .zara-btn.ghost:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)}
+        .zara-btn.full{width:100%}
+        .zara-btn.sm{padding:6px 12px;font-size:.75em;border-radius:6px}
 
-    /* TABS ESPORTES */
-    .zara-tab{padding:10px 20px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.35);font-size:.8em;font-weight:500;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;letter-spacing:.5px}
-    .zara-tab:hover{border-color:rgba(212,175,125,.2);color:rgba(255,255,255,.5)}
-    .zara-tab.active{background:rgba(212,175,125,.1);border-color:rgba(212,175,125,.35);color:#d4af7d}
+        /* TABS ESPORTES */
+        .zara-tab{padding:10px 20px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.35);font-size:.8em;font-weight:500;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;letter-spacing:.5px}
+        .zara-tab:hover{border-color:rgba(212,175,125,.2);color:rgba(255,255,255,.5)}
+        .zara-tab.active{background:rgba(212,175,125,.1);border-color:rgba(212,175,125,.35);color:#d4af7d}
 
-    /* BTN MINI (legacy) */
-    .btn-mini{padding:6px 12px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.35);font-size:.72em;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
-    .btn-mini:hover{border-color:rgba(212,175,125,.3);color:rgba(212,175,125,.6)}
-    .btn-mini.active{border-color:rgba(212,175,125,.4);color:#d4af7d;background:rgba(212,175,125,.08)}
-    .btn-mini.delete{border-color:rgba(231,76,60,.2);color:rgba(231,76,60,.4)}
-    .btn-mini.delete:hover{background:rgba(231,76,60,.08)}
+        /* BTN MINI (legacy) */
+        .btn-mini{padding:6px 12px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.35);font-size:.72em;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+        .btn-mini:hover{border-color:rgba(212,175,125,.3);color:rgba(212,175,125,.6)}
+        .btn-mini.active{border-color:rgba(212,175,125,.4);color:#d4af7d;background:rgba(212,175,125,.08)}
+        .btn-mini.delete{border-color:rgba(231,76,60,.2);color:rgba(231,76,60,.4)}
+        .btn-mini.delete:hover{background:rgba(231,76,60,.08)}
 
-    
+        
 
-    /* ==================== ROLETA ==================== */
-    .freq-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+        /* ==================== ROLETA ==================== */
+        .freq-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
 
-    /* Mesa de números */
-    .mesa-numeros{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
-    .mesa-btn{padding:8px 4px;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#fff;font-size:.85em;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;font-family:'Inter',sans-serif}
-    .mesa-btn:active{transform:scale(0.92)}
-    .mesa-btn.vermelho{background:rgba(200,30,30,.6)}.mesa-btn.preto{background:rgba(30,30,30,.8)}.mesa-btn.verde{background:rgba(0,128,0,.6);grid-column:span 3}
-    .mesa-btn.selecionado{box-shadow:0 0 0 2px #d4af7d;transform:scale(1.05)}
+        /* Mesa de números */
+        .mesa-numeros{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+        .mesa-btn{padding:8px 4px;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#fff;font-size:.85em;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;font-family:'Inter',sans-serif}
+        .mesa-btn:active{transform:scale(0.92)}
+        .mesa-btn.vermelho{background:rgba(200,30,30,.6)}.mesa-btn.preto{background:rgba(30,30,30,.8)}.mesa-btn.verde{background:rgba(0,128,0,.6);grid-column:span 3}
+        .mesa-btn.selecionado{box-shadow:0 0 0 2px #d4af7d;transform:scale(1.05)}
 
-    /* Últimos números */
-    .ultimos-numeros{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:15px}
-    .ultimo-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7em;font-weight:600}
-    .ultimo-num.v{background:rgba(200,30,30,.7)}.ultimo-num.p{background:rgba(40,40,40,.9);border:1px solid rgba(255,255,255,.2)}.ultimo-num.z{background:rgba(0,128,0,.7)}
+        /* Últimos números */
+        .ultimos-numeros{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:15px}
+        .ultimo-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7em;font-weight:600}
+        .ultimo-num.v{background:rgba(200,30,30,.7)}.ultimo-num.p{background:rgba(40,40,40,.9);border:1px solid rgba(255,255,255,.2)}.ultimo-num.z{background:rgba(0,128,0,.7)}
 
-    /* Painel de análise */
-    .analise-box{background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:10px;padding:15px;margin-bottom:15px}
-    .analise-titulo{font-size:.75em;color:rgba(212,175,125,.6);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
-    .barra-container{margin-bottom:8px}.barra-label{display:flex;justify-content:space-between;font-size:.8em;margin-bottom:3px}.barra-nome{color:rgba(255,255,255,.7)}.barra-pct{color:#d4af7d;font-weight:600}
-    .barra-track{height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}.barra-fill{height:100%;border-radius:4px;transition:width .4s}
-    .barra-fill.quente{background:linear-gradient(90deg,#e74c3c,#c0392b)}.barra-fill.morno{background:linear-gradient(90deg,#f39c12,#d4af7d)}.barra-fill.frio{background:linear-gradient(90deg,#3498db,#2980b9)}
+        /* Painel de análise */
+        .analise-box{background:#0a0a0a;border:1px solid rgba(212,175,125,.15);border-radius:10px;padding:15px;margin-bottom:15px}
+        .analise-titulo{font-size:.75em;color:rgba(212,175,125,.6);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+        .barra-container{margin-bottom:8px}.barra-label{display:flex;justify-content:space-between;font-size:.8em;margin-bottom:3px}.barra-nome{color:rgba(255,255,255,.7)}.barra-pct{color:#d4af7d;font-weight:600}
+        .barra-track{height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}.barra-fill{height:100%;border-radius:4px;transition:width .4s}
+        .barra-fill.quente{background:linear-gradient(90deg,#e74c3c,#c0392b)}.barra-fill.morno{background:linear-gradient(90deg,#f39c12,#d4af7d)}.barra-fill.frio{background:linear-gradient(90deg,#3498db,#2980b9)}
 
-    /* Recomendação */
-    .recomendacao{background:linear-gradient(135deg,rgba(212,175,125,.15),rgba(0,0,0,.3));border:1px solid rgba(212,175,125,.3);border-radius:12px;padding:20px;text-align:center;margin-bottom:15px}
-    .rec-titulo{font-family:'Cinzel',serif;font-size:.9em;color:#d4af7d;letter-spacing:1px;margin-bottom:12px}
-    .rec-duzias{display:flex;gap:10px;justify-content:center;margin-bottom:8px}
-            .rec-badge.alta{background:rgba(46,204,113,.2);color:#2ecc71;border:1px solid rgba(46,204,113,.4)}
-    .rec-badge.media{background:rgba(241,196,15,.15);color:#f1c40f;border:1px solid rgba(241,196,15,.3)}
-    .rec-confianca{font-size:.75em;color:rgba(255,255,255,.4);margin-top:8px}
+        /* Recomendação */
+        .recomendacao{background:linear-gradient(135deg,rgba(212,175,125,.15),rgba(0,0,0,.3));border:1px solid rgba(212,175,125,.3);border-radius:12px;padding:20px;text-align:center;margin-bottom:15px}
+        .rec-titulo{font-family:'Cinzel',serif;font-size:.9em;color:#d4af7d;letter-spacing:1px;margin-bottom:12px}
+        .rec-duzias{display:flex;gap:10px;justify-content:center;margin-bottom:8px}
+                .rec-badge.alta{background:rgba(46,204,113,.2);color:#2ecc71;border:1px solid rgba(46,204,113,.4)}
+        .rec-badge.media{background:rgba(241,196,15,.15);color:#f1c40f;border:1px solid rgba(241,196,15,.3)}
+        .rec-confianca{font-size:.75em;color:rgba(255,255,255,.4);margin-top:8px}
 
-    /* Gestão de Banca */
+        /* Gestão de Banca */
 
-    /* Disciplina */
-    .regra-item{display:flex;align-items:center;gap:12px;padding:12px;background:#0a0a0a;border:1px solid rgba(212,175,125,.08);border-radius:8px;margin-bottom:6px}
-    .regra-check{width:20px;height:20px;border:2px solid rgba(212,175,125,.4);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}.regra-check.done{background:#d4af7d;border-color:#d4af7d}.regra-check svg{width:12px;height:12px;color:#0a0a0a;opacity:0}.regra-check.done svg{opacity:1}
-    .regra-texto{font-size:.85em;color:rgba(255,255,255,.7)}
+        /* Disciplina */
+        .regra-item{display:flex;align-items:center;gap:12px;padding:12px;background:#0a0a0a;border:1px solid rgba(212,175,125,.08);border-radius:8px;margin-bottom:6px}
+        .regra-check{width:20px;height:20px;border:2px solid rgba(212,175,125,.4);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}.regra-check.done{background:#d4af7d;border-color:#d4af7d}.regra-check svg{width:12px;height:12px;color:#0a0a0a;opacity:0}.regra-check.done svg{opacity:1}
+        .regra-texto{font-size:.85em;color:rgba(255,255,255,.7)}
 
-    /* Skeleton */
-    .skeleton-box{background:linear-gradient(135deg,rgba(212,175,125,.08),rgba(0,0,0,.2));border:1px dashed rgba(212,175,125,.2);border-radius:10px;padding:30px;text-align:center;color:rgba(255,255,255,.3);font-size:.85em}
-    .skeleton-box h3{color:rgba(212,175,125,.4);font-family:'Cinzel',serif;margin-bottom:10px;font-size:1em}
+        /* Skeleton */
+        .skeleton-box{background:linear-gradient(135deg,rgba(212,175,125,.08),rgba(0,0,0,.2));border:1px dashed rgba(212,175,125,.2);border-radius:10px;padding:30px;text-align:center;color:rgba(255,255,255,.3);font-size:.85em}
+        .skeleton-box h3{color:rgba(212,175,125,.4);font-family:'Cinzel',serif;margin-bottom:10px;font-size:1em}
 
-    /* MODAL */
-    .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:2000;justify-content:center;align-items:center;padding:20px}.modal-overlay.active{display:flex}.modal-content{background:#1a1a1a;border:1px solid rgba(212,175,125,.2);border-radius:16px;padding:25px;width:100%;max-width:450px;max-height:90vh;overflow-y:auto}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.modal-title{font-family:'Cinzel',serif;font-size:1.1em;color:#d4af7d}.modal-close{background:transparent;border:none;color:rgba(255,255,255,.5);font-size:1.5em;cursor:pointer}
-    .form-group{margin-bottom:15px}.form-group label{display:block;font-size:.75em;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.2);border-radius:6px;color:#fff;font-size:.9em;font-family:'Inter',sans-serif}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#d4af7d}.form-group select option{background:#1a1a1a}
-    .modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.btn-salvar{padding:10px 20px;background:linear-gradient(135deg,#d4af7d,#c9a066);border:none;border-radius:6px;color:#0a0a0a;font-weight:600;cursor:pointer;font-size:.85em}.btn-cancelar{padding:10px 20px;background:transparent;border:1px solid rgba(212,175,125,.3);border-radius:6px;color:#d4af7d;cursor:pointer;font-size:.85em}
-    .toast{position:fixed;bottom:100px;right:20px;padding:12px 20px;background:#1a1a1a;border:1px solid #2ecc71;border-radius:8px;color:#fff;font-size:.85em;z-index:10001;opacity:0;transform:translateY(20px);transition:all .3s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
-    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0a0a0a}::-webkit-scrollbar-thumb{background:rgba(212,175,125,.3);border-radius:3px}
+        /* MODAL */
+        .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:2000;justify-content:center;align-items:center;padding:20px}.modal-overlay.active{display:flex}.modal-content{background:#1a1a1a;border:1px solid rgba(212,175,125,.2);border-radius:16px;padding:25px;width:100%;max-width:450px;max-height:90vh;overflow-y:auto}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.modal-title{font-family:'Cinzel',serif;font-size:1.1em;color:#d4af7d}.modal-close{background:transparent;border:none;color:rgba(255,255,255,.5);font-size:1.5em;cursor:pointer}
+        .form-group{margin-bottom:15px}.form-group label{display:block;font-size:.75em;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.2);border-radius:6px;color:#fff;font-size:.9em;font-family:'Inter',sans-serif}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#d4af7d}.form-group select option{background:#1a1a1a}
+        .modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.btn-salvar{padding:10px 20px;background:linear-gradient(135deg,#d4af7d,#c9a066);border:none;border-radius:6px;color:#0a0a0a;font-weight:600;cursor:pointer;font-size:.85em}.btn-cancelar{padding:10px 20px;background:transparent;border:1px solid rgba(212,175,125,.3);border-radius:6px;color:#d4af7d;cursor:pointer;font-size:.85em}
+        .toast{position:fixed;bottom:100px;right:20px;padding:12px 20px;background:#1a1a1a;border:1px solid #2ecc71;border-radius:8px;color:#fff;font-size:.85em;z-index:10001;opacity:0;transform:translateY(20px);transition:all .3s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0a0a0a}::-webkit-scrollbar-thumb{background:rgba(212,175,125,.3);border-radius:3px}
 
-    /* RECOMENDAÇÃO CARDS */
-                            .rec-badge{display:inline-block;padding:5px 16px;border-radius:20px;font-weight:600;font-size:.95em;letter-spacing:1px}
-    .rec-badge.hot{background:rgba(231,76,60,.2);border:1px solid rgba(231,76,60,.5);color:#e74c3c}
-    .rec-badge.warm{background:rgba(241,196,15,.15);border:1px solid rgba(241,196,15,.4);color:#f1c40f}
-    .rec-badge.neutral{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5)}
-    /* INDICADORES */
-                            /* MESA ROLETA REAL */
-    .mesa-roleta{padding-bottom:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-    .mesa-table{border-collapse:collapse;width:100%;table-layout:fixed}
-    .mesa-table td{padding:0;text-align:center;cursor:pointer;font-weight:700;font-size:1.1em;height:52px;border:1px solid rgba(255,255,255,.15);transition:all .15s;user-select:none}
-    .mesa-table td:hover{opacity:.85;transform:scale(1.08);z-index:1}
-    .mesa-table td:active{transform:scale(0.95);opacity:1}
-    .mesa-table td.v{background:#c0392b;color:#fff}.mesa-table td.p{background:#1a1a1a;color:#fff}.mesa-table td.z{background:#27ae60;color:#fff}
-    .mesa-table td.dz-label{background:rgba(212,175,125,.1);color:#d4af7d;font-size:.65em;letter-spacing:.5px;cursor:default;font-weight:400}
-    .mesa-table td.dz-label:hover{opacity:1;transform:none}
-    /* BANCA PRO */
-    .btn-resultado{padding:12px 24px;border:none;border-radius:8px;font-weight:700;font-size:.9em;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
-    .btn-resultado.ganhou{background:rgba(46,204,113,.15);border:2px solid rgba(46,204,113,.5);color:#2ecc71}
-    .btn-resultado.ganhou:hover{background:rgba(46,204,113,.25)}
-    .btn-resultado.perdeu{background:rgba(231,76,60,.15);border:2px solid rgba(231,76,60,.5);color:#e74c3c}
-    .btn-resultado.perdeu:hover{background:rgba(231,76,60,.25)}
-    /* REGRAS */
-    .regra-item{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(212,175,125,.05);border-radius:6px;font-size:.85em;color:rgba(255,255,255,.7)}
-    .regra-num{color:#d4af7d;font-weight:600;min-width:22px;font-size:.9em}
+        /* RECOMENDAÇÃO CARDS */
+                                .rec-badge{display:inline-block;padding:5px 16px;border-radius:20px;font-weight:600;font-size:.95em;letter-spacing:1px}
+        .rec-badge.hot{background:rgba(231,76,60,.2);border:1px solid rgba(231,76,60,.5);color:#e74c3c}
+        .rec-badge.warm{background:rgba(241,196,15,.15);border:1px solid rgba(241,196,15,.4);color:#f1c40f}
+        .rec-badge.neutral{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5)}
+        /* INDICADORES */
+                                /* MESA ROLETA REAL */
+        .mesa-roleta{padding-bottom:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+        .mesa-table{border-collapse:collapse;width:100%;table-layout:fixed}
+        .mesa-table td{padding:0;text-align:center;cursor:pointer;font-weight:700;font-size:1.1em;height:52px;border:1px solid rgba(255,255,255,.15);transition:all .15s;user-select:none}
+        .mesa-table td:hover{opacity:.85;transform:scale(1.08);z-index:1}
+        .mesa-table td:active{transform:scale(0.95);opacity:1}
+        .mesa-table td.v{background:#c0392b;color:#fff}.mesa-table td.p{background:#1a1a1a;color:#fff}.mesa-table td.z{background:#27ae60;color:#fff}
+        .mesa-table td.dz-label{background:rgba(212,175,125,.1);color:#d4af7d;font-size:.65em;letter-spacing:.5px;cursor:default;font-weight:400}
+        .mesa-table td.dz-label:hover{opacity:1;transform:none}
+        /* BANCA PRO */
+        .btn-resultado{padding:12px 24px;border:none;border-radius:8px;font-weight:700;font-size:.9em;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+        .btn-resultado.ganhou{background:rgba(46,204,113,.15);border:2px solid rgba(46,204,113,.5);color:#2ecc71}
+        .btn-resultado.ganhou:hover{background:rgba(46,204,113,.25)}
+        .btn-resultado.perdeu{background:rgba(231,76,60,.15);border:2px solid rgba(231,76,60,.5);color:#e74c3c}
+        .btn-resultado.perdeu:hover{background:rgba(231,76,60,.25)}
+        /* REGRAS */
+        .regra-item{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(212,175,125,.05);border-radius:6px;font-size:.85em;color:rgba(255,255,255,.7)}
+        .regra-num{color:#d4af7d;font-weight:600;min-width:22px;font-size:.9em}
 
-    /* FUTEBOL */
-    .fut-section{display:none}.fut-section.active{display:block}
-    .fut-input{width:100%;padding:8px 10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.2);border-radius:6px;color:#fff;font-size:.85em;font-family:'Inter',sans-serif}
-    .fut-input:focus{border-color:#d4af7d;outline:none}
-    .fut-input-sm{width:100%;padding:6px 8px;background:#0a0a0a;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#fff;font-size:.8em;font-family:'Inter',sans-serif}
-    .fut-input-sm:focus{border-color:rgba(212,175,125,.4);outline:none}
-    .fut-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .fut-stat-item{display:flex;flex-direction:column;gap:3px}
-    .fut-stat-item label{font-size:.68em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
-</style>
-```
-
+        /* FUTEBOL */
+        .fut-section{display:none}.fut-section.active{display:block}
+        .fut-input{width:100%;padding:8px 10px;background:#0a0a0a;border:1px solid rgba(212,175,125,.2);border-radius:6px;color:#fff;font-size:.85em;font-family:'Inter',sans-serif}
+        .fut-input:focus{border-color:#d4af7d;outline:none}
+        .fut-input-sm{width:100%;padding:6px 8px;background:#0a0a0a;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#fff;font-size:.8em;font-family:'Inter',sans-serif}
+        .fut-input-sm:focus{border-color:rgba(212,175,125,.4);outline:none}
+        .fut-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .fut-stat-item{display:flex;flex-direction:column;gap:3px}
+        .fut-stat-item label{font-size:.68em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
+    </style>
 </head>
 <body>
     <nav class="sidebar">
@@ -194,256 +190,250 @@
         <a href="agenda.html" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Agenda</a>
     </div></nav>
 
-```
-<div class="main-container"><div class="container">
-    <div class="header"><h1>Profissional</h1><p>Roleta &bull; Esportes &bull; Operações</p></div>
+    <div class="main-container"><div class="container">
+        <div class="header"><h1>Profissional</h1><p>Roleta &bull; Esportes &bull; Operações</p></div>
 
-    <!-- TABS PRINCIPAIS -->
-    <div class="main-tabs">
-        <button class="main-tab active" onclick="switchMain('roleta')">Roleta</button>
-        <button class="main-tab" onclick="switchMain('esportes')">Esportes</button>
-    </div>
-
-    <!-- ==================== ROLETA ==================== -->
-    <div class="main-tab-content active" id="tab-roleta">
-        <div class="tab-padding">
-
-
-
-            <!-- ULTIMOS NUMEROS -->
-            <div class="analise-box" style="margin-bottom:15px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div class="analise-titulo" style="margin:0;">Últimos Números</div>
-                    <div style="display:flex;gap:4px;">
-                        <button class="zara-btn ghost sm" onclick="desfazerUltimo()">Desfazer</button>
-                        <button class="zara-btn red sm" onclick="limparHistorico()">Reset</button>
-                    </div>
-                </div>
-                <div class="ultimos-numeros" id="ultimosNums" style="margin-top:8px;"></div>
-            </div>
-
-            <!-- MESA -->
-            <div class="analise-box" style="margin-bottom:15px;">
-                <div class="analise-titulo">Mesa — Toque no Número</div>
-                <div id="mesaRoleta" class="mesa-roleta"></div>
-            </div>
-
-            <!-- DUZIAS + COLUNAS LADO A LADO -->
-            <div class="freq-grid" style="margin-bottom:15px;">
-                <div class="analise-box">
-                    <div class="analise-titulo">Dúzias — Frequência</div>
-                    <div id="analiseDuzias"></div>
-                </div>
-                <div class="analise-box">
-                    <div class="analise-titulo">Colunas — Frequência</div>
-                    <div id="analiseColunas"></div>
-                </div>
-            </div>
-
-            <!-- METADES -->
-            <div class="analise-box" style="margin-bottom:15px;">
-                <div class="analise-titulo">1-18 / 19-36</div>
-                <div id="analiseMetades"></div>
-            </div>
-
-            <!-- ESTATISTICAS -->
-            <div class="analise-box" style="margin-bottom:15px;">
-                <div class="analise-titulo">Estatísticas</div>
-                <div id="estatisticasGerais"></div>
-            </div>
-
-            <!-- CONTROLE DE GANHOS -->
-            <div class="analise-box">
-                <div class="analise-titulo">Controle de Ganhos</div>
-                <!-- DEPOSITADO | BANCA ATUAL | LUCRO -->
-                <div class="grid-3" style="margin-bottom:15px;">
-                    <div style="background:rgba(212,175,125,.04);border:1px solid rgba(212,175,125,.1);border-radius:8px;padding:12px;text-align:center;">
-                        <div style="font-size:.58em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Depositado</div>
-                        <input type="number" id="cgDep" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:2px 0;background:transparent;border:none;border-bottom:1px solid rgba(212,175,125,.15);color:#d4af7d;font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;text-align:center;outline:none;">
-                    </div>
-                    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;text-align:center;">
-                        <div style="font-size:.58em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Banca Atual</div>
-                        <input type="number" id="cgAtual" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:2px 0;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.08);color:#fff;font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;text-align:center;outline:none;">
-                    </div>
-                    <div id="cgLucroBox" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px;padding:12px;text-align:center;">
-                        <div style="font-size:.58em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Lucro</div>
-                        <div id="cgLucro" style="font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;">—</div>
-                    </div>
-                </div>
-                <!-- SAQUE + QUEBRA -->
-                <div class="grid-2" style="margin-bottom:15px;">
-                    <div style="display:flex;gap:8px;align-items:flex-end;">
-                        <div style="flex:1;">
-                            <div style="font-size:.6em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Sacar</div>
-                            <input type="number" id="cgSaqueVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(46,204,113,.12);border-radius:6px;color:#2ecc71;font-size:.9em;font-family:'Inter',sans-serif;">
-                        </div>
-                        <button class="zara-btn green sm" onclick="registrarSaque()">Sacar</button>
-                    </div>
-                    <div style="display:flex;gap:6px;align-items:flex-end;">
-                        <div style="flex:1;">
-                            <div style="font-size:.6em;color:rgba(231,76,60,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Perda</div>
-                            <input type="number" id="cgPerdaVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(231,76,60,.12);border-radius:6px;color:#e74c3c;font-size:.9em;font-family:'Inter',sans-serif;">
-                        </div>
-                        <button class="zara-btn red sm" onclick="registrarPerda()">Perdi</button>
-                    </div>
-                </div>
-                <!-- TOTAL SACADO -->
-                <div id="cgTotalSacado" style="text-align:center;padding:10px;background:rgba(46,204,113,.04);border:1px solid rgba(46,204,113,.08);border-radius:8px;margin-bottom:15px;display:none;"></div>
-                <!-- SAQUES DO MES -->
-                <div id="cgSaques"></div>
-                <!-- HISTORICO MENSAL -->
-                <div id="cgResumo" style="margin-top:12px;"></div>
-            </div>
-
+        <!-- TABS PRINCIPAIS -->
+        <div class="main-tabs">
+            <button class="main-tab active" onclick="switchMain('roleta')">Roleta</button>
+            <button class="main-tab" onclick="switchMain('esportes')">Esportes</button>
         </div>
-    </div>
 
-    <!-- ==================== ESPORTES ==================== -->
-    <div class="main-tab-content" id="tab-esportes">
-        <div class="tab-padding">
-            <div style="display:flex;gap:5px;margin-bottom:15px;flex-wrap:wrap;">
-                <button class="zara-tab active" onclick="switchFut(this,'fut-bilhete')">Bilhete</button>
-                <button class="zara-tab" onclick="switchFut(this,'fut-financeiro')">Controle</button>
+        <!-- ==================== ROLETA ==================== -->
+        <div class="main-tab-content active" id="tab-roleta">
+            <div class="tab-padding">
+
+
+
+                <!-- ULTIMOS NUMEROS -->
+                <div class="analise-box" style="margin-bottom:15px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="analise-titulo" style="margin:0;">Últimos Números</div>
+                        <div style="display:flex;gap:4px;">
+                            <button class="zara-btn ghost sm" onclick="desfazerUltimo()">Desfazer</button>
+                            <button class="zara-btn red sm" onclick="limparHistorico()">Reset</button>
+                        </div>
+                    </div>
+                    <div class="ultimos-numeros" id="ultimosNums" style="margin-top:8px;"></div>
+
+                </div>
+
+                <!-- MESA -->
+                <div class="analise-box" style="margin-bottom:15px;">
+                    <div class="analise-titulo">Mesa — Toque no Número</div>
+                    <div id="mesaRoleta" class="mesa-roleta"></div>
+                </div>
+
+                <!-- DUZIAS + COLUNAS LADO A LADO -->
+                <div class="freq-grid" style="margin-bottom:15px;">
+                    <div class="analise-box">
+                        <div class="analise-titulo">Dúzias — Frequência</div>
+                        <div id="analiseDuzias"></div>
+                    </div>
+                    <div class="analise-box">
+                        <div class="analise-titulo">Colunas — Frequência</div>
+                        <div id="analiseColunas"></div>
+                    </div>
+                </div>
+
+
+
+                <!-- ESTATISTICAS -->
+                <div class="analise-box" style="margin-bottom:15px;">
+                    <div class="analise-titulo">Estatísticas</div>
+                    <div id="estatisticasGerais"></div>
+                </div>
+
+                <!-- CONTROLE DE GANHOS -->
+                <div class="analise-box">
+                    <div class="analise-titulo">Controle de Ganhos</div>
+                    <!-- DEPOSITADO | BANCA ATUAL | LUCRO -->
+                    <div class="grid-3" style="margin-bottom:15px;">
+                        <div style="background:rgba(212,175,125,.04);border:1px solid rgba(212,175,125,.1);border-radius:8px;padding:12px;text-align:center;">
+                            <div style="font-size:.58em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Depositado</div>
+                            <input type="number" id="cgDep" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:2px 0;background:transparent;border:none;border-bottom:1px solid rgba(212,175,125,.15);color:#d4af7d;font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;text-align:center;outline:none;">
+                        </div>
+                        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;text-align:center;">
+                            <div style="font-size:.58em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Banca Atual</div>
+                            <input type="number" id="cgAtual" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:2px 0;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.08);color:#fff;font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;text-align:center;outline:none;">
+                        </div>
+                        <div id="cgLucroBox" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px;padding:12px;text-align:center;">
+                            <div style="font-size:.58em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Lucro</div>
+                            <div id="cgLucro" style="font-size:1.2em;font-weight:700;font-family:'Cinzel',serif;">—</div>
+                        </div>
+                    </div>
+                    <!-- SAQUE + QUEBRA -->
+                    <div class="grid-2" style="margin-bottom:15px;">
+                        <div style="display:flex;gap:8px;align-items:flex-end;">
+                            <div style="flex:1;">
+                                <div style="font-size:.6em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Sacar</div>
+                                <input type="number" id="cgSaqueVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(46,204,113,.12);border-radius:6px;color:#2ecc71;font-size:.9em;font-family:'Inter',sans-serif;">
+                            </div>
+                            <button class="zara-btn green sm" onclick="registrarSaque()">Sacar</button>
+                        </div>
+                        <div style="display:flex;gap:6px;align-items:flex-end;">
+                            <div style="flex:1;">
+                                <div style="font-size:.6em;color:rgba(231,76,60,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Perda</div>
+                                <input type="number" id="cgPerdaVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(231,76,60,.12);border-radius:6px;color:#e74c3c;font-size:.9em;font-family:'Inter',sans-serif;">
+                            </div>
+                            <button class="zara-btn red sm" onclick="registrarPerda()">Perdi</button>
+                        </div>
+                    </div>
+                    <!-- TOTAL SACADO -->
+                    <div id="cgTotalSacado" style="text-align:center;padding:10px;background:rgba(46,204,113,.04);border:1px solid rgba(46,204,113,.08);border-radius:8px;margin-bottom:15px;display:none;"></div>
+                    <!-- SAQUES DO MES -->
+                    <div id="cgSaques"></div>
+                    <!-- HISTORICO MENSAL -->
+                    <div id="cgResumo" style="margin-top:12px;"></div>
+                </div>
+
             </div>
+        </div>
 
-            <!-- ====== BILHETE ====== -->
-            <div class="fut-section active" id="fut-bilhete">
-                <!-- REGISTRAR -->
-                <div class="analise-box">
-                    <div class="analise-titulo">Novo Bilhete</div>
-                    <input type="text" id="betJogo" placeholder="Time / Jogo" class="fut-input" style="margin-bottom:8px;">
-                    <div class="grid-2" style="margin-bottom:10px;">
-                        <input type="number" id="betOdd" step="0.01" placeholder="Odd" class="fut-input">
-                        <input type="number" id="betStake" step="0.01" placeholder="Stake R$" class="fut-input">
-                    </div>
-                    <button class="zara-btn gold full" onclick="registrarBet()">REGISTRAR</button>
+        <!-- ==================== ESPORTES ==================== -->
+        <div class="main-tab-content" id="tab-esportes">
+            <div class="tab-padding">
+                <div style="display:flex;gap:5px;margin-bottom:15px;flex-wrap:wrap;">
+                    <button class="zara-tab active" onclick="switchFut(this,'fut-bilhete')">Bilhete</button>
+                    <button class="zara-tab" onclick="switchFut(this,'fut-financeiro')">Controle</button>
                 </div>
-                <!-- PENDENTES -->
-                <div class="analise-box">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <div class="analise-titulo" style="margin:0;">Apostas Pendentes</div>
-                        <span id="pendCount" style="font-size:.75em;color:rgba(255,255,255,.3);"></span>
-                    </div>
-                    <div id="betPendentes" style="margin-top:10px;"></div>
-                </div>
-                <!-- RECENTES -->
-                <div class="analise-box">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <div class="analise-titulo" style="margin:0;">Resolvidas Hoje</div>
-                        <span id="hojeResumo" style="font-size:.75em;"></span>
-                    </div>
-                    <div id="betHoje" style="margin-top:10px;"></div>
-                </div>
-            </div>
 
-            <!-- ====== FINANCEIRO ====== -->
-            <div class="fut-section" id="fut-financeiro">
-                <!-- BANCA -->
-                <div class="analise-box" style="text-align:center;padding:25px;">
-                    <div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;">Banca Esportes</div>
-                    <div id="spBanca" style="font-size:2.4em;font-weight:700;color:#d4af7d;font-family:'Cinzel',serif;">R$ 0,00</div>
-                    <div id="spLP" style="font-size:.95em;margin-top:4px;font-weight:600;"></div>
-                </div>
-                <!-- DEPOSITO / SAQUE -->
-                <div class="grid-2" style="margin-bottom:15px;">
-                    <div class="analise-box" style="padding:12px;">
-                        <div style="font-size:.7em;color:rgba(255,255,255,.35);margin-bottom:6px;">Depositar</div>
-                        <div style="display:flex;gap:6px;">
-                            <input type="number" id="spDeposito" step="0.01" placeholder="R$" class="fut-input-sm" style="flex:1;">
-                            <button class="zara-btn gold sm" onclick="spMovimentar('deposito')">+</button>
+                <!-- ====== BILHETE ====== -->
+                <div class="fut-section active" id="fut-bilhete">
+                    <!-- REGISTRAR -->
+                    <div class="analise-box">
+                        <div class="analise-titulo">Novo Bilhete</div>
+                        <input type="text" id="betJogo" placeholder="Time / Jogo" class="fut-input" style="margin-bottom:8px;">
+                        <div class="grid-2" style="margin-bottom:10px;">
+                            <input type="number" id="betOdd" step="0.01" placeholder="Odd" class="fut-input">
+                            <input type="number" id="betStake" step="0.01" placeholder="Stake R$" class="fut-input">
                         </div>
+                        <button class="zara-btn gold full" onclick="registrarBet()">REGISTRAR</button>
                     </div>
-                    <div class="analise-box" style="padding:12px;">
-                        <div style="font-size:.7em;color:rgba(255,255,255,.35);margin-bottom:6px;">Sacar</div>
-                        <div style="display:flex;gap:6px;">
-                            <input type="number" id="spSaque" step="0.01" placeholder="R$" class="fut-input-sm" style="flex:1;">
-                            <button class="zara-btn ghost sm" onclick="spMovimentar('saque')">-</button>
+                    <!-- PENDENTES -->
+                    <div class="analise-box">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div class="analise-titulo" style="margin:0;">Apostas Pendentes</div>
+                            <span id="pendCount" style="font-size:.75em;color:rgba(255,255,255,.3);"></span>
                         </div>
+                        <div id="betPendentes" style="margin-top:10px;"></div>
                     </div>
-                </div>
-                <!-- KPIs MES -->
-                <div class="analise-box">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
-                        <div class="analise-titulo" style="margin:0;">Mensal</div>
-                        <div style="display:flex;gap:6px;align-items:center;"><button class="zara-btn ghost sm" onclick="mudarMesSP(-1)">&lt;</button><span id="spMesLabel" style="font-size:.85em;color:#d4af7d;min-width:90px;text-align:center;"></span><button class="zara-btn ghost sm" onclick="mudarMesSP(1)">&gt;</button></div>
-                    </div>
-                    <!-- LUCRO DESTAQUE -->
-                    <div style="text-align:center;padding:15px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:10px;margin-bottom:12px;">
-                        <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px;">Lucro / Prejuizo</div>
-                        <div id="spMesLucro" style="font-size:1.8em;font-weight:700;margin-top:6px;">R$ 0</div>
-                    </div>
-                    <!-- GREENS | REDS | WIN RATE -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
-                        <div style="background:rgba(46,204,113,.05);border:1px solid rgba(46,204,113,.1);border-radius:8px;padding:10px;text-align:center;">
-                            <div style="font-size:.55em;color:#2ecc71;text-transform:uppercase;">Greens</div>
-                            <div id="spMesG" style="font-size:1.2em;font-weight:700;color:#2ecc71;margin-top:4px;">0</div>
+                    <!-- RECENTES -->
+                    <div class="analise-box">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div class="analise-titulo" style="margin:0;">Resolvidas Hoje</div>
+                            <span id="hojeResumo" style="font-size:.75em;"></span>
                         </div>
-                        <div style="background:rgba(231,76,60,.05);border:1px solid rgba(231,76,60,.1);border-radius:8px;padding:10px;text-align:center;">
-                            <div style="font-size:.55em;color:#e74c3c;text-transform:uppercase;">Reds</div>
-                            <div id="spMesR" style="font-size:1.2em;font-weight:700;color:#e74c3c;margin-top:4px;">0</div>
-                        </div>
-                        <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px;text-align:center;">
-                            <div style="font-size:.55em;color:rgba(255,255,255,.35);text-transform:uppercase;">Win Rate</div>
-                            <div id="spMesWR" style="font-size:1.2em;font-weight:700;margin-top:4px;">0%</div>
-                        </div>
-                    </div>
-                    <!-- APOSTAS | ODD MEDIA | ROI -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
-                        <div style="text-align:center;padding:8px;">
-                            <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">Apostas</div>
-                            <div id="spMesTotal" style="font-size:1em;font-weight:600;color:#fff;margin-top:4px;">0</div>
-                        </div>
-                        <div style="text-align:center;padding:8px;">
-                            <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">Odd Media</div>
-                            <div id="spMesOdd" style="font-size:1em;font-weight:600;color:#d4af7d;margin-top:4px;">—</div>
-                        </div>
-                        <div style="text-align:center;padding:8px;">
-                            <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">ROI</div>
-                            <div id="spMesROI" style="font-size:1em;font-weight:600;margin-top:4px;">0%</div>
-                        </div>
-                    </div>
-                    <!-- DEPOSITOS | SAQUES -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                        <div style="background:rgba(52,152,219,.05);border:1px solid rgba(52,152,219,.1);border-radius:8px;padding:10px;text-align:center;">
-                            <div style="font-size:.55em;color:#3498db;text-transform:uppercase;">Depositos</div>
-                            <div id="spMesDep" style="font-size:1em;font-weight:600;color:#3498db;margin-top:4px;">R$ 0</div>
-                        </div>
-                        <div style="background:rgba(155,89,182,.05);border:1px solid rgba(155,89,182,.1);border-radius:8px;padding:10px;text-align:center;">
-                            <div style="font-size:.55em;color:#9b59b6;text-transform:uppercase;">Saques</div>
-                            <div id="spMesSaq" style="font-size:1em;font-weight:600;color:#9b59b6;margin-top:4px;">R$ 0</div>
-                        </div>
+                        <div id="betHoje" style="margin-top:10px;"></div>
                     </div>
                 </div>
-                <!-- MOVIMENTACOES -->
-                <div class="analise-box">
-                    <div class="analise-titulo">Movimentacoes</div>
-                    <div id="spMovList"></div>
-                </div>
-                <div class="analise-box">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <div class="analise-titulo" style="margin:0;">Todas as Apostas</div>
-                        <div style="display:flex;gap:4px;" id="hFiltros">
-                            <button class="btn-mini active" onclick="filtroHist('todas',this)">Todas</button>
-                            <button class="btn-mini" onclick="filtroHist('green',this)" style="color:#2ecc71;">G</button>
-                            <button class="btn-mini" onclick="filtroHist('red',this)" style="color:#e74c3c;">R</button>
+
+                <!-- ====== FINANCEIRO ====== -->
+                <div class="fut-section" id="fut-financeiro">
+                    <!-- BANCA -->
+                    <div class="analise-box" style="text-align:center;padding:25px;">
+                        <div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;">Banca Esportes</div>
+                        <div id="spBanca" style="font-size:2.4em;font-weight:700;color:#d4af7d;font-family:'Cinzel',serif;">R$ 0,00</div>
+                        <div id="spLP" style="font-size:.95em;margin-top:4px;font-weight:600;"></div>
+                    </div>
+                    <!-- DEPOSITO / SAQUE -->
+                    <div class="grid-2" style="margin-bottom:15px;">
+                        <div class="analise-box" style="padding:12px;">
+                            <div style="font-size:.7em;color:rgba(255,255,255,.35);margin-bottom:6px;">Depositar</div>
+                            <div style="display:flex;gap:6px;">
+                                <input type="number" id="spDeposito" step="0.01" placeholder="R$" class="fut-input-sm" style="flex:1;">
+                                <button class="zara-btn gold sm" onclick="spMovimentar('deposito')">+</button>
+                            </div>
+                        </div>
+                        <div class="analise-box" style="padding:12px;">
+                            <div style="font-size:.7em;color:rgba(255,255,255,.35);margin-bottom:6px;">Sacar</div>
+                            <div style="display:flex;gap:6px;">
+                                <input type="number" id="spSaque" step="0.01" placeholder="R$" class="fut-input-sm" style="flex:1;">
+                                <button class="zara-btn ghost sm" onclick="spMovimentar('saque')">-</button>
+                            </div>
                         </div>
                     </div>
-                    <div id="hLista" style="margin-top:10px;"></div>
+                    <!-- KPIs MES -->
+                    <div class="analise-box">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+                            <div class="analise-titulo" style="margin:0;">Mensal</div>
+                            <div style="display:flex;gap:6px;align-items:center;"><button class="zara-btn ghost sm" onclick="mudarMesSP(-1)">&lt;</button><span id="spMesLabel" style="font-size:.85em;color:#d4af7d;min-width:90px;text-align:center;"></span><button class="zara-btn ghost sm" onclick="mudarMesSP(1)">&gt;</button></div>
+                        </div>
+                        <!-- LUCRO DESTAQUE -->
+                        <div style="text-align:center;padding:15px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:10px;margin-bottom:12px;">
+                            <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px;">Lucro / Prejuizo</div>
+                            <div id="spMesLucro" style="font-size:1.8em;font-weight:700;margin-top:6px;">R$ 0</div>
+                        </div>
+                        <!-- GREENS | REDS | WIN RATE -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+                            <div style="background:rgba(46,204,113,.05);border:1px solid rgba(46,204,113,.1);border-radius:8px;padding:10px;text-align:center;">
+                                <div style="font-size:.55em;color:#2ecc71;text-transform:uppercase;">Greens</div>
+                                <div id="spMesG" style="font-size:1.2em;font-weight:700;color:#2ecc71;margin-top:4px;">0</div>
+                            </div>
+                            <div style="background:rgba(231,76,60,.05);border:1px solid rgba(231,76,60,.1);border-radius:8px;padding:10px;text-align:center;">
+                                <div style="font-size:.55em;color:#e74c3c;text-transform:uppercase;">Reds</div>
+                                <div id="spMesR" style="font-size:1.2em;font-weight:700;color:#e74c3c;margin-top:4px;">0</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px;text-align:center;">
+                                <div style="font-size:.55em;color:rgba(255,255,255,.35);text-transform:uppercase;">Win Rate</div>
+                                <div id="spMesWR" style="font-size:1.2em;font-weight:700;margin-top:4px;">0%</div>
+                            </div>
+                        </div>
+                        <!-- APOSTAS | ODD MEDIA | ROI -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+                            <div style="text-align:center;padding:8px;">
+                                <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">Apostas</div>
+                                <div id="spMesTotal" style="font-size:1em;font-weight:600;color:#fff;margin-top:4px;">0</div>
+                            </div>
+                            <div style="text-align:center;padding:8px;">
+                                <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">Odd Media</div>
+                                <div id="spMesOdd" style="font-size:1em;font-weight:600;color:#d4af7d;margin-top:4px;">—</div>
+                            </div>
+                            <div style="text-align:center;padding:8px;">
+                                <div style="font-size:.55em;color:rgba(255,255,255,.3);text-transform:uppercase;">ROI</div>
+                                <div id="spMesROI" style="font-size:1em;font-weight:600;margin-top:4px;">0%</div>
+                            </div>
+                        </div>
+                        <!-- DEPOSITOS | SAQUES -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                            <div style="background:rgba(52,152,219,.05);border:1px solid rgba(52,152,219,.1);border-radius:8px;padding:10px;text-align:center;">
+                                <div style="font-size:.55em;color:#3498db;text-transform:uppercase;">Depositos</div>
+                                <div id="spMesDep" style="font-size:1em;font-weight:600;color:#3498db;margin-top:4px;">R$ 0</div>
+                            </div>
+                            <div style="background:rgba(155,89,182,.05);border:1px solid rgba(155,89,182,.1);border-radius:8px;padding:10px;text-align:center;">
+                                <div style="font-size:.55em;color:#9b59b6;text-transform:uppercase;">Saques</div>
+                                <div id="spMesSaq" style="font-size:1em;font-weight:600;color:#9b59b6;margin-top:4px;">R$ 0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- MOVIMENTACOES -->
+                    <div class="analise-box">
+                        <div class="analise-titulo">Movimentacoes</div>
+                        <div id="spMovList"></div>
+                    </div>
+                    <div class="analise-box">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div class="analise-titulo" style="margin:0;">Todas as Apostas</div>
+                            <div style="display:flex;gap:4px;" id="hFiltros">
+                                <button class="btn-mini active" onclick="filtroHist('todas',this)">Todas</button>
+                                <button class="btn-mini" onclick="filtroHist('green',this)" style="color:#2ecc71;">G</button>
+                                <button class="btn-mini" onclick="filtroHist('red',this)" style="color:#e74c3c;">R</button>
+                            </div>
+                        </div>
+                        <div id="hLista" style="margin-top:10px;"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-</div></div>
-<!-- MODAIS -->
-
-
-
-<div class="toast" id="toast"></div>
-```
+    </div></div>
+    <!-- MODAIS -->
+    
+    
+    
+    <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 // ==========================================
 // SUPABASE SYNC
@@ -696,47 +686,76 @@ function renderRoleta(){
         var el=document.getElementById(ctn);if(!el)return;
         el.innerHTML=nomes.map(function(nome,i){
             var pct=pcts[i],z=zArr[i],gap=gapArr[i],bay=bayArr[i],mom=momArr[i],momC=momCArr[i];
-            var modo=modosArr[i];
             var classe=z>1?'quente':z<-1?'frio':'morno';
             var zCor=z>1.5?'#e74c3c':z>0.5?'#f39c12':z<-1.5?'#2ecc71':z<-0.5?'#3498db':'rgba(255,255,255,.5)';
             var mI=mom>10?'^^':mom>3?'^':mom<-10?'vv':mom<-3?'v':'--';
             var mC2=mom>5?'#e74c3c':mom<-5?'#2ecc71':'rgba(255,255,255,.35)';
-            var mCI=momC>10?'^^':momC>0?'^':momC<-10?'vv':momC<0?'v':'--';
             var jT=janObj?(janObj.desvio[i]>0?'+':'')+janObj.desvio[i].toFixed(0)+'%':'--';
             var jC=janObj?(janObj.desvio[i]>8?'#e74c3c':janObj.desvio[i]<-8?'#2ecc71':'rgba(255,255,255,.35)'):'rgba(255,255,255,.35)';
-            // Modo badge
-            var modoCor='rgba(255,255,255,.3)';var modoTxt='';
-            return '<div class="barra-container"><div class="barra-label"><span class="barra-nome">'+nome+'</span><span class="barra-pct">'+pct+'% ('+counts[i]+'x)</span></div><div class="barra-track"><div class="barra-fill '+classe+'" style="width:'+pct+'%"></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;font-size:.62em;opacity:.7;"><span style="color:'+zCor+';">Z:'+(z>=0?'+':'')+z.toFixed(2)+'</span><span style="color:'+mC2+';">M:'+mI+'</span><span style="color:rgba(255,255,255,.3);">G:'+gap+'</span><span style="color:rgba(212,175,125,.4);">B:'+bay.toFixed(0)+'%</span><span style="color:'+jC+';">U12:'+jT+'</span></div></div>';
+
+
+            // GAP ALERT
+            var gapAlert='';
+            if(gap>=8&&total>=15){gapAlert='<div style="margin-top:5px;padding:5px 10px;background:rgba(0,255,128,.04);border:1px solid rgba(0,255,128,.2);border-radius:5px;font-size:.72em;color:#00ff80;font-weight:600;text-shadow:0 0 8px rgba(0,255,128,.4);letter-spacing:.5px;">'+gap+' rodadas sem sair</div>';}
+
+
+            return '<div class="barra-container">'+
+                '<div class="barra-label">'+
+                    '<span class="barra-nome">'+nome+'</span>'+
+                    '<span class="barra-pct">'+pct+'% ('+counts[i]+'x)</span>'+
+                '</div>'+
+                '<div class="barra-track"><div class="barra-fill '+classe+'" style="width:'+pct+'%"></div></div>'+
+                '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;font-size:.62em;opacity:.7;">'+
+                    '<span style="color:'+zCor+';">Z:'+(z>=0?'+':'')+z.toFixed(2)+'</span>'+
+                    '<span style="color:'+mC2+';">M:'+mI+'</span>'+
+                    '<span style="color:rgba(255,255,255,.3);">G:'+gap+'</span>'+
+                    '<span style="color:rgba(212,175,125,.4);">B:'+bay.toFixed(0)+'%</span>'+
+                    '<span style="color:'+jC+';">U12:'+jT+'</span>'+
+                '</div>'+
+                gapAlert+
+            '</div>';
         }).join('');
     }
     renderBarras('analiseDuzias',dzN,dzPct,dz,dzZ,gaps.dz,bayDz,momDz,momDzC,janDz,[]);
     renderBarras('analiseColunas',clN,clPct,cl,clZ,gaps.cl,bayCl,momCl,momClC,janCl,[]);
 
-    // 1-18 / 19-36
+    // NEON DUZIAS QUENTES na mesa
+    var mesaTds=document.querySelectorAll('.mesa-table td');
+    mesaTds.forEach(function(td){td.style.boxShadow='';td.style.border='';});
+    if(T>=10){
+        // Rankear duzias por frequencia
+        var dzRank=[{i:0,c:dz[0]},{i:1,c:dz[1]},{i:2,c:dz[2]}];
+        dzRank.sort(function(a,b){return b.c-a.c;});
+        // Pegar as 2 mais quentes MAS so se tiver numeros
+        var hotDz=[];
+        if(dzRank[0].c>0)hotDz.push(dzRank[0].i);
+        if(dzRank[1].c>0)hotDz.push(dzRank[1].i);
+        if(hotDz.length>0){
+            mesaTds.forEach(function(td){
+                var txt=td.textContent.trim();
+                var num=parseInt(txt);
+                if(isNaN(num)||num<1||num>36||txt!==String(num))return;
+                // Duzia: 1-12=0, 13-24=1, 25-36=2
+                var dzi=num<=12?0:num<=24?1:2;
+                if(hotDz.indexOf(dzi)>=0){
+                    td.style.boxShadow='0 0 12px #00ff80, 0 0 25px rgba(0,255,128,.5), inset 0 0 10px rgba(0,255,128,.35)';
+                    td.style.border='2px solid #00ff80';
+                }
+            });
+        }
+    }
+
+
+
+    // ESTATISTICAS
     var zeros=h.filter(function(n){return n===0;}).length;
     var verms=h.filter(function(n){return VERMELHOS.includes(n);}).length;
     var pretos=total-zeros-verms;
-    var baixo=sz.filter(function(n){return n>=1&&n<=18;}).length;
-    var alto=sz.filter(function(n){return n>=19&&n<=36;}).length;
-    var bP=T>0?Math.round(baixo/T*100):0;var aP=T>0?Math.round(alto/T*100):0;
-    var bZ=zScore(baixo,T,0.5);var aZ=zScore(alto,T,0.5);
-    var bZC=bZ>1?'#e74c3c':bZ<-1?'#2ecc71':'rgba(255,255,255,.4)';
-    var aZC=aZ>1?'#e74c3c':aZ<-1?'#2ecc71':'rgba(255,255,255,.4)';
-    var bCl2=bZ>0.5?'quente':bZ<-0.5?'frio':'morno';
-    var aCl2=aZ>0.5?'quente':aZ<-0.5?'frio':'morno';
-    var metEl=document.getElementById('analiseMetades');
-    if(metEl){
-        var sig='';
-        if(Math.abs(bZ)>1.3&&total>=18){var fria=bZ<0?'1-18':'19-36';var cnf=Math.abs(bZ)>1.8?'ALTA':'MODERADA';sig='<div style="margin-top:10px;padding:8px 12px;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.15);border-radius:6px;font-size:.75em;color:rgba(46,204,113,.7);">'+fria+' fria (Z:'+(bZ<0?bZ.toFixed(2):aZ.toFixed(2))+') — Confianca '+cnf+'</div>';}
-        metEl.innerHTML='<div class="barra-container"><div class="barra-label"><span class="barra-nome">1-18</span><span class="barra-pct">'+bP+'% ('+baixo+'x)</span></div><div class="barra-track"><div class="barra-fill '+bCl2+'" style="width:'+bP+'%"></div></div><div style="font-size:.63em;margin-top:3px;color:'+bZC+';">Z:'+(bZ>=0?'+':'')+bZ.toFixed(2)+'</div></div><div class="barra-container"><div class="barra-label"><span class="barra-nome">19-36</span><span class="barra-pct">'+aP+'% ('+alto+'x)</span></div><div class="barra-track"><div class="barra-fill '+aCl2+'" style="width:'+aP+'%"></div></div><div style="font-size:.63em;margin-top:3px;color:'+aZC+';">Z:'+(aZ>=0?'+':'')+aZ.toFixed(2)+'</div></div>'+sig;
-    }
-
-    // ESTATISTICAS
     var estEl=document.getElementById('estatisticasGerais');
     if(estEl){
         var clHtml='';
-        if(setores&&setores.ativo){clHtml='<div style="margin-top:8px;background:rgba(241,196,15,.08);border:1px solid rgba(241,196,15,.15);border-radius:6px;padding:8px 10px;font-size:.72em;color:rgba(241,196,15,.7);">Cluster: setor '+setores.setor+' ('+setores.count+'/'+setores.janela+' ultimos)</div>';}
-        estEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:10px;"><div><div style="font-size:.65em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.1em;font-weight:600;">'+total+'</div></div><div><div style="font-size:.65em;color:#c0392b;">Verm.</div><div style="font-size:1.1em;font-weight:600;color:#c0392b;">'+verms+'</div></div><div><div style="font-size:.65em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.1em;font-weight:600;">'+pretos+'</div></div><div><div style="font-size:.65em;color:#27ae60;">Zero</div><div style="font-size:1.1em;font-weight:600;color:#27ae60;">'+zeros+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.7em;"><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Duzias</div><div style="color:#fff;font-weight:600;">'+chiDz.toFixed(2)+' <span style="color:'+(sDz.f>=2?'#2ecc71':sDz.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';"> ('+sDz.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Colunas</div><div style="color:#fff;font-weight:600;">'+chiCol.toFixed(2)+' <span style="color:'+(sCol.f>=2?'#2ecc71':sCol.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';"> ('+sCol.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">Volatilidade</div><div style="color:'+(vol.t==='MUITO ALTA'||vol.t==='ALTA'?'#e74c3c':vol.t==='MODERADA'?'#f1c40f':'#2ecc71')+';font-weight:600;">'+vol.t+'</div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">CUSUM</div><div style="color:'+(cuDz.alarme||cuCl.alarme?'#e74c3c':'#2ecc71')+';font-weight:600;">'+(cuDz.alarme||cuCl.alarme?'REGIME MUDOU':'NORMAL')+'</div></div></div>'+clHtml;
+        if(setores&&setores.ativo){clHtml='<div style="margin-top:8px;background:rgba(241,196,15,.06);border:1px solid rgba(241,196,15,.15);border-radius:6px;padding:10px 12px;font-size:.78em;color:#f1c40f;">Os numeros estao caindo no mesmo setor da roda ('+setores.count+' dos ultimos '+setores.janela+')</div>';}
+        estEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:10px;"><div><div style="font-size:.65em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.1em;font-weight:600;">'+total+'</div></div><div><div style="font-size:.65em;color:#c0392b;">Verm.</div><div style="font-size:1.1em;font-weight:600;color:#c0392b;">'+verms+'</div></div><div><div style="font-size:.65em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.1em;font-weight:600;">'+pretos+'</div></div><div><div style="font-size:.65em;color:#27ae60;">Zero</div><div style="font-size:1.1em;font-weight:600;color:#27ae60;">'+zeros+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.7em;"><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Duzias</div><div style="color:#fff;font-weight:600;">'+chiDz.toFixed(2)+' <span style="color:'+(sDz.f>=2?'#2ecc71':sDz.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';"> ('+sDz.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Colunas</div><div style="color:#fff;font-weight:600;">'+chiCol.toFixed(2)+' <span style="color:'+(sCol.f>=2?'#2ecc71':sCol.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';"> ('+sCol.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">Volatilidade</div><div style="color:'+(vol.t==='MUITO ALTA'||vol.t==='ALTA'?'#e74c3c':vol.t==='MODERADA'?'#f1c40f':'#2ecc71')+';font-weight:600;">'+vol.t+'</div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">Mesa</div><div style="color:'+(cuDz.alarme||cuCl.alarme?'#e74c3c':'#2ecc71')+';font-weight:600;">'+(cuDz.alarme||cuCl.alarme?'MUDOU — reinicie a leitura':'ESTAVEL')+'</div></div></div>'+clHtml;
     }
 }
 
@@ -1198,6 +1217,5 @@ async function initAll(){
 initAll();
 
 </script>
-
 </body>
 </html>
