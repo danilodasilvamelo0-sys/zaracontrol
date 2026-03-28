@@ -254,11 +254,11 @@
                 <div class="grid-3" style="margin-bottom:15px;">
                     <div style="background:rgba(212,175,125,.04);border:1px solid rgba(212,175,125,.1);border-radius:8px;padding:12px;text-align:center;">
                         <div style="font-size:.58em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Depositado</div>
-                        <input type="number" id="cgDep" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:2px 0;background:transparent;border:none;border-bottom:1px solid rgba(212,175,125,.15);color:#d4af7d;font-size:1.2em;font-weight:700;font-family:'Open Sans',sans-serif;text-align:center;outline:none;">
+                        <input type="text" id="cgDep" placeholder="0,00" inputmode="decimal" onblur="salvarCG()" oninput="fmtInput(this)" style="width:100%;padding:2px 0;background:transparent;border:none;border-bottom:1px solid rgba(212,175,125,.15);color:#d4af7d;font-size:1.2em;font-weight:700;font-family:'Open Sans',sans-serif;text-align:center;outline:none;">
                     </div>
                     <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;text-align:center;">
                         <div style="font-size:.58em;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Banca Atual</div>
-                        <input type="number" id="cgAtual" placeholder="0.00" step="0.01" onchange="salvarCG()" style="width:100%;padding:2px 0;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.08);color:#fff;font-size:1.2em;font-weight:700;font-family:'Open Sans',sans-serif;text-align:center;outline:none;">
+                        <input type="text" id="cgAtual" placeholder="0,00" inputmode="decimal" onblur="salvarCG()" oninput="fmtInput(this)" style="width:100%;padding:2px 0;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.08);color:#fff;font-size:1.2em;font-weight:700;font-family:'Open Sans',sans-serif;text-align:center;outline:none;">
                     </div>
                     <div id="cgLucroBox" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px;padding:12px;text-align:center;">
                         <div style="font-size:.58em;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Lucro</div>
@@ -270,14 +270,14 @@
                     <div style="display:flex;gap:8px;align-items:flex-end;">
                         <div style="flex:1;">
                             <div style="font-size:.6em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Sacar</div>
-                            <input type="number" id="cgSaqueVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(46,204,113,.12);border-radius:6px;color:#2ecc71;font-size:.9em;font-family:'Open Sans',sans-serif;">
+                            <input type="text" id="cgSaqueVal" placeholder="Valor R$" inputmode="decimal" oninput="fmtInput(this)" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(46,204,113,.12);border-radius:6px;color:#2ecc71;font-size:.9em;font-family:'Open Sans',sans-serif;">
                         </div>
                         <button class="zara-btn green sm" onclick="registrarSaque()">Sacar</button>
                     </div>
                     <div style="display:flex;gap:6px;align-items:flex-end;">
                         <div style="flex:1;">
                             <div style="font-size:.6em;color:rgba(231,76,60,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Perda</div>
-                            <input type="number" id="cgPerdaVal" placeholder="Valor R$" step="0.01" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(231,76,60,.12);border-radius:6px;color:#e74c3c;font-size:.9em;font-family:'Open Sans',sans-serif;">
+                            <input type="text" id="cgPerdaVal" placeholder="Valor R$" inputmode="decimal" oninput="fmtInput(this)" style="width:100%;padding:10px;background:#0a0a0a;border:1px solid rgba(231,76,60,.12);border-radius:6px;color:#e74c3c;font-size:.9em;font-family:'Open Sans',sans-serif;">
                         </div>
                         <button class="zara-btn red sm" onclick="registrarPerda()">Perdi</button>
                     </div>
@@ -520,6 +520,35 @@ function loadAll(){
     }catch(e){console.error('loadAll error:',e);}
 }
 function saveR(){try{localStorage.setItem(ROL_KEY,JSON.stringify(R));triggerSync();}catch(e){}}
+// FORMATACAO BR
+function parseBR(str){if(!str)return 0;var s=String(str).replace(/\s/g,'').replace(/R\$\s*/g,'');s=s.replace(/\./g,'').replace(',','.');return parseFloat(s)||0;}
+function fmtBR(v){if(!v&&v!==0)return'';return v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtInput(el){var v=el.value;v=v.replace(/[^0-9.,]/g,'');el.value=v;}
+
+// SVG ICONS
+var SVG_EDIT='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>';
+var SVG_TRASH='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+
+function editarSaque(idx){
+    var s=CG.saques[idx];if(!s)return;
+    var novoVal=prompt('Valor do saque:',fmtBR(s.valor));if(novoVal===null)return;
+    var dt=new Date(s.data);
+    var novaData=prompt('Data (dd/mm/aaaa):',dt.toLocaleDateString('pt-BR'));if(novaData===null)return;
+    var pv=parseBR(novoVal);if(pv>0)s.valor=pv;
+    var pd=novaData.split('/');if(pd.length===3){var nd=new Date(pd[2],pd[1]-1,pd[0],dt.getHours(),dt.getMinutes());if(!isNaN(nd.getTime()))s.data=nd.toISOString();}
+    _saveCG();renderCG();toast('Saque editado');
+}
+
+function editarMov(idx){
+    var m=CG.movs[idx];if(!m)return;
+    var novoVal=prompt('Valor:',fmtBR(m.valor));if(novoVal===null)return;
+    var dt=new Date(m.data);
+    var novaData=prompt('Data (dd/mm/aaaa):',dt.toLocaleDateString('pt-BR'));if(novaData===null)return;
+    var pv=parseBR(novoVal);if(pv>0)m.valor=pv;
+    var pd=novaData.split('/');if(pd.length===3){var nd=new Date(pd[2],pd[1]-1,pd[0],dt.getHours(),dt.getMinutes());if(!isNaN(nd.getTime()))m.data=nd.toISOString();}
+    _saveCG();renderCG();toast('Registro editado');
+}
+
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 
 // ==========================================
@@ -974,7 +1003,7 @@ function renderBilhete(){
                         '<button onclick="resolverBet(\''+b.id+'\',\'green\')" style="flex:1;padding:10px;background:rgba(46,204,113,.1);border:2px solid rgba(46,204,113,.4);border-radius:8px;color:#2ecc71;font-weight:700;font-size:.9em;cursor:pointer;font-family:\'Inter\',sans-serif;">GREEN</button>'+
                         '<button onclick="resolverBet(\''+b.id+'\',\'red\')" style="flex:1;padding:10px;background:rgba(231,76,60,.1);border:2px solid rgba(231,76,60,.4);border-radius:8px;color:#e74c3c;font-weight:700;font-size:.9em;cursor:pointer;font-family:\'Inter\',sans-serif;">RED</button>'+
                         '<button onclick="resolverBet(\''+b.id+'\',\'void\')" style="padding:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:rgba(255,255,255,.4);font-size:.75em;cursor:pointer;font-family:\'Inter\',sans-serif;">Void</button>'+
-                        '<button onclick="deletarBet(\''+b.id+'\')" style="padding:10px;background:rgba(231,76,60,.05);border:1px solid rgba(231,76,60,.15);border-radius:8px;color:rgba(231,76,60,.5);font-size:.7em;cursor:pointer;font-family:\'Inter\',sans-serif;">x</button>'+
+                        '<button onclick="deletarBet(\''+b.id+'\')" style="padding:8px;background:transparent;border:1px solid rgba(231,76,60,.12);border-radius:8px;color:rgba(231,76,60,.4);cursor:pointer;display:flex;align-items:center;" onmouseover="this.style.color=\'#e74c3c\'" onmouseout="this.style.color=\'rgba(231,76,60,.4)\'">'+SVG_TRASH+'</button>'+
                     '</div>'+
                 '</div>';
             }).join('');
@@ -1065,7 +1094,7 @@ function renderFinanceiro(){
                     '<div style="flex:1;font-size:.8em;color:rgba(255,255,255,.5);">'+(m.tipo==='deposito'?'Deposito':'Saque')+'</div>'+
                     '<span style="font-size:.85em;font-weight:600;color:'+cr+';">'+(m.tipo==='deposito'?'+':'-')+fmtR(m.valor)+'</span>'+
                     '<span style="font-size:.6em;color:rgba(255,255,255,.2);">'+ds+'</span>'+
-                    '<button class="btn-mini delete" onclick="deletarMov(\''+m.id+'\')" style="padding:2px 5px;font-size:.5em;">x</button></div>';
+                    '<button onclick="deletarMov(\''+m.id+'\')" style="background:transparent;border:none;color:rgba(231,76,60,.25);cursor:pointer;display:flex;align-items:center;padding:4px;" onmouseover="this.style.color=\'#e74c3c\'" onmouseout="this.style.color=\'rgba(231,76,60,.25)\'">'+SVG_TRASH+'</button></div>';
             }).join('');
         }
     }
@@ -1102,8 +1131,8 @@ function renderHistorico(){
             '<div style="flex:1;"><div style="font-size:.82em;color:#fff;">'+b.jogo+'</div><div style="font-size:.68em;color:rgba(255,255,255,.3);">@'+b.odd.toFixed(2)+' | '+fmtR(b.stake)+'</div></div>'+
             '<div style="text-align:right;min-width:55px;"><div style="font-size:.82em;font-weight:700;color:'+cr+';">'+lucroTxt+'</div><div style="font-size:.58em;color:rgba(255,255,255,.2);">'+ds+'</div></div>'+
             '<div style="display:flex;gap:4px;margin-left:4px;">'+
-                '<button onclick="editarBet(\''+b.id+'\')" style="padding:4px 6px;background:transparent;border:1px solid rgba(255,255,255,.06);border-radius:4px;color:rgba(255,255,255,.2);font-size:.6em;cursor:pointer;">&#9998;</button>'+
-                '<button onclick="deletarBetHist(\''+b.id+'\')" style="padding:4px 6px;background:transparent;border:1px solid rgba(231,76,60,.1);border-radius:4px;color:rgba(231,76,60,.3);font-size:.6em;cursor:pointer;">x</button>'+
+                '<button onclick="editarBet(\''+b.id+'\')" style="background:transparent;border:none;color:rgba(212,175,125,.3);cursor:pointer;display:flex;align-items:center;padding:4px;border-radius:4px;" onmouseover="this.style.color=\'#d4af7d\'" onmouseout="this.style.color=\'rgba(212,175,125,.3)\'">'+SVG_EDIT+'</button>'+
+                '<button onclick="deletarBetHist(\''+b.id+'\')" style="background:transparent;border:none;color:rgba(231,76,60,.25);cursor:pointer;display:flex;align-items:center;padding:4px;border-radius:4px;" onmouseover="this.style.color=\'#e74c3c\'" onmouseout="this.style.color=\'rgba(231,76,60,.25)\'">'+SVG_TRASH+'</button>'+
             '</div>'+
         '</div>';
     }).join('');
@@ -1146,29 +1175,29 @@ function loadCG(){try{var s=localStorage.getItem(CG_KEY);if(s){var p=JSON.parse(
 function _saveCG(){try{localStorage.setItem(CG_KEY,JSON.stringify(CG));}catch(e){}triggerSync();}
 
 function salvarCG(){
-    CG.dep=parseFloat(document.getElementById('cgDep').value)||0;
-    CG.atual=parseFloat(document.getElementById('cgAtual').value)||0;
+    CG.dep=parseBR(document.getElementById('cgDep').value);
+    CG.atual=parseBR(document.getElementById('cgAtual').value);
     _saveCG();renderCG();
 }
 
 function registrarSaque(){
-    var val=parseFloat(document.getElementById('cgSaqueVal').value);
+    var val=parseBR(document.getElementById('cgSaqueVal').value);
     if(!val||val<=0)return;
-    if(val>CG.atual){toast('Saldo insuficiente. Banca: R$ '+CG.atual.toFixed(2));return;}
+    if(val>CG.atual){toast('Saldo insuficiente. Banca: R$ '+fmtBR(CG.atual));return;}
     CG.atual-=val;
     CG.saques.push({valor:val,data:new Date().toISOString()});
     CG.movs.push({tipo:'saque',valor:val,data:new Date().toISOString()});
-    document.getElementById('cgAtual').value=CG.atual.toFixed(2);
+    document.getElementById('cgAtual').value=fmtBR(CG.atual);
     document.getElementById('cgSaqueVal').value='';
-    _saveCG();renderCG();playCash();toast('Saque R$ '+val.toFixed(2));
+    _saveCG();renderCG();playCash();toast('Saque R$ '+fmtBR(val));
 }
 
 function registrarPerda(){
-    var val=parseFloat(document.getElementById('cgPerdaVal').value);
+    var val=parseBR(document.getElementById('cgPerdaVal').value);
     if(!val||val<=0)return;
     CG.movs.push({tipo:'perda',valor:val,data:new Date().toISOString()});
     document.getElementById('cgPerdaVal').value='';
-    _saveCG();renderCG();toast('Perda de R$ '+val.toFixed(2)+' registrada');
+    _saveCG();renderCG();toast('Perda de R$ '+fmtBR(val)+' registrada');
 }
 
 function deletarSaque(idx){CG.saques.splice(idx,1);_saveCG();renderCG();}
@@ -1177,8 +1206,8 @@ function deletarMov(idx){CG.movs.splice(idx,1);_saveCG();renderCG();}
 function renderCG(){
     var depEl=document.getElementById('cgDep');
     var atuEl=document.getElementById('cgAtual');
-    if(depEl&&document.activeElement!==depEl)depEl.value=CG.dep||'';
-    if(atuEl&&document.activeElement!==atuEl)atuEl.value=CG.atual||'';
+    if(depEl&&document.activeElement!==depEl)depEl.value=CG.dep?fmtBR(CG.dep):'';
+    if(atuEl&&document.activeElement!==atuEl)atuEl.value=CG.atual?fmtBR(CG.atual):'';
 
     // Lucro = Banca Atual - Depositado
     var lucro=CG.atual-CG.dep;
@@ -1187,7 +1216,7 @@ function renderCG(){
     if(lucroEl){
         if(CG.dep>0||CG.atual>0){
             var sinal=lucro>=0?'+':'';
-            lucroEl.textContent=sinal+'R$ '+Math.abs(lucro).toFixed(2);
+            lucroEl.textContent=sinal+'R$ '+fmtBR(Math.abs(lucro));
             lucroEl.style.color=lucro>=0?'#2ecc71':'#e74c3c';
             if(lucroBox){lucroBox.style.background=lucro>=0?'rgba(46,204,113,.06)':'rgba(231,76,60,.06)';lucroBox.style.border='1px solid '+(lucro>=0?'rgba(46,204,113,.12)':'rgba(231,76,60,.12)');}
         }else{
@@ -1202,7 +1231,7 @@ function renderCG(){
     if(tsEl){
         if(totalSaques>0){
             tsEl.style.display='block';
-            tsEl.innerHTML='<div style="font-size:.6em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;">Total Sacado</div><div style="font-size:1.3em;font-weight:700;color:#2ecc71;font-family:\'Open Sans\',sans-serif;margin-top:4px;">R$ '+totalSaques.toFixed(2)+'</div>';
+            tsEl.innerHTML='<div style="font-size:.6em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;">Total Sacado</div><div style="font-size:1.3em;font-weight:700;color:#2ecc71;font-family:\'Open Sans\',sans-serif;margin-top:4px;">R$ '+fmtBR(totalSaques)+'</div>';
         }else{tsEl.style.display='none';}
     }
 
@@ -1217,26 +1246,32 @@ function renderCG(){
 
         var html='';
         if(saquesMes.length){
-            html+='<div style="font-size:.65em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Saques do Mes — R$ '+totalSaqMes.toFixed(2)+'</div>';
+            html+='<div style="font-size:.65em;color:rgba(46,204,113,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Saques do Mes — R$ '+fmtBR(totalSaqMes)+'</div>';
             html+=saquesMes.map(function(s){
                 var dt=new Date(s.data);var ds=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
                 var gi=CG.saques.indexOf(s);
-                return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);">'+
-                    '<span style="font-size:.78em;color:rgba(255,255,255,.4);">'+ds+'</span>'+
-                    '<span style="font-size:.85em;font-weight:600;color:#2ecc71;">+R$ '+s.valor.toFixed(2)+'</span>'+
-                    '<button onclick="deletarSaque('+gi+')" style="background:transparent;border:none;color:rgba(255,255,255,.12);cursor:pointer;font-size:.65em;">x</button>'+
+                return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);">'+
+                    '<span style="font-size:.8em;color:rgba(255,255,255,.4);">'+ds+'</span>'+
+                    '<span style="font-size:.88em;font-weight:600;color:#2ecc71;">+R$ '+fmtBR(s.valor)+'</span>'+
+                    '<div style="display:flex;gap:6px;">'+
+                        '<button onclick="editarSaque('+gi+')" style="background:transparent;border:none;color:rgba(212,175,125,.3);cursor:pointer;display:flex;align-items:center;padding:4px;border-radius:4px;transition:color .2s;" onmouseover="this.style.color=\'#d4af7d\'" onmouseout="this.style.color=\'rgba(212,175,125,.3)\'">'+SVG_EDIT+'</button>'+
+                        '<button onclick="deletarSaque('+gi+')" style="background:transparent;border:none;color:rgba(231,76,60,.25);cursor:pointer;display:flex;align-items:center;padding:4px;border-radius:4px;transition:color .2s;" onmouseover="this.style.color=\'#e74c3c\'" onmouseout="this.style.color=\'rgba(231,76,60,.25)\'">'+SVG_TRASH+'</button>'+
+                    '</div>'+
                 '</div>';
             }).join('');
         }
         if(quebrasMes.length){
-            html+='<div style="font-size:.65em;color:rgba(231,76,60,.5);text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px;">Perdas do Mes — R$ '+totalQuebraMes.toFixed(2)+' perdido</div>';
+            html+='<div style="font-size:.65em;color:rgba(231,76,60,.5);text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px;">Perdas do Mes — R$ '+fmtBR(totalQuebraMes)+' perdido</div>';
             html+=quebrasMes.map(function(m){
                 var dt=new Date(m.data);var ds=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
                 var gi=CG.movs.indexOf(m);
-                return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);">'+
-                    '<span style="font-size:.78em;color:rgba(255,255,255,.4);">'+ds+'</span>'+
-                    '<span style="font-size:.85em;font-weight:600;color:#e74c3c;">-R$ '+m.valor.toFixed(2)+'</span>'+
-                    '<button onclick="deletarMov('+gi+')" style="background:transparent;border:none;color:rgba(255,255,255,.12);cursor:pointer;font-size:.65em;">x</button>'+
+                return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);">'+
+                    '<span style="font-size:.8em;color:rgba(255,255,255,.4);">'+ds+'</span>'+
+                    '<span style="font-size:.88em;font-weight:600;color:#e74c3c;">-R$ '+fmtBR(m.valor)+'</span>'+
+                    '<div style="display:flex;gap:6px;">'+
+                        '<button onclick="editarMov('+gi+')" style="background:transparent;border:none;color:rgba(212,175,125,.3);cursor:pointer;display:flex;align-items:center;padding:4px;border-radius:4px;transition:color .2s;" onmouseover="this.style.color=\'#d4af7d\'" onmouseout="this.style.color=\'rgba(212,175,125,.3)\'">'+SVG_EDIT+'</button>'+
+                        '<button onclick="deletarMov('+gi+')" style="background:transparent;border:none;color:rgba(231,76,60,.25);cursor:pointer;display:flex;align-items:center;padding:4px;border-radius:4px;transition:color .2s;" onmouseover="this.style.color=\'#e74c3c\'" onmouseout="this.style.color=\'rgba(231,76,60,.25)\'">'+SVG_TRASH+'</button>'+
+                    '</div>'+
                 '</div>';
             }).join('');
         }
@@ -1260,7 +1295,7 @@ function renderCG(){
                     var val=meses[k];var cor=val>=0?'#2ecc71':'#e74c3c';var sinal=val>=0?'+':'';
                     return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:.78em;">'+
                         '<span style="color:rgba(255,255,255,.4);">'+label+'</span>'+
-                        '<span style="color:'+cor+';font-weight:600;">'+sinal+'R$ '+Math.abs(val).toFixed(2)+'</span></div>';
+                        '<span style="color:'+cor+';font-weight:600;">'+sinal+'R$ '+fmtBR(Math.abs(val))+'</span></div>';
                 }).join('');
         }
     }
