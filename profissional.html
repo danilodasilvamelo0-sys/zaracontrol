@@ -91,13 +91,13 @@
 
     /* Mesa de números */
     .mesa-numeros{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
-    .mesa-table{border-collapse:separate;border-spacing:3px;width:100%;table-layout:fixed}
-    .mesa-table td{font-size:1.1em;font-weight:700;height:52px;text-align:center;cursor:pointer;transition:all .15s;font-family:'Open Sans',sans-serif;border-radius:4px;letter-spacing:1px}
-    .mesa-table td:active{transform:scale(0.92);filter:brightness(1.3)}
-    .mesa-table td.v{background:linear-gradient(145deg,rgba(180,30,30,.65),rgba(140,20,20,.7))}
-    .mesa-table td.p{background:linear-gradient(145deg,rgba(35,35,35,.85),rgba(20,20,20,.9))}
-    .mesa-table td.z{background:linear-gradient(145deg,rgba(0,110,0,.65),rgba(0,80,0,.7))}
-    .mesa-table td.dz-label{background:transparent;color:rgba(212,175,125,.3);font-size:.65em;cursor:default;letter-spacing:2px}
+    .mesa-table{border-collapse:collapse;width:100%;table-layout:fixed;border-radius:10px;overflow:hidden;border:2px solid rgba(255,255,255,.15)}
+    .mesa-table td{font-size:1.15em;font-weight:700;height:50px;text-align:center;cursor:pointer;transition:all .12s;font-family:'Open Sans',sans-serif;border:1px solid rgba(255,255,255,.12);color:#fff}
+    .mesa-table td:active{transform:scale(0.93);filter:brightness(1.3)}
+    .mesa-table td.v{background:#c0272d}
+    .mesa-table td.p{background:#1a1a1a}
+    .mesa-table td.z{background:#00802b}
+    .mesa-table td.lbl{background:rgba(255,255,255,.04);color:rgba(255,255,255,.35);font-size:.7em;cursor:default;font-weight:600;letter-spacing:1px}
 
     /* Últimos números */
     .ultimos-numeros{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
@@ -230,6 +230,7 @@
             <div class="analise-box" style="margin-bottom:15px;">
                 <div class="analise-titulo">Mesa — Toque no Número</div>
                 <div id="mesaRoleta" class="mesa-roleta"></div>
+                <div id="foraContador" style="margin-top:10px;display:none;"></div>
             </div>
 
             <!-- SEXTINAS -->
@@ -656,14 +657,21 @@ function analisarSetores(h){
 function buildMesa(){
     var m=document.getElementById('mesaRoleta');if(!m)return;
     var html='<table class="mesa-table">';
-    html+='<tr><td class="z" rowspan="3" onclick="addNum(0)" style="font-size:1.3em;">0</td>';
+    // Row 1: 0 + 3,6,9...36 + 2:1
+    html+='<tr><td class="z" rowspan="3" onclick="addNum(0)">0</td>';
     for(var i=3;i<=36;i+=3)html+='<td class="'+corNum(i)+'" onclick="addNum('+i+')">'+i+'</td>';
-    html+='<td class="dz-label" style="cursor:default;">2:1</td></tr><tr>';
+    html+='<td class="lbl" rowspan="1">2:1</td></tr>';
+    // Row 2: 2,5,8...35 + 2:1
+    html+='<tr>';
     for(var i2=2;i2<=35;i2+=3)html+='<td class="'+corNum(i2)+'" onclick="addNum('+i2+')">'+i2+'</td>';
-    html+='<td class="dz-label" style="cursor:default;">2:1</td></tr><tr>';
+    html+='<td class="lbl">2:1</td></tr>';
+    // Row 3: 1,4,7...34 + 2:1
+    html+='<tr>';
     for(var i3=1;i3<=34;i3+=3)html+='<td class="'+corNum(i3)+'" onclick="addNum('+i3+')">'+i3+'</td>';
-    html+='<td class="dz-label" style="cursor:default;">2:1</td></tr>';
-    html+='<tr><td class="dz-label" style="cursor:default;"></td><td class="dz-label" colspan="4" style="cursor:default;">1st 12</td><td class="dz-label" colspan="4" style="cursor:default;">2nd 12</td><td class="dz-label" colspan="4" style="cursor:default;">3rd 12</td><td class="dz-label" style="cursor:default;"></td></tr></table>';
+    html+='<td class="lbl">2:1</td></tr>';
+    // Row 4: 1a 12, 2a 12, 3a 12 (alinhado com numeros, sem invadir 0 e 2:1)
+    html+='<tr><td class="lbl"></td><td class="lbl" colspan="4">1.ª 12</td><td class="lbl" colspan="4">2.ª 12</td><td class="lbl" colspan="4">3.ª 12</td><td class="lbl"></td></tr>';
+    html+='</table>';
     m.innerHTML=html;
 }
 
@@ -745,6 +753,26 @@ function renderRoleta(){
     // SINALIZACAO NA MESA
     var mesaTds=document.querySelectorAll('.mesa-table td');
     mesaTds.forEach(function(td){td.style.boxShadow='';td.style.outline='';td.style.outlineOffset='';td.style.zIndex='';td.style.position='';});
+
+    // Contar fora
+    var fora13=0;var fora3436=0;
+    h.forEach(function(n){if(n>=1&&n<=3)fora13++;if(n>=34&&n<=36)fora3436++;});
+    var foraTotal=fora13+fora3436;
+    var foraEl=document.getElementById('foraContador');
+    if(foraEl){
+        if(foraTotal>0){
+            foraEl.style.display='flex';
+            foraEl.innerHTML='<div style="display:flex;gap:15px;align-items:center;justify-content:center;padding:8px 14px;background:rgba(52,152,219,.06);border:1px solid rgba(52,152,219,.15);border-radius:8px;font-size:.85em;">'+
+                '<span style="color:rgba(255,255,255,.4);">Fora do jogo:</span>'+
+                '<span style="color:#3498db;font-weight:700;">1-3 <span style="font-size:1.1em;">'+fora13+'x</span></span>'+
+                '<span style="color:rgba(255,255,255,.12);">|</span>'+
+                '<span style="color:#3498db;font-weight:700;">34-36 <span style="font-size:1.1em;">'+fora3436+'x</span></span>'+
+                '<span style="color:rgba(255,255,255,.12);">|</span>'+
+                '<span style="color:'+(foraTotal>5?'#e74c3c':'rgba(255,255,255,.5)')+';font-weight:600;">Total '+foraTotal+'x ('+(total>0?Math.round(foraTotal/total*100):0)+'%)</span>'+
+            '</div>';
+        }else{foraEl.style.display='none';}
+    }
+
     if(T>=10){
         var sxRank=sx.map(function(c,i){return{i:i,c:c};});
         sxRank.sort(function(a,b){return b.c-a.c;});
@@ -755,30 +783,25 @@ function renderRoleta(){
         if(sxRank[3]&&sxRank[3].c>0&&sxRank[3].c===sxRank[1].c)hotSx.push(sxRank[3].i);
         if(sxRank[4]&&sxRank[4].c>0&&sxRank[4].c===sxRank[1].c)hotSx.push(sxRank[4].i);
 
-        var foraSet={};var foraCount=0;
-        h.forEach(function(n){if((n>=1&&n<=3)||(n>=34&&n<=36)){foraSet[n]=true;foraCount++;}});
-        var fi=Math.min(foraCount/T,1);
+        var foraSet={};
+        h.forEach(function(n){if((n>=1&&n<=3)||(n>=34&&n<=36))foraSet[n]=true;});
 
         mesaTds.forEach(function(td){
+            if(td.classList.contains('lbl'))return;
             var txt=td.textContent.trim();
             var num=parseInt(txt);
             if(isNaN(num)||num<1||num>36||txt!==String(num))return;
-            // FORA: azul — intensifica
+            // FORA: azul neon
             if(foraSet[num]){
-                var op=0.5+fi*0.5;
-                td.style.position='relative';td.style.zIndex='1';
-                td.style.outline='2px solid rgba(52,152,219,'+op+')';
-                td.style.outlineOffset='-2px';
-                td.style.boxShadow='inset 0 0 12px rgba(52,152,219,'+(op*0.3)+')';
+                td.style.position='relative';td.style.zIndex='2';
+                td.style.boxShadow='inset 0 0 0 2px #3498db, 0 0 10px rgba(52,152,219,.4)';
                 return;
             }
             // QUENTE: verde
             var sxi=sextina(num);
             if(sxi>=0&&hotSx.indexOf(sxi)>=0){
-                td.style.position='relative';td.style.zIndex='1';
-                td.style.outline='2px solid rgba(46,204,113,.7)';
-                td.style.outlineOffset='-2px';
-                td.style.boxShadow='inset 0 0 10px rgba(46,204,113,.15)';
+                td.style.position='relative';td.style.zIndex='2';
+                td.style.boxShadow='inset 0 0 0 2px #2ecc71, 0 0 8px rgba(46,204,113,.3)';
             }
         });
     }
