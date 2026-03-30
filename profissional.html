@@ -804,21 +804,24 @@ function renderRoleta(){
     var mesaTds=document.querySelectorAll('.mesa-table td');
     mesaTds.forEach(function(td){td.style.boxShadow='';td.style.outline='';td.style.outlineOffset='';td.style.zIndex='';td.style.position='';});
 
-    // Contar fora
+    // Contar fora (0 + 1-3 + 34-36)
+    var foraZero=h.filter(function(n){return n===0;}).length;
     var fora13=0;var fora3436=0;
     h.forEach(function(n){if(n>=1&&n<=3)fora13++;if(n>=34&&n<=36)fora3436++;});
-    var foraTotal=fora13+fora3436;
+    var foraTotal=foraZero+fora13+fora3436;
     var foraEl=document.getElementById('foraContador');
     if(foraEl){
         if(foraTotal>0){
             foraEl.style.display='flex';
-            foraEl.innerHTML='<div style="display:flex;gap:15px;align-items:center;justify-content:center;padding:8px 14px;background:rgba(52,152,219,.06);border:1px solid rgba(52,152,219,.15);border-radius:8px;font-size:.85em;">'+
+            foraEl.innerHTML='<div style="display:flex;gap:12px;align-items:center;justify-content:center;padding:8px 14px;background:rgba(52,152,219,.06);border:1px solid rgba(52,152,219,.15);border-radius:8px;font-size:.85em;flex-wrap:wrap;">'+
                 '<span style="color:rgba(255,255,255,.4);">Fora do jogo:</span>'+
+                '<span style="color:#27ae60;font-weight:700;">0 <span style="font-size:1.1em;">'+foraZero+'x</span></span>'+
+                '<span style="color:rgba(255,255,255,.08);">|</span>'+
                 '<span style="color:#3498db;font-weight:700;">1-3 <span style="font-size:1.1em;">'+fora13+'x</span></span>'+
-                '<span style="color:rgba(255,255,255,.12);">|</span>'+
+                '<span style="color:rgba(255,255,255,.08);">|</span>'+
                 '<span style="color:#3498db;font-weight:700;">34-36 <span style="font-size:1.1em;">'+fora3436+'x</span></span>'+
-                '<span style="color:rgba(255,255,255,.12);">|</span>'+
-                '<span style="color:'+(foraTotal>5?'#e74c3c':'rgba(255,255,255,.5)')+';font-weight:600;">Total '+foraTotal+'x ('+(total>0?Math.round(foraTotal/total*100):0)+'%)</span>'+
+                '<span style="color:rgba(255,255,255,.08);">|</span>'+
+                '<span style="color:'+(foraTotal>5?'#e74c3c':'rgba(255,255,255,.5)')+';font-weight:600;">Total '+foraTotal+'/'+(total||0)+' ('+(total>0?Math.round(foraTotal/total*100):0)+'%)</span>'+
             '</div>';
         }else{foraEl.style.display='none';}
     }
@@ -836,14 +839,14 @@ function renderRoleta(){
             streakSeg++;
         }
 
-        // Fora nas ultimas 10
+        // Fora nas ultimas 10 e 5 (0 + 1-3 + 34-36)
+        function isFora(n){return n===0||(n>=1&&n<=3)||(n>=34&&n<=36);}
         var ult10=h.slice(-10);
-        var foraUlt10=ult10.filter(function(n){return n===0||(n>=1&&n<=3)||(n>=34&&n<=36);}).length;
-        var foraUlt5=h.slice(-5).filter(function(n){return n===0||(n>=1&&n<=3)||(n>=34&&n<=36);}).length;
+        var foraUlt10=ult10.filter(isFora).length;
+        var foraUlt5=h.slice(-5).filter(isFora).length;
 
-        // % fora na sessao (incluindo zero)
-        var foraComZero=foraTotal+(h.filter(function(n){return n===0;}).length);
-        var foraPct=total>0?Math.round(foraComZero/total*100):0;
+        // % fora na sessao
+        var foraPct=total>0?Math.round(foraTotal/total*100):0;
 
         // Semaforo
         var semaforoCor='#2ecc71';var semaforoTxt='SEGURO';var semaforoDesc='Mesa favoravel. Entre com confianca.';
@@ -851,15 +854,19 @@ function renderRoleta(){
         else if(foraUlt5>=2||foraUlt10>=4){semaforoCor='#f39c12';semaforoTxt='ATENCAO';semaforoDesc='Fora acima da media. Reduza exposicao.';}
         else if(foraPct>25&&total>=15){semaforoCor='#f39c12';semaforoTxt='ATENCAO';semaforoDesc='Sessao com '+foraPct+'% fora. Mesa desfavoravel.';}
 
-        // Hedge
+        // Hedge — qual street cobrir
         var hedgeHtml='';
         if(foraUlt10>=3&&total>=10){
+            var hedgeAlvo='';
+            if(foraZero>=fora13&&foraZero>=fora3436)hedgeAlvo='zero (straight up, paga 35:1)';
+            else if(fora13>=fora3436)hedgeAlvo='street 1-3 (paga 11:1)';
+            else hedgeAlvo='street 34-36 (paga 11:1)';
             hedgeHtml='<div style="margin-top:10px;padding:10px 14px;background:rgba(212,175,125,.04);border:1px solid rgba(212,175,125,.1);border-radius:8px;">'+
                 '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'+
                     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4af7d" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'+
                     '<span style="font-size:.78em;color:#d4af7d;font-weight:600;letter-spacing:1px;">HEDGE RECOMENDADO</span>'+
                 '</div>'+
-                '<div style="font-size:.78em;color:rgba(255,255,255,.45);line-height:1.5;">Cubra a street '+(fora13>=fora3436?'1-3':'34-36')+' com aposta minima. Pagamento 11:1 protege varias rodadas.</div>'+
+                '<div style="font-size:.78em;color:rgba(255,255,255,.45);line-height:1.5;">Cubra '+hedgeAlvo+' com aposta minima.</div>'+
             '</div>';
         }
 
@@ -867,18 +874,15 @@ function renderRoleta(){
             '<div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:12px;align-items:center;padding:12px 16px;background:linear-gradient(135deg,rgba('+
             (semaforoCor==='#2ecc71'?'46,204,113':semaforoCor==='#f39c12'?'243,156,18':'231,76,60')+',.04),transparent);'+
             'border:1px solid rgba('+(semaforoCor==='#2ecc71'?'46,204,113':semaforoCor==='#f39c12'?'243,156,18':'231,76,60')+',.12);border-radius:10px;">'+
-                // Semaforo
                 '<div style="text-align:center;">'+
                     '<div style="width:38px;height:38px;border-radius:50%;background:'+semaforoCor+';display:flex;align-items:center;justify-content:center;box-shadow:0 0 15px '+semaforoCor+'60;">'+
                         '<span style="font-size:.6em;font-weight:700;color:#000;letter-spacing:.5px;">'+semaforoTxt.charAt(0)+'</span>'+
                     '</div>'+
                     '<div style="font-size:.58em;font-weight:700;color:'+semaforoCor+';margin-top:4px;letter-spacing:1px;">'+semaforoTxt+'</div>'+
                 '</div>'+
-                // Info
                 '<div>'+
                     '<div style="font-size:.78em;color:rgba(255,255,255,.5);line-height:1.4;">'+semaforoDesc+'</div>'+
                 '</div>'+
-                // Metricas
                 '<div style="text-align:right;">'+
                     '<div style="font-size:.68em;color:rgba(255,255,255,.3);margin-bottom:2px;">Streak segura</div>'+
                     '<div style="font-size:1.2em;font-weight:700;color:'+(streakSeg>=8?'#2ecc71':streakSeg>=4?'#f39c12':'rgba(255,255,255,.5)')+';">'+streakSeg+'</div>'+
@@ -898,15 +902,16 @@ function renderRoleta(){
         if(sxRank[4]&&sxRank[4].c>0&&sxRank[4].c===sxRank[1].c)hotSx.push(sxRank[4].i);
 
         var foraSet={};
-        h.forEach(function(n){if((n>=1&&n<=3)||(n>=34&&n<=36))foraSet[n]=true;});
+        h.forEach(function(n){if(n===0||(n>=1&&n<=3)||(n>=34&&n<=36))foraSet[n]=true;});
 
         mesaTds.forEach(function(td){
             if(td.classList.contains('lbl'))return;
             var txt=td.textContent.trim();
             var num=parseInt(txt);
-            if(isNaN(num)||num<1||num>36||txt!==String(num))return;
-            // FORA: azul neon
-            if(foraSet[num]){
+            if(isNaN(num)||num>36)return;
+            if(txt!==String(num))return;
+            // FORA: azul neon (0, 1-3, 34-36)
+            if(foraSet[num]!==undefined&&foraSet[num]){
                 td.style.position='relative';td.style.zIndex='2';
                 td.style.boxShadow='inset 0 0 0 2px #3498db, 0 0 10px rgba(52,152,219,.4)';
                 return;
