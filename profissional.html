@@ -87,29 +87,16 @@
     
 
     /* ==================== ROLETA ==================== */
-    .freq-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
 
     /* Mesa de números */
-    .mesa-numeros{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
-    .mesa-table{border-collapse:collapse;width:100%;table-layout:fixed;border-radius:10px;overflow:hidden;border:2px solid rgba(255,255,255,.15)}
-    .mesa-table td{font-size:1.15em;font-weight:700;height:50px;text-align:center;cursor:pointer;transition:all .12s;font-family:'Open Sans',sans-serif;border:1px solid rgba(255,255,255,.12);color:#fff}
-    .mesa-table td:active{transform:scale(0.93);filter:brightness(1.3)}
-    .mesa-table td.v{background:#c0272d}
-    .mesa-table td.p{background:#1a1a1a}
-    .mesa-table td.z{background:#00802b}
-    .mesa-table td.lbl{background:rgba(255,255,255,.04);color:rgba(255,255,255,.35);font-size:.7em;cursor:default;font-weight:600;letter-spacing:1px}
 
     /* Últimos números */
-    .ultimos-numeros{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
-    .ultimo-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7em;font-weight:600;font-family:'Open Sans',sans-serif;border:1px solid rgba(255,255,255,.08)}
-    .ultimo-num.v{background:linear-gradient(145deg,rgba(180,30,30,.7),rgba(140,20,20,.8))}.ultimo-num.p{background:linear-gradient(145deg,rgba(40,40,40,.9),rgba(25,25,25,.95));border:1px solid rgba(255,255,255,.12)}.ultimo-num.z{background:linear-gradient(145deg,rgba(0,110,0,.7),rgba(0,80,0,.8))}
 
     /* Painel de análise */
     .analise-box{background:linear-gradient(160deg,#0c0c0c,#0a0a0a);border:1px solid rgba(212,175,125,.1);border-radius:12px;padding:18px;margin-bottom:15px;box-shadow:0 2px 12px rgba(0,0,0,.3)}
     .analise-titulo{font-size:.8em;color:rgba(212,175,125,.5);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;font-weight:600}
     .barra-container{margin-bottom:10px}.barra-label{display:flex;justify-content:space-between;font-size:.88em;margin-bottom:4px}.barra-nome{color:rgba(255,255,255,.6);font-size:1em}.barra-pct{color:#d4af7d;font-weight:600;font-size:.95em}
     .barra-track{height:6px;background:rgba(255,255,255,.03);border-radius:3px;overflow:hidden}.barra-fill{height:100%;border-radius:3px;transition:width .4s}
-    .barra-fill.quente{background:linear-gradient(90deg,#c0392b,#e74c3c)}.barra-fill.morno{background:linear-gradient(90deg,#c9a066,#d4af7d)}.barra-fill.frio{background:linear-gradient(90deg,#2980b9,#3498db)}
 
     /* Recomendação */
     .recomendacao{background:linear-gradient(135deg,rgba(212,175,125,.15),rgba(0,0,0,.3));border:1px solid rgba(212,175,125,.3);border-radius:12px;padding:20px;text-align:center;margin-bottom:15px}
@@ -199,54 +186,19 @@
 
 ```
 <div class="main-container"><div class="container">
-    <div class="header"><h1>Profissional</h1><p>Roleta &bull; Esportes &bull; Operações</p></div>
+    <div class="header"><h1>Profissional</h1><p>Esportes &bull; Operações</p></div>
 
     <!-- TABS PRINCIPAIS -->
     <div class="main-tabs">
-        <button class="main-tab active" onclick="switchMain('roleta')">Roleta</button>
-        <button class="main-tab" onclick="switchMain('esportes')">Esportes</button>
+        <button class="main-tab active" onclick="switchMain('esportes')">Esportes</button>
+        <button class="main-tab" onclick="switchMain('operacoes')">Operações</button>
     </div>
 
-    <!-- ==================== ROLETA ==================== -->
-    <div class="main-tab-content active" id="tab-roleta">
+    <!-- ==================== OPERACOES ==================== -->
+    <div class="main-tab-content" id="tab-operacoes">
         <div class="tab-padding">
 
 
-
-            <!-- ULTIMOS NUMEROS -->
-            <div class="analise-box" style="margin-bottom:15px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div class="analise-titulo" style="margin:0;">Últimos Números</div>
-                    <div style="display:flex;gap:4px;">
-                        <button class="zara-btn ghost sm" onclick="desfazerUltimo()">Desfazer</button>
-                        <button class="zara-btn red sm" onclick="limparHistorico()">Reset</button>
-                    </div>
-                </div>
-                <div class="ultimos-numeros" id="ultimosNums" style="margin-top:8px;"></div>
-
-            </div>
-
-            <!-- MESA -->
-            <div class="analise-box" style="margin-bottom:15px;">
-                <div class="analise-titulo">Mesa — Toque no Número</div>
-                <div id="mesaRoleta" class="mesa-roleta"></div>
-                <div id="foraContador" style="margin-top:10px;display:none;"></div>
-                <div id="painelSeguranca" style="margin-top:10px;display:none;"></div>
-            </div>
-
-            <!-- SEXTINAS -->
-            <div class="analise-box" style="margin-bottom:15px;">
-                <div class="analise-titulo">Sextinas — Frequência</div>
-                <div id="analiseSextinas"></div>
-            </div>
-
-
-
-            <!-- ESTATISTICAS -->
-            <div class="analise-box" style="margin-bottom:15px;">
-                <div class="analise-titulo">Estatísticas</div>
-                <div id="estatisticasGerais"></div>
-            </div>
 
             <!-- CONTROLE DE GANHOS -->
 
@@ -313,7 +265,7 @@
     </div>
 
     <!-- ==================== ESPORTES ==================== -->
-    <div class="main-tab-content" id="tab-esportes">
+    <div class="main-tab-content active" id="tab-esportes">
         <div class="tab-padding">
             <div style="display:flex;gap:5px;margin-bottom:15px;flex-wrap:wrap;">
                 <button class="zara-tab active" onclick="switchFut(this,'fut-bilhete')">Bilhete</button>
@@ -479,7 +431,6 @@ async function syncToSupabase(){
     if(!useSB)return;
     try{
         var dados={
-            roleta:JSON.parse(localStorage.getItem(ROL_KEY)||'{}'),
             ganhos:JSON.parse(localStorage.getItem(CG_KEY)||'{}'),
             futebol:JSON.parse(localStorage.getItem(FUT_KEY)||'{}')
         };
@@ -507,7 +458,6 @@ async function carregarSupabase(){
         }
         if(r.data&&r.data.dados){
             var d=r.data.dados;
-            if(d.roleta&&d.roleta.historico)localStorage.setItem(ROL_KEY,JSON.stringify(d.roleta));
             if(d.ganhos)localStorage.setItem(CG_KEY,JSON.stringify(d.ganhos));
             if(d.futebol)localStorage.setItem(FUT_KEY,JSON.stringify(d.futebol));
             mostrarSync('Dados carregados','success');
@@ -530,15 +480,7 @@ function mostrarSync(msg,tipo){
 // STORAGE
 // ==========================================
 // Storage keys
-var ROL_KEY='roletaZara';
-var R={historico:[],assertDz:{ac:0,er:0,seq:[]},assertCol:{ac:0,er:0,seq:[]}};
 
-function loadAll(){
-    try{
-    var ro=localStorage.getItem(ROL_KEY);if(ro)R=Object.assign({},R,JSON.parse(ro));
-    }catch(e){console.error('loadAll error:',e);}
-}
-function saveR(){try{localStorage.setItem(ROL_KEY,JSON.stringify(R));triggerSync();}catch(e){}}
 // FORMATACAO BR
 function parseBR(str){if(!str)return 0;var s=String(str).replace(/\s/g,'').replace(/R\$\s*/g,'');s=s.replace(/\./g,'').replace(',','.');return parseFloat(s)||0;}
 function fmtBR(v){if(!v&&v!==0)return'';return v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -582,153 +524,7 @@ function switchMain(tab){
     document.getElementById('tab-'+tab).classList.add('active');
     if(tab==='esportes')renderTudo();
 }
-// ==========================================
-// ROLETA ENGINE V5 — DUAL MODE
-// Garcia-Pelayo + Regression to Mean
-// ==========================================
-const VERMELHOS=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-const P_DZ=12/37;const P_SX=6/37;const P_HALF=18/37;
-const RODA=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
 
-function corNum(n){if(n===0)return'z';return VERMELHOS.includes(n)?'v':'p';}
-function duzia(n){if(n===0)return 0;if(n<=12)return 1;if(n<=24)return 2;return 3;}
-function coluna(n){if(n===0)return 0;return((n-1)%3)+1;}
-function sextina(n){
-    if(n===0)return-1;
-    if(n>=4&&n<=9)return 0;
-    if(n>=10&&n<=15)return 1;
-    if(n>=16&&n<=21)return 2;
-    if(n>=22&&n<=27)return 3;
-    if(n>=28&&n<=33)return 4;
-    return-1;
-}
-
-// MATH
-function zScore(obs,n,p){var sd=Math.sqrt(n*p*(1-p));return sd===0?0:(obs-n*p)/sd;}
-function chiQuad(obs,n,p){var esp=n*p;if(esp===0)return 0;return obs.reduce(function(s,o){return s+Math.pow(o-esp,2)/esp;},0);}
-function chiSig(x,df){
-    if(!df||df===2){if(x>=9.21)return{nv:'p<0.01',f:3};if(x>=5.99)return{nv:'p<0.05',f:2};if(x>=4.60)return{nv:'p<0.10',f:1};return{nv:'n.s.',f:0};}
-    if(df===4){if(x>=13.28)return{nv:'p<0.01',f:3};if(x>=9.49)return{nv:'p<0.05',f:2};if(x>=7.78)return{nv:'p<0.10',f:1};return{nv:'n.s.',f:0};}
-    if(df===5){if(x>=15.09)return{nv:'p<0.01',f:3};if(x>=11.07)return{nv:'p<0.05',f:2};if(x>=9.24)return{nv:'p<0.10',f:1};return{nv:'n.s.',f:0};}
-    return{nv:'n.s.',f:0};
-}
-
-function calcGaps(h){
-    var g={dz:[0,0,0],cl:[0,0,0],sx:[0,0,0,0,0]};
-    for(var k=0;k<3;k++){var gap=0;for(var i=h.length-1;i>=0;i--){var n=h[i];if(n===0){gap++;continue;}if(duzia(n)-1===k)break;gap++;}g.dz[k]=gap;}
-    for(var k2=0;k2<3;k2++){var gap2=0;for(var i2=h.length-1;i2>=0;i2--){var n2=h[i2];if(n2===0){gap2++;continue;}if(coluna(n2)-1===k2)break;gap2++;}g.cl[k2]=gap2;}
-    for(var k3=0;k3<5;k3++){var gap3=0;for(var i3=h.length-1;i3>=0;i3--){var n3=h[i3];if(n3===0){gap3++;continue;}if(sextina(n3)===k3)break;gap3++;}g.sx[k3]=gap3;}
-    return g;
-}
-
-function bayesPcts(h,tipo){
-    var f=h.filter(function(n){return n!==0;});
-    var ng=tipo==='sx'?5:3;
-    var def=[];for(var d=0;d<ng;d++)def.push(100/ng);
-    if(!f.length)return def;
-    var cnt=[];for(var c=0;c<ng;c++)cnt.push(0);var tw=0;
-    f.forEach(function(n,i){var w=Math.pow(0.93,f.length-1-i);var cat=tipo==='dz'?duzia(n)-1:tipo==='cl'?coluna(n)-1:sextina(n);if(cat>=0&&cat<ng)cnt[cat]+=w;tw+=w;});
-    return tw===0?def:cnt.map(function(c){return(c/tw)*100;});
-}
-
-// MOMENTUM: ultimos 8 vs anteriores 8
-function calcMom(h,tipo){
-    var f=h.filter(function(n){return n!==0;});var ng=tipo==='sx'?5:3;
-    if(f.length<16){var z=[];for(var i=0;i<ng;i++)z.push(0);return z;}
-    var r=f.slice(-8);var a=f.slice(-16,-8);var m=[];
-    for(var k=0;k<ng;k++){var cr=r.filter(function(n){return(tipo==='dz'?duzia(n)-1:tipo==='cl'?coluna(n)-1:sextina(n))===k;}).length;var ca=a.filter(function(n){return(tipo==='dz'?duzia(n)-1:tipo==='cl'?coluna(n)-1:sextina(n))===k;}).length;m.push((cr/8*100)-(ca/8*100));}
-    return m;
-}
-
-// MOMENTUM CURTO: ultimos 5 vs anteriores 5
-function calcMomCurto(h,tipo){
-    var f=h.filter(function(n){return n!==0;});var ng=tipo==='sx'?5:3;
-    if(f.length<10){var z=[];for(var i=0;i<ng;i++)z.push(0);return z;}
-    var r=f.slice(-5);var a=f.slice(-10,-5);var m=[];
-    for(var k=0;k<ng;k++){var cr=r.filter(function(n){return(tipo==='dz'?duzia(n)-1:tipo==='cl'?coluna(n)-1:sextina(n))===k;}).length;var ca=a.filter(function(n){return(tipo==='dz'?duzia(n)-1:tipo==='cl'?coluna(n)-1:sextina(n))===k;}).length;m.push((cr/5*100)-(ca/5*100));}
-    return m;
-}
-
-// JANELA: ultimos 12 vs geral
-function janelaComp(h,tipo){
-    var f=h.filter(function(n){return n!==0;});var ng=tipo==='sx'?5:3;
-    if(f.length<12)return null;
-    var u=f.slice(-12);var c12=[];var ca=[];for(var i=0;i<ng;i++){c12.push(0);ca.push(0);}
-    u.forEach(function(n){var cat=tipo==='dz'?duzia(n)-1:tipo==='cl'?coluna(n)-1:sextina(n);if(cat>=0&&cat<ng)c12[cat]++;});
-    f.forEach(function(n){var cat=tipo==='dz'?duzia(n)-1:tipo==='cl'?coluna(n)-1:sextina(n);if(cat>=0&&cat<ng)ca[cat]++;});
-    return{pct12:c12.map(function(c){return c/12*100;}),pctAll:ca.map(function(c){return c/f.length*100;}),desvio:c12.map(function(c,i){return c/12*100-ca[i]/f.length*100;})};
-}
-
-function calcVol(h){
-    var f=h.filter(function(n){return n!==0;});if(f.length<20)return{v:0,t:'--'};
-    var bl=[];for(var i=0;i<=f.length-10;i+=10){var b=f.slice(i,i+10);var d=[0,0,0];b.forEach(function(n){d[duzia(n)-1]++;});bl.push(d.map(function(x){return x/10*100;}));}
-    if(bl.length<2)return{v:0,t:'--'};
-    var tv=0;for(var dd=0;dd<3;dd++){var vals=bl.map(function(b2){return b2[dd];});var mm=vals.reduce(function(s,v){return s+v;},0)/vals.length;tv+=vals.reduce(function(s,v){return s+Math.pow(v-mm,2);},0)/vals.length;}
-    var vol=Math.sqrt(tv/3);
-    if(vol>25)return{v:vol,t:'MUITO ALTA'};if(vol>15)return{v:vol,t:'ALTA'};if(vol>8)return{v:vol,t:'MODERADA'};return{v:vol,t:'BAIXA'};
-}
-
-function calcCUSUM(h,tipo){
-    var f=h.filter(function(n){return n!==0;});var ng=tipo==='sx'?5:3;
-    var pos=[];var neg=[];for(var j=0;j<ng;j++){pos.push(0);neg.push(0);}
-    if(f.length<10)return{pos:pos,neg:neg,alarme:false};
-    var alarme=false;var ep=1/ng;
-    f.forEach(function(n){var cat=tipo==='dz'?duzia(n)-1:tipo==='cl'?coluna(n)-1:sextina(n);
-        for(var j=0;j<ng;j++){var xi=(cat===j)?1:0;pos[j]=Math.max(0,pos[j]+(xi-ep-0.05));neg[j]=Math.min(0,neg[j]+(xi-ep+0.05));if(pos[j]>4||Math.abs(neg[j])>4)alarme=true;}
-    });return{pos:pos,neg:neg,alarme:alarme};
-}
-
-function calcStreak(aObj){
-    if(!aObj||!aObj.seq||!aObj.seq.length)return{atual:0};
-    var seq=aObj.seq;var atual=0;
-    for(var i=seq.length-1;i>=0;i--){
-        if(i===seq.length-1)atual=seq[i]==='l'?-1:1;
-        else if(seq[i]==='l'&&atual<0)atual--;
-        else if(seq[i]==='w'&&atual>0)atual++;
-        else break;
-    }return{atual:atual};
-}
-
-function analisarSetores(h){
-    if(h.length<10)return{ativo:false};var u=h.slice(-5).filter(function(n){return n!==0;});if(u.length<3)return{ativo:false};
-    var setores={};u.forEach(function(n){var idx=RODA.indexOf(n);var sid=Math.floor(idx/5);setores[sid]=(setores[sid]||0)+1;});
-    var mx=Math.max.apply(null,Object.values(setores));
-    if(mx>=3){return{ativo:true,count:mx,janela:u.length};}
-    return{ativo:false};
-}
-
-// ==========================================
-// DUAL MODE DETECTION
-// Modo 1: REGRESSION (apostar contra a quente)
-// Modo 2: EXPLOITATION (nao apostar, ou apostar COM)
-// ==========================================
-
-// MESA
-function buildMesa(){
-    var m=document.getElementById('mesaRoleta');if(!m)return;
-    var html='<table class="mesa-table">';
-    // Row 1: 0 + 3,6,9...36 + 2:1
-    html+='<tr><td class="z" rowspan="3" onclick="addNum(0)">0</td>';
-    for(var i=3;i<=36;i+=3)html+='<td class="'+corNum(i)+'" onclick="addNum('+i+')">'+i+'</td>';
-    html+='<td class="lbl" rowspan="1">2:1</td></tr>';
-    // Row 2: 2,5,8...35 + 2:1
-    html+='<tr>';
-    for(var i2=2;i2<=35;i2+=3)html+='<td class="'+corNum(i2)+'" onclick="addNum('+i2+')">'+i2+'</td>';
-    html+='<td class="lbl">2:1</td></tr>';
-    // Row 3: 1,4,7...34 + 2:1
-    html+='<tr>';
-    for(var i3=1;i3<=34;i3+=3)html+='<td class="'+corNum(i3)+'" onclick="addNum('+i3+')">'+i3+'</td>';
-    html+='<td class="lbl">2:1</td></tr>';
-    // Row 4: 1a 12, 2a 12, 3a 12 (alinhado com numeros, sem invadir 0 e 2:1)
-    html+='<tr><td class="lbl"></td><td class="lbl" colspan="4">1.ª 12</td><td class="lbl" colspan="4">2.ª 12</td><td class="lbl" colspan="4">3.ª 12</td><td class="lbl"></td></tr>';
-    html+='</table>';
-    m.innerHTML=html;
-}
-
-// SUGESTAO ATUAL (p/ assertividade auto — so fase 3)
-
-
-function playClick(){try{var a=new(window.AudioContext||window.webkitAudioContext)();var o=a.createOscillator();var g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;o.type='sine';g.gain.value=0.15;o.start();g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+0.08);o.stop(a.currentTime+0.08);}catch(e){}}
 function playCash(){try{var a=new(window.AudioContext||window.webkitAudioContext)();var t=a.currentTime;
 // CHA - mecanismo batendo (click metalico)
 var b1=a.createBuffer(1,a.sampleRate*0.03,a.sampleRate);var d1=b1.getChannelData(0);for(var i=0;i<d1.length;i++){d1[i]=(Math.random()*2-1)*Math.exp(-i/(a.sampleRate*0.005));}
@@ -742,202 +538,6 @@ var o3=a.createOscillator();o3.type='sine';o3.frequency.value=1760;var go3=a.cre
 var b2=a.createBuffer(1,a.sampleRate*0.08,a.sampleRate);var d2=b2.getChannelData(0);for(var j=0;j<d2.length;j++){d2[j]=(Math.random()*2-1)*Math.exp(-j/(a.sampleRate*0.02));}
 var n2=a.createBufferSource();n2.buffer=b2;var f2=a.createBiquadFilter();f2.type='lowpass';f2.frequency.value=800;var g2=a.createGain();g2.gain.value=0.2;n2.connect(f2);f2.connect(g2);g2.connect(a.destination);n2.start(t+0.06);
 }catch(e){}}
-function addNum(n){
-    if(n<0)return;
-    playClick();
-    R.historico.push(n);if(R.historico.length>200)R.historico=R.historico.slice(-200);
-    saveR();renderRoleta();
-}
-function desfazerUltimo(){if(!R.historico.length)return;R.historico.pop();saveR();renderRoleta();}
-function limparHistorico(){R.historico=[];R.assertDz={ac:0,er:0,seq:[]};R.assertCol={ac:0,er:0,seq:[]};saveR();renderRoleta();toast('Tudo limpo');}
-
-// ==========================================
-// RENDER PRINCIPAL
-// ==========================================
-function renderRoleta(){
-    var h=R.historico;var total=h.length;var sz=h.filter(function(n){return n!==0;});var T=sz.length||1;
-    document.getElementById('ultimosNums').innerHTML=h.slice(-30).map(function(n){return '<div class="ultimo-num '+corNum(n)+'">'+n+'</div>';}).join('');
-
-    // SEXTINAS: 5 sixlines
-    var sx=[0,0,0,0,0];sz.forEach(function(n){var s=sextina(n);if(s>=0)sx[s]++;});
-    var sxPct=sx.map(function(s){return Math.round((s/T)*100);});
-    var sxN=['4-9','10-15','16-21','22-27','28-33'];
-    var sxZ=sx.map(function(s){return zScore(s,T,P_SX);});
-    var chiSx=0;var espSx=T*P_SX;if(espSx>0)chiSx=sx.reduce(function(s,o){return s+Math.pow(o-espSx,2)/espSx;},0);
-    var sSx=chiSig(chiSx,4);
-    var gaps=calcGaps(h);var baySx=bayesPcts(h,'sx');
-    var vol=calcVol(h);
-    var momSx=calcMom(h,'sx');var momSxC=calcMomCurto(h,'sx');
-    var janSx=janelaComp(h,'sx');
-    var cuSx=calcCUSUM(h,'sx');
-    var setores=analisarSetores(h);
-
-    // BARRAS SEXTINAS
-    var el=document.getElementById('analiseSextinas');if(el){
-        el.innerHTML=sxN.map(function(nome,i){
-            var pct=sxPct[i],z=sxZ[i],gap=gaps.sx[i],bay=baySx[i],mom=momSx[i];
-            var classe=z>1?'quente':z<-1?'frio':'morno';
-            var zCor=z>1.5?'#e74c3c':z>0.5?'#f39c12':z<-1.5?'#2ecc71':z<-0.5?'#3498db':'rgba(255,255,255,.5)';
-            var mI=mom>10?'^^':mom>3?'^':mom<-10?'vv':mom<-3?'v':'--';
-            var mC2=mom>5?'#e74c3c':mom<-5?'#2ecc71':'rgba(255,255,255,.35)';
-            var jT=janSx?(janSx.desvio[i]>0?'+':'')+janSx.desvio[i].toFixed(0)+'%':'--';
-            var jC=janSx?(janSx.desvio[i]>8?'#e74c3c':janSx.desvio[i]<-8?'#2ecc71':'rgba(255,255,255,.35)'):'rgba(255,255,255,.35)';
-            var gapAlert='';
-            if(gap>=8&&total>=15){gapAlert='<div style="margin-top:6px;padding:6px 14px;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:4px;font-size:.78em;color:#2ecc71;font-weight:600;letter-spacing:.5px;">'+gap+' rodadas sem sair</div>';}
-            return '<div class="barra-container">'+
-                '<div class="barra-label">'+
-                    '<span class="barra-nome">'+nome+'</span>'+
-                    '<span class="barra-pct">'+pct+'% ('+sx[i]+'x)</span>'+
-                '</div>'+
-                '<div class="barra-track"><div class="barra-fill '+classe+'" style="width:'+Math.min(pct*3,100)+'%"></div></div>'+
-                '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;font-size:.62em;opacity:.7;">'+
-                    '<span style="color:'+zCor+';">Z:'+(z>=0?'+':'')+z.toFixed(2)+'</span>'+
-                    '<span style="color:'+mC2+';">M:'+mI+'</span>'+
-                    '<span style="color:rgba(255,255,255,.3);">G:'+gap+'</span>'+
-                    '<span style="color:rgba(212,175,125,.4);">B:'+bay.toFixed(0)+'%</span>'+
-                    '<span style="color:'+jC+';">U12:'+jT+'</span>'+
-                '</div>'+gapAlert+'</div>';
-        }).join('');
-    }
-
-    // SINALIZACAO NA MESA
-    var mesaTds=document.querySelectorAll('.mesa-table td');
-    mesaTds.forEach(function(td){td.style.boxShadow='';td.style.outline='';td.style.outlineOffset='';td.style.zIndex='';td.style.position='';});
-
-    // Contar fora (0 + 1-3 + 34-36)
-    var foraZero=h.filter(function(n){return n===0;}).length;
-    var fora13=0;var fora3436=0;
-    h.forEach(function(n){if(n>=1&&n<=3)fora13++;if(n>=34&&n<=36)fora3436++;});
-    var foraTotal=foraZero+fora13+fora3436;
-    var foraEl=document.getElementById('foraContador');
-    if(foraEl){
-        if(foraTotal>0){
-            foraEl.style.display='flex';
-            foraEl.innerHTML='<div style="display:flex;gap:12px;align-items:center;justify-content:center;padding:8px 14px;background:rgba(52,152,219,.06);border:1px solid rgba(52,152,219,.15);border-radius:8px;font-size:.85em;flex-wrap:wrap;">'+
-                '<span style="color:rgba(255,255,255,.4);">Fora do jogo:</span>'+
-                '<span style="color:#27ae60;font-weight:700;">0 <span style="font-size:1.1em;">'+foraZero+'x</span></span>'+
-                '<span style="color:rgba(255,255,255,.08);">|</span>'+
-                '<span style="color:#3498db;font-weight:700;">1-3 <span style="font-size:1.1em;">'+fora13+'x</span></span>'+
-                '<span style="color:rgba(255,255,255,.08);">|</span>'+
-                '<span style="color:#3498db;font-weight:700;">34-36 <span style="font-size:1.1em;">'+fora3436+'x</span></span>'+
-                '<span style="color:rgba(255,255,255,.08);">|</span>'+
-                '<span style="color:'+(foraTotal>5?'#e74c3c':'rgba(255,255,255,.5)')+';font-weight:600;">Total '+foraTotal+'/'+(total||0)+' ('+(total>0?Math.round(foraTotal/total*100):0)+'%)</span>'+
-            '</div>';
-        }else{foraEl.style.display='none';}
-    }
-
-    // PAINEL DE SEGURANCA
-    var segEl=document.getElementById('painelSeguranca');
-    if(segEl&&total>=5){
-        segEl.style.display='block';
-
-        // Streak segura: quantas rodadas desde o ultimo fora
-        var streakSeg=0;
-        for(var si=h.length-1;si>=0;si--){
-            var sn=h[si];
-            if(sn===0||(sn>=1&&sn<=3)||(sn>=34&&sn<=36))break;
-            streakSeg++;
-        }
-
-        // Fora nas ultimas 10 e 5 (0 + 1-3 + 34-36)
-        function isFora(n){return n===0||(n>=1&&n<=3)||(n>=34&&n<=36);}
-        var ult10=h.slice(-10);
-        var foraUlt10=ult10.filter(isFora).length;
-        var foraUlt5=h.slice(-5).filter(isFora).length;
-
-        // % fora na sessao
-        var foraPct=total>0?Math.round(foraTotal/total*100):0;
-
-        // Semaforo
-        var semaforoCor='#2ecc71';var semaforoTxt='SEGURO';var semaforoDesc='Mesa favoravel. Entre com confianca.';
-        if(foraUlt5>=3){semaforoCor='#e74c3c';semaforoTxt='PARE';semaforoDesc='Fora saindo em excesso. Aguarde normalizar.';}
-        else if(foraUlt5>=2||foraUlt10>=4){semaforoCor='#f39c12';semaforoTxt='ATENCAO';semaforoDesc='Fora acima da media. Reduza exposicao.';}
-        else if(foraPct>25&&total>=15){semaforoCor='#f39c12';semaforoTxt='ATENCAO';semaforoDesc='Sessao com '+foraPct+'% fora. Mesa desfavoravel.';}
-
-        // Hedge — qual street cobrir
-        var hedgeHtml='';
-        if(foraUlt10>=3&&total>=10){
-            var hedgeAlvo='';
-            if(foraZero>=fora13&&foraZero>=fora3436)hedgeAlvo='zero (straight up, paga 35:1)';
-            else if(fora13>=fora3436)hedgeAlvo='street 1-3 (paga 11:1)';
-            else hedgeAlvo='street 34-36 (paga 11:1)';
-            hedgeHtml='<div style="margin-top:10px;padding:10px 14px;background:rgba(212,175,125,.04);border:1px solid rgba(212,175,125,.1);border-radius:8px;">'+
-                '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'+
-                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4af7d" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'+
-                    '<span style="font-size:.78em;color:#d4af7d;font-weight:600;letter-spacing:1px;">HEDGE RECOMENDADO</span>'+
-                '</div>'+
-                '<div style="font-size:.78em;color:rgba(255,255,255,.45);line-height:1.5;">Cubra '+hedgeAlvo+' com aposta minima.</div>'+
-            '</div>';
-        }
-
-        segEl.innerHTML=
-            '<div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:12px;align-items:center;padding:12px 16px;background:linear-gradient(135deg,rgba('+
-            (semaforoCor==='#2ecc71'?'46,204,113':semaforoCor==='#f39c12'?'243,156,18':'231,76,60')+',.04),transparent);'+
-            'border:1px solid rgba('+(semaforoCor==='#2ecc71'?'46,204,113':semaforoCor==='#f39c12'?'243,156,18':'231,76,60')+',.12);border-radius:10px;">'+
-                '<div style="text-align:center;">'+
-                    '<div style="width:38px;height:38px;border-radius:50%;background:'+semaforoCor+';display:flex;align-items:center;justify-content:center;box-shadow:0 0 15px '+semaforoCor+'60;">'+
-                        '<span style="font-size:.6em;font-weight:700;color:#000;letter-spacing:.5px;">'+semaforoTxt.charAt(0)+'</span>'+
-                    '</div>'+
-                    '<div style="font-size:.58em;font-weight:700;color:'+semaforoCor+';margin-top:4px;letter-spacing:1px;">'+semaforoTxt+'</div>'+
-                '</div>'+
-                '<div>'+
-                    '<div style="font-size:.78em;color:rgba(255,255,255,.5);line-height:1.4;">'+semaforoDesc+'</div>'+
-                '</div>'+
-                '<div style="text-align:right;">'+
-                    '<div style="font-size:.68em;color:rgba(255,255,255,.3);margin-bottom:2px;">Streak segura</div>'+
-                    '<div style="font-size:1.2em;font-weight:700;color:'+(streakSeg>=8?'#2ecc71':streakSeg>=4?'#f39c12':'rgba(255,255,255,.5)')+';">'+streakSeg+'</div>'+
-                    '<div style="font-size:.62em;color:rgba(255,255,255,.2);margin-top:4px;">Fora ult.10: '+foraUlt10+'/10</div>'+
-                '</div>'+
-            '</div>'+hedgeHtml;
-    }else if(segEl){segEl.style.display='none';}
-
-    if(T>=10){
-        var sxRank=sx.map(function(c,i){return{i:i,c:c};});
-        sxRank.sort(function(a,b){return b.c-a.c;});
-        var hotSx=[];
-        if(sxRank[0].c>0)hotSx.push(sxRank[0].i);
-        if(sxRank[1].c>0)hotSx.push(sxRank[1].i);
-        if(sxRank[2]&&sxRank[2].c>0&&sxRank[2].c===sxRank[1].c)hotSx.push(sxRank[2].i);
-        if(sxRank[3]&&sxRank[3].c>0&&sxRank[3].c===sxRank[1].c)hotSx.push(sxRank[3].i);
-        if(sxRank[4]&&sxRank[4].c>0&&sxRank[4].c===sxRank[1].c)hotSx.push(sxRank[4].i);
-
-        var foraSet={};
-        h.forEach(function(n){if(n===0||(n>=1&&n<=3)||(n>=34&&n<=36))foraSet[n]=true;});
-
-        mesaTds.forEach(function(td){
-            if(td.classList.contains('lbl'))return;
-            var txt=td.textContent.trim();
-            var num=parseInt(txt);
-            if(isNaN(num)||num>36)return;
-            if(txt!==String(num))return;
-            // FORA: azul neon (0, 1-3, 34-36)
-            if(foraSet[num]!==undefined&&foraSet[num]){
-                td.style.position='relative';td.style.zIndex='2';
-                td.style.boxShadow='inset 0 0 0 2px #3498db, 0 0 10px rgba(52,152,219,.4)';
-                return;
-            }
-            // QUENTE: verde
-            var sxi=sextina(num);
-            if(sxi>=0&&hotSx.indexOf(sxi)>=0){
-                td.style.position='relative';td.style.zIndex='2';
-                td.style.boxShadow='inset 0 0 0 2px #2ecc71, 0 0 8px rgba(46,204,113,.3)';
-            }
-        });
-    }
-
-
-
-    // ESTATISTICAS
-    var zeros=h.filter(function(n){return n===0;}).length;
-    var verms=h.filter(function(n){return VERMELHOS.includes(n);}).length;
-    var pretos=total-zeros-verms;
-    var estEl=document.getElementById('estatisticasGerais');
-    if(estEl){
-        var clHtml='';
-        if(setores&&setores.ativo){clHtml='<div style="margin-top:8px;background:rgba(241,196,15,.06);border:1px solid rgba(241,196,15,.15);border-radius:6px;padding:10px 12px;font-size:.78em;color:#f1c40f;">Os numeros estao caindo no mesmo setor da roda ('+setores.count+' dos ultimos '+setores.janela+')</div>';}
-        estEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:10px;"><div><div style="font-size:.65em;color:rgba(255,255,255,.4);">Total</div><div style="font-size:1.1em;font-weight:600;">'+total+'</div></div><div><div style="font-size:.65em;color:#c0392b;">Verm.</div><div style="font-size:1.1em;font-weight:600;color:#c0392b;">'+verms+'</div></div><div><div style="font-size:.65em;color:rgba(255,255,255,.6);">Preto</div><div style="font-size:1.1em;font-weight:600;">'+pretos+'</div></div><div><div style="font-size:.65em;color:#27ae60;">Zero</div><div style="font-size:1.1em;font-weight:600;color:#27ae60;">'+zeros+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.7em;"><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">X2 Sextinas</div><div style="color:#fff;font-weight:600;">'+chiSx.toFixed(2)+' <span style="color:'+(sSx.f>=2?'#2ecc71':sSx.f>=1?'#f1c40f':'rgba(255,255,255,.4)')+';"> ('+sSx.nv+')</span></div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">Volatilidade</div><div style="color:'+(vol.t==='MUITO ALTA'||vol.t==='ALTA'?'#e74c3c':vol.t==='MODERADA'?'#f1c40f':'#2ecc71')+';font-weight:600;">'+vol.t+'</div></div><div style="background:rgba(212,175,125,.05);padding:7px;border-radius:5px;"><div style="color:rgba(212,175,125,.5);">Mesa</div><div style="color:'+(cuSx.alarme?'#e74c3c':'#2ecc71')+';font-weight:600;">'+(cuSx.alarme?'MUDOU — reinicie a leitura':'ESTAVEL')+'</div></div></div>'+clHtml;
-    }
-}
 
 // FUTEBOL — ENGINE
 // ==========================================
@@ -1421,8 +1021,8 @@ function renderCG(){
 // ==========================================
 async function initAll(){
     await carregarSupabase();
-    loadAll();loadCG();loadFut();
-    buildMesa();renderRoleta();renderCG();initFutebol();
+    loadCG();loadFut();
+    renderCG();initFutebol();
 }
 initAll();
 
