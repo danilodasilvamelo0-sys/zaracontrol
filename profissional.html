@@ -1293,7 +1293,7 @@ function registrarPerda(){
 }
 
 function deletarSaque(idx){CG.saques.splice(idx,1);_saveCG();renderCG();}
-function deletarMov(idx){CG.movs.splice(idx,1);_saveCG();renderCG();}
+function deletarMovCG(idx){CG.movs.splice(idx,1);_saveCG();renderCG();}
 
 function renderCG(){
     var depEl=document.getElementById('cgDep');
@@ -1383,7 +1383,7 @@ function renderCG(){
                     '</div>'+
                     '<div style="display:flex;gap:6px;">'+
                         '<button onclick="editarMov('+gi+')" style="background:transparent;border:none;color:rgba(212,175,125,.25);cursor:pointer;display:flex;align-items:center;padding:4px;transition:color .2s;" onmouseover="this.style.color=\'#d4af7d\'" onmouseout="this.style.color=\'rgba(212,175,125,.25)\'">'+SVG_EDIT+'</button>'+
-                        '<button onclick="deletarMov('+gi+')" style="background:transparent;border:none;color:rgba(231,76,60,.2);cursor:pointer;display:flex;align-items:center;padding:4px;transition:color .2s;" onmouseover="this.style.color=\'#e74c3c\'" onmouseout="this.style.color=\'rgba(231,76,60,.2)\'">'+SVG_TRASH+'</button>'+
+                        '<button onclick="deletarMovCG('+gi+')" style="background:transparent;border:none;color:rgba(231,76,60,.2);cursor:pointer;display:flex;align-items:center;padding:4px;transition:color .2s;" onmouseover="this.style.color=\'#e74c3c\'" onmouseout="this.style.color=\'rgba(231,76,60,.2)\'">'+SVG_TRASH+'</button>'+
                     '</div>'+
                 '</div>';
             }).join('');
