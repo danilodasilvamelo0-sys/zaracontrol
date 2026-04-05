@@ -11,8 +11,11 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{background:#080808}
-body{font-family:'Open Sans',sans-serif;background:#080808;color:#fff;min-height:100vh;padding:12px 12px 40px 12px;font-size:15px}
+body{font-family:'Open Sans',sans-serif;background:#080808;color:#fff;min-height:100vh;padding:20px 20px 80px 80px;font-size:15px}
 body::before{content:'';position:fixed;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 5%,rgba(212,175,125,.4) 50%,transparent 95%);z-index:9999}
+.sidebar{position:fixed;top:0;left:0;width:60px;height:100vh;background:linear-gradient(180deg,#0f0f0f,#1a1a1a);border-right:1px solid rgba(212,175,125,.15);z-index:1000;display:flex;flex-direction:column;align-items:center;padding:15px 0;transition:width .3s;overflow:hidden}.sidebar:hover{width:200px}.sidebar-logo{width:40px;height:40px;border:1px solid rgba(212,175,125,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1em;color:#d4af7d;margin-bottom:20px;text-decoration:none;font-weight:700}.sidebar-menu{display:flex;flex-direction:column;gap:5px;width:100%;flex:1}.sidebar-menu a{display:flex;align-items:center;gap:12px;padding:12px 10px;color:rgba(255,255,255,.6);text-decoration:none;font-size:.85em;border-left:2px solid transparent;white-space:nowrap;transition:all .3s}.sidebar-menu a:hover,.sidebar-menu a.active{background:rgba(212,175,125,.15);border-left-color:#d4af7d;color:#d4af7d}.sidebar-menu a svg{width:20px;height:20px;min-width:20px;margin-left:10px}.sidebar-menu a span{opacity:0;transition:opacity .3s}.sidebar:hover .sidebar-menu a span{opacity:1}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,#1a1a1a,#0f0f0f);border-top:1px solid rgba(212,175,125,.15);padding:10px 0;z-index:1000}.mobile-nav-items{display:flex;justify-content:space-around}.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:rgba(255,255,255,.5);text-decoration:none;font-size:.65em}.mobile-nav-item svg{width:22px;height:22px}.mobile-nav-item.active{color:#d4af7d}
+@media(max-width:768px){body{padding:10px 10px 80px 10px}.sidebar{display:none}.mobile-nav{display:block}}
 .main-container{max-width:700px;margin:0 auto}
 .container{background:linear-gradient(145deg,#0e0e0e,#111);border:1px solid rgba(212,175,125,.12);border-radius:14px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
 .header{background:linear-gradient(135deg,#111,#0a0a0a);border-bottom:1px solid rgba(212,175,125,.15);padding:22px;text-align:center}
@@ -51,6 +54,26 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:1px;backgroun
 
 </head>
 <body>
+<!-- SIDEBAR -->
+<nav class="sidebar">
+    <a href="index.html" class="sidebar-logo">Z</a>
+    <div class="sidebar-menu">
+        <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Início</span></a>
+        <a href="saude.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Saúde</span></a>
+        <a href="financeiro.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Financeiro</span></a>
+        <a href="profissional.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><span>Profissional</span></a>
+        <a href="agenda.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Agenda</span></a>
+    </div>
+</nav>
+<!-- MOBILE NAV -->
+<nav class="mobile-nav"><div class="mobile-nav-items">
+    <a href="index.html" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início</a>
+    <a href="saude.html" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Saúde</a>
+    <a href="financeiro.html" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Fin</a>
+    <a href="profissional.html" class="mobile-nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Prof.</a>
+    <a href="agenda.html" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Agenda</a>
+</div></nav>
+
 <div class="main-container"><div class="container">
     <div class="header"><h1>PROFISSIONAL</h1><p>Apostas e Controle</p></div>
     <div class="tp">
