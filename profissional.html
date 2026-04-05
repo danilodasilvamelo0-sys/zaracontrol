@@ -195,20 +195,20 @@ function regBet(){
     var stake=parseFloat(document.getElementById('betStake').value)||0;
     if(!odd||!stake)return;
     F.bets.push({id:Date.now().toString(36),jogo:jogo,odd:odd,stake:stake,status:'pending',data:new Date().toISOString()});
-    F.banca-=stake;
     document.getElementById('betJogo').value='';document.getElementById('betOdd').value='';document.getElementById('betStake').value='';
     salvarDados();render();toast('Aposta registrada');
 }
 function resolveBet(id,st){
     var b=F.bets.find(function(x){return x.id===id;});if(!b||b.status!=='pending')return;
-    b.status=st;if(st==='won')F.banca+=b.stake*b.odd;else if(st==='void')F.banca+=b.stake;
+    b.status=st;
+    if(st==='won')F.banca+=b.stake*(b.odd-1);
+    else if(st==='lost')F.banca-=b.stake;
     salvarDados();render();
 }
 function deleteBet(id){
     var b=F.bets.find(function(x){return x.id===id;});if(!b)return;
-    if(b.status==='pending')F.banca+=b.stake;
-    else if(b.status==='won')F.banca-=b.stake*b.odd;
-    else if(b.status==='void')F.banca-=b.stake;
+    if(b.status==='won')F.banca-=b.stake*(b.odd-1);
+    else if(b.status==='lost')F.banca+=b.stake;
     F.bets=F.bets.filter(function(x){return x.id!==id;});salvarDados();render();
 }
 function delMov(id){
@@ -256,7 +256,7 @@ function render(){
         if(!res.length){rE.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.12);padding:14px;font-size:.85em;">Nenhuma hoje</div>';}
         else{rE.innerHTML=res.map(function(b){
             var co=b.status==='won'?'#2ecc71':b.status==='lost'?'#e74c3c':'rgba(255,255,255,.5)';
-            var g=b.status==='won'?(b.stake*b.odd-b.stake):b.status==='lost'?-b.stake:0;
+            var g=b.status==='won'?b.stake*(b.odd-1):b.status==='lost'?-b.stake:0;
             return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.85em;">'+
                 '<span style="color:#fff;">'+b.jogo+'</span>'+
                 '<span style="font-weight:700;color:'+co+';">'+(g>=0?'+':'')+' R$ '+fmtBR(Math.abs(g))+'</span>'+
@@ -278,7 +278,7 @@ function render(){
     if(mnE){
         var won=F.bets.filter(function(b){return b.status==='won';});
         var lost=F.bets.filter(function(b){return b.status==='lost';});
-        var tW=won.reduce(function(s,b){return s+(b.stake*b.odd-b.stake);},0);
+        var tW=won.reduce(function(s,b){return s+b.stake*(b.odd-1);},0);
         var tL=lost.reduce(function(s,b){return s+b.stake;},0);
         var luc=tW-tL;
         var wr=(won.length+lost.length)>0?Math.round(won.length/(won.length+lost.length)*100):0;
