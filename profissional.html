@@ -75,7 +75,12 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:1px;backgroun
 </div></nav>
 
 <div class="main-container"><div class="container">
-    <div class="header"><h1>PROFISSIONAL</h1><p>Apostas e Controle</p></div>
+    <div class="header">
+        <h1>PROFISSIONAL</h1>
+        <p>Apostas e Controle</p>
+        <div id="syncStatus" style="font-size:.65em;color:rgba(255,255,255,.3);margin-top:6px;transition:all .3s;">Conectando...</div>
+        <button onclick="forcarSync()" style="margin-top:6px;padding:4px 12px;background:transparent;border:1px solid rgba(212,175,125,.15);border-radius:4px;color:rgba(212,175,125,.4);font-size:.65em;cursor:pointer;font-family:'Open Sans',sans-serif;">Sincronizar</button>
+    </div>
     <div class="tp">
         <div class="sub-tabs">
             <button class="sub-tab active" onclick="switchTab(this,'sec-bilhete')">Bilhete</button>
@@ -148,12 +153,13 @@ try{
     if(typeof supabase!=='undefined'){
         sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
         useSB=true;
-        console.log('Supabase conectado');
+    }else{
+        console.log('Supabase CDN nao carregou');
     }
-}catch(e){console.log('Supabase indisponivel');}
+}catch(e){console.log('Supabase init erro:',e);}
 
-var syncTimer=null;
-function triggerSync(){if(!useSB)return;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(salvarSupabase,2000);}
+var syncTimer=null;var syncReady=false;
+function triggerSync(){if(!useSB||!syncReady)return;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(salvarSupabase,2000);}
 
 async function salvarSupabase(){
     if(!useSB)return;
@@ -164,8 +170,8 @@ async function salvarSupabase(){
             dados:dados,
             updated_at:new Date().toISOString()
         });
-        if(r.error){console.error('Sync erro:',r.error.message||r.error);}
-        else{console.log('Sincronizado');}
+        if(r.error){console.error('Sync erro:',r.error.message||r.error);showSyncStatus('Erro sync: '+r.error.message,'#e74c3c');}
+        else{showSyncStatus('Sincronizado','#2ecc71');}
     }catch(e){console.error('Sync exception:',e);}
 }
 
@@ -173,14 +179,22 @@ async function carregarSupabase(){
     if(!useSB)return false;
     try{
         var r=await sbClient.from('profissional_dados').select('dados').eq('id',SYNC_ID).maybeSingle();
-        if(r.error){console.error('Load erro:',r.error.message||r.error);return false;}
+        if(r.error){console.error('Load erro:',r.error.message||r.error);showSyncStatus('Erro: '+r.error.message,'#e74c3c');return false;}
         if(r.data&&r.data.dados){
             var d=r.data.dados;
-            if(d.futebol){localStorage.setItem(FUT_KEY,JSON.stringify(d.futebol));console.log('Dados carregados do Supabase');}
+            console.log('Dados no Supabase:',Object.keys(d));
+            if(d.futebol){localStorage.setItem(FUT_KEY,JSON.stringify(d.futebol));}
+            showSyncStatus('Dados carregados','#2ecc71');
             return true;
         }
+        showSyncStatus('Nenhum dado no servidor','#f39c12');
         return false;
-    }catch(e){console.error('Load exception:',e);return false;}
+    }catch(e){console.error('Load exception:',e);showSyncStatus('Erro: '+e.message,'#e74c3c');return false;}
+}
+
+function showSyncStatus(msg,cor){
+    var el=document.getElementById('syncStatus');
+    if(el){el.textContent=msg;el.style.color=cor;el.style.opacity='1';setTimeout(function(){el.style.opacity='.3';},3000);}
 }
 var SVG_TRASH='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
 function parseBR(s){if(!s)return 0;return parseFloat(String(s).replace(/\s/g,'').replace(/R\$\s*/g,'').replace(/\./g,'').replace(',','.'))||0;}
@@ -337,10 +351,26 @@ function render(){
     }
 }
 
+async function forcarSync(){
+    showSyncStatus('Sincronizando...','#d4af7d');
+    syncReady=true;
+    await salvarSupabase();
+    var ok=await carregarSupabase();
+    if(ok){loadF();render();}
+}
+
 // INIT
 loadF();render();
-// Sync from Supabase after render
-if(useSB){carregarSupabase().then(function(ok){if(ok){loadF();render();console.log('UI atualizada do Supabase');}});}
+if(useSB){
+    showSyncStatus('Carregando...','#d4af7d');
+    carregarSupabase().then(function(ok){
+        if(ok){loadF();render();}
+        syncReady=true;
+    });
+}else{
+    syncReady=true;
+    showSyncStatus('Supabase offline','#e74c3c');
+}
 </script>
 
 </body>
