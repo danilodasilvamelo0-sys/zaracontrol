@@ -48,6 +48,8 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:1px;backgroun
 
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);padding:10px 20px;background:#141414;border:1px solid rgba(212,175,125,.25);border-radius:6px;color:#d4af7d;font-size:.82em;font-weight:600;z-index:10001;opacity:0;transition:all .3s;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#syncStatus{position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:8px;font-size:.8em;font-weight:600;z-index:10001;opacity:0;transition:opacity .3s;color:#fff}
+@media(max-width:768px){#syncStatus{bottom:90px;right:10px;left:10px;text-align:center}}
 
 @media(max-width:500px){.tp{padding:12px}.header h1{font-size:1.3em;letter-spacing:3px}}
 </style>
@@ -75,12 +77,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:1px;backgroun
 </div></nav>
 
 <div class="main-container"><div class="container">
-    <div class="header">
-        <h1>PROFISSIONAL</h1>
-        <p>Apostas e Controle</p>
-        <div id="syncStatus" style="font-size:.65em;color:rgba(255,255,255,.3);margin-top:6px;transition:all .3s;">Conectando...</div>
-        <button onclick="forcarSync()" style="margin-top:6px;padding:4px 12px;background:transparent;border:1px solid rgba(212,175,125,.15);border-radius:4px;color:rgba(212,175,125,.4);font-size:.65em;cursor:pointer;font-family:'Open Sans',sans-serif;">Sincronizar</button>
-    </div>
+    <div class="header"><h1>PROFISSIONAL</h1><p>Apostas e Controle</p></div>
     <div class="tp">
         <div class="sub-tabs">
             <button class="sub-tab active" onclick="switchTab(this,'sec-bilhete')">Bilhete</button>
@@ -142,60 +139,61 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:1px;backgroun
 
 <script>
 // ==========================================
-// SUPABASE INIT
+// SUPABASE — IGUAL FINANCEIRO
 // ==========================================
 var SUPABASE_URL='https://ltwamldgdwqzyssoukzl.supabase.co';
 var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
 var SYNC_ID='default';
-var sbClient=null;var useSB=false;
-var FUT_KEY='futZara';
-try{
-    if(typeof supabase!=='undefined'){
-        sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-        useSB=true;
-    }else{
-        console.log('Supabase CDN nao carregou');
-    }
-}catch(e){console.log('Supabase init erro:',e);}
+var supabaseClient=null;var useSupabase=false;
+try{supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);useSupabase=true;}catch(e){console.log('Supabase indisponivel');}
 
-var syncTimer=null;var syncReady=false;
-function triggerSync(){if(!useSB||!syncReady)return;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(salvarSupabase,2000);}
+var FUT_KEY='futZara';
 
 async function salvarSupabase(){
-    if(!useSB)return;
+    if(!useSupabase)return;
     try{
-        var dados={futebol:JSON.parse(localStorage.getItem(FUT_KEY)||'{}')};
-        var r=await sbClient.from('profissional_dados').upsert({
+        var r=await supabaseClient.from('profissional_dados').upsert({
             id:SYNC_ID,
-            dados:dados,
+            dados:{futebol:JSON.parse(localStorage.getItem(FUT_KEY)||'{}')},
             updated_at:new Date().toISOString()
         });
-        if(r.error){console.error('Sync erro:',r.error.message||r.error);showSyncStatus('Erro sync: '+r.error.message,'#e74c3c');}
-        else{showSyncStatus('Sincronizado','#2ecc71');}
+        if(r.error){console.error('Sync erro:',r.error);mostrarStatus('Erro ao sincronizar','error');}
+        else{mostrarStatus('Sincronizado','success');}
     }catch(e){console.error('Sync exception:',e);}
 }
 
 async function carregarSupabase(){
-    if(!useSB)return false;
+    if(!useSupabase)return false;
     try{
-        var r=await sbClient.from('profissional_dados').select('dados').eq('id',SYNC_ID).maybeSingle();
-        if(r.error){console.error('Load erro:',r.error.message||r.error);showSyncStatus('Erro: '+r.error.message,'#e74c3c');return false;}
+        var r=await supabaseClient.from('profissional_dados').select('*').eq('id',SYNC_ID).maybeSingle();
+        if(r.error){console.error('Load erro:',r.error);mostrarStatus('Erro ao carregar','error');return false;}
         if(r.data&&r.data.dados){
             var d=r.data.dados;
-            console.log('Dados no Supabase:',Object.keys(d));
             if(d.futebol){localStorage.setItem(FUT_KEY,JSON.stringify(d.futebol));}
-            showSyncStatus('Dados carregados','#2ecc71');
+            mostrarStatus('Dados carregados','success');
             return true;
         }
-        showSyncStatus('Nenhum dado no servidor','#f39c12');
         return false;
-    }catch(e){console.error('Load exception:',e);showSyncStatus('Erro: '+e.message,'#e74c3c');return false;}
+    }catch(e){console.error('Load exception:',e);return false;}
 }
 
-function showSyncStatus(msg,cor){
+function mostrarStatus(msg,tipo){
     var el=document.getElementById('syncStatus');
-    if(el){el.textContent=msg;el.style.color=cor;el.style.opacity='1';setTimeout(function(){el.style.opacity='.3';},3000);}
+    if(!el){el=document.createElement('div');el.id='syncStatus';document.body.appendChild(el);}
+    el.textContent=msg;
+    el.style.background=tipo==='success'?'rgba(39,174,96,.95)':'rgba(231,76,60,.95)';
+    el.style.opacity='1';
+    setTimeout(function(){el.style.opacity='0';},3000);
 }
+
+function salvarDados(){
+    localStorage.setItem(FUT_KEY,JSON.stringify(F));
+    salvarSupabase();
+}
+
+// ==========================================
+// UTILS
+// ==========================================
 var SVG_TRASH='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
 function parseBR(s){if(!s)return 0;return parseFloat(String(s).replace(/\s/g,'').replace(/R\$\s*/g,'').replace(/\./g,'').replace(',','.'))||0;}
 function fmtBR(v){return(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -213,7 +211,6 @@ function switchTab(el,id){
 // ==========================================
 var F={bets:[],movs:[],banca:0};
 function loadF(){try{var s=localStorage.getItem(FUT_KEY);if(s)F=Object.assign({bets:[],movs:[],banca:0},JSON.parse(s));}catch(e){}}
-function saveF(){try{localStorage.setItem(FUT_KEY,JSON.stringify(F));triggerSync();}catch(e){}}
 
 function regBet(){
     var jogo=document.getElementById('betJogo').value.trim();if(!jogo)return;
@@ -223,38 +220,35 @@ function regBet(){
     F.bets.push({id:Date.now().toString(36),jogo:jogo,odd:odd,stake:stake,status:'pending',data:new Date().toISOString()});
     F.banca-=stake;
     document.getElementById('betJogo').value='';document.getElementById('betOdd').value='';document.getElementById('betStake').value='';
-    saveF();render();toast('Aposta registrada');
+    salvarDados();render();toast('Aposta registrada');
 }
 function resolveBet(id,st){
     var b=F.bets.find(function(x){return x.id===id;});if(!b||b.status!=='pending')return;
     b.status=st;if(st==='won')F.banca+=b.stake*b.odd;else if(st==='void')F.banca+=b.stake;
-    saveF();render();
+    salvarDados();render();
 }
 function deleteBet(id){
     var b=F.bets.find(function(x){return x.id===id;});if(!b)return;
     if(b.status==='pending')F.banca+=b.stake;
     else if(b.status==='won')F.banca-=b.stake*b.odd;
     else if(b.status==='void')F.banca-=b.stake;
-    F.bets=F.bets.filter(function(x){return x.id!==id;});saveF();render();
+    F.bets=F.bets.filter(function(x){return x.id!==id;});salvarDados();render();
 }
 function delMov(id){
     var m=F.movs.find(function(x){return x.id===id;});if(!m)return;
     if(m.tipo==='deposito')F.banca-=m.valor;else F.banca+=m.valor;
-    F.movs=F.movs.filter(function(x){return x.id!==id;});saveF();render();
+    F.movs=F.movs.filter(function(x){return x.id!==id;});salvarDados();render();
 }
 function spMov(tipo){
     var elId=tipo==='deposito'?'spDepVal':'spSaqVal';
     var val=parseBR(document.getElementById(elId).value);if(!val||val<=0)return;
     if(tipo==='deposito')F.banca+=val;else{if(val>F.banca){toast('Insuficiente');return;}F.banca-=val;}
     F.movs.push({id:Date.now().toString(36),tipo:tipo,valor:val,data:new Date().toISOString()});
-    document.getElementById(elId).value='';saveF();render();toast((tipo==='deposito'?'Depósito':'Saque')+' R$ '+fmtBR(val));
+    document.getElementById(elId).value='';salvarDados();render();toast((tipo==='deposito'?'Deposito':'Saque')+' R$ '+fmtBR(val));
 }
 
 function render(){
-    // Banca
     document.getElementById('spBanca').textContent='R$ '+fmtBR(F.banca);
-
-    // Pendentes
     var pend=F.bets.filter(function(b){return b.status==='pending';});
     document.getElementById('pendCount').textContent=pend.length?pend.length+' aposta'+(pend.length>1?'s':''):'';
     var pE=document.getElementById('pendList');
@@ -278,8 +272,6 @@ function render(){
             '</div>';
         }).join('');}
     }
-
-    // Resolvidas hoje
     var today=new Date().toISOString().substring(0,10);
     var res=F.bets.filter(function(b){return b.status!=='pending'&&b.data.startsWith(today);});
     var rE=document.getElementById('resolvList');
@@ -294,23 +286,17 @@ function render(){
             '</div>';
         }).join('');}
     }
-
-    // Movimentacoes
     var mE=document.getElementById('spMovList');
     if(mE){
         mE.innerHTML=F.movs.slice(-10).reverse().map(function(m){
             var dt=new Date(m.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-            var co=m.tipo==='deposito'?'#2ecc71':'#e74c3c';
-            var sig=m.tipo==='deposito'?'+':'-';
             return '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.025);font-size:.8em;">'+
                 '<span style="color:rgba(255,255,255,.45);">'+dt+'</span>'+
-                '<span style="font-weight:600;color:'+co+';">'+sig+' R$ '+fmtBR(m.valor)+'</span>'+
+                '<span style="font-weight:600;color:'+(m.tipo==='deposito'?'#2ecc71':'#e74c3c')+';">'+(m.tipo==='deposito'?'+':'-')+' R$ '+fmtBR(m.valor)+'</span>'+
                 '<button onclick="delMov(&quot;'+m.id+'&quot;)" style="background:transparent;border:none;color:rgba(231,76,60,.2);cursor:pointer;display:flex;padding:2px;">'+SVG_TRASH+'</button>'+
             '</div>';
         }).join('');
     }
-
-    // Mensal
     var mnE=document.getElementById('spMensal');
     if(mnE){
         var won=F.bets.filter(function(b){return b.status==='won';});
@@ -325,12 +311,10 @@ function render(){
             '<div><div style="font-size:.6em;color:rgba(255,255,255,.4);font-weight:600;">WIN RATE</div><div style="font-size:1.2em;font-weight:700;color:'+(wr>=50?'#2ecc71':'#e74c3c')+';">'+wr+'%</div></div>'+
         '</div>'+
         '<div style="text-align:center;padding:10px;background:'+(luc>=0?'rgba(46,204,113,.05)':'rgba(231,76,60,.05)')+';border:1px solid '+(luc>=0?'rgba(46,204,113,.1)':'rgba(231,76,60,.1)')+';border-radius:8px;">'+
-            '<div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Lucro / Prejuízo</div>'+
+            '<div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Lucro / Prejuizo</div>'+
             '<div style="font-size:1.3em;font-weight:700;color:'+(luc>=0?'#2ecc71':'#e74c3c')+';">'+(luc>=0?'+':'')+' R$ '+fmtBR(Math.abs(luc))+'</div>'+
         '</div>';
     }
-
-    // Todas
     var abE=document.getElementById('spAllBets');
     if(abE){
         var all=F.bets.slice().reverse().slice(0,25);
@@ -338,11 +322,11 @@ function render(){
         else{abE.innerHTML=all.map(function(b){
             var co=b.status==='won'?'#2ecc71':b.status==='lost'?'#e74c3c':b.status==='pending'?'#d4af7d':'rgba(255,255,255,.5)';
             var dt=new Date(b.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-            var statusTxt=b.status==='won'?'GREEN':b.status==='lost'?'RED':b.status==='pending'?'PEND':'VOID';
+            var st=b.status==='won'?'GREEN':b.status==='lost'?'RED':b.status==='pending'?'PEND':'VOID';
             return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.025);font-size:.8em;">'+
                 '<div style="flex:1;"><span style="color:#fff;">'+b.jogo+'</span> <span style="color:rgba(255,255,255,.2);font-size:.85em;">'+dt+'</span></div>'+
                 '<div style="display:flex;gap:8px;align-items:center;">'+
-                    '<span style="font-size:.7em;font-weight:700;color:'+co+';letter-spacing:.5px;">'+statusTxt+'</span>'+
+                    '<span style="font-size:.7em;font-weight:700;color:'+co+';letter-spacing:.5px;">'+st+'</span>'+
                     '<span style="color:rgba(255,255,255,.5);font-weight:600;">'+b.odd+'x</span>'+
                     '<button onclick="deleteBet(&quot;'+b.id+'&quot;)" style="background:transparent;border:none;color:rgba(231,76,60,.15);cursor:pointer;display:flex;padding:2px;">'+SVG_TRASH+'</button>'+
                 '</div>'+
@@ -351,26 +335,15 @@ function render(){
     }
 }
 
-async function forcarSync(){
-    showSyncStatus('Sincronizando...','#d4af7d');
-    syncReady=true;
-    await salvarSupabase();
-    var ok=await carregarSupabase();
-    if(ok){loadF();render();}
+// ==========================================
+// INIT — IGUAL FINANCEIRO
+// ==========================================
+async function init(){
+    await carregarSupabase();
+    loadF();
+    render();
 }
-
-// INIT
-loadF();render();
-if(useSB){
-    showSyncStatus('Carregando...','#d4af7d');
-    carregarSupabase().then(function(ok){
-        if(ok){loadF();render();}
-        syncReady=true;
-    });
-}else{
-    syncReady=true;
-    showSyncStatus('Supabase offline','#e74c3c');
-}
+init();
 </script>
 
 </body>
