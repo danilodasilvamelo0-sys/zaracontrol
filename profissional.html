@@ -61,6 +61,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:1px;backgroun
             <button class="sub-tab" onclick="switchTab(this,'sec-ctrl')">Controle</button>
         </div>
 
+```
     <!-- BILHETE -->
     <div class="section active" id="sec-bilhete">
         <div class="box">
@@ -106,6 +107,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:1px;backgroun
         </div>
     </div>
 </div>
+```
 
 </div></div>
 <div class="toast" id="toast"></div>
@@ -199,30 +201,27 @@ function regBet(){
 function resolveBet(id,st){
     var b=F.bets.find(function(x){return x.id===id;});if(!b||b.status!=='pending')return;
     b.status=st;
-    if(st==='won')F.banca+=b.stake*(b.odd-1);
-    else if(st==='lost')F.banca-=b.stake;
     salvarDados();render();
 }
 function deleteBet(id){
-    var b=F.bets.find(function(x){return x.id===id;});if(!b)return;
-    if(b.status==='won')F.banca-=b.stake*(b.odd-1);
-    else if(b.status==='lost')F.banca+=b.stake;
     F.bets=F.bets.filter(function(x){return x.id!==id;});salvarDados();render();
 }
 function delMov(id){
-    var m=F.movs.find(function(x){return x.id===id;});if(!m)return;
-    if(m.tipo==='deposito')F.banca-=m.valor;else F.banca+=m.valor;
     F.movs=F.movs.filter(function(x){return x.id!==id;});salvarDados();render();
 }
 function spMov(tipo){
     var elId=tipo==='deposito'?'spDepVal':'spSaqVal';
     var val=parseBR(document.getElementById(elId).value);if(!val||val<=0)return;
-    if(tipo==='deposito')F.banca+=val;else{if(val>F.banca){toast('Insuficiente');return;}F.banca-=val;}
     F.movs.push({id:Date.now().toString(36),tipo:tipo,valor:val,data:new Date().toISOString()});
-    document.getElementById(elId).value='';salvarDados();render();toast((tipo==='deposito'?'Deposito':'Saque')+' R$ '+fmtBR(val));
+    document.getElementById(elId).value='';salvarDados();render();toast((tipo==='deposito'?'Depósito':'Saque')+' R$ '+fmtBR(val));
 }
 
 function render(){
+    // Recalcular banca dos movimentos (nunca usa F.banca acumulado)
+    var bancaCalc=0;
+    F.movs.forEach(function(m){if(m.tipo==='deposito')bancaCalc+=m.valor;else bancaCalc-=m.valor;});
+    F.bets.forEach(function(b){if(b.status==='won')bancaCalc+=b.stake*(b.odd-1);else if(b.status==='lost')bancaCalc-=b.stake;});
+    F.banca=bancaCalc;
     document.getElementById('spBanca').textContent='R$ '+fmtBR(F.banca);
     var pend=F.bets.filter(function(b){return b.status==='pending';});
     document.getElementById('pendCount').textContent=pend.length?pend.length+' aposta'+(pend.length>1?'s':''):'';
