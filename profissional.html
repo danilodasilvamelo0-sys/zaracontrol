@@ -151,7 +151,7 @@ function switchTab(el,id){
 // ==========================================
 var FUT_KEY='futZara';var F={bets:[],movs:[],banca:0};
 function loadF(){try{var s=localStorage.getItem(FUT_KEY);if(s)F=Object.assign({bets:[],movs:[],banca:0},JSON.parse(s));}catch(e){}}
-function saveF(){try{localStorage.setItem(FUT_KEY,JSON.stringify(F));}catch(e){}}
+function saveF(){try{localStorage.setItem(FUT_KEY,JSON.stringify(F));triggerSync();}catch(e){}}
 
 function regBet(){
     var jogo=document.getElementById('betJogo').value.trim();if(!jogo)return;
@@ -289,9 +289,21 @@ function render(){
     }
 }
 
+// ==========================================
+// SUPABASE SYNC
+// ==========================================
+var SUPABASE_URL='https://ltwamldgdwqzyssoukzl.supabase.co';
+var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
+var SYNC_ID='default';var sbClient=null;var useSB=false;var syncTimer=null;
+function triggerSync(){if(!useSB)return;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(doSync,2000);}
+async function doSync(){if(!useSB)return;try{await sbClient.from('profissional_dados').upsert({id:SYNC_ID,dados:{futebol:JSON.parse(localStorage.getItem(FUT_KEY)||'{}')}});}catch(e){console.log('Sync err:',e);}}
+async function loadSync(){if(!useSB)return false;try{var r=await sbClient.from('profissional_dados').select('dados').eq('id',SYNC_ID).maybeSingle();if(r.data&&r.data.dados){var d=r.data.dados;if(d.futebol)localStorage.setItem(FUT_KEY,JSON.stringify(d.futebol));return true;}}catch(e){}return false;}
+
 // INIT
 loadF();render();
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="try{sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);useSB=true;loadSync().then(function(ok){if(ok){loadF();render();}});}catch(e){}"></script>
 
 </body>
 </html>
