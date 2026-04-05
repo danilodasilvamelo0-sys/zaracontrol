@@ -133,7 +133,55 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:1px;backgroun
 </div></div>
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+// ==========================================
+// SUPABASE INIT
+// ==========================================
+var SUPABASE_URL='https://ltwamldgdwqzyssoukzl.supabase.co';
+var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
+var SYNC_ID='default';
+var sbClient=null;var useSB=false;
+var FUT_KEY='futZara';
+try{
+    if(typeof supabase!=='undefined'){
+        sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+        useSB=true;
+        console.log('Supabase conectado');
+    }
+}catch(e){console.log('Supabase indisponivel');}
+
+var syncTimer=null;
+function triggerSync(){if(!useSB)return;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(salvarSupabase,2000);}
+
+async function salvarSupabase(){
+    if(!useSB)return;
+    try{
+        var dados={futebol:JSON.parse(localStorage.getItem(FUT_KEY)||'{}')};
+        var r=await sbClient.from('profissional_dados').upsert({
+            id:SYNC_ID,
+            dados:dados,
+            updated_at:new Date().toISOString()
+        });
+        if(r.error){console.error('Sync erro:',r.error.message||r.error);}
+        else{console.log('Sincronizado');}
+    }catch(e){console.error('Sync exception:',e);}
+}
+
+async function carregarSupabase(){
+    if(!useSB)return false;
+    try{
+        var r=await sbClient.from('profissional_dados').select('dados').eq('id',SYNC_ID).maybeSingle();
+        if(r.error){console.error('Load erro:',r.error.message||r.error);return false;}
+        if(r.data&&r.data.dados){
+            var d=r.data.dados;
+            if(d.futebol){localStorage.setItem(FUT_KEY,JSON.stringify(d.futebol));console.log('Dados carregados do Supabase');}
+            return true;
+        }
+        return false;
+    }catch(e){console.error('Load exception:',e);return false;}
+}
 var SVG_TRASH='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
 function parseBR(s){if(!s)return 0;return parseFloat(String(s).replace(/\s/g,'').replace(/R\$\s*/g,'').replace(/\./g,'').replace(',','.'))||0;}
 function fmtBR(v){return(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -149,7 +197,7 @@ function switchTab(el,id){
 // ==========================================
 // ESPORTES
 // ==========================================
-var FUT_KEY='futZara';var F={bets:[],movs:[],banca:0};
+var F={bets:[],movs:[],banca:0};
 function loadF(){try{var s=localStorage.getItem(FUT_KEY);if(s)F=Object.assign({bets:[],movs:[],banca:0},JSON.parse(s));}catch(e){}}
 function saveF(){try{localStorage.setItem(FUT_KEY,JSON.stringify(F));triggerSync();}catch(e){}}
 
@@ -289,21 +337,11 @@ function render(){
     }
 }
 
-// ==========================================
-// SUPABASE SYNC
-// ==========================================
-var SUPABASE_URL='https://ltwamldgdwqzyssoukzl.supabase.co';
-var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
-var SYNC_ID='default';var sbClient=null;var useSB=false;var syncTimer=null;
-function triggerSync(){if(!useSB)return;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(doSync,2000);}
-async function doSync(){if(!useSB)return;try{await sbClient.from('profissional_dados').upsert({id:SYNC_ID,dados:{futebol:JSON.parse(localStorage.getItem(FUT_KEY)||'{}')}});}catch(e){console.log('Sync err:',e);}}
-async function loadSync(){if(!useSB)return false;try{var r=await sbClient.from('profissional_dados').select('dados').eq('id',SYNC_ID).maybeSingle();if(r.data&&r.data.dados){var d=r.data.dados;if(d.futebol)localStorage.setItem(FUT_KEY,JSON.stringify(d.futebol));return true;}}catch(e){}return false;}
-
 // INIT
 loadF();render();
+// Sync from Supabase after render
+if(useSB){carregarSupabase().then(function(ok){if(ok){loadF();render();console.log('UI atualizada do Supabase');}});}
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="try{sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);useSB=true;loadSync().then(function(ok){if(ok){loadF();render();}});}catch(e){}"></script>
-
-    </body>
+</body>
 </html>
