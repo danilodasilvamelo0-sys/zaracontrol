@@ -111,8 +111,19 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:1px;backgroun
             <div id="spMovList"></div>
         </div>
         <div class="box">
-            <div class="box-t">Mensal</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div class="box-t" style="margin:0;">Mensal</div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <button class="btn btn-ghost btn-sm" onclick="mudarMes(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+                    <span id="mesLabel" style="font-size:.78em;color:#d4af7d;min-width:80px;text-align:center;font-weight:600;"></span>
+                    <button class="btn btn-ghost btn-sm" onclick="mudarMes(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+                </div>
+            </div>
             <div id="spMensal"></div>
+            <div style="margin-top:10px;">
+                <button class="btn btn-ghost btn-sm btn-full" onclick="toggleSemanas()" id="btnSemanas">Ver por Semanas</button>
+                <div id="spSemanas" style="display:none;margin-top:10px;"></div>
+            </div>
         </div>
         <div class="box">
             <div class="box-t">Todas as Apostas</div>
@@ -200,7 +211,43 @@ function switchTab(el,id){
 // ESPORTES
 // ==========================================
 var F={bets:[],movs:[],banca:0};
+var mesAtual={m:new Date().getMonth()+1,y:new Date().getFullYear()};
 function loadF(){try{var s=localStorage.getItem(FUT_KEY);if(s)F=Object.assign({bets:[],movs:[],banca:0},JSON.parse(s));}catch(e){}}
+
+function mudarMes(dir){
+    mesAtual.m+=dir;
+    if(mesAtual.m>12){mesAtual.m=1;mesAtual.y++;}
+    if(mesAtual.m<1){mesAtual.m=12;mesAtual.y--;}
+    render();
+}
+function toggleSemanas(){
+    var el=document.getElementById('spSemanas');
+    var btn=document.getElementById('btnSemanas');
+    if(el.style.display==='none'){el.style.display='block';btn.textContent='Ocultar Semanas';}
+    else{el.style.display='none';btn.textContent='Ver por Semanas';}
+}
+function renderSemanas(mk,mesBets){
+    var el=document.getElementById('spSemanas');if(!el)return;
+    if(!mesBets.length){el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.1);padding:10px;font-size:.8em;">Sem dados</div>';return;}
+    var semanas={};
+    mesBets.forEach(function(b){
+        var d=new Date(b.data);var dia=d.getDate();
+        var sem=Math.ceil(dia/7);
+        if(!semanas[sem])semanas[sem]={won:0,lost:0,lucro:0,total:0};
+        semanas[sem].total++;
+        if(b.status==='won'){semanas[sem].won++;semanas[sem].lucro+=b.stake*(b.odd-1);}
+        else if(b.status==='lost'){semanas[sem].lost++;semanas[sem].lucro-=b.stake;}
+    });
+    var ks=Object.keys(semanas).sort(function(a,b){return a-b;});
+    el.innerHTML=ks.map(function(k){
+        var s=semanas[k];var co=s.lucro>=0?'#2ecc71':'#e74c3c';
+        var wr=s.total>0?Math.round(s.won/s.total*100):0;
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.03);border-radius:6px;margin-bottom:6px;">'+
+            '<div><div style="font-size:.85em;font-weight:600;color:#fff;">Semana '+k+'</div><div style="font-size:.68em;color:rgba(255,255,255,.3);margin-top:2px;">'+s.won+'G '+s.lost+'R — WR '+wr+'%</div></div>'+
+            '<div style="text-align:right;"><div style="font-size:.95em;font-weight:700;color:'+co+';">'+(s.lucro>=0?'+':'')+' R$ '+fmtBR(Math.abs(s.lucro))+'</div></div>'+
+        '</div>';
+    }).join('');
+}
 
 function regBet(){
     var jogo=document.getElementById('betJogo').value.trim();if(!jogo)return;
@@ -261,15 +308,18 @@ function render(){
     }
     var today=new Date().toISOString().substring(0,10);
     var res=F.bets.filter(function(b){return b.status!=='pending'&&b.data.startsWith(today);});
+    res.sort(function(a,b){return a.jogo.localeCompare(b.jogo);});
     var rE=document.getElementById('resolvList');
     if(rE){
         if(!res.length){rE.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.12);padding:14px;font-size:.85em;">Nenhuma hoje</div>';}
         else{rE.innerHTML=res.map(function(b){
             var co=b.status==='won'?'#2ecc71':b.status==='lost'?'#e74c3c':'rgba(255,255,255,.5)';
             var g=b.status==='won'?b.stake*(b.odd-1):b.status==='lost'?-b.stake:0;
-            return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.85em;">'+
-                '<span style="color:#fff;">'+b.jogo+'</span>'+
-                '<span style="font-weight:700;color:'+co+';">'+(g>=0?'+':'')+' R$ '+fmtBR(Math.abs(g))+'</span>'+
+            var dt=new Date(b.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+            var st=b.status==='won'?'GREEN':b.status==='lost'?'RED':'VOID';
+            return '<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.85em;">'+
+                '<div style="flex:1;"><div style="color:#fff;font-weight:600;">'+b.jogo+'</div><div style="font-size:.75em;color:rgba(255,255,255,.3);margin-top:2px;">'+dt+' — Stake: R$ '+fmtBR(b.stake)+' — '+b.odd+'x</div></div>'+
+                '<div style="text-align:right;"><div style="font-weight:700;color:'+co+';">'+(g>=0?'+':'')+' R$ '+fmtBR(Math.abs(g))+'</div><div style="font-size:.65em;color:'+co+';font-weight:600;">'+st+'</div></div>'+
             '</div>';
         }).join('');}
     }
@@ -284,10 +334,15 @@ function render(){
             '</div>';
         }).join('');
     }
+    // MENSAL — mes selecionado
     var mnE=document.getElementById('spMensal');
     if(mnE){
-        var won=F.bets.filter(function(b){return b.status==='won';});
-        var lost=F.bets.filter(function(b){return b.status==='lost';});
+        var mk=mesAtual.y+'-'+String(mesAtual.m).padStart(2,'0');
+        var meses=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        document.getElementById('mesLabel').textContent=meses[mesAtual.m]+' '+mesAtual.y;
+        var mesBets=F.bets.filter(function(b){return b.data.startsWith(mk)&&b.status!=='pending';});
+        var won=mesBets.filter(function(b){return b.status==='won';});
+        var lost=mesBets.filter(function(b){return b.status==='lost';});
         var tW=won.reduce(function(s,b){return s+b.stake*(b.odd-1);},0);
         var tL=lost.reduce(function(s,b){return s+b.stake;},0);
         var luc=tW-tL;
@@ -298,25 +353,29 @@ function render(){
             '<div><div style="font-size:.6em;color:rgba(255,255,255,.4);font-weight:600;">WIN RATE</div><div style="font-size:1.2em;font-weight:700;color:'+(wr>=50?'#2ecc71':'#e74c3c')+';">'+wr+'%</div></div>'+
         '</div>'+
         '<div style="text-align:center;padding:10px;background:'+(luc>=0?'rgba(46,204,113,.05)':'rgba(231,76,60,.05)')+';border:1px solid '+(luc>=0?'rgba(46,204,113,.1)':'rgba(231,76,60,.1)')+';border-radius:8px;">'+
-            '<div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Lucro / Prejuizo</div>'+
+            '<div style="font-size:.6em;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Lucro / Prejuízo</div>'+
             '<div style="font-size:1.3em;font-weight:700;color:'+(luc>=0?'#2ecc71':'#e74c3c')+';">'+(luc>=0?'+':'')+' R$ '+fmtBR(Math.abs(luc))+'</div>'+
         '</div>';
+        renderSemanas(mk,mesBets);
     }
+    // TODAS — alfabetico
     var abE=document.getElementById('spAllBets');
     if(abE){
-        var all=F.bets.slice().reverse().slice(0,25);
+        var all=F.bets.slice().sort(function(a,b){return a.jogo.localeCompare(b.jogo)||new Date(b.data)-new Date(a.data);});
         if(!all.length){abE.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.12);padding:14px;font-size:.85em;">Nenhuma aposta</div>';}
         else{abE.innerHTML=all.map(function(b){
             var co=b.status==='won'?'#2ecc71':b.status==='lost'?'#e74c3c':b.status==='pending'?'#d4af7d':'rgba(255,255,255,.5)';
             var dt=new Date(b.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
             var st=b.status==='won'?'GREEN':b.status==='lost'?'RED':b.status==='pending'?'PEND':'VOID';
-            return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.025);font-size:.8em;">'+
-                '<div style="flex:1;"><span style="color:#fff;">'+b.jogo+'</span> <span style="color:rgba(255,255,255,.2);font-size:.85em;">'+dt+'</span></div>'+
-                '<div style="display:flex;gap:8px;align-items:center;">'+
-                    '<span style="font-size:.7em;font-weight:700;color:'+co+';letter-spacing:.5px;">'+st+'</span>'+
-                    '<span style="color:rgba(255,255,255,.5);font-weight:600;">'+b.odd+'x</span>'+
-                    '<button onclick="deleteBet(&quot;'+b.id+'&quot;)" style="background:transparent;border:none;color:rgba(231,76,60,.15);cursor:pointer;display:flex;padding:2px;">'+SVG_TRASH+'</button>'+
+            var lucBet=b.status==='won'?b.stake*(b.odd-1):b.status==='lost'?-b.stake:0;
+            var lucTxt=b.status==='pending'?'':('<div style="font-size:.82em;font-weight:700;color:'+co+';">'+(lucBet>=0?'+':'')+' R$ '+fmtBR(Math.abs(lucBet))+'</div>');
+            return '<div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.025);font-size:.8em;">'+
+                '<div style="flex:1;"><div style="color:#fff;font-weight:600;">'+b.jogo+'</div><div style="font-size:.78em;color:rgba(255,255,255,.25);margin-top:1px;">'+dt+' — R$ '+fmtBR(b.stake)+' — '+b.odd+'x</div></div>'+
+                '<div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px;">'+
+                    '<span style="font-size:.68em;font-weight:700;color:'+co+';letter-spacing:.5px;">'+st+'</span>'+
+                    lucTxt+
                 '</div>'+
+                '<button onclick="deleteBet(&quot;'+b.id+'&quot;)" style="background:transparent;border:none;color:rgba(231,76,60,.15);cursor:pointer;display:flex;padding:2px;margin-left:6px;">'+SVG_TRASH+'</button>'+
             '</div>';
         }).join('');}
     }
