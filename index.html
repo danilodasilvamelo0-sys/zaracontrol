@@ -6,8 +6,24 @@
     <meta name="theme-color" content="#0a0a0a">
     <meta name="color-scheme" content="dark">
     <title>ZARA | Private Access</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --surface2: #1a1a1a;
+            --gold: #d4af7d;
+            --gold-dim: rgba(212, 175, 125, 0.15);
+            --cyan: #00d4ff;
+            --magenta: #ff006e;
+            --green: #00ff87;
+            --orange: #ff8c00;
+            --purple: #a855f7;
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.6);
+            --text-muted: rgba(255, 255, 255, 0.4);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,13 +31,13 @@
         }
 
         html {
-            background: #0a0a0a !important;
+            background: var(--bg) !important;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #0a0a0a !important;
-            color: #fff;
+            background: var(--bg) !important;
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -32,6 +48,7 @@
             overflow-x: hidden;
         }
 
+        /* Animated gradient background */
         body::before {
             content: '';
             position: fixed;
@@ -39,90 +56,133 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(ellipse at center, rgba(120, 90, 60, 0.03) 0%, transparent 50%);
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.03) 0%, transparent 40%),
+                radial-gradient(ellipse at 80% 80%, rgba(255, 0, 110, 0.03) 0%, transparent 40%),
+                radial-gradient(ellipse at center, rgba(212, 175, 125, 0.02) 0%, transparent 50%);
             pointer-events: none;
+            animation: bgPulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
+
+        /* Top and bottom accent lines */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--gold), var(--green));
+            background-size: 300% 100%;
+            animation: gradientMove 4s ease infinite;
+            z-index: 9999;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .container {
             text-align: center;
-            max-width: 480px;
+            max-width: 500px;
             width: 100%;
             position: relative;
             z-index: 1;
         }
 
         .logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 30px;
-            border: 1px solid rgba(212, 175, 125, 0.3);
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 35px;
+            border: 2px solid transparent;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            background: var(--surface);
         }
 
         .logo::before {
             content: '';
             position: absolute;
-            inset: -1px;
+            inset: -2px;
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(212, 175, 125, 0.5), transparent, rgba(212, 175, 125, 0.2));
+            background: linear-gradient(135deg, var(--cyan), var(--magenta), var(--gold));
             z-index: -1;
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
 
         .logo-text {
             font-family: 'Playfair Display', serif;
-            font-size: 1.8em;
-            color: #d4af7d;
-            font-weight: 400;
+            font-size: 2em;
+            background: linear-gradient(135deg, var(--gold), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
         }
 
         h1 {
             font-family: 'Playfair Display', serif;
-            color: #fff;
-            font-size: 2.2em;
-            font-weight: 400;
-            letter-spacing: 8px;
-            margin-bottom: 8px;
+            color: var(--text);
+            font-size: 2.5em;
+            font-weight: 500;
+            letter-spacing: 10px;
+            margin-bottom: 10px;
             text-transform: uppercase;
         }
 
         .subtitle {
-            color: rgba(212, 175, 125, 0.8);
-            font-size: 0.7em;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 0.75em;
             margin-bottom: 50px;
-            font-weight: 300;
-            letter-spacing: 4px;
+            font-weight: 500;
+            letter-spacing: 5px;
             text-transform: uppercase;
         }
 
         .divider {
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #d4af7d, transparent);
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
             margin: 0 auto 50px;
         }
 
         .menu {
             display: flex;
             flex-direction: column;
-            gap: 1px;
-            background: rgba(212, 175, 125, 0.1);
-            border-radius: 16px;
+            gap: 2px;
+            background: var(--surface);
+            border-radius: 20px;
             overflow: hidden;
-            border: 1px solid rgba(212, 175, 125, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .menu-item {
             display: flex;
             align-items: center;
             gap: 20px;
-            padding: 22px 25px;
-            background: rgba(15, 15, 15, 0.95);
+            padding: 24px 28px;
+            background: var(--surface);
             text-decoration: none;
-            color: #fff;
+            color: var(--text);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -135,7 +195,7 @@
             top: 0;
             height: 100%;
             width: 0;
-            background: linear-gradient(90deg, rgba(212, 175, 125, 0.1), transparent);
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.1), transparent);
             transition: width 0.4s ease;
         }
 
@@ -144,36 +204,47 @@
         }
 
         .menu-item:hover {
-            background: rgba(20, 20, 20, 0.95);
-        }
-
-        .menu-item:hover .icon {
-            transform: scale(1.1);
-            color: #d4af7d;
-        }
-
-        .menu-item:hover .arrow {
-            transform: translateX(5px);
-            color: #d4af7d;
+            background: var(--surface2);
         }
 
         .menu-item .icon {
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            border-radius: 14px;
             transition: all 0.4s ease;
             position: relative;
             z-index: 1;
         }
 
         .menu-item .icon svg {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
+            transition: all 0.3s ease;
         }
+
+        /* Colored icons */
+        .menu-item.comando .icon { background: rgba(0, 212, 255, 0.1); }
+        .menu-item.comando .icon svg { stroke: var(--cyan); }
+        .menu-item.comando:hover .icon { background: rgba(0, 212, 255, 0.2); transform: scale(1.1); }
+
+        .menu-item.saude .icon { background: rgba(0, 255, 135, 0.1); }
+        .menu-item.saude .icon svg { stroke: var(--green); }
+        .menu-item.saude:hover .icon { background: rgba(0, 255, 135, 0.2); transform: scale(1.1); }
+
+        .menu-item.financeiro .icon { background: rgba(212, 175, 125, 0.1); }
+        .menu-item.financeiro .icon svg { stroke: var(--gold); }
+        .menu-item.financeiro:hover .icon { background: rgba(212, 175, 125, 0.2); transform: scale(1.1); }
+
+        .menu-item.profissional .icon { background: rgba(255, 0, 110, 0.1); }
+        .menu-item.profissional .icon svg { stroke: var(--magenta); }
+        .menu-item.profissional:hover .icon { background: rgba(255, 0, 110, 0.2); transform: scale(1.1); }
+
+        .menu-item.agenda .icon { background: rgba(168, 85, 247, 0.1); }
+        .menu-item.agenda .icon svg { stroke: var(--purple); }
+        .menu-item.agenda:hover .icon { background: rgba(168, 85, 247, 0.2); transform: scale(1.1); }
 
         .menu-item .text {
             text-align: left;
@@ -183,48 +254,54 @@
         }
 
         .menu-item h3 {
-            font-size: 0.95em;
-            font-weight: 500;
-            margin-bottom: 3px;
-            letter-spacing: 1px;
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         .menu-item p {
-            font-size: 0.7em;
-            color: rgba(255, 255, 255, 0.4);
-            font-weight: 300;
+            font-size: 0.75em;
+            color: var(--text-muted);
+            font-weight: 400;
             letter-spacing: 0.5px;
         }
 
         .menu-item .arrow {
-            color: rgba(255, 255, 255, 0.2);
+            color: var(--text-muted);
             transition: all 0.4s ease;
             position: relative;
             z-index: 1;
         }
 
+        .menu-item:hover .arrow {
+            transform: translateX(5px);
+            color: var(--gold);
+        }
+
         .menu-item .arrow svg {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
         }
 
         .footer {
             margin-top: 50px;
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 0.65em;
-            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-size: 0.7em;
+            letter-spacing: 3px;
             text-transform: uppercase;
         }
 
         .badge {
             display: inline-block;
-            padding: 4px 12px;
-            background: linear-gradient(135deg, rgba(212, 175, 125, 0.2), rgba(212, 175, 125, 0.1));
-            border: 1px solid rgba(212, 175, 125, 0.3);
-            border-radius: 20px;
-            font-size: 0.55em;
-            color: #d4af7d;
-            letter-spacing: 2px;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(255, 0, 110, 0.15));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 25px;
+            font-size: 0.6em;
+            color: var(--cyan);
+            letter-spacing: 3px;
             margin-bottom: 30px;
             text-transform: uppercase;
             cursor: pointer;
@@ -232,150 +309,128 @@
         }
 
         .badge:hover {
-            background: linear-gradient(135deg, rgba(212, 175, 125, 0.3), rgba(212, 175, 125, 0.15));
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(255, 0, 110, 0.25));
             transform: scale(1.05);
         }
 
         .badge.unlocked {
-            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1));
-            border-color: rgba(46, 204, 113, 0.4);
-            color: #2ecc71;
+            background: linear-gradient(135deg, rgba(0, 255, 135, 0.2), rgba(0, 212, 255, 0.2));
+            border-color: var(--green);
+            color: var(--green);
         }
 
-        .gold-line {
+        /* Toast notification */
+        .toast {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #d4af7d, transparent);
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, var(--surface2), var(--surface));
+            border: 1px solid var(--gold);
+            padding: 14px 28px;
+            border-radius: 12px;
+            color: var(--gold);
+            font-size: 0.85em;
+            font-weight: 500;
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 1px;
         }
 
-        .gold-line-bottom {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #d4af7d, transparent);
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
-        .content-locked .menu {
-            filter: blur(8px);
-            pointer-events: none;
-            opacity: 0.3;
-        }
-
-        .modal-overlay {
+        /* Login Modal */
+        .login-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px);
+            z-index: 9998;
+            animation: fadeIn 0.3s ease;
         }
 
-        .modal-overlay.active {
+        .login-overlay.show {
             display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .login-modal {
-            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
-            border: 1px solid rgba(212, 175, 125, 0.2);
+            background: var(--surface);
+            border: 1px solid rgba(0, 212, 255, 0.2);
             border-radius: 20px;
-            padding: 40px 35px;
+            padding: 40px;
+            max-width: 400px;
             width: 90%;
-            max-width: 380px;
-            text-align: center;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
             position: relative;
+            animation: slideUp 0.4s ease;
         }
 
-        .login-modal::before {
-            content: '';
-            position: absolute;
-            top: -1px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #d4af7d, transparent);
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .login-logo {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 25px;
-            border: 1px solid rgba(212, 175, 125, 0.3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5em;
-            color: #d4af7d;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
         }
 
         .login-modal h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.4em;
-            font-weight: 400;
-            color: #fff;
-            margin-bottom: 8px;
-            letter-spacing: 2px;
+            font-size: 1.5em;
+            color: var(--text);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
         }
 
-        .login-modal .login-subtitle {
-            font-size: 0.75em;
-            color: rgba(255, 255, 255, 0.4);
+        .login-modal p {
+            color: var(--text-dim);
+            font-size: 0.85em;
             margin-bottom: 30px;
-            letter-spacing: 1px;
         }
 
-        .login-field {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .login-field label {
-            display: block;
-            font-size: 0.7em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 8px;
-        }
-
-        .login-field input {
+        .login-input {
             width: 100%;
-            padding: 14px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(212, 175, 125, 0.2);
-            border-radius: 10px;
-            color: #fff;
+            padding: 16px 20px;
+            background: var(--bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text);
             font-size: 1em;
-            font-family: inherit;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 15px;
             transition: all 0.3s ease;
         }
 
-        .login-field input:focus {
+        .login-input:focus {
             outline: none;
-            border-color: #d4af7d;
-            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
         }
 
-        .login-field input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
+        .login-input::placeholder {
+            color: var(--text-muted);
         }
 
         .login-error {
-            color: #e74c3c;
-            font-size: 0.8em;
+            background: rgba(255, 0, 110, 0.1);
+            border: 1px solid rgba(255, 0, 110, 0.3);
+            color: var(--magenta);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.85em;
             margin-bottom: 15px;
             display: none;
         }
@@ -386,87 +441,54 @@
 
         .login-btn {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #d4af7d, #c9a066);
+            padding: 16px;
+            background: linear-gradient(135deg, var(--cyan), var(--magenta));
             border: none;
-            border-radius: 10px;
-            color: #0a0a0a;
-            font-size: 0.9em;
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1em;
             font-weight: 600;
-            letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Inter', sans-serif;
         }
 
         .login-btn:hover {
-            background: linear-gradient(135deg, #e0c08d, #d4af7d);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(212, 175, 125, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
         }
 
         .login-close {
             position: absolute;
             top: 15px;
             right: 15px;
-            background: transparent;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
             border: none;
-            color: rgba(255, 255, 255, 0.3);
+            color: var(--text-dim);
             cursor: pointer;
-            transition: color 0.3s;
-            padding: 5px;
-        }
-
-        .login-close:hover {
-            color: #d4af7d;
-        }
-
-        .login-close svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Botão de Biometria / Face ID */
-        .biometric-btn {
-            width: 100%;
-            padding: 16px;
-            background: rgba(212, 175, 125, 0.1);
-            border: 1px solid rgba(212, 175, 125, 0.3);
-            border-radius: 12px;
-            color: #d4af7d;
-            font-size: 0.9em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            margin-bottom: 15px;
+            transition: all 0.3s ease;
         }
 
-        .biometric-btn:hover {
-            background: rgba(212, 175, 125, 0.2);
-            border-color: rgba(212, 175, 125, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .biometric-btn:active {
-            transform: scale(0.98);
-        }
-
-        .biometric-btn svg {
-            stroke: #d4af7d;
+        .login-close:hover {
+            background: rgba(255, 0, 110, 0.2);
+            color: var(--magenta);
         }
 
         .login-divider {
-            display: flex;
+            display: none;
             align-items: center;
+            gap: 15px;
             margin: 20px 0;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 0.75em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-size: 0.8em;
         }
 
         .login-divider::before,
@@ -477,330 +499,258 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .login-divider span {
-            padding: 0 15px;
+        .biometric-btn {
+            display: none;
+            width: 100%;
+            padding: 16px;
+            background: rgba(0, 255, 135, 0.1);
+            border: 1px solid rgba(0, 255, 135, 0.3);
+            border-radius: 12px;
+            color: var(--green);
+            font-size: 0.95em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .biometric-btn:hover {
+            background: rgba(0, 255, 135, 0.2);
+        }
+
+        .biometric-btn svg {
+            width: 22px;
+            height: 22px;
         }
 
         .setup-biometric-link {
-            background: none;
-            border: none;
-            color: rgba(212, 175, 125, 0.6);
-            font-size: 0.75em;
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            color: var(--text-dim);
+            font-size: 0.8em;
             cursor: pointer;
-            margin-top: 20px;
-            padding: 10px;
-            transition: color 0.3s;
+            transition: color 0.3s ease;
         }
 
         .setup-biometric-link:hover {
-            color: #d4af7d;
+            color: var(--cyan);
         }
 
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #1a1a1a;
-            border: 1px solid rgba(46, 204, 113, 0.4);
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-size: 0.85em;
-            color: #2ecc71;
-            z-index: 2000;
-            opacity: 0;
-            transition: all 0.4s ease;
+        /* Locked content */
+        .content-locked .menu {
+            filter: blur(5px);
+            pointer-events: none;
+            user-select: none;
         }
 
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-10px); }
-            40%, 80% { transform: translateX(10px); }
-        }
-
-        @media (max-width: 500px) {
+        /* Responsive */
+        @media (max-width: 480px) {
             h1 {
-                font-size: 1.6em;
-                letter-spacing: 5px;
+                font-size: 1.8em;
+                letter-spacing: 6px;
             }
 
             .menu-item {
                 padding: 18px 20px;
-                gap: 15px;
             }
 
             .menu-item .icon {
-                width: 40px;
-                height: 40px;
-            }
-
-            .menu-item h3 {
-                font-size: 0.9em;
-            }
-
-            .logo {
-                width: 65px;
-                height: 65px;
-            }
-
-            .logo-text {
-                font-size: 1.5em;
+                width: 44px;
+                height: 44px;
             }
 
             .login-modal {
-                width: 95%;
                 padding: 30px 25px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="gold-line"></div>
-    <div class="gold-line-bottom"></div>
-
-    <div class="container content-locked" id="mainContainer">
+    <div class="container" id="mainContainer">
         <div class="logo">
             <span class="logo-text">Z</span>
         </div>
         
-        <span class="badge" id="badgeAccess" onclick="abrirLogin()">Private Access</span>
+        <h1>ZARA</h1>
+        <p class="subtitle">Private Access</p>
         
-        <h1>Zara</h1>
-        <p class="subtitle">Excellence in Control</p>
+        <div class="badge" id="badgeAccess" onclick="abrirLogin()">Private Access</div>
         
         <div class="divider"></div>
-
+        
         <nav class="menu">
-            <a href="comando.html" class="menu-item">
-                <span class="icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <a href="comando.html" class="menu-item comando">
+                <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
-                </span>
+                </div>
                 <div class="text">
                     <h3>Comando</h3>
-                    <p>Disciplina e Poder</p>
+                    <p>Centro de controle estratégico</p>
                 </div>
-                <span class="arrow">
+                <div class="arrow">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                        <polyline points="9 18 15 12 9 6"/>
                     </svg>
-                </span>
+                </div>
             </a>
-
-            <a href="financeiro.html" class="menu-item">
-                <span class="icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            
+            <a href="saude.html" class="menu-item saude">
+                <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                </div>
+                <div class="text">
+                    <h3>Saúde</h3>
+                    <p>Monitoramento e bem-estar</p>
+                </div>
+                <div class="arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </div>
+            </a>
+            
+            <a href="financeiro.html" class="menu-item financeiro">
+                <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="1" x2="12" y2="23"/>
                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                     </svg>
-                </span>
+                </div>
                 <div class="text">
                     <h3>Financeiro</h3>
-                    <p>Patrimonio e Investimentos</p>
+                    <p>Gestão e planejamento</p>
                 </div>
-                <span class="arrow">
+                <div class="arrow">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                        <polyline points="9 18 15 12 9 6"/>
                     </svg>
-                </span>
-            </a>
-
-            <a href="familiar.html" class="menu-item">
-                <span class="icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                    </svg>
-                </span>
-                <div class="text">
-                    <h3>Familiar</h3>
-                    <p>Familia e Compromissos</p>
                 </div>
-                <span class="arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </span>
             </a>
-
-            <a href="profissional.html" class="menu-item">
-                <span class="icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            
+            <a href="profissional.html" class="menu-item profissional">
+                <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
                         <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
                     </svg>
-                </span>
+                </div>
                 <div class="text">
                     <h3>Profissional</h3>
-                    <p>Carreira e Projetos</p>
+                    <p>Apostas e controle</p>
                 </div>
-                <span class="arrow">
+                <div class="arrow">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                        <polyline points="9 18 15 12 9 6"/>
                     </svg>
-                </span>
+                </div>
             </a>
-
-            <a href="agenda.html" class="menu-item">
-                <span class="icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            
+            <a href="agenda.html" class="menu-item agenda">
+                <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                         <line x1="16" y1="2" x2="16" y2="6"/>
                         <line x1="8" y1="2" x2="8" y2="6"/>
                         <line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
-                </span>
+                </div>
                 <div class="text">
                     <h3>Agenda</h3>
-                    <p>Compromissos e Metas</p>
+                    <p>Compromissos e tarefas</p>
                 </div>
-                <span class="arrow">
+                <div class="arrow">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                        <polyline points="9 18 15 12 9 6"/>
                     </svg>
-                </span>
-            </a>
-
-            <a href="saude.html" class="menu-item">
-                <span class="icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                    </svg>
-                </span>
-                <div class="text">
-                    <h3>Saude</h3>
-                    <p>Bem-estar e Vitalidade</p>
                 </div>
-                <span class="arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </span>
             </a>
         </nav>
-
-        <p class="footer">2025 Zara Institute - Members Only</p>
-    </div>
-
-    <div class="modal-overlay" id="loginModal">
-        <div class="login-modal">
-            <button class="login-close" onclick="fecharLogin()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
-            <div class="login-logo">Z</div>
-            <h2>Acesso Privado</h2>
-            <p class="login-subtitle">Digite suas credenciais para continuar</p>
-            
-            <!-- Botão Face ID / Biometria -->
-            <button type="button" class="biometric-btn" id="biometricBtn" onclick="autenticarBiometria()" style="display: none;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
-                    <path d="M7 3H5a2 2 0 0 0-2 2v2M17 3h2a2 2 0 0 1 2 2v2M7 21H5a2 2 0 0 1-2-2v-2M17 21h2a2 2 0 0 0 2-2v-2"/>
-                    <circle cx="12" cy="12" r="4"/>
-                    <path d="M12 8v1M12 15v1M8 12h1M15 12h1"/>
-                </svg>
-                <span>Usar Face ID</span>
-            </button>
-            
-            <div class="login-divider" id="loginDivider" style="display: none;">
-                <span>ou</span>
-            </div>
-            
-            <form onsubmit="verificarLogin(event)">
-                <div class="login-field">
-                    <label>Usuario</label>
-                    <input type="text" id="loginUser" placeholder="Digite seu usuario" autocomplete="off">
-                </div>
-                <div class="login-field">
-                    <label>Senha</label>
-                    <input type="password" id="loginPassword" placeholder="Digite sua senha">
-                </div>
-                <p class="login-error" id="loginError">Credenciais invalidas. Tente novamente.</p>
-                <button type="submit" class="login-btn">Entrar</button>
-            </form>
-            
-            <!-- Link para configurar biometria -->
-            <button type="button" class="setup-biometric-link" id="setupBiometricLink" onclick="configurarBiometria()" style="display: none;">
-                Configurar Face ID / Biometria
-            </button>
+        
+        <div class="footer">
+            ZARA &copy; 2024
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
-    <!-- Modal de Logout -->
-    <div class="modal-overlay" id="logoutModal">
-        <div class="login-modal" style="max-width: 350px;">
-            <div class="login-logo">Z</div>
-            <h2>Encerrar Sessao</h2>
-            <p class="login-subtitle">Voce ja esta autenticado. Deseja sair?</p>
-            <div style="display: flex; gap: 10px; margin-top: 25px;">
-                <button onclick="fecharLogout()" style="flex:1; padding: 14px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: #fff; font-size: 0.9em; cursor: pointer; transition: all 0.3s;">Cancelar</button>
-                <button onclick="confirmarLogout()" style="flex:1; padding: 14px; background: linear-gradient(135deg, #d4af7d, #c9a066); border: none; border-radius: 10px; color: #0a0a0a; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s;">Sair</button>
+    <!-- Login Modal -->
+    <div class="login-overlay" id="loginModal">
+        <div class="login-modal">
+            <button class="login-close" onclick="fecharLogin()">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            
+            <h2>Acesso Privado</h2>
+            <p>Digite sua senha para continuar</p>
+            
+            <div class="login-error" id="loginError">Senha incorreta. Tente novamente.</div>
+            
+            <input type="password" class="login-input" id="loginPassword" placeholder="••••••••" onkeypress="if(event.key==='Enter')verificarSenha()">
+            
+            <button class="login-btn" onclick="verificarSenha()">Entrar</button>
+            
+            <div class="login-divider" id="loginDivider">ou</div>
+            
+            <button class="biometric-btn" id="biometricBtn" onclick="autenticarBiometria()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                    <path d="M12 6v6l4 2"/>
+                </svg>
+                Face ID / Touch ID
+            </button>
+            
+            <div class="setup-biometric-link" id="setupBiometricLink" onclick="configurarBiometria()">
+                Configurar Face ID / Touch ID
             </div>
         </div>
     </div>
 
     <script>
-        var CREDENCIAIS = {
-            usuario: 'master',
-            senha: '2026'
-        };
-
-        var AUTH_KEY = 'zara_authenticated';
+        var AUTH_KEY = 'zara_auth_session';
+        var PASSWORD = 'zara2024';
 
         function verificarSessao() {
-            var autenticado = sessionStorage.getItem(AUTH_KEY);
-            if (autenticado === 'true') {
+            var autenticado = sessionStorage.getItem(AUTH_KEY) === 'true';
+            if (autenticado) {
                 desbloquearConteudo();
+            } else {
+                bloquearConteudo();
             }
         }
 
         function abrirLogin() {
-            var autenticado = sessionStorage.getItem(AUTH_KEY);
-            if (autenticado === 'true') {
-                document.getElementById('logoutModal').classList.add('active');
-                return;
+            var autenticado = sessionStorage.getItem(AUTH_KEY) === 'true';
+            if (autenticado) {
+                sessionStorage.removeItem(AUTH_KEY);
+                bloquearConteudo();
+                toast('Sessão encerrada');
+            } else {
+                document.getElementById('loginModal').classList.add('show');
+                document.getElementById('loginPassword').focus();
+                abrirLoginComBiometria();
             }
-            document.getElementById('loginModal').classList.add('active');
-            document.getElementById('loginUser').focus();
-        }
-
-        function fecharLogout() {
-            document.getElementById('logoutModal').classList.remove('active');
-        }
-
-        function confirmarLogout() {
-            sessionStorage.removeItem(AUTH_KEY);
-            bloquearConteudo();
-            fecharLogout();
-            toast('Sessao encerrada');
         }
 
         function fecharLogin() {
-            document.getElementById('loginModal').classList.remove('active');
-            document.getElementById('loginUser').value = '';
+            document.getElementById('loginModal').classList.remove('show');
             document.getElementById('loginPassword').value = '';
             document.getElementById('loginError').classList.remove('show');
         }
 
-        function verificarLogin(e) {
-            e.preventDefault();
-            
-            var usuario = document.getElementById('loginUser').value.trim().toLowerCase();
+        function verificarSenha() {
             var senha = document.getElementById('loginPassword').value;
-            
-            if (usuario === CREDENCIAIS.usuario.toLowerCase() && senha === CREDENCIAIS.senha) {
+            if (senha === PASSWORD) {
                 sessionStorage.setItem(AUTH_KEY, 'true');
                 fecharLogin();
                 desbloquearConteudo();
@@ -845,57 +795,46 @@
             if (e.key === 'Escape') fecharLogin();
         });
 
-        // ==========================================
-        // AUTENTICAÇÃO BIOMÉTRICA (Face ID / Touch ID)
-        // ==========================================
-        
+        // Biometric Authentication
         var BIOMETRIC_KEY = 'zara_biometric_enabled';
         var BIOMETRIC_CREDENTIAL = 'zara_biometric_credential';
-        
-        // Verifica se WebAuthn está disponível
+
         function biometriaDisponivel() {
             return window.PublicKeyCredential !== undefined && 
                    typeof window.PublicKeyCredential === 'function';
         }
-        
-        // Verifica se o dispositivo suporta autenticação de plataforma (Face ID, Touch ID)
+
         async function verificarSuporteBiometria() {
             if (!biometriaDisponivel()) return false;
-            
             try {
                 const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
                 return available;
             } catch (e) {
-                console.log('Biometria não suportada:', e);
                 return false;
             }
         }
-        
-        // Inicializa interface de biometria
+
         async function inicializarBiometria() {
             const suportado = await verificarSuporteBiometria();
             const configurado = localStorage.getItem(BIOMETRIC_KEY) === 'true';
-            
+
             const btnBiometric = document.getElementById('biometricBtn');
             const divider = document.getElementById('loginDivider');
             const setupLink = document.getElementById('setupBiometricLink');
-            
+
             if (suportado) {
                 if (configurado) {
-                    // Mostrar botão de Face ID
                     btnBiometric.style.display = 'flex';
                     divider.style.display = 'flex';
                     setupLink.style.display = 'none';
                 } else {
-                    // Mostrar link para configurar
                     btnBiometric.style.display = 'none';
                     divider.style.display = 'none';
                     setupLink.style.display = 'block';
                 }
             }
         }
-        
-        // Gera um ID único para o usuário
+
         function gerarUserId() {
             let id = localStorage.getItem('zara_user_id');
             if (!id) {
@@ -904,43 +843,35 @@
             }
             return id;
         }
-        
-        // Converte string para ArrayBuffer
+
         function stringToBuffer(str) {
             return Uint8Array.from(str, c => c.charCodeAt(0));
         }
-        
-        // Converte ArrayBuffer para Base64
+
         function bufferToBase64(buffer) {
             return btoa(String.fromCharCode(...new Uint8Array(buffer)));
         }
-        
-        // Configura biometria pela primeira vez
+
         async function configurarBiometria() {
             if (!biometriaDisponivel()) {
-                toast('Seu navegador nao suporta biometria');
+                toast('Biometria não suportada');
                 return;
             }
-            
+
             try {
                 const userId = gerarUserId();
-                
-                // Opções para criar credencial
                 const createOptions = {
                     publicKey: {
                         challenge: stringToBuffer('zara_challenge_' + Date.now()),
-                        rp: {
-                            name: 'ZARA Private Access',
-                            id: window.location.hostname
-                        },
+                        rp: { name: 'ZARA Private Access', id: window.location.hostname },
                         user: {
                             id: stringToBuffer(userId),
                             name: 'master@zara.local',
                             displayName: 'ZARA Master'
                         },
                         pubKeyCredParams: [
-                            { type: 'public-key', alg: -7 },  // ES256
-                            { type: 'public-key', alg: -257 } // RS256
+                            { type: 'public-key', alg: -7 },
+                            { type: 'public-key', alg: -257 }
                         ],
                         authenticatorSelection: {
                             authenticatorAttachment: 'platform',
@@ -951,45 +882,37 @@
                         attestation: 'none'
                     }
                 };
-                
-                // Criar credencial
+
                 const credential = await navigator.credentials.create(createOptions);
-                
                 if (credential) {
-                    // Salvar ID da credencial
                     localStorage.setItem(BIOMETRIC_CREDENTIAL, bufferToBase64(credential.rawId));
                     localStorage.setItem(BIOMETRIC_KEY, 'true');
-                    
-                    toast('Face ID configurado com sucesso!');
+                    toast('Face ID configurado!');
                     inicializarBiometria();
                 }
             } catch (e) {
-                console.error('Erro ao configurar biometria:', e);
                 if (e.name === 'NotAllowedError') {
-                    toast('Permissao negada. Tente novamente.');
+                    toast('Permissão negada');
                 } else {
-                    toast('Erro ao configurar. Tente novamente.');
+                    toast('Erro ao configurar');
                 }
             }
         }
-        
-        // Autenticar com biometria
+
         async function autenticarBiometria() {
             if (!biometriaDisponivel()) {
-                toast('Biometria nao disponivel');
+                toast('Biometria não disponível');
                 return;
             }
-            
+
             const credentialId = localStorage.getItem(BIOMETRIC_CREDENTIAL);
             if (!credentialId) {
                 toast('Configure a biometria primeiro');
                 return;
             }
-            
+
             try {
-                // Converter credencial salva de volta para ArrayBuffer
                 const credentialIdBuffer = Uint8Array.from(atob(credentialId), c => c.charCodeAt(0));
-                
                 const getOptions = {
                     publicKey: {
                         challenge: stringToBuffer('zara_auth_' + Date.now()),
@@ -1003,37 +926,31 @@
                         timeout: 60000
                     }
                 };
-                
-                // Solicitar autenticação
+
                 const assertion = await navigator.credentials.get(getOptions);
-                
                 if (assertion) {
-                    // Autenticação bem-sucedida
                     sessionStorage.setItem(AUTH_KEY, 'true');
                     fecharLogin();
                     desbloquearConteudo();
-                    toast('Acesso autorizado via Face ID');
+                    toast('Acesso via Face ID');
                 }
             } catch (e) {
-                console.error('Erro na autenticacao biometrica:', e);
                 if (e.name === 'NotAllowedError') {
-                    toast('Autenticacao cancelada');
+                    toast('Autenticação cancelada');
                 } else {
-                    toast('Falha na autenticacao. Use senha.');
+                    toast('Falha. Use senha.');
                 }
             }
         }
-        
-        // Auto-login com biometria ao abrir modal
+
         function abrirLoginComBiometria() {
             const configurado = localStorage.getItem(BIOMETRIC_KEY) === 'true';
             if (configurado) {
-                // Tentar autenticar automaticamente
                 setTimeout(() => autenticarBiometria(), 300);
             }
         }
-        
-        // Inicializar
+
+        // Initialize
         verificarSessao();
         inicializarBiometria();
     </script>
