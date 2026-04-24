@@ -1182,18 +1182,291 @@ tr.grupo-pausado td {
     transition: width 0.5s ease;
 }
 
-/* ========== EMPRÉSTIMOS CARD ========== */
-.emprestimo-card {
+/* ========== NOVO VISUAL: TABELA ACCORDION PARCELADAS & EMPRÉSTIMOS ========== */
+
+/* Tabela accordion compartilhada */
+.accordion-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.accordion-table th {
+    text-align: left;
+    padding: 10px 16px;
+    color: #d4af7d;
+    font-size: 0.75em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid rgba(212, 175, 125, 0.15);
+}
+
+.accordion-table td {
+    padding: 14px 16px;
+    color: #fff;
+    font-size: 0.9em;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.accordion-table tbody tr.acc-row {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.accordion-table tbody tr.acc-row:hover {
+    background: rgba(212, 175, 125, 0.06);
+}
+
+.accordion-table tbody tr.acc-detail-row td {
+    padding: 0;
+    border-bottom: 1px solid rgba(212, 175, 125, 0.12);
+}
+
+/* Chevron */
+.acc-chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+}
+.acc-chevron svg { width: 13px; height: 13px; stroke: rgba(255,255,255,0.5); }
+.acc-chevron.open { transform: rotate(180deg); }
+
+/* Progresso inline na tabela */
+.acc-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+}
+.acc-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.acc-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+.acc-bar-fill.parcela { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+.acc-bar-fill.emprestimo { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+
+/* === DETALHE PARCELAS === */
+.parcelas-detail-box {
+    background: rgba(255,255,255,0.02);
+    padding: 18px 20px;
+}
+
+.parcelas-detail-title {
+    font-size: 0.78em;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+}
+
+.parcelas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.parcela-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     background: #1a1a1a;
-    border: 1px solid rgba(155, 89, 182, 0.25);
-    border-radius: 15px;
-    padding: 22px;
-    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 10px 13px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.parcela-item:hover { border-color: rgba(212,175,125,0.3); }
+.parcela-item.pago { background: rgba(46,204,113,0.07); border-color: rgba(46,204,113,0.2); }
+.parcela-item.vencida { border-color: rgba(231,76,60,0.3); }
+
+.parcela-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.parcela-check.checked {
+    background: #2ecc71;
+    border-color: #2ecc71;
+}
+.parcela-check.checked::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.parcela-info-box { flex: 1; min-width: 0; }
+.parcela-nome { font-size: 0.82em; font-weight: 500; color: #fff; }
+.parcela-data-txt { font-size: 0.72em; color: rgba(255,255,255,0.35); margin-top: 1px; }
+.parcela-valor-txt { font-size: 0.82em; color: rgba(255,255,255,0.7); white-space: nowrap; }
+
+/* === DETALHE EMPRÉSTIMO === */
+.emp-detail-box {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 0;
+    background: rgba(255,255,255,0.02);
+}
+
+.emp-acoes-col {
+    padding: 18px 20px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.emp-btn-acao {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 14px;
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 9px;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+}
+.emp-btn-acao:hover { background: rgba(212,175,125,0.1); border-color: rgba(212,175,125,0.3); color: #d4af7d; }
+.emp-btn-acao svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.emp-historico-col {
+    padding: 18px 20px;
+}
+
+.emp-historico-titulo {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 12px;
+}
+
+.emp-historico-vazio {
+    font-size: 0.82em;
+    color: rgba(255,255,255,0.3);
+}
+
+.emp-historico-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.82em;
+}
+.emp-historico-item:last-child { border-bottom: none; }
+.emp-hist-data { color: rgba(255,255,255,0.4); }
+.emp-hist-tipo { color: rgba(255,255,255,0.6); }
+.emp-hist-valor-amort { color: #2ecc71; }
+.emp-hist-valor-juros { color: #f39c12; }
+
+/* Botão adicionar novo estilo */
+.btn-add-novo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #e74c3c;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.82em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-add-novo:hover { background: #c0392b; }
+.btn-add-novo svg { width: 14px; height: 14px; stroke: #fff; }
+
+/* Botão adicionar empréstimo — azul outline */
+.btn-add-emp {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid rgba(52,152,219,0.5);
+    border-radius: 8px;
+    color: #3498db;
+    font-size: 0.82em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-add-emp:hover { background: rgba(52,152,219,0.1); border-color: #3498db; }
+.btn-add-emp svg { width: 14px; height: 14px; }
+
+/* Cor texto tabela acc */
+.acc-descricao { font-weight: 500; }
+.acc-condicao { color: rgba(255,255,255,0.55); font-size: 0.85em; }
+.acc-valor-total { font-weight: 600; color: #fff; }
+.acc-juros-val { color: #e74c3c; font-weight: 500; }
+.acc-saldo-val { color: #e74c3c; }
+.acc-original-val { color: rgba(255,255,255,0.7); }
+.acc-taxa-val { color: rgba(255,255,255,0.6); font-size: 0.85em; }
+.acc-delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: rgba(255,255,255,0.25);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+}
+.acc-delete-btn:hover { color: #e74c3c; }
+.acc-delete-btn svg { width: 15px; height: 15px; }
+
+/* Linha quitação (barra de progresso col empréstimo) */
+.acc-quitacao-wrap { min-width: 100px; }
+
+@media (max-width: 768px) {
+    .parcelas-grid { grid-template-columns: repeat(2, 1fr); }
+    .emp-detail-box { grid-template-columns: 1fr; }
+    .emp-acoes-col { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+}
+
+/* ========== EMPRÉSTIMOS CARD (legado - mantido para compatibilidade) ========== */
+.emprestimo-card {
+    display: none; /* substituído pelo novo layout accordion para ativos */
 }
 
 .emprestimo-card.arquivado {
-    opacity: 0.5;
-    border-color: rgba(149, 165, 166, 0.25);
+    display: block;
+    background: #1a1a1a;
+    border: 1px solid rgba(149, 165, 166, 0.2);
+    border-radius: 15px;
+    padding: 22px;
+    margin-bottom: 20px;
+    opacity: 0.65;
 }
 
 .emprestimo-card-header {
@@ -3550,48 +3823,67 @@ tr.grupo-pausado td {
 <div class="section" id="sectionDespesasVariaveis">
     <div class="section-header">
         <h2>Despesas Parceladas <span class="subtotal" id="subtotalVariaveis"></span></h2>
-        <button class="btn-add-section" id="btnAddDespesaVariavel" title="Adicionar despesa variável">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <button class="btn-add-novo" id="btnAddDespesaVariavel" title="Adicionar despesa parcelada">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:#fff;">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
+            Adicionar
         </button>
     </div>
     <div class="section-content">
         <div id="formDespesaVariavel" class="form-container"></div>
         <div class="table-container">
-            <table class="transacoes-table">
+            <table class="accordion-table">
                 <thead>
                     <tr>
-                        <th class="col-status"></th>
-                        <th class="col-descricao">Descrição</th>
-                        <th class="col-categoria">Categoria</th>
-                        <th class="col-data">Data</th>
-                        <th class="col-valor">Valor</th>
-                        <th class="col-acoes">Ações</th>
+                        <th style="width:36px;"></th>
+                        <th>Descrição</th>
+                        <th>Condição</th>
+                        <th>Progresso</th>
+                        <th style="text-align:right;">Valor Total</th>
+                        <th style="width:36px;"></th>
                     </tr>
                 </thead>
                 <tbody id="despesasVariaveisTable"></tbody>
             </table>
         </div>
-        <div id="emptyDespesasVariaveis" class="empty-state">Nenhuma despesa variável cadastrada</div>
+        <div id="emptyDespesasVariaveis" class="empty-state">Nenhuma despesa parcelada cadastrada</div>
     </div>
 </div>
 
 <!-- SEÇÃO: EMPRÉSTIMOS / DÍVIDAS -->
 <div class="section" id="sectionEmprestimos">
     <div class="section-header">
-        <h2>Empréstimos / Dívidas</h2>
-        <button class="btn-add-section" id="btnAddEmprestimo" title="Adicionar empréstimo">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <h2>Empréstimos</h2>
+        <button class="btn-add-emp" id="btnAddEmprestimo" title="Adicionar empréstimo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
+            Adicionar
         </button>
     </div>
     <div class="section-content">
         <div id="formEmprestimo" class="form-container"></div>
-        <div id="emprestimosContainer"></div>
+        <div class="table-container">
+            <table class="accordion-table">
+                <thead>
+                    <tr>
+                        <th style="width:36px;"></th>
+                        <th>Descrição</th>
+                        <th>Taxa</th>
+                        <th>Original</th>
+                        <th>Saldo Devedor</th>
+                        <th>Juros Acum.</th>
+                        <th>Quitação</th>
+                        <th style="width:36px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="emprestimosContainer"></tbody>
+            </table>
+        </div>
+        <div id="emprestimosArquivadosContainer" style="display:none;"></div>
         <div id="emptyEmprestimos" class="empty-state">Nenhum empréstimo cadastrado</div>
     </div>
 </div>
@@ -6114,6 +6406,15 @@ tr.grupo-pausado td {
         renderizar();
     }
 
+    function toggleAccordion(detailId, rowEl) {
+        const detail = document.getElementById(detailId);
+        const chev = document.getElementById('chev-' + detailId);
+        if (!detail) return;
+        const isOpen = detail.style.display !== 'none';
+        detail.style.display = isOpen ? 'none' : 'table-row';
+        if (chev) chev.classList.toggle('open', !isOpen);
+    }
+
     function toggleHistoricoEmprestimo(id) {
         const lista = document.getElementById('historico-emp-' + id);
         if (lista) {
@@ -6576,6 +6877,12 @@ tr.grupo-pausado td {
             return;
         }
 
+        // Restaurar exibição normal (caso venha do modo arquivados)
+        const empTableWrapperNormal = document.querySelector('#sectionEmprestimos .table-container');
+        const empArqContainerNormal = document.getElementById('emprestimosArquivadosContainer');
+        if (empTableWrapperNormal) empTableWrapperNormal.style.display = '';
+        if (empArqContainerNormal) { empArqContainerNormal.style.display = 'none'; empArqContainerNormal.innerHTML = ''; }
+
         // Gerar instâncias de receitas recorrentes
         gerarInstanciasReceitas();
 
@@ -6962,7 +7269,7 @@ tr.grupo-pausado td {
             gruposParcelados[p.grupoParcelaId].push(p);
         });
 
-        // Incluir também grupos que SÓ têm parcelas em atraso (sem parcela no mês atual)
+        // Incluir grupos com SÓ parcelas em atraso
         parcelasEmAtraso.filter(d => d.grupoParcelaId).forEach(d => {
             if (!gruposParcelados[d.grupoParcelaId]) {
                 gruposParcelados[d.grupoParcelaId] = [];
@@ -6971,191 +7278,103 @@ tr.grupo-pausado td {
 
         let htmlVariaveis = '';
 
-        // Renderizar despesas não parceladas normalmente
+        // Renderizar despesas não parceladas (linha simples, sem accordion)
         naoParceladas.forEach(d => {
             const status = getStatusVencimento(d.data, d.pago);
-            const temComprovante = d.comprovante !== null && d.comprovante !== undefined;
             const valorClass = d.pago ? 'valor-positivo' : 'valor-negativo';
-
             htmlVariaveis += `
-                <tr class="${d.pago ? 'done' : ''} ${status.classe}">
-                    <td><input type="checkbox" class="checkbox-status" ${d.pago ? 'checked' : ''} onchange="togglePagoVariavel(${d.id})"></td>
-                    <td class="descricao">
-                        ${d.descricao}
-                        ${temComprovante ? '<span class="badge comprovante"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></span>' : ''}
-                    </td>
-                    <td><span class="categoria">${d.categoria}</span></td>
-                    <td>${formatarData(d.data)} ${status.badge}</td>
-                    <td class="${valorClass}">${formatarMoeda(d.valor)}</td>
+                <tr class="acc-row">
+                    <td></td>
+                    <td class="acc-descricao">${d.descricao}</td>
+                    <td class="acc-condicao">${formatarData(d.data)}</td>
+                    <td>—</td>
+                    <td class="${valorClass}" style="text-align:right;">${formatarMoeda(d.valor)}</td>
                     <td>
-                        <div class="action-buttons">
-                            ${temComprovante ? `
-                                <button class="action-btn btn-comprovante" onclick="verComprovanteVariavel(${d.id})" title="Ver Comprovante">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
-                                    </svg>
-                                </button>
-                            ` : ''}
-                            <button class="action-btn btn-edit" onclick="editarDespesaVariavel(${d.id})" title="Editar">
-                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                </svg>
-                            </button>
-                            <button class="action-btn btn-delete" onclick="deletarDespesaVariavel(${d.id})" title="Excluir">
-                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
-                            </button>
-                        </div>
+                        <button class="acc-delete-btn" onclick="deletarDespesaVariavel(${d.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
                     </td>
                 </tr>
             `;
         });
 
-        // Renderizar grupos parcelados
+        // Renderizar grupos parcelados com accordion
         Object.keys(gruposParcelados).forEach(grupoId => {
             const parcelasDoMes = gruposParcelados[grupoId].sort((a, b) => a.parcelaAtual - b.parcelaAtual);
-
-            // TODAS as parcelas deste grupo (incluindo outros meses)
             const todasParcelas = financeiro.despesasVariaveis.filter(dv => String(dv.grupoParcelaId) === String(grupoId));
             if (todasParcelas.length === 0) return;
-            
+
             const primeiraParcela = parcelasDoMes[0] || todasParcelas[0];
             const valorTotal = todasParcelas.reduce((s, p) => s + p.valor, 0);
             const parcelasPagasCount = todasParcelas.filter(p => p.pago).length;
-            const parcelasRestantes = todasParcelas.length - parcelasPagasCount;
-            const valorRestante = todasParcelas.filter(p => !p.pago).reduce((s, p) => s + p.valor, 0);
-            const todasQuitadas = parcelasRestantes === 0;
-
-            // Parcelas EM ATRASO deste grupo (meses anteriores, não pagas)
-            const atrasadasDoGrupo = parcelasEmAtraso.filter(d => String(d.grupoParcelaId) === String(grupoId));
-            const totalAtrasadoGrupo = atrasadasDoGrupo.reduce((s, d) => s + d.valor, 0);
-            
-            // Verificar se está pausado
+            const totalParcelas = todasParcelas.length;
+            const percentPago = totalParcelas > 0 ? Math.round((parcelasPagasCount / totalParcelas) * 100) : 0;
             const estaPausado = primeiraParcela.pausado === true;
-            const badgePausado = estaPausado ? '<span class="badge pausado">⏸ PAUSADO</span>' : '<span class="badge parcela">Parcelado</span>';
-            const classePausado = estaPausado ? ' grupo-pausado' : '';
-            
-            // Ícones
-            const svgPause = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
-            const svgPlay = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
-            const iconePausePlay = estaPausado ? svgPlay : svgPause;
-            const titlePausePlay = estaPausado ? 'Reativar' : 'Pausar';
+            const atrasadasDoGrupo = parcelasEmAtraso.filter(d => String(d.grupoParcelaId) === String(grupoId));
+            const detailId = 'detail-parcela-' + grupoId;
 
-            // Linha principal com nome da despesa parcelada
+            const condicao = `${totalParcelas}x de ${formatarMoeda(primeiraParcela.valor)}`;
+
             htmlVariaveis += `
-                <tr class="${classePausado}" style="background: rgba(52, 152, 219, 0.05); font-weight: 500;">
-                    <td colspan="6" style="padding: 12px 15px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                                <span style="font-size: 1em;">${primeiraParcela.descricao}</span>
-                                ${badgePausado}
-                                <span class="categoria">${primeiraParcela.categoria}</span>
-                                ${atrasadasDoGrupo.length > 0 ? `<span style="background: rgba(231,76,60,0.15); color: #e74c3c; padding: 2px 8px; border-radius: 10px; font-size: 0.75em; font-weight: 600;">${atrasadasDoGrupo.length} em atraso</span>` : ''}
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                                <span style="color: rgba(255,255,255,0.6); font-size: 0.85em;">Restam: ${parcelasRestantes}x</span>
-                                <span style="color: rgba(255,255,255,0.4); font-size: 0.8em;">Saldo: ${formatarMoeda(valorRestante)}</span>
-                                <div class="action-buttons">
-                                    ${!todasQuitadas ? `
-                                    <button class="action-btn" onclick="quitarDivida('${grupoId}')" title="Quitar dívida" style="color: #2ecc71;">
-                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                        </svg>
-                                    </button>
-                                    ` : ''}
-                                    <button class="action-btn btn-pause" onclick="togglePauseGrupo('${grupoId}')" title="${titlePausePlay}">
-                                        ${iconePausePlay}
-                                    </button>
-                                    <button class="action-btn btn-edit" onclick="editarDespesaVariavel(${primeiraParcela.id})" title="Editar">
-                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                    </button>
-                                    <button class="action-btn btn-delete" onclick="deletarTodasParcelas(${primeiraParcela.id})" title="Excluir todas parcelas">
-                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <polyline points="3 6 5 6 21 6"></polyline>
-                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                        </svg>
-                                    </button>
-                                </div>
+                <tr class="acc-row${estaPausado ? ' grupo-pausado' : ''}" onclick="toggleAccordion('${detailId}', this)">
+                    <td>
+                        <span class="acc-chevron" id="chev-${detailId}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </td>
+                    <td class="acc-descricao">
+                        ${primeiraParcela.descricao}
+                        ${estaPausado ? '<span class="badge pausado" style="margin-left:6px;">⏸</span>' : ''}
+                        ${atrasadasDoGrupo.length > 0 ? `<span style="margin-left:6px;background:rgba(231,76,60,0.15);color:#e74c3c;padding:2px 7px;border-radius:8px;font-size:0.72em;font-weight:600;">${atrasadasDoGrupo.length} em atraso</span>` : ''}
+                    </td>
+                    <td class="acc-condicao">${condicao}</td>
+                    <td>
+                        <div class="acc-progress-wrap">
+                            <div class="acc-bar"><div class="acc-bar-fill parcela" style="width:${percentPago}%"></div></div>
+                            <span style="font-size:0.75em;color:rgba(255,255,255,0.4);white-space:nowrap;">${parcelasPagasCount}/${totalParcelas}</span>
+                        </div>
+                    </td>
+                    <td class="acc-valor-total" style="text-align:right;">${formatarMoeda(valorTotal)}</td>
+                    <td>
+                        <button class="acc-delete-btn" onclick="event.stopPropagation();deletarTodasParcelas(${primeiraParcela.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+                <tr class="acc-detail-row" id="${detailId}" style="display:none;">
+                    <td colspan="6">
+                        <div class="parcelas-detail-box">
+                            <div class="parcelas-detail-title">Detalhamento das Parcelas</div>
+                            <div class="parcelas-grid">
+                                ${todasParcelas.sort((a,b) => a.parcelaAtual - b.parcelaAtual).map(p => {
+                                    const isPago = p.pago;
+                                    const dataP = p.data ? new Date(p.data + 'T00:00:00') : null;
+                                    const hoje2 = new Date(); hoje2.setHours(0,0,0,0);
+                                    const isVencida = dataP && dataP < hoje2 && !isPago;
+                                    return `
+                                        <div class="parcela-item${isPago ? ' pago' : ''}${isVencida ? ' vencida' : ''}" onclick="togglePagoVariavel(${p.id})">
+                                            <div class="parcela-check${isPago ? ' checked' : ''}"></div>
+                                            <div class="parcela-info-box">
+                                                <div class="parcela-nome">Parcela ${p.parcelaAtual}/${p.totalParcelas}</div>
+                                                <div class="parcela-data-txt">${p.data ? p.data.split('-').reverse().join('/') : '—'}</div>
+                                            </div>
+                                            <div class="parcela-valor-txt">${formatarMoeda(p.valor)}</div>
+                                        </div>
+                                    `;
+                                }).join('')}
                             </div>
                         </div>
                     </td>
                 </tr>
             `;
-
-            // Renderizar parcelas EM ATRASO deste grupo (não contabilizadas no mês)
-            atrasadasDoGrupo.sort((a, b) => a.parcelaAtual - b.parcelaAtual).forEach(p => {
-                htmlVariaveis += `
-                    <tr style="background: rgba(231, 76, 60, 0.06); opacity: 0.75;">
-                        <td style="padding-left: 40px;"><input type="checkbox" class="checkbox-status" onchange="togglePagoVariavel(${p.id})"></td>
-                        <td class="descricao" style="padding-left: 10px;">
-                            <span style="color: #e74c3c;">Parcela ${p.parcelaAtual}/${p.totalParcelas} – Atraso</span>
-                            <span style="color: rgba(255,255,255,0.3); font-size: 0.75em; margin-left: 6px;">(fora do saldo)</span>
-                        </td>
-                        <td></td>
-                        <td>${formatarData(p.data)} <span class="badge vencido" style="font-size: 0.7em;">Vencida</span></td>
-                        <td style="color: #e74c3c; font-weight: 500;">${formatarMoeda(p.valor)}</td>
-                        <td></td>
-                    </tr>
-                `;
-            });
-
-            // Renderizar parcelas DO MÊS ATUAL
-            parcelasDoMes.forEach(p => {
-                const status = getStatusVencimento(p.data, p.pago);
-                const temComprovante = p.comprovante !== null && p.comprovante !== undefined;
-
-                // Determinar status da parcela
-                let statusParcela = 'Atual';
-                let corStatus = 'rgba(255,255,255,0.7)';
-                let iconeStatus = '';
-
-                const hoje = new Date();
-                hoje.setHours(0, 0, 0, 0);
-                const dataVencimento = new Date(p.data + 'T00:00:00');
-
-                if (p.pago) {
-                    statusParcela = 'Paga';
-                    corStatus = '#2ecc71';
-                    iconeStatus = '✓';
-                } else if (dataVencimento < hoje) {
-                    statusParcela = 'Atrasada';
-                    corStatus = '#e74c3c';
-                    iconeStatus = '🔴';
-                } else if (dataVencimento.getMonth() === hoje.getMonth() && dataVencimento.getFullYear() === hoje.getFullYear()) {
-                    statusParcela = 'Atual';
-                    corStatus = '#3498db';
-                }
-
-                const valorClass = p.pago ? 'valor-positivo' : 'valor-negativo';
-                htmlVariaveis += `
-                    <tr class="${p.pago ? 'done' : ''} ${status.classe}" style="background: ${p.pago ? 'rgba(46, 204, 113, 0.03)' : (statusParcela === 'Atrasada' ? 'rgba(231, 76, 60, 0.05)' : 'transparent')};">
-                        <td style="padding-left: 40px;"><input type="checkbox" class="checkbox-status" ${p.pago ? 'checked' : ''} onchange="togglePagoVariavel(${p.id})"></td>
-                        <td class="descricao" style="padding-left: 10px;">
-                            <span style="color: ${corStatus};">Parcela ${p.parcelaAtual}/${p.totalParcelas} – ${statusParcela} ${iconeStatus}</span>
-                            ${temComprovante ? '<span class="badge comprovante"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></span>' : ''}
-                        </td>
-                        <td></td>
-                        <td>${formatarData(p.data)} ${status.badge}</td>
-                        <td class="${valorClass}" style="cursor: pointer;" onclick="editarValorParcela(${p.id})" title="Clique para editar valor">${formatarMoeda(p.valor)}</td>
-                        <td>
-                            ${temComprovante ? `
-                                <button class="action-btn btn-comprovante" onclick="verComprovanteVariavel(${p.id})" title="Ver Comprovante">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
-                                    </svg>
-                                </button>
-                            ` : ''}
-                        </td>
-                    </tr>
-                `;
-            });
         });
 
         variaveisTable.innerHTML = htmlVariaveis;
@@ -7212,100 +7431,69 @@ tr.grupo-pausado td {
         empContainer.innerHTML = emprestimosAtivos.map(e => {
             const percentQuitado = e.principalOriginal > 0 ? Math.round(((e.principalOriginal - e.principal) / e.principalOriginal) * 100) : 0;
             const temJurosPendentes = (e.jurosAcumulados || 0) > 0;
+            const detailId = 'detail-emp-' + e.id;
+            const historicoHtml = (e.historicoPagamentos && e.historicoPagamentos.length > 0)
+                ? e.historicoPagamentos.slice().reverse().slice(0,5).map(h => `
+                    <div class="emp-historico-item">
+                        <span class="emp-hist-data">${formatarData(h.data)}</span>
+                        <span class="emp-hist-tipo">${h.tipo === 'amortizacao' ? 'Amortização' : 'Juros'}</span>
+                        <span class="${h.tipo === 'amortizacao' ? 'emp-hist-valor-amort' : 'emp-hist-valor-juros'}">${formatarMoeda(h.valor)}</span>
+                    </div>
+                `).join('')
+                : '<div class="emp-historico-vazio">Nenhum histórico registrado.</div>';
 
             return `
-                <div class="emprestimo-card">
-                    <div class="emprestimo-card-header">
-                        <div class="emprestimo-card-title">
-                            ${e.descricao}
-                            ${temJurosPendentes ? '<span class="badge juros-pendente"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Juros</span>' : ''}
-                            <small>
-                                <span class="categoria">${e.categoria}</span> • Taxa: ${e.taxaJuros}% a.m.
-                            </small>
+                <tr class="acc-row" onclick="toggleAccordion('${detailId}', this)">
+                    <td>
+                        <span class="acc-chevron" id="chev-${detailId}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </td>
+                    <td class="acc-descricao">${e.descricao}</td>
+                    <td class="acc-taxa-val">${e.taxaJuros}% a.m.</td>
+                    <td class="acc-original-val">${formatarMoeda(e.principalOriginal)}</td>
+                    <td class="acc-saldo-val">${formatarMoeda(e.principal)}</td>
+                    <td class="acc-juros-val">${formatarMoeda(e.jurosAcumulados || 0)}</td>
+                    <td>
+                        <div class="acc-progress-wrap acc-quitacao-wrap">
+                            <div class="acc-bar"><div class="acc-bar-fill emprestimo" style="width:${percentQuitado}%"></div></div>
                         </div>
-                        <div class="emprestimo-card-acoes">
-                            <button class="action-btn btn-edit" onclick="editarEmprestimo(${e.id})" title="Editar">
-                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                </svg>
-                            </button>
-                            <button class="action-btn btn-delete" onclick="deletarEmprestimo(${e.id})" title="Excluir">
-                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="emprestimo-valores">
-                        <div class="emprestimo-valor-item">
-                            <label>Dívida Original</label>
-                            <div class="valor principal">${formatarMoeda(e.principalOriginal)}</div>
-                        </div>
-                        <div class="emprestimo-valor-item">
-                            <label>Saldo Devedor</label>
-                            <div class="valor saldo">${formatarMoeda(e.principal)}</div>
-                        </div>
-                        <div class="emprestimo-valor-item">
-                            <label>Juros Acumulados</label>
-                            <div class="valor juros-acum">${formatarMoeda(e.jurosAcumulados || 0)}</div>
-                        </div>
-                        <div class="emprestimo-valor-item">
-                            <label>Juros Pagos</label>
-                            <div class="valor juros-pagos" style="color: #2ecc71;">${formatarMoeda(e.totalJurosPagos || 0)}</div>
-                        </div>
-                        <div class="emprestimo-valor-item">
-                            <label>Total Amortizado</label>
-                            <div class="valor amortizado" style="color: #2ecc71;">${formatarMoeda(e.totalAmortizado || 0)}</div>
-                        </div>
-                        <div class="emprestimo-valor-item">
-                            <label>Total Pago</label>
-                            <div class="valor total-pago" style="color: #d4af7d; font-weight: 600;">${formatarMoeda((e.totalAmortizado || 0) + (e.totalJurosPagos || 0))}</div>
-                        </div>
-                    </div>
-
-                    <div class="emprestimo-progress">
-                        <label>Progresso de Quitação: ${percentQuitado}%</label>
-                        <div class="progress-bar">
-                            <div class="progress-bar-fill" style="width: ${percentQuitado}%"></div>
-                        </div>
-                    </div>
-
-                    ${(e.historicoPagamentos && e.historicoPagamentos.length > 0) ? `
-                    <div class="emprestimo-historico">
-                        <div class="emprestimo-historico-header" onclick="toggleHistoricoEmprestimo(${e.id})">
-                            <span>Histórico de Pagamentos (${e.historicoPagamentos.length})</span>
-                            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </div>
-                        <div class="emprestimo-historico-lista" id="historico-emp-${e.id}" style="display: none;">
-                            ${e.historicoPagamentos.slice().reverse().map(h => `
-                                <div class="historico-item ${h.tipo}">
-                                    <span class="historico-data">${formatarData(h.data)}</span>
-                                    <span class="historico-tipo">${h.tipo === 'amortizacao' ? 'Amortização' : h.tipo === 'juros' ? 'Juros' : 'Pagamento'}</span>
-                                    <span class="historico-valor ${h.tipo === 'amortizacao' ? 'amort' : 'juros'}">${formatarMoeda(h.valor)}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-
-                    <div class="emprestimo-acoes-rapidas">
-                        <button class="btn-gerar-juros" onclick="gerarJurosMes(${e.id})">
-                            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                            Gerar Juros
+                    </td>
+                    <td>
+                        <button class="acc-delete-btn" onclick="event.stopPropagation();deletarEmprestimo(${e.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
                         </button>
-                        <button class="btn-juros" onclick="abrirModalPagarJuros(${e.id})">
-                            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                            Pagar Juros
-                        </button>
-                        <button class="btn-amortizar" onclick="abrirModalAmortizar(${e.id})">
-                            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-                            Amortizar
-                        </button>
-                    </div>
-                </div>
+                    </td>
+                </tr>
+                <tr class="acc-detail-row" id="${detailId}" style="display:none;">
+                    <td colspan="8">
+                        <div class="emp-detail-box">
+                            <div class="emp-acoes-col">
+                                <button class="emp-btn-acao" onclick="gerarJurosMes(${e.id})">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                    Gerar Juros (Mensal)
+                                </button>
+                                <button class="emp-btn-acao" onclick="abrirModalPagarJuros(${e.id})">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                                    Pagar Juros
+                                </button>
+                                <button class="emp-btn-acao" onclick="abrirModalAmortizar(${e.id})">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                                    Amortizar Principal
+                                </button>
+                            </div>
+                            <div class="emp-historico-col">
+                                <div class="emp-historico-titulo">Histórico de Movimentações</div>
+                                ${historicoHtml}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
             `;
         }).join('');
 
@@ -7405,7 +7593,12 @@ tr.grupo-pausado td {
         
         // Mostrar empréstimos arquivados
         const empArquivados = financeiro.emprestimos.filter(e => e.arquivado);
-        const empContainer = document.getElementById('emprestimosContainer');
+        // No modo arquivado, usar div separada (o tbody da tabela é para ativos)
+        const empTableWrapper = document.querySelector('#sectionEmprestimos .table-container');
+        const empArqContainer = document.getElementById('emprestimosArquivadosContainer');
+        const empContainer = empArqContainer;
+        if (empTableWrapper) empTableWrapper.style.display = 'none';
+        if (empArqContainer) empArqContainer.style.display = 'block';
         
         if (empArquivados.length === 0) {
             empContainer.innerHTML = '<div class="empty-state">Nenhum item arquivado</div>';
