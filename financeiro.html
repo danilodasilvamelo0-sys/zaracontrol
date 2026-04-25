@@ -1448,10 +1448,60 @@ tr.grupo-pausado td {
 /* Linha quitação (barra de progresso col empréstimo) */
 .acc-quitacao-wrap { min-width: 100px; }
 
+/* ── MOBILE: ACCORDION TABLES ── */
 @media (max-width: 768px) {
+    /* Parcelas grid */
     .parcelas-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* Empréstimo detalhe */
     .emp-detail-box { grid-template-columns: 1fr; }
     .emp-acoes-col { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+    /* Tabela accordion: esconder colunas menos importantes */
+    .accordion-table th.hide-mobile,
+    .accordion-table td.hide-mobile { display: none; }
+
+    /* Tabela: fonte menor e padding compacto */
+    .accordion-table th { padding: 8px 10px; font-size: 0.68em; }
+    .accordion-table td { padding: 11px 10px; font-size: 0.82em; }
+
+    /* Botão adicionar ocupa largura total */
+    .btn-add-novo, .btn-add-emp {
+        font-size: 0.8em;
+        padding: 7px 12px;
+    }
+
+    /* Section header compacto */
+    .section-header { padding: 14px 16px !important; }
+    .section-header h2 { font-size: 0.9em !important; }
+
+    /* Overflow scroll nas tabelas */
+    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Detalhe parcelas mais compacto */
+    .parcelas-detail-box { padding: 14px 12px; }
+    .parcela-item { padding: 8px 10px; }
+    .parcela-nome { font-size: 0.78em; }
+    .parcela-data-txt { font-size: 0.68em; }
+    .parcela-valor-txt { font-size: 0.78em; }
+
+    /* Botões ação empréstimo */
+    .emp-btn-acao { padding: 9px 11px; font-size: 0.8em; }
+}
+
+@media (max-width: 480px) {
+    /* Stack: esconder categoria nas tabelas */
+    .accordion-table .col-cat { display: none; }
+
+    /* Parcelas: coluna única */
+    .parcelas-grid { grid-template-columns: 1fr; }
+
+    /* Valor no topo da linha via flex  */
+    .acc-progress-wrap { min-width: 80px; }
+    .acc-bar { min-width: 50px; }
+
+    /* Empréstimo: ocultar histórico vazio */
+    .emp-historico-vazio { font-size: 0.78em; }
 }
 
 /* ========== EMPRÉSTIMOS CARD (legado - mantido para compatibilidade) ========== */
@@ -3705,8 +3755,8 @@ tr.grupo-pausado td {
                 <thead><tr>
                     <th style="width:36px;"></th>
                     <th>Descrição</th>
-                    <th>Categoria</th>
-                    <th>Data</th>
+                    <th class="col-cat">Categoria</th>
+                    <th class="col-cat">Data</th>
                     <th style="text-align:right;">Valor</th>
                     <th style="width:36px;"></th>
                 </tr></thead>
@@ -3735,8 +3785,8 @@ tr.grupo-pausado td {
                 <thead><tr>
                     <th style="width:36px;"></th>
                     <th>Descrição</th>
-                    <th>Categoria</th>
-                    <th>Data</th>
+                    <th class="col-cat">Categoria</th>
+                    <th class="col-cat">Data</th>
                     <th style="text-align:right;">Valor</th>
                     <th style="width:36px;"></th>
                 </tr></thead>
@@ -3749,7 +3799,6 @@ tr.grupo-pausado td {
 </div><!-- /sections-grid receitas -->
 
 <!-- GRID: DESPESAS (FIXA + VARIÁVEL LADO A LADO) -->
-<div class="sections-grid">
 <!-- SEÇÃO: DESPESAS FIXAS -->
 <div class="section" id="sectionDespesasFixas">
     <div class="section-header">
@@ -3811,7 +3860,6 @@ tr.grupo-pausado td {
         <div id="emptyDespesasAvulsas" class="empty-state">Nenhuma despesa variável cadastrada</div>
     </div>
 </div>
-</div><!-- /sections-grid despesas -->
 
 <!-- SEÇÃO: DESPESAS PARCELADAS (largura total) -->
 <div class="section" id="sectionDespesasVariaveis">
@@ -7069,13 +7117,18 @@ tr.grupo-pausado td {
                     </span>
                 </td>
                 <td class="acc-descricao">${r.descricao}</td>
-                <td><span class="categoria">${r.categoria}</span></td>
-                <td class="acc-condicao">${formatarData(r.data)}</td>
+                <td class="col-cat"><span class="categoria">${r.categoria}</span></td>
+                <td class="col-cat acc-condicao">${formatarData(r.data)}</td>
                 <td style="text-align:right;" class="${r.recebido ? 'valor-positivo' : 'valor-negativo'}">${formatarMoeda(r.valor)}</td>
                 <td>
-                    <button class="acc-delete-btn" onclick="deletarReceita(${r.id})" title="Excluir">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    </button>
+                    <div style="display:flex;gap:4px;">
+                        <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                        <button class="acc-delete-btn" onclick="deletarReceita(${r.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
                 </td>
             </tr>`;
         }).join('');
@@ -7094,13 +7147,18 @@ tr.grupo-pausado td {
                     </span>
                 </td>
                 <td class="acc-descricao">${r.descricao}</td>
-                <td><span class="categoria">${r.categoria}</span></td>
-                <td class="acc-condicao">${formatarData(r.data)}</td>
+                <td class="col-cat"><span class="categoria">${r.categoria}</span></td>
+                <td class="col-cat acc-condicao">${formatarData(r.data)}</td>
                 <td style="text-align:right;" class="${r.recebido ? 'valor-positivo' : 'valor-negativo'}">${formatarMoeda(r.valor)}</td>
                 <td>
-                    <button class="acc-delete-btn" onclick="deletarReceita(${r.id})" title="Excluir">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    </button>
+                    <div style="display:flex;gap:4px;">
+                        <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                        <button class="acc-delete-btn" onclick="deletarReceita(${r.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
                 </td>
             </tr>`;
         }).join('');
@@ -7149,9 +7207,14 @@ tr.grupo-pausado td {
                         ${formatarMoeda(todasPagas ? (despesaRef.valor || 0) : totalPendente)}
                     </td>
                     <td>
-                        <button class="acc-delete-btn" onclick="event.stopPropagation();encerrarDespesaFixa(${despesaRef.modeloId})" title="Encerrar">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        </button>
+                        <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
+                            <button class="acc-delete-btn" onclick="editarDespesaFixaModelo(${despesaRef.modeloId})" title="Editar" style="color:rgba(212,175,125,0.5);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="acc-delete-btn" onclick="encerrarDespesaFixa(${despesaRef.modeloId})" title="Encerrar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 <tr class="acc-detail-row" id="${detailId}" style="display:none;">
@@ -7277,12 +7340,11 @@ tr.grupo-pausado td {
                     </td>
                     <td class="acc-valor-total" style="text-align:right;">${formatarMoeda(valorTotal)}</td>
                     <td>
-                        <button class="acc-delete-btn" onclick="event.stopPropagation();deletarTodasParcelas(${primeiraParcela.id})" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
-                        </button>
+                        <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
+                            <button class="acc-delete-btn" onclick="deletarTodasParcelas(${primeiraParcela.id})" title="Excluir">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 <tr class="acc-detail-row" id="${detailId}" style="display:none;">
@@ -7343,9 +7405,14 @@ tr.grupo-pausado td {
                     <td>${badgeSt}</td>
                     <td style="text-align:right;" class="${d.pago ? 'valor-positivo' : 'valor-negativo'}">${formatarMoeda(d.valor)}</td>
                     <td>
-                        <button class="acc-delete-btn" onclick="deletarDespesaAvulsa(${d.id})" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        </button>
+                        <div style="display:flex;gap:4px;">
+                            <button class="acc-delete-btn" onclick="editarDespesaAvulsa(${d.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="acc-delete-btn" onclick="deletarDespesaAvulsa(${d.id})" title="Excluir">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
                     </td>
                 </tr>`;
         }).join('');
