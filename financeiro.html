@@ -28,12 +28,12 @@
 
     body {
         font-family: 'Inter', sans-serif;
-        background: #0a0a0a;
+        background: #f5f4f1;
         min-height: 100vh;
         padding: 20px;
         padding-left: 80px;
         padding-bottom: 100px;
-        color: #fff;
+        color: #1a1a1a;
         transition: padding-left 0.3s;
     }
 
@@ -43,7 +43,7 @@
         left: 0;
         right: 0;
         height: 1px;
-        background: linear-gradient(90deg, transparent, #d4af7d, transparent);
+        background: linear-gradient(90deg, transparent, #b8972e, transparent);
         z-index: 9999;
     }
     body::before { top: 0; }
@@ -68,12 +68,12 @@
         font-family: 'Playfair Display', serif;
         font-size: 1.9em;
         font-weight: 400;
-        color: #fff;
+        color: #1a1a1a;
         letter-spacing: 2px;
     }
 
     .header-title p {
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(26, 26, 26, 0.5);
         font-size: 0.9em;
         margin-top: 4px;
     }
@@ -88,9 +88,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #141414;
-    border: 1px solid rgba(212, 175, 125, 0.15);
+    background: #fff;
+    border: 1px solid rgba(184, 151, 46, 0.2);
     border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     padding: 15px 20px;
     margin-bottom: 25px;
 }
@@ -102,14 +103,15 @@
 }
 
 .mes-label {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
     font-size: 0.9em;
 }
 
 .mes-selector select {
-    background: #1a1a1a;
-    border: 1px solid rgba(212, 175, 125, 0.3);
-    color: #d4af7d;
+    background: #fafafa;
+    border: 1px solid rgba(184, 151, 46, 0.25);
+    color: #5a4a10;
+    font-weight: 500;
     padding: 10px 15px;
     border-radius: 8px;
     font-size: 1em;
@@ -118,12 +120,12 @@
 }
 
 .mes-selector select:focus {
-    border-color: #d4af7d;
+    border-color: #8a6d1a;
 }
 
 .mes-selector select option {
-    background: #1a1a1a;
-    color: #fff;
+    background: #f5f4f1;
+    color: #1a1a1a;
 }
 
 .view-toggle {
@@ -133,9 +135,9 @@
 }
 
 .view-toggle button {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.5);
+    background: rgba(26, 26, 26, 0.04);
+    border: 1px solid rgba(26, 26, 26, 0.12);
+    color: rgba(26, 26, 26, 0.45);
     padding: 10px 15px;
     border-radius: 8px;
     cursor: pointer;
@@ -147,21 +149,21 @@
 }
 
 .view-toggle button:hover {
-    background: rgba(212, 175, 125, 0.1);
-    border-color: rgba(212, 175, 125, 0.3);
+    background: rgba(184, 151, 46, 0.08);
+    border-color: rgba(184, 151, 46, 0.3);
 }
 
 .view-toggle button.active {
-    background: rgba(212, 175, 125, 0.15);
-    border-color: #d4af7d;
-    color: #d4af7d;
+    background: rgba(184, 151, 46, 0.12);
+    border-color: #b8972e;
+    color: #8a6d1a;
 }
 
 /* Botões de navegação de período */
 .btn-periodo-nav {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: rgba(255, 255, 255, 0.6);
+    background: rgba(26, 26, 26, 0.04) !important;
+    border: 1px solid rgba(26, 26, 26, 0.1) !important;
+    color: rgba(26, 26, 26, 0.5);
     padding: 10px 12px;
     border-radius: 8px;
     cursor: pointer;
@@ -170,15 +172,15 @@
 }
 
 .btn-periodo-nav:hover {
-    background: rgba(212, 175, 125, 0.15) !important;
-    border-color: rgba(212, 175, 125, 0.3) !important;
-    color: #d4af7d;
+    background: rgba(184, 151, 46, 0.1) !important;
+    border-color: rgba(184, 151, 46, 0.3) !important;
+    color: #8a6d1a;
 }
 
 .btn-periodo-hoje {
-    background: rgba(212, 175, 125, 0.1) !important;
-    border: 1px solid rgba(212, 175, 125, 0.3) !important;
-    color: #d4af7d;
+    background: rgba(184, 151, 46, 0.08) !important;
+    border: 1px solid rgba(184, 151, 46, 0.25) !important;
+    color: #8a6d1a;
     padding: 10px 15px;
     border-radius: 8px;
     cursor: pointer;
@@ -188,8 +190,8 @@
 }
 
 .btn-periodo-hoje:hover {
-    background: rgba(212, 175, 125, 0.2) !important;
-    border-color: #d4af7d !important;
+    background: rgba(184, 151, 46, 0.15) !important;
+    border-color: #b8972e !important;
 }
 
 /* ========== DASHBOARD KPIs ========== */
@@ -202,19 +204,20 @@
 }
 
 .kpi-card {
-    background: #141414;
-    border: 1px solid rgba(212, 175, 125, 0.15);
+    background: #fff;
+    border: 1px solid rgba(184, 151, 46, 0.12);
     border-radius: 15px;
     padding: 20px 18px;
     text-align: center;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.05);
 }
 
 .kpi-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
 .kpi-card::before {
@@ -237,9 +240,9 @@
 .kpi-card.despesas .kpi-icon { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
 
 /* KPI: Saldo Disponível */
-.kpi-card.saldo::before { background: linear-gradient(90deg, #d4af7d, #c9a050); }
-.kpi-card.saldo .kpi-valor { color: #d4af7d; }
-.kpi-card.saldo .kpi-icon { background: rgba(212, 175, 125, 0.15); color: #d4af7d; }
+.kpi-card.saldo::before { background: linear-gradient(90deg, #b8972e, #c9a050); }
+.kpi-card.saldo .kpi-valor { color: #8a6d1a; }
+.kpi-card.saldo .kpi-icon { background: rgba(212, 175, 125, 0.15); color: #8a6d1a; }
 .kpi-card.saldo.negativo::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
 .kpi-card.saldo.negativo .kpi-valor { color: #e74c3c; }
 .kpi-card.saldo.negativo .kpi-icon { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
@@ -294,7 +297,7 @@
 }
 
 .kpi-label {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.5);
     font-size: 0.75em;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -303,13 +306,13 @@
 .kpi-valor {
     font-size: 1.5em;
     font-weight: 600;
-    color: #fff;
+    color: #1a1a1a;
     margin-bottom: 8px;
 }
 
 .kpi-detalhe {
     font-size: 0.7em;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(26, 26, 26, 0.4);
     line-height: 1.4;
 }
 
@@ -427,8 +430,9 @@
 
 /* ========== SEÇÕES ========== */
 .section {
-    background: #141414;
-    border: 1px solid rgba(212, 175, 125, 0.15);
+    background: #fff;
+    border: 1px solid rgba(184, 151, 46, 0.12);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.04);
     border-radius: 15px;
     margin-bottom: 25px;
     overflow: hidden;
@@ -440,14 +444,14 @@
     align-items: center;
     padding: 20px 25px;
     background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
-    border-bottom: 1px solid rgba(212, 175, 125, 0.15);
+    border-bottom: 1px solid rgba(184, 151, 46, 0.12);
 }
 
 .section-header h2 {
     font-family: 'Playfair Display', serif;
     font-size: 1.25em;
     font-weight: 400;
-    color: #fff;
+    color: #1a1a1a;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -456,14 +460,14 @@
 .section-header .subtotal {
     font-family: 'Inter', sans-serif;
     font-size: 0.7em;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(26, 26, 26, 0.4);
     font-weight: 400;
 }
 
 .btn-add {
     background: rgba(212, 175, 125, 0.12);
     border: 1px solid rgba(212, 175, 125, 0.3);
-    color: #d4af7d;
+    color: #8a6d1a;
     padding: 10px 20px;
     border-radius: 8px;
     font-size: 0.9em;
@@ -494,7 +498,7 @@
 .transacoes-table th {
     text-align: center;
     padding: 16px 12px;
-    color: #d4af7d;
+    color: #8a6d1a;
     font-size: 0.8em;
     font-weight: 500;
     text-transform: uppercase;
@@ -505,8 +509,8 @@
 
 .transacoes-table td {
     padding: 18px 12px;
-    color: #fff;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #1a1a1a;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.06);
     font-size: 1em;
     text-align: center;
     vertical-align: middle;
@@ -522,7 +526,7 @@
 }
 
 .transacoes-table tbody tr:hover {
-    background: rgba(212, 175, 125, 0.05);
+    background: rgba(184, 151, 46, 0.04);
 }
 
 .transacoes-table tr.done {
@@ -552,17 +556,20 @@
     text-align: left;
     font-weight: 400;
     font-size: 1em;
-    color: #fff;
+    color: #1a1a1a;
 }
 
 /* Categoria badge */
 .categoria {
     display: inline-block;
-    padding: 5px 12px;
-    background: rgba(212, 175, 125, 0.1);
-    border-radius: 15px;
-    font-size: 0.85em;
-    color: #d4af7d;
+    padding: 4px 10px;
+    background: rgba(184, 151, 46, 0.1);
+    border: 1px solid rgba(184, 151, 46, 0.2);
+    border-radius: 20px;
+    font-size: 0.78em;
+    font-weight: 500;
+    color: #6b5212;
+    letter-spacing: 0.3px;
     font-weight: 400;
 }
 
@@ -631,7 +638,7 @@
 
 .action-btn:hover {
     background: rgba(212, 175, 125, 0.1);
-    color: #d4af7d;
+    color: #8a6d1a;
     transform: none;
 }
 
@@ -644,7 +651,7 @@
     color: rgba(212, 175, 125, 0.7);
 }
 .action-btn.btn-edit:hover {
-    color: #d4af7d;
+    color: #8a6d1a;
     background: rgba(212, 175, 125, 0.1);
 }
 
@@ -714,7 +721,7 @@ tr.grupo-pausado td {
     color: rgba(212, 175, 125, 0.5);
 }
 .action-btn.btn-duplicate:hover {
-    color: #d4af7d;
+    color: #8a6d1a;
     background: rgba(212, 175, 125, 0.1);
 }
 
@@ -747,7 +754,7 @@ tr.grupo-pausado td {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: #d4af7d;
+    color: #8a6d1a;
 }
 
 .btn-add-section:hover {
@@ -833,7 +840,7 @@ tr.grupo-pausado td {
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255,255,255,0.8);
     font-size: 0.95em;
 }
 
@@ -851,8 +858,8 @@ tr.grupo-pausado td {
 }
 
 .checkbox-label input[type="checkbox"]:checked {
-    background: #d4af7d;
-    border-color: #d4af7d;
+    background: #b8972e;
+    border-color: #8a6d1a;
 }
 
 .checkbox-label input[type="checkbox"]:checked::after {
@@ -881,7 +888,7 @@ tr.grupo-pausado td {
 
 .parcelas-preview .preview-header {
     font-size: 0.8em;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.6);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 10px;
@@ -910,11 +917,11 @@ tr.grupo-pausado td {
 
 .parcelas-preview .preview-total {
     font-size: 0.9em;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(26, 26, 26, 0.8);
     font-weight: 500;
     text-align: right;
     padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(26, 26, 26, 0.1);
 }
 
 /* Parcelas editáveis */
@@ -947,14 +954,14 @@ tr.grupo-pausado td {
     border: 1px solid rgba(212, 175, 125, 0.3);
     border-radius: 6px;
     padding: 8px 12px;
-    color: #fff;
+    color: #1a1a1a;
     font-size: 0.95em;
     text-align: right;
 }
 
 .preview-item-editable .parcela-valor-input:focus {
     outline: none;
-    border-color: #d4af7d;
+    border-color: #8a6d1a;
 }
 
 .preview-soma {
@@ -977,7 +984,7 @@ tr.grupo-pausado td {
     display: flex;
     justify-content: space-between;
     font-size: 0.85em;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(26, 26, 26, 0.7);
     margin-bottom: 4px;
 }
 
@@ -987,7 +994,7 @@ tr.grupo-pausado td {
     justify-content: space-between;
     margin-top: 8px;
     padding-top: 8px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(26, 26, 26, 0.1);
     color: #e74c3c;
     font-size: 0.85em;
 }
@@ -1002,7 +1009,7 @@ tr.grupo-pausado td {
 .btn-ajustar {
     background: rgba(212, 175, 125, 0.2);
     border: 1px solid rgba(212, 175, 125, 0.4);
-    color: #d4af7d;
+    color: #8a6d1a;
     padding: 4px 10px;
     border-radius: 5px;
     font-size: 0.8em;
@@ -1035,7 +1042,7 @@ tr.grupo-pausado td {
 }
 
 .parcela-info .parcela-percent {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.6);
 }
 
 .parcela-bar {
@@ -1057,18 +1064,19 @@ tr.grupo-pausado td {
 .empty-state {
     text-align: center;
     padding: 45px 20px;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(26, 26, 26, 0.3);
     font-size: 0.95em;
 }
 
 /* ========== FORMULÁRIOS ========== */
 .form-container {
     display: none;
-    background: #1a1a1a;
-    border-radius: 12px;
+    background: #1c1c1e;
+    border-radius: 14px;
     padding: 25px;
     margin-bottom: 20px;
-    border: 1px solid rgba(212, 175, 125, 0.1);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }
 
 .form-container.active {
@@ -1089,41 +1097,62 @@ tr.grupo-pausado td {
 }
 
 .form-group label {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.8em;
+    color: rgba(255,255,255,0.55);
+    font-size: 0.78em;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    font-weight: 500;
 }
 
 .form-group input,
 .form-group select {
     padding: 13px 16px;
-    background: #141414;
-    border: 1px solid rgba(212, 175, 125, 0.2);
-    border-radius: 8px;
-    color: #fff;
+    background: #2a2a2e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: #ffffff;
     font-size: 1em;
     transition: border-color 0.3s;
+    font-family: inherit;
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #d4af7d;
+    border-color: #b8972e;
+    background: #313136;
 }
 
 .form-group input::placeholder {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255,255,255,0.3);
 }
 
 .form-group select option {
-    background: #141414;
-    color: #fff;
+    background: #2a2a2e;
+    color: #ffffff;
 }
 
+.form-group textarea {
+    padding: 13px 16px;
+    background: #2a2a2e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 1em;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.3s;
+}
+.form-group textarea:focus {
+    outline: none;
+    border-color: #b8972e;
+    background: #313136;
+}
+.form-group textarea::placeholder { color: rgba(255,255,255,0.3); }
 .form-group input[type="file"] {
     padding: 11px;
     font-size: 0.9em;
+    color: rgba(255,255,255,0.7);
 }
 
 .form-buttons {
@@ -1134,8 +1163,8 @@ tr.grupo-pausado td {
 }
 
 .btn-salvar {
-    background: #d4af7d;
-    color: #0a0a0a;
+    background: #b8972e;
+    color: #fff;
     border: none;
     padding: 13px 28px;
     border-radius: 8px;
@@ -1151,8 +1180,8 @@ tr.grupo-pausado td {
 }
 
 .btn-cancelar {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
     border: none;
     padding: 13px 22px;
     border-radius: 8px;
@@ -1162,14 +1191,14 @@ tr.grupo-pausado td {
 }
 
 .btn-cancelar:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255,255,255,0.12);
 }
 
 /* ========== PROGRESS BAR ========== */
 .progress-bar {
     width: 100%;
     height: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(26, 26, 26, 0.1);
     border-radius: 4px;
     overflow: hidden;
     margin-top: 8px;
@@ -1193,20 +1222,20 @@ tr.grupo-pausado td {
 .accordion-table th {
     text-align: left;
     padding: 10px 16px;
-    color: #d4af7d;
+    color: #8a6d1a;
     font-size: 0.75em;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    border-bottom: 1px solid rgba(212, 175, 125, 0.15);
+    border-bottom: 1px solid rgba(184, 151, 46, 0.1);
 }
 
 .accordion-table td {
     padding: 14px 16px;
-    color: #fff;
+    color: #1a1a1a;
     font-size: 0.9em;
     vertical-align: middle;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(26,26,26,0.05);
 }
 
 .accordion-table tbody tr.acc-row {
@@ -1215,7 +1244,7 @@ tr.grupo-pausado td {
 }
 
 .accordion-table tbody tr.acc-row:hover {
-    background: rgba(212, 175, 125, 0.06);
+    background: rgba(184, 151, 46, 0.05);
 }
 
 .accordion-table tbody tr.acc-detail-row td {
@@ -1231,11 +1260,11 @@ tr.grupo-pausado td {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.07);
+    background: rgba(26,26,26,0.06);
     transition: transform 0.25s;
     flex-shrink: 0;
 }
-.acc-chevron svg { width: 13px; height: 13px; stroke: rgba(255,255,255,0.5); }
+.acc-chevron svg { width: 13px; height: 13px; stroke: rgba(26,26,26,0.45); }
 .acc-chevron.open { transform: rotate(180deg); }
 
 /* Progresso inline na tabela */
@@ -1248,7 +1277,7 @@ tr.grupo-pausado td {
 .acc-bar {
     flex: 1;
     height: 6px;
-    background: rgba(255,255,255,0.08);
+    background: rgba(26,26,26,0.08);
     border-radius: 3px;
     overflow: hidden;
 }
@@ -1262,13 +1291,13 @@ tr.grupo-pausado td {
 
 /* === DETALHE PARCELAS === */
 .parcelas-detail-box {
-    background: rgba(255,255,255,0.02);
+    background: rgba(26,26,26,0.02);
     padding: 18px 20px;
 }
 
 .parcelas-detail-title {
     font-size: 0.78em;
-    color: rgba(255,255,255,0.4);
+    color: rgba(26,26,26,0.4);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 14px;
@@ -1284,15 +1313,15 @@ tr.grupo-pausado td {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #1a1a1a;
-    border: 1px solid rgba(255,255,255,0.07);
+    background: #fafafa;
+    border: 1px solid rgba(26,26,26,0.08);
     border-radius: 10px;
     padding: 10px 13px;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
 }
 
-.parcela-item:hover { border-color: rgba(212,175,125,0.3); }
+.parcela-item:hover { border-color: rgba(184,151,46,0.3); }
 .parcela-item.pago { background: rgba(46,204,113,0.07); border-color: rgba(46,204,113,0.2); }
 .parcela-item.vencida { border-color: rgba(231,76,60,0.3); }
 
@@ -1300,7 +1329,7 @@ tr.grupo-pausado td {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.2);
+    border: 2px solid rgba(26, 26, 26, 0.2);
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -1320,21 +1349,21 @@ tr.grupo-pausado td {
 }
 
 .parcela-info-box { flex: 1; min-width: 0; }
-.parcela-nome { font-size: 0.82em; font-weight: 500; color: #fff; }
-.parcela-data-txt { font-size: 0.72em; color: rgba(255,255,255,0.35); margin-top: 1px; }
-.parcela-valor-txt { font-size: 0.82em; color: rgba(255,255,255,0.7); white-space: nowrap; }
+.parcela-nome { font-size: 0.82em; font-weight: 500; color: #1a1a1a; }
+.parcela-data-txt { font-size: 0.72em; color: rgba(26,26,26,0.4); margin-top: 1px; }
+.parcela-valor-txt { font-size: 0.82em; color: rgba(26,26,26,0.65); white-space: nowrap; }
 
 /* === DETALHE EMPRÉSTIMO === */
 .emp-detail-box {
     display: grid;
     grid-template-columns: 1fr 1.5fr;
     gap: 0;
-    background: rgba(255,255,255,0.02);
+    background: rgba(26,26,26,0.02);
 }
 
 .emp-acoes-col {
     padding: 18px 20px;
-    border-right: 1px solid rgba(255,255,255,0.06);
+    border-right: 1px solid rgba(26, 26, 26, 0.06);
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -1345,17 +1374,17 @@ tr.grupo-pausado td {
     align-items: center;
     gap: 9px;
     padding: 11px 14px;
-    background: #1a1a1a;
-    border: 1px solid rgba(255,255,255,0.09);
+    background: #f5f4f1;
+    border: 1px solid rgba(26,26,26,0.1);
     border-radius: 9px;
-    color: rgba(255,255,255,0.75);
+    color: rgba(26,26,26,0.65);
     font-size: 0.85em;
     cursor: pointer;
     transition: all 0.2s;
     text-align: left;
     width: 100%;
 }
-.emp-btn-acao:hover { background: rgba(212,175,125,0.1); border-color: rgba(212,175,125,0.3); color: #d4af7d; }
+.emp-btn-acao:hover { background: rgba(184,151,46,0.08); border-color: rgba(184,151,46,0.3); color: #8a6d1a; }
 .emp-btn-acao svg { width: 15px; height: 15px; flex-shrink: 0; }
 
 .emp-historico-col {
@@ -1365,13 +1394,13 @@ tr.grupo-pausado td {
 .emp-historico-titulo {
     font-size: 0.8em;
     font-weight: 600;
-    color: #fff;
+    color: #1a1a1a;
     margin-bottom: 12px;
 }
 
 .emp-historico-vazio {
     font-size: 0.82em;
-    color: rgba(255,255,255,0.3);
+    color: rgba(26,26,26,0.3);
 }
 
 .emp-historico-item {
@@ -1379,12 +1408,12 @@ tr.grupo-pausado td {
     justify-content: space-between;
     align-items: center;
     padding: 7px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.05);
     font-size: 0.82em;
 }
 .emp-historico-item:last-child { border-bottom: none; }
-.emp-hist-data { color: rgba(255,255,255,0.4); }
-.emp-hist-tipo { color: rgba(255,255,255,0.6); }
+.emp-hist-data { color: rgba(26,26,26,0.4); }
+.emp-hist-tipo { color: rgba(26,26,26,0.55); }
 .emp-hist-valor-amort { color: #2ecc71; }
 .emp-hist-valor-juros { color: #f39c12; }
 
@@ -1394,16 +1423,17 @@ tr.grupo-pausado td {
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
-    background: #e74c3c;
+    background: #1a1a1a;
     border: none;
     border-radius: 8px;
-    color: #fff;
+    color: #1a1a1a;
     font-size: 0.82em;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
-.btn-add-novo:hover { background: #c0392b; }
+.btn-add-novo:hover { background: #333; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 .btn-add-novo svg { width: 14px; height: 14px; stroke: #fff; }
 
 /* Botão adicionar empréstimo — azul outline */
@@ -1413,31 +1443,31 @@ tr.grupo-pausado td {
     gap: 6px;
     padding: 8px 14px;
     background: transparent;
-    border: 1px solid rgba(52,152,219,0.5);
+    border: 1px solid rgba(26,26,26,0.2);
     border-radius: 8px;
-    color: #3498db;
+    color: rgba(26,26,26,0.6);
     font-size: 0.82em;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
 }
-.btn-add-emp:hover { background: rgba(52,152,219,0.1); border-color: #3498db; }
+.btn-add-emp:hover { background: rgba(26,26,26,0.05); border-color: rgba(26,26,26,0.4); color: #1a1a1a; }
 .btn-add-emp svg { width: 14px; height: 14px; }
 
 /* Cor texto tabela acc */
-.acc-descricao { font-weight: 500; }
-.acc-condicao { color: rgba(255,255,255,0.55); font-size: 0.85em; }
+.acc-descricao { font-weight: 500; color: #1a1a1a; }
+.acc-condicao { color: rgba(26,26,26,0.5); font-size: 0.85em; }
 .acc-valor-total { font-weight: 600; color: #fff; }
 .acc-juros-val { color: #e74c3c; font-weight: 500; }
 .acc-saldo-val { color: #e74c3c; }
-.acc-original-val { color: rgba(255,255,255,0.7); }
-.acc-taxa-val { color: rgba(255,255,255,0.6); font-size: 0.85em; }
+.acc-original-val { color: rgba(26,26,26,0.65); }
+.acc-taxa-val { color: rgba(26,26,26,0.5); font-size: 0.85em; }
 .acc-delete-btn {
     background: none;
     border: none;
     cursor: pointer;
     padding: 4px;
-    color: rgba(255,255,255,0.25);
+    color: rgba(26,26,26,0.22);
     transition: color 0.2s;
     display: flex;
     align-items: center;
@@ -1449,13 +1479,27 @@ tr.grupo-pausado td {
 .acc-quitacao-wrap { min-width: 100px; }
 
 /* ── MOBILE: ACCORDION TABLES ── */
+
+/* Mobile: btn-add mostrar só ícone */
+@media (max-width: 600px) {
+    .btn-add-novo .btn-label,
+    .btn-add-emp .btn-label { display: none; }
+    .btn-add-novo, .btn-add-emp {
+        width: 36px; height: 36px; padding: 0;
+        justify-content: center; border-radius: 50%;
+    }
+    .mobile-nav-item span { display: none; }
+    .mobile-nav-item { padding: 6px 14px; }
+    .mobile-nav-item svg { width: 24px; height: 24px; }
+}
+
 @media (max-width: 768px) {
     /* Parcelas grid */
     .parcelas-grid { grid-template-columns: repeat(2, 1fr); }
 
     /* Empréstimo detalhe */
     .emp-detail-box { grid-template-columns: 1fr; }
-    .emp-acoes-col { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .emp-acoes-col { border-right: none; border-bottom: 1px solid rgba(26, 26, 26, 0.06); }
 
     /* Tabela accordion: esconder colunas menos importantes */
     .accordion-table th.hide-mobile,
@@ -1511,7 +1555,7 @@ tr.grupo-pausado td {
 
 .emprestimo-card.arquivado {
     display: block;
-    background: #1a1a1a;
+    background: #f5f4f1;
     border: 1px solid rgba(149, 165, 166, 0.2);
     border-radius: 15px;
     padding: 22px;
@@ -1528,14 +1572,14 @@ tr.grupo-pausado td {
 
 .emprestimo-card-title {
     font-size: 1.15em;
-    color: #fff;
+    color: #1a1a1a;
     font-weight: 500;
 }
 
 .emprestimo-card-title small {
     display: block;
     font-size: 0.75em;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
     font-weight: 400;
     margin-top: 6px;
 }
@@ -1553,7 +1597,8 @@ tr.grupo-pausado td {
 }
 
 .emprestimo-valor-item {
-    background: rgba(0, 0, 0, 0.25);
+    background: #f8f6f0;
+    border: 1px solid rgba(26,26,26,0.06);
     padding: 16px;
     border-radius: 10px;
     text-align: center;
@@ -1562,7 +1607,7 @@ tr.grupo-pausado td {
 .emprestimo-valor-item label {
     display: block;
     font-size: 0.7em;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
     text-transform: uppercase;
     margin-bottom: 8px;
     letter-spacing: 0.5px;
@@ -1595,7 +1640,7 @@ tr.grupo-pausado td {
     background: rgba(212, 175, 125, 0.08);
     cursor: pointer;
     font-size: 0.85em;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(26, 26, 26, 0.7);
     transition: all 0.3s;
 }
 
@@ -1613,7 +1658,7 @@ tr.grupo-pausado td {
     justify-content: space-between;
     align-items: center;
     padding: 10px 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.03);
     font-size: 0.85em;
 }
 
@@ -1630,12 +1675,12 @@ tr.grupo-pausado td {
 }
 
 .historico-data {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
     min-width: 80px;
 }
 
 .historico-tipo {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.6);
     flex: 1;
     text-align: center;
 }
@@ -1655,8 +1700,9 @@ tr.grupo-pausado td {
 }
 
 .reserva-card {
-    background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%);
+    background: #fff;
     border: 1px solid rgba(46, 204, 113, 0.2);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
     border-radius: 15px;
     padding: 20px;
     margin-bottom: 15px;
@@ -1672,13 +1718,14 @@ tr.grupo-pausado td {
 .reserva-card-title {
     font-size: 1.1em;
     font-weight: 500;
-    color: #fff;
+    color: #1a1a1a;
+    font-family: 'Playfair Display', serif;
 }
 
 .reserva-card-title small {
     display: block;
     font-size: 0.7em;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(26, 26, 26, 0.4);
     font-weight: 400;
     margin-top: 4px;
 }
@@ -1699,7 +1746,7 @@ tr.grupo-pausado td {
 .reserva-saldo label {
     display: block;
     font-size: 0.75em;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 8px;
@@ -1752,7 +1799,7 @@ tr.grupo-pausado td {
 .btn-retirar:hover { background: rgba(231, 76, 60, 0.25); }
 
 .reserva-historico {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(26, 26, 26, 0.1);
     padding-top: 15px;
 }
 
@@ -1766,12 +1813,12 @@ tr.grupo-pausado td {
 
 .reserva-historico-header h4 {
     font-size: 0.85em;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.6);
     font-weight: 500;
 }
 
 .reserva-historico-header .toggle-icon {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(26, 26, 26, 0.4);
     transition: transform 0.3s;
 }
 
@@ -1808,12 +1855,12 @@ tr.grupo-pausado td {
 
 .reserva-mov-item .mov-data {
     font-size: 0.75em;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(26, 26, 26, 0.4);
 }
 
 .reserva-mov-item .mov-obs {
     font-size: 0.85em;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(26, 26, 26, 0.7);
 }
 
 .reserva-mov-item .mov-valor {
@@ -1826,7 +1873,7 @@ tr.grupo-pausado td {
 
 .emprestimo-progress label {
     font-size: 0.8em;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
 }
 
 .emprestimo-acoes-rapidas {
@@ -1876,7 +1923,7 @@ tr.grupo-pausado td {
 
 .btn-menu-acoes {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(26, 26, 26, 0.1);
     border-radius: 8px;
     padding: 8px;
     cursor: pointer;
@@ -1887,14 +1934,14 @@ tr.grupo-pausado td {
 }
 
 .btn-menu-acoes:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(26, 26, 26, 0.05);
+    border-color: rgba(26, 26, 26, 0.2);
 }
 
 .btn-menu-acoes .icon {
     width: 18px;
     height: 18px;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.6);
 }
 
 .menu-acoes-dropdown {
@@ -1902,12 +1949,12 @@ tr.grupo-pausado td {
     top: 100%;
     right: 0;
     margin-top: 8px;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #f5f4f1;
+    border: 1px solid rgba(26, 26, 26, 0.1);
     border-radius: 12px;
     padding: 8px;
     min-width: 200px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
@@ -1930,7 +1977,7 @@ tr.grupo-pausado td {
     background: transparent;
     border: none;
     border-radius: 8px;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(26, 26, 26, 0.8);
     font-size: 0.9em;
     cursor: pointer;
     transition: all 0.2s;
@@ -1938,18 +1985,18 @@ tr.grupo-pausado td {
 }
 
 .menu-acao-item:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(26, 26, 26, 0.05);
 }
 
 .menu-acao-item .icon {
     width: 16px;
     height: 16px;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
 }
 
 .menu-acao-divisor {
     height: 1px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(26, 26, 26, 0.1);
     margin: 8px 0;
 }
 
@@ -1991,12 +2038,12 @@ tr.grupo-pausado td {
 .modal-exclusao-titulo {
     font-size: 1.2em;
     font-weight: 600;
-    color: #fff;
+    color: #1a1a1a;
     margin-bottom: 10px;
 }
 
 .modal-exclusao-descricao {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.6);
     font-size: 0.9em;
     line-height: 1.5;
     margin-bottom: 20px;
@@ -2026,7 +2073,7 @@ tr.grupo-pausado td {
 }
 
 .modal-exclusao-info {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(26, 26, 26, 0.03);
     border-radius: 10px;
     padding: 15px;
     margin-bottom: 25px;
@@ -2037,7 +2084,7 @@ tr.grupo-pausado td {
     display: flex;
     justify-content: space-between;
     padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.05);
 }
 
 .modal-exclusao-info-item:last-child {
@@ -2045,18 +2092,18 @@ tr.grupo-pausado td {
 }
 
 .modal-exclusao-info-item label {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
     font-size: 0.85em;
 }
 
 .modal-exclusao-info-item span {
-    color: #fff;
+    color: #1a1a1a;
     font-weight: 500;
     font-size: 0.9em;
 }
 
 .modal-exclusao-confirmar {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(26, 26, 26, 0.03);
     border-radius: 10px;
     padding: 15px;
     margin-bottom: 20px;
@@ -2066,7 +2113,7 @@ tr.grupo-pausado td {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(26, 26, 26, 0.8);
     font-size: 0.9em;
     cursor: pointer;
 }
@@ -2116,21 +2163,21 @@ tr.grupo-pausado td {
 }
 
 .btn-menu-acoes:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(26, 26, 26, 0.1);
 }
 
 .btn-menu-acoes .icon {
     width: 18px;
     height: 18px;
-    stroke: rgba(255, 255, 255, 0.6);
+    stroke: rgba(26, 26, 26, 0.6);
 }
 
 .menu-acoes-dropdown {
     position: absolute;
     top: 100%;
     right: 0;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #f5f4f1;
+    border: 1px solid rgba(26, 26, 26, 0.15);
     border-radius: 12px;
     padding: 8px 0;
     min-width: 200px;
@@ -2156,7 +2203,7 @@ tr.grupo-pausado td {
     padding: 12px 16px;
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(26, 26, 26, 0.8);
     font-size: 0.9em;
     cursor: pointer;
     transition: all 0.2s;
@@ -2164,7 +2211,7 @@ tr.grupo-pausado td {
 }
 
 .menu-acao-item:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(26, 26, 26, 0.08);
 }
 
 .menu-acao-item .icon {
@@ -2175,7 +2222,7 @@ tr.grupo-pausado td {
 
 .menu-acao-divisor {
     height: 1px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(26, 26, 26, 0.1);
     margin: 8px 0;
 }
 
@@ -2224,14 +2271,15 @@ tr.grupo-pausado td {
 }
 
 .exclusao-aviso p {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(26, 26, 26, 0.7);
     font-size: 0.9em;
     line-height: 1.5;
     margin: 0;
 }
 
 .exclusao-info {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(26,26,26,0.04);
+    border: 1px solid rgba(26,26,26,0.06);
     border-radius: 10px;
     padding: 15px;
     margin-bottom: 20px;
@@ -2241,7 +2289,7 @@ tr.grupo-pausado td {
     display: flex;
     justify-content: space-between;
     padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.05);
 }
 
 .exclusao-info-item:last-child {
@@ -2249,18 +2297,18 @@ tr.grupo-pausado td {
 }
 
 .exclusao-info-item label {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
     font-size: 0.85em;
 }
 
 .exclusao-info-item span {
-    color: #fff;
+    color: #1a1a1a;
     font-weight: 500;
 }
 
 .exclusao-confirmacao {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(26, 26, 26, 0.03);
+    border: 1px solid rgba(26, 26, 26, 0.1);
     border-radius: 10px;
     padding: 15px;
     margin-bottom: 20px;
@@ -2271,7 +2319,7 @@ tr.grupo-pausado td {
     align-items: flex-start;
     gap: 12px;
     cursor: pointer;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(26, 26, 26, 0.8);
     font-size: 0.9em;
     line-height: 1.4;
 }
@@ -2300,7 +2348,7 @@ tr.grupo-pausado td {
 .btn-excluir-final.ativo {
     background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
     border-color: transparent;
-    color: #fff;
+    color: #1a1a1a;
     cursor: pointer;
     pointer-events: auto;
 }
@@ -2336,7 +2384,7 @@ tr.grupo-pausado td {
 .resumo-final h3 {
     font-family: 'Playfair Display', serif;
     font-size: 1.3em;
-    color: #d4af7d;
+    color: #8a6d1a;
     margin-bottom: 22px;
     text-align: center;
     letter-spacing: 2px;
@@ -2357,7 +2405,7 @@ tr.grupo-pausado td {
 
 .resumo-final-item label {
     display: block;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
     font-size: 0.8em;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -2390,14 +2438,14 @@ tr.grupo-pausado td {
 .sugestoes-header h3 {
     font-family: 'Playfair Display', serif;
     font-size: 1.5em;
-    color: #d4af7d;
+    color: #8a6d1a;
     margin-bottom: 8px;
     letter-spacing: 2px;
 }
 
 .sugestoes-subtitulo {
     font-size: 0.85em;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(26, 26, 26, 0.4);
     font-style: italic;
 }
 
@@ -2424,7 +2472,7 @@ tr.grupo-pausado td {
 
 .citacao-texto {
     font-size: 1.1em;
-    color: #fff;
+    color: #1a1a1a;
     font-style: italic;
     line-height: 1.5;
     margin-bottom: 8px;
@@ -2432,7 +2480,7 @@ tr.grupo-pausado td {
 
 .citacao-fonte {
     font-size: 0.85em;
-    color: #d4af7d;
+    color: #8a6d1a;
 }
 
 /* Diagnóstico Financeiro */
@@ -2445,7 +2493,7 @@ tr.grupo-pausado td {
 
 .diagnostico-container h4 {
     font-size: 1em;
-    color: #fff;
+    color: #1a1a1a;
     margin-bottom: 15px;
 }
 
@@ -2456,7 +2504,7 @@ tr.grupo-pausado td {
 }
 
 .diagnostico-item {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(26, 26, 26, 0.03);
     border-radius: 10px;
     padding: 15px;
     border-left: 3px solid;
@@ -2468,8 +2516,9 @@ tr.grupo-pausado td {
 .diagnostico-item.critico { border-left-color: #e74c3c; }
 
 .diagnostico-item .titulo {
+    color: #1a1a1a;
     font-size: 0.75em;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 5px;
@@ -2478,7 +2527,7 @@ tr.grupo-pausado td {
 .diagnostico-item .valor {
     font-size: 1.2em;
     font-weight: 600;
-    color: #fff;
+    color: #1a1a1a;
 }
 
 .diagnostico-item.otimo .valor { color: #2ecc71; }
@@ -2488,7 +2537,7 @@ tr.grupo-pausado td {
 
 .diagnostico-item .descricao {
     font-size: 0.8em;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(26, 26, 26, 0.4);
     margin-top: 3px;
 }
 
@@ -2516,7 +2565,7 @@ tr.grupo-pausado td {
 .sugestao-card.economia { border-left-color: #2ecc71; background: rgba(46, 204, 113, 0.05); }
 .sugestao-card.corte { border-left-color: #f39c12; background: rgba(243, 156, 18, 0.05); }
 .sugestao-card.investimento { border-left-color: #9b59b6; background: rgba(155, 89, 182, 0.05); }
-.sugestao-card.sabedoria { border-left-color: #d4af7d; background: rgba(212, 175, 125, 0.05); }
+.sugestao-card.sabedoria { border-left-color: #8a6d1a; background: rgba(212, 175, 125, 0.05); }
 
 .sugestao-icone {
     font-size: 1.5em;
@@ -2532,13 +2581,13 @@ tr.grupo-pausado td {
 .sugestao-titulo {
     font-size: 1em;
     font-weight: 600;
-    color: #fff;
+    color: #1a1a1a;
     margin-bottom: 6px;
 }
 
 .sugestao-texto {
     font-size: 0.9em;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(26, 26, 26, 0.7);
     line-height: 1.5;
     margin-bottom: 8px;
 }
@@ -2551,7 +2600,7 @@ tr.grupo-pausado td {
 
 .sugestao-acao {
     font-size: 0.85em;
-    color: #d4af7d;
+    color: #8a6d1a;
     font-weight: 500;
     margin-top: 8px;
     padding: 8px 12px;
@@ -2570,7 +2619,7 @@ tr.grupo-pausado td {
 
 .plano-acao h4 {
     font-size: 1em;
-    color: #fff;
+    color: #1a1a1a;
     margin-bottom: 15px;
 }
 
@@ -2599,13 +2648,13 @@ tr.grupo-pausado td {
     justify-content: center;
     font-size: 0.85em;
     font-weight: 600;
-    color: #fff;
+    color: #1a1a1a;
     flex-shrink: 0;
 }
 
 .plano-texto {
     font-size: 0.9em;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(26, 26, 26, 0.85);
     flex: 1;
 }
 
@@ -2677,7 +2726,7 @@ tr.grupo-pausado td {
 }
 
 .modal-content {
-    background: #141414;
+    background: #fff;
     border: 1px solid rgba(212, 175, 125, 0.2);
     border-radius: 20px;
     padding: 0;
@@ -2694,19 +2743,19 @@ tr.grupo-pausado td {
     justify-content: space-between;
     align-items: center;
     padding: 22px 28px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.1);
 }
 
 .modal-header h3 {
     font-family: 'Playfair Display', serif;
-    color: #d4af7d;
+    color: #8a6d1a;
     font-size: 1.3em;
 }
 
 .modal-close {
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
     font-size: 1.8em;
     cursor: pointer;
     line-height: 1;
@@ -2715,7 +2764,7 @@ tr.grupo-pausado td {
 }
 
 .modal-close:hover {
-    color: #fff;
+    color: #1a1a1a;
 }
 
 .modal-body {
@@ -2730,11 +2779,11 @@ tr.grupo-pausado td {
     padding: 16px;
     margin-bottom: 20px;
     font-size: 0.95em;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(26, 26, 26, 0.7);
 }
 
 .info-box strong {
-    color: #d4af7d;
+    color: #8a6d1a;
 }
 
 .info-box.warning {
@@ -2759,7 +2808,7 @@ tr.grupo-pausado td {
     z-index: 10001;
     opacity: 0;
     transition: opacity 0.3s;
-    color: #fff;
+    color: #1a1a1a;
 }
 
 /* ========== RESPONSIVO ========== */
@@ -2822,10 +2871,10 @@ tr.grupo-pausado td {
     left: 0;
     width: 60px;
     height: 100vh;
-    background: linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 100%);
-    border-right: 1px solid rgba(212, 175, 125, 0.15);
+    background: linear-gradient(180deg, #fdfcf8 0%, #f8f6f0 100%);
+    border-right: 1px solid rgba(184, 151, 46, 0.12);
     z-index: 1000;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2846,21 +2895,21 @@ tr.grupo-pausado td {
     width: 40px;
     height: 40px;
     background: transparent;
-    border: 1px solid rgba(212, 175, 125, 0.3);
+    border: 1px solid rgba(184, 151, 46, 0.25);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Playfair Display', serif;
     font-size: 1.2em;
-    color: #d4af7d;
+    color: #8a6d1a;
     margin-bottom: 20px;
     flex-shrink: 0;
     text-decoration: none;
 }
 
 .sidebar-logo:hover {
-    background: rgba(212, 175, 125, 0.1);
+    background: rgba(184, 151, 46, 0.08);
 }
 
 .sidebar-menu {
@@ -2876,7 +2925,7 @@ tr.grupo-pausado td {
     align-items: center;
     gap: 12px;
     padding: 12px 10px;
-    color: rgba(255,255,255,0.6);
+    color: rgba(26,26,26,0.5);
     text-decoration: none;
     font-size: 0.85em;
     transition: all 0.3s;
@@ -2885,15 +2934,15 @@ tr.grupo-pausado td {
 }
 
 .sidebar-menu a:hover {
-    background: rgba(212, 175, 125, 0.1);
-    border-left-color: #d4af7d;
-    color: #fff;
+    background: rgba(184, 151, 46, 0.07);
+    border-left-color: #b8972e;
+    color: #1a1a1a;
 }
 
 .sidebar-menu a.active {
-    background: rgba(212, 175, 125, 0.15);
-    border-left-color: #d4af7d;
-    color: #d4af7d;
+    background: rgba(184, 151, 46, 0.1);
+    border-left-color: #b8972e;
+    color: #8a6d1a;
 }
 
 .sidebar-menu a svg {
@@ -2914,7 +2963,7 @@ tr.grupo-pausado td {
 
 .sidebar-divider {
     height: 1px;
-    background: rgba(212, 175, 125, 0.2);
+    background: rgba(184, 151, 46, 0.15);
     margin: 8px 10px;
     width: calc(100% - 20px);
 }
@@ -2922,13 +2971,13 @@ tr.grupo-pausado td {
 .sidebar-footer {
     padding: 15px 10px;
     text-align: center;
-    border-top: 1px solid rgba(212, 175, 125, 0.2);
+    border-top: 1px solid rgba(184, 151, 46, 0.15);
     width: 100%;
-    background: rgba(0,0,0,0.3);
+    background: rgba(184,151,46,0.04);
 }
 
 .sidebar-footer p {
-    color: rgba(255,255,255,0.6);
+    color: rgba(26,26,26,0.5);
     font-size: 0.7em;
     font-weight: 400;
     text-transform: uppercase;
@@ -2940,7 +2989,7 @@ tr.grupo-pausado td {
 
 .sidebar-footer .instituto {
     font-size: 0.85em;
-    color: #d4af7d;
+    color: #8a6d1a;
     display: block;
     margin-bottom: 3px;
 }
@@ -2956,8 +3005,9 @@ tr.grupo-pausado td {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
-    border-top: 1px solid rgba(212, 175, 125, 0.15);
+    background: linear-gradient(180deg, #fff 0%, #fdfcf8 100%);
+    border-top: 1px solid rgba(184, 151, 46, 0.12);
+    box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
     padding: 10px 0;
     z-index: 1000;
 }
@@ -2972,8 +3022,8 @@ tr.grupo-pausado td {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    color: rgba(255,255,255,0.5);
+    gap: 3px;
+    color: rgba(26,26,26,0.4);
     text-decoration: none;
     font-size: 0.65em;
     padding: 5px 10px;
@@ -2986,7 +3036,7 @@ tr.grupo-pausado td {
 }
 
 .mobile-nav-item.active {
-    color: #d4af7d;
+    color: #8a6d1a;
 }
 
 @media (max-width: 768px) {
@@ -3389,7 +3439,7 @@ tr.grupo-pausado td {
 
     .alertas-badge {
         background: #e74c3c;
-        color: #fff;
+        color: #1a1a1a;
         padding: 4px 12px;
         border-radius: 20px;
         font-size: 0.8em;
@@ -3435,12 +3485,12 @@ tr.grupo-pausado td {
 
     .alerta-descricao {
         font-weight: 500;
-        color: #fff;
+        color: #1a1a1a;
     }
 
     .alerta-detalhe {
         font-size: 0.8em;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(26, 26, 26, 0.5);
     }
 
     .alerta-valor {
@@ -3635,14 +3685,7 @@ tr.grupo-pausado td {
                 </svg>
                 Ativos
             </button>
-            <button id="btnArquivados">
-                <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 8v13H3V8"></path>
-                    <path d="M1 3h22v5H1z"></path>
-                    <path d="M10 12h4"></path>
-                </svg>
-                Arquivados
-            </button>
+
         </div>
     </div>
 </div>
@@ -3744,8 +3787,7 @@ tr.grupo-pausado td {
         <button class="btn-add-novo" id="btnAddReceitaFixa" title="Adicionar receita fixa">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:#fff;">
                 <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Adicionar
+            </svg><span class="btn-label"><span class="btn-label">Adicionar</span></span>
         </button>
     </div>
     <div class="section-content">
@@ -3774,8 +3816,7 @@ tr.grupo-pausado td {
         <button class="btn-add-novo" id="btnAddReceitaVariavel" title="Adicionar receita variável">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:#fff;">
                 <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Adicionar
+            </svg><span class="btn-label"><span class="btn-label">Adicionar</span></span>
         </button>
     </div>
     <div class="section-content">
@@ -3806,8 +3847,7 @@ tr.grupo-pausado td {
         <button class="btn-add-novo" id="btnAddDespesaFixa" title="Adicionar despesa fixa">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:#fff;">
                 <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Adicionar
+            </svg><span class="btn-label"><span class="btn-label">Adicionar</span></span>
         </button>
     </div>
     <div class="section-content">
@@ -3837,8 +3877,7 @@ tr.grupo-pausado td {
         <button class="btn-add-novo" id="btnAddDespesaAvulsa" title="Adicionar despesa variável">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:#fff;">
                 <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Adicionar
+            </svg><span class="btn-label"><span class="btn-label">Adicionar</span></span>
         </button>
     </div>
     <div class="section-content">
@@ -3869,8 +3908,7 @@ tr.grupo-pausado td {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:#fff;">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Adicionar
+            </svg><span class="btn-label"><span class="btn-label">Adicionar</span></span>
         </button>
     </div>
     <div class="section-content">
@@ -3902,8 +3940,7 @@ tr.grupo-pausado td {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Adicionar
+            </svg><span class="btn-label"><span class="btn-label">Adicionar</span></span>
         </button>
     </div>
     <div class="section-content">
@@ -5726,20 +5763,20 @@ tr.grupo-pausado td {
                     <strong style="font-size: 1.1em;">${item.descricao}</strong>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px;">
                         <div style="text-align: center;">
-                            <div style="color: rgba(255,255,255,0.5); font-size: 0.75em; text-transform: uppercase;">Total</div>
+                            <div style="color: rgba(26, 26, 26, 0.5); font-size: 0.75em; text-transform: uppercase;">Total</div>
                             <div style="color: #3498db; font-weight: 600;">${formatarMoeda(valorTotalAtual)}</div>
                         </div>
                         <div style="text-align: center;">
-                            <div style="color: rgba(255,255,255,0.5); font-size: 0.75em; text-transform: uppercase;">Pago</div>
+                            <div style="color: rgba(26, 26, 26, 0.5); font-size: 0.75em; text-transform: uppercase;">Pago</div>
                             <div style="color: #27ae60; font-weight: 600;">${formatarMoeda(valorJaPago)}</div>
                         </div>
                         <div style="text-align: center;">
-                            <div style="color: rgba(255,255,255,0.5); font-size: 0.75em; text-transform: uppercase;">Restante</div>
+                            <div style="color: rgba(26, 26, 26, 0.5); font-size: 0.75em; text-transform: uppercase;">Restante</div>
                             <div style="color: #e74c3c; font-weight: 600;">${formatarMoeda(valorRestante)}</div>
                         </div>
                     </div>
-                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
-                        <small style="color: rgba(255,255,255,0.5);">
+                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(26, 26, 26, 0.1);">
+                        <small style="color: rgba(26, 26, 26, 0.5);">
                             ${parcelasPagas.length} de ${totalAtual} parcelas pagas
                         </small>
                     </div>
@@ -5761,7 +5798,7 @@ tr.grupo-pausado td {
                         <label>Novo Valor Total da Dívida</label>
                         <input type="number" id="editValorTotal" step="0.01" value="${valorTotalAtual.toFixed(2)}" 
                                oninput="atualizarPreviewEdicaoParcelas()">
-                        <small style="color: rgba(255,255,255,0.4); font-size: 0.75em;">
+                        <small style="color: rgba(26, 26, 26, 0.4); font-size: 0.75em;">
                             Valor já pago (${formatarMoeda(valorJaPago)}) não será alterado
                         </small>
                     </div>
@@ -5769,7 +5806,7 @@ tr.grupo-pausado td {
                         <label>Quantidade de Parcelas</label>
                         <input type="number" id="editTotalParcelas" min="${parcelasPagas.length || 1}" value="${totalAtual}"
                                oninput="atualizarPreviewEdicaoParcelas()">
-                        <small style="color: rgba(255,255,255,0.4); font-size: 0.75em;">
+                        <small style="color: rgba(26, 26, 26, 0.4); font-size: 0.75em;">
                             Mínimo: ${parcelasPagas.length || 1} (já pagas)
                         </small>
                     </div>
@@ -6788,7 +6825,7 @@ tr.grupo-pausado td {
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
             <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; text-align: center;">
-                <div style="font-size: 0.8em; color: rgba(255,255,255,0.5); text-transform: uppercase;">Saldo Atual</div>
+                <div style="font-size: 0.8em; color: rgba(26, 26, 26, 0.5); text-transform: uppercase;">Saldo Atual</div>
                 <div style="font-size: 1.8em; font-weight: 600; color: #2ecc71;">${formatarMoeda(reserva.saldo || 0)}</div>
             </div>
             <div class="form-row">
@@ -6847,7 +6884,7 @@ tr.grupo-pausado td {
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
             <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; text-align: center;">
-                <div style="font-size: 0.8em; color: rgba(255,255,255,0.5); text-transform: uppercase;">Saldo Disponível</div>
+                <div style="font-size: 0.8em; color: rgba(26, 26, 26, 0.5); text-transform: uppercase;">Saldo Disponível</div>
                 <div style="font-size: 1.8em; font-weight: 600; color: #2ecc71;">${formatarMoeda(reserva.saldo || 0)}</div>
             </div>
             <div class="form-row">
@@ -7106,14 +7143,14 @@ tr.grupo-pausado td {
         recFixasTable.innerHTML = receitasMes.map(r => {
             const badgeSt = r.recebido
                 ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Recebido</span>'
-                : '<span style="color:rgba(255,255,255,0.35);font-size:0.78em;">Pendente</span>';
+                : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>';
             return `
             <tr>
                 <td>
-                    <span class="acc-chevron" style="cursor:pointer;background:${r.recebido ? 'rgba(46,204,113,0.15)' : 'rgba(255,255,255,0.07)'};"
+                    <span class="acc-chevron" style="cursor:pointer;background:${r.recebido ? 'rgba(46,204,113,0.15)' : 'rgba(26, 26, 26, 0.07)'};"
                           onclick="toggleRecebido(${r.id})" title="Marcar recebido">
                         ${r.recebido ? '<svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
+                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26, 26, 26, 0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
                     </span>
                 </td>
                 <td class="acc-descricao">${r.descricao}</td>
@@ -7140,10 +7177,10 @@ tr.grupo-pausado td {
             return `
             <tr>
                 <td>
-                    <span class="acc-chevron" style="cursor:pointer;background:${r.recebido ? 'rgba(46,204,113,0.15)' : 'rgba(255,255,255,0.07)'};"
+                    <span class="acc-chevron" style="cursor:pointer;background:${r.recebido ? 'rgba(46,204,113,0.15)' : 'rgba(26, 26, 26, 0.07)'};"
                           onclick="toggleRecebido(${r.id})" title="Marcar recebido">
                         ${r.recebido ? '<svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
+                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26, 26, 26, 0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
                     </span>
                 </td>
                 <td class="acc-descricao">${r.descricao}</td>
@@ -7201,7 +7238,7 @@ tr.grupo-pausado td {
                             ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Pago</span>'
                             : hasAtrasadas
                                 ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Atrasado</span>'
-                                : '<span style="color:rgba(255,255,255,0.35);font-size:0.78em;">Pendente</span>'}
+                                : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>'}
                     </td>
                     <td class="${todasPagas ? 'valor-positivo' : 'valor-negativo'}" style="text-align:right;">
                         ${formatarMoeda(todasPagas ? (despesaRef.valor || 0) : totalPendente)}
@@ -7335,12 +7372,15 @@ tr.grupo-pausado td {
                     <td>
                         <div class="acc-progress-wrap">
                             <div class="acc-bar"><div class="acc-bar-fill parcela" style="width:${percentPago}%"></div></div>
-                            <span style="font-size:0.75em;color:rgba(255,255,255,0.4);white-space:nowrap;">${parcelasPagasCount}/${totalParcelas}</span>
+                            <span style="font-size:0.75em;color:rgba(26,26,26,0.4);white-space:nowrap;">${parcelasPagasCount}/${totalParcelas}</span>
                         </div>
                     </td>
                     <td class="acc-valor-total" style="text-align:right;">${formatarMoeda(valorTotal)}</td>
                     <td>
                         <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
+                            <button class="acc-delete-btn" onclick="editarDespesaParcelada && editarDespesaParcelada(${primeiraParcela.grupoParcelaId || primeiraParcela.id})" title="Editar" style="color:rgba(184,151,46,0.6);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
                             <button class="acc-delete-btn" onclick="deletarTodasParcelas(${primeiraParcela.id})" title="Excluir">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                             </button>
@@ -7389,14 +7429,14 @@ tr.grupo-pausado td {
                 ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Pago</span>'
                 : vencida
                     ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Vencido</span>'
-                    : '<span style="color:rgba(255,255,255,0.35);font-size:0.78em;">Pendente</span>';
+                    : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>';
             return `
                 <tr>
                     <td>
-                        <span class="acc-chevron" style="cursor:pointer;background:${d.pago ? 'rgba(46,204,113,0.15)' : 'rgba(255,255,255,0.07)'};"
+                        <span class="acc-chevron" style="cursor:pointer;background:${d.pago ? 'rgba(46,204,113,0.15)' : 'rgba(26, 26, 26, 0.07)'};"
                               onclick="togglePagoAvulsa(${d.id})" title="Marcar pago">
                             ${d.pago ? '<svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
+                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26, 26, 26, 0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
                         </span>
                     </td>
                     <td class="acc-descricao">${d.descricao}</td>
@@ -7454,12 +7494,14 @@ tr.grupo-pausado td {
                         </div>
                     </td>
                     <td>
-                        <button class="acc-delete-btn" onclick="event.stopPropagation();deletarEmprestimo(${e.id})" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
-                        </button>
+                        <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
+                            <button class="acc-delete-btn" onclick="editarEmprestimo(${e.id})" title="Editar" style="color:rgba(184,151,46,0.6);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="acc-delete-btn" onclick="deletarEmprestimo(${e.id})" title="Excluir">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 <tr class="acc-detail-row" id="${detailId}" style="display:none;">
@@ -7511,7 +7553,7 @@ tr.grupo-pausado td {
                         ${m.tipo === 'entrada' ? '+' : '-'} ${formatarMoeda(m.valor)}
                     </span>
                 </div>
-            `).join('') : '<div style="text-align: center; color: rgba(255,255,255,0.4); padding: 10px; font-size: 0.85em;">Nenhuma movimentação</div>';
+            `).join('') : '<div style="text-align: center; color: rgba(26, 26, 26, 0.4); padding: 10px; font-size: 0.85em;">Nenhuma movimentação</div>';
             
             return `
                 <div class="reserva-card" id="reserva-${reserva.id}">
@@ -7663,8 +7705,8 @@ tr.grupo-pausado td {
                         </div>
                     </div>
                     ${historicoComComprovantes ? `
-                        <div style="margin-top:15px;padding-top:15px;border-top:1px solid rgba(255,255,255,0.1);">
-                            <label style="font-size:0.8em;color:rgba(255,255,255,0.5);display:block;margin-bottom:8px;">Anexo: Comprovantes Salvos:</label>
+                        <div style="margin-top:15px;padding-top:15px;border-top:1px solid rgba(26, 26, 26, 0.1);">
+                            <label style="font-size:0.8em;color:rgba(26, 26, 26, 0.5);display:block;margin-bottom:8px;">Anexo: Comprovantes Salvos:</label>
                             ${historicoComComprovantes}
                         </div>
                     ` : ''}
@@ -7851,16 +7893,11 @@ tr.grupo-pausado td {
     document.getElementById('btnAtivos').addEventListener('click', function() {
         viewMode = 'ativos';
         this.classList.add('active');
-        document.getElementById('btnArquivados').classList.remove('active');
+        
         renderizar();
     });
 
-    document.getElementById('btnArquivados').addEventListener('click', function() {
-        viewMode = 'arquivados';
-        this.classList.add('active');
-        document.getElementById('btnAtivos').classList.remove('active');
-        renderizar();
-    });
+
 
     // ==========================================
     // INICIALIZAÇÃO
