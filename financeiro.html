@@ -395,6 +395,7 @@
 }
 .sections-grid .section-header {
     padding: 15px 18px;
+    background: linear-gradient(135deg, #fdfcf8 0%, #f8f6f0 100%);
 }
 .sections-grid .section-header h2 {
     font-size: 0.95em;
@@ -442,19 +443,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 25px;
-    background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+    padding: 18px 25px;
+    background: linear-gradient(135deg, #fdfcf8 0%, #f8f6f0 100%);
     border-bottom: 1px solid rgba(184, 151, 46, 0.12);
 }
 
 .section-header h2 {
     font-family: 'Playfair Display', serif;
-    font-size: 1.25em;
-    font-weight: 400;
+    font-size: 1.15em;
+    font-weight: 600;
     color: #1a1a1a;
     display: flex;
     align-items: center;
     gap: 10px;
+    letter-spacing: 0.3px;
 }
 
 .section-header .subtotal {
@@ -1426,7 +1428,7 @@ tr.grupo-pausado td {
     background: #1a1a1a;
     border: none;
     border-radius: 8px;
-    color: #1a1a1a;
+    color: #ffffff;
     font-size: 0.82em;
     font-weight: 600;
     cursor: pointer;
@@ -1466,13 +1468,16 @@ tr.grupo-pausado td {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 4px;
-    color: rgba(26,26,26,0.22);
+    padding: 6px;
+    color: rgba(26,26,26,0.35);
+    border-radius: 6px;
+    transition: all 0.2s;
     transition: color 0.2s;
     display: flex;
     align-items: center;
 }
-.acc-delete-btn:hover { color: #e74c3c; }
+.acc-delete-btn:hover { color: #e74c3c; background: rgba(231,76,60,0.08); }
+.acc-delete-btn[style*="rgba(184,151,46"]:hover { color: #8a6d1a; background: rgba(184,151,46,0.1); }
 .acc-delete-btn svg { width: 15px; height: 15px; }
 
 /* Linha quitação (barra de progresso col empréstimo) */
@@ -2374,8 +2379,9 @@ tr.grupo-pausado td {
 
 /* ========== RESUMO FINAL ========== */
 .resumo-final {
-    background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%);
-    border: 1px solid rgba(212, 175, 125, 0.2);
+    background: #ffffff;
+    border: 1px solid rgba(184, 151, 46, 0.15);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.05);
     border-radius: 18px;
     padding: 28px;
     margin-top: 30px;
@@ -2423,11 +2429,12 @@ tr.grupo-pausado td {
 
 /* ========== SUGESTÕES DE SABEDORIA FINANCEIRA ========== */
 .sugestoes-sabedoria {
-    background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
-    border: 1px solid rgba(212, 175, 125, 0.25);
+    background: #ffffff !important;
+    border: 1px solid rgba(184, 151, 46, 0.15);
     border-radius: 20px;
     padding: 30px;
     margin-top: 30px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
 }
 
 .sugestoes-header {
@@ -2445,7 +2452,7 @@ tr.grupo-pausado td {
 
 .sugestoes-subtitulo {
     font-size: 0.85em;
-    color: rgba(26, 26, 26, 0.4);
+    color: rgba(26, 26, 26, 0.45);
     font-style: italic;
 }
 
@@ -2471,10 +2478,10 @@ tr.grupo-pausado td {
 }
 
 .citacao-texto {
-    font-size: 1.1em;
-    color: #1a1a1a;
+    font-size: 0.97em;
+    color: #2a2a2a;
     font-style: italic;
-    line-height: 1.5;
+    line-height: 1.7;
     margin-bottom: 8px;
 }
 
@@ -2485,16 +2492,20 @@ tr.grupo-pausado td {
 
 /* Diagnóstico Financeiro */
 .diagnostico-container {
-    background: rgba(0, 0, 0, 0.3);
+    background: #f8f6f0 !important;
+    border: 1px solid rgba(26,26,26,0.06);
     border-radius: 15px;
     padding: 20px;
     margin-bottom: 25px;
 }
 
 .diagnostico-container h4 {
-    font-size: 1em;
-    color: #1a1a1a;
+    font-size: 0.85em;
+    color: rgba(26,26,26,0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
     margin-bottom: 15px;
+    font-weight: 500;
 }
 
 .diagnostico-grid {
@@ -2504,10 +2515,11 @@ tr.grupo-pausado td {
 }
 
 .diagnostico-item {
-    background: rgba(26, 26, 26, 0.03);
+    background: #ffffff !important;
     border-radius: 10px;
     padding: 15px;
     border-left: 3px solid;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
 }
 
 .diagnostico-item.otimo { border-left-color: #2ecc71; }
@@ -2547,7 +2559,7 @@ tr.grupo-pausado td {
 }
 
 .sugestao-card {
-    background: rgba(0, 0, 0, 0.25);
+    background: #ffffff !important;
     border-radius: 12px;
     padding: 18px 20px;
     margin-bottom: 12px;
@@ -2555,17 +2567,18 @@ tr.grupo-pausado td {
     display: flex;
     align-items: flex-start;
     gap: 15px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
 }
 
 .sugestao-card:last-child {
     margin-bottom: 0;
 }
 
-.sugestao-card.divida { border-left-color: #e74c3c; background: rgba(231, 76, 60, 0.05); }
-.sugestao-card.economia { border-left-color: #2ecc71; background: rgba(46, 204, 113, 0.05); }
-.sugestao-card.corte { border-left-color: #f39c12; background: rgba(243, 156, 18, 0.05); }
-.sugestao-card.investimento { border-left-color: #9b59b6; background: rgba(155, 89, 182, 0.05); }
-.sugestao-card.sabedoria { border-left-color: #8a6d1a; background: rgba(212, 175, 125, 0.05); }
+.sugestao-card.divida { border-left-color: #e74c3c; background: rgba(231, 76, 60, 0.04) !important; }
+.sugestao-card.economia { border-left-color: #2ecc71; background: rgba(46, 204, 113, 0.04) !important; }
+.sugestao-card.corte { border-left-color: #f39c12; background: rgba(243, 156, 18, 0.04) !important; }
+.sugestao-card.investimento { border-left-color: #9b59b6; background: rgba(155, 89, 182, 0.04) !important; }
+.sugestao-card.sabedoria { border-left-color: #b8972e; background: rgba(184, 151, 46, 0.04) !important; }
 
 .sugestao-icone {
     font-size: 1.5em;
@@ -2586,41 +2599,45 @@ tr.grupo-pausado td {
 }
 
 .sugestao-texto {
-    font-size: 0.9em;
+    font-size: 0.88em;
     color: rgba(26, 26, 26, 0.7);
-    line-height: 1.5;
+    line-height: 1.6;
     margin-bottom: 8px;
 }
 
 .sugestao-fonte {
     font-size: 0.75em;
-    color: rgba(212, 175, 125, 0.8);
+    color: #8a6d1a;
     font-style: italic;
 }
 
 .sugestao-acao {
-    font-size: 0.85em;
-    color: #8a6d1a;
-    font-weight: 500;
+    font-size: 0.82em;
+    color: #6b5212;
+    font-weight: 600;
     margin-top: 8px;
-    padding: 8px 12px;
-    background: rgba(212, 175, 125, 0.1);
+    padding: 6px 12px;
+    background: rgba(184, 151, 46, 0.1);
+    border: 1px solid rgba(184, 151, 46, 0.2);
     border-radius: 8px;
     display: inline-block;
 }
 
 /* Plano de Ação */
 .plano-acao {
-    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%);
-    border: 1px solid rgba(52, 152, 219, 0.2);
+    background: #f8f6f0 !important;
+    border: 1px solid rgba(26,26,26,0.06);
     border-radius: 15px;
     padding: 20px;
 }
 
 .plano-acao h4 {
-    font-size: 1em;
-    color: #1a1a1a;
+    font-size: 0.85em;
+    color: rgba(26,26,26,0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
     margin-bottom: 15px;
+    font-weight: 500;
 }
 
 .plano-lista {
@@ -2634,8 +2651,10 @@ tr.grupo-pausado td {
     align-items: center;
     gap: 12px;
     padding: 12px 15px;
-    background: rgba(0, 0, 0, 0.2);
+    background: #ffffff !important;
     border-radius: 10px;
+    border: 1px solid rgba(26,26,26,0.05);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
 }
 
 .plano-numero {
@@ -2648,7 +2667,7 @@ tr.grupo-pausado td {
     justify-content: center;
     font-size: 0.85em;
     font-weight: 600;
-    color: #1a1a1a;
+    color: #fff;
     flex-shrink: 0;
 }
 
