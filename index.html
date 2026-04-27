@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#040404">
-    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#f0ede6">
+    <meta name="color-scheme" content="light">
     <title>ZARA | Private Access</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --black: #040404;
-            --black-rich: #080808;
-            --surface: #0c0c0c;
-            --surface2: #111111;
-            --gold: #c9a55c;
-            --gold-light: #d4b06a;
-            --gold-dark: #a08040;
-            --gold-glow: rgba(201, 165, 92, 0.08);
-            --gold-border: rgba(201, 165, 92, 0.15);
-            --text: #f5f5f5;
-            --text-dim: rgba(245, 245, 245, 0.55);
-            --text-muted: rgba(245, 245, 245, 0.35);
+            --black: #f0ede6;
+            --black-rich: #f5f3ee;
+            --surface: #ffffff;
+            --surface2: #fdfcf8;
+            --gold: #8a6d1a;
+            --gold-light: #b8972e;
+            --gold-dark: #5a4a0e;
+            --gold-glow: rgba(184, 151, 46, 0.07);
+            --gold-border: rgba(184, 151, 46, 0.15);
+            --text: #1a1a1a;
+            --text-dim: rgba(26, 26, 26, 0.6);
+            --text-muted: rgba(26, 26, 26, 0.4);
         }
 
         * {
@@ -30,7 +30,7 @@
         }
 
         html, body {
-            background: var(--black);
+            background: #f0ede6;
         }
 
         body {
@@ -103,13 +103,13 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            background: var(--black);
+            background: #f8f6f0;
             transition: all 0.5s ease;
         }
 
         .logo:hover {
             border-color: var(--gold);
-            box-shadow: 0 0 40px rgba(201, 165, 92, 0.1);
+            box-shadow: 0 0 40px rgba(184,151,46,0.12);
         }
 
         .logo-text {
@@ -123,22 +123,21 @@
         /* Title */
         h1 {
             font-family: 'Playfair Display', serif;
-            color: var(--text);
+            color: #111111;
             font-size: 2.8em;
-            font-weight: 400;
+            font-weight: 500;
             letter-spacing: 12px;
             margin-bottom: 12px;
             text-transform: uppercase;
         }
 
         .subtitle {
-            color: var(--gold);
+            color: #8a6d1a;
             font-size: 0.7em;
             margin-bottom: 50px;
-            font-weight: 400;
+            font-weight: 500;
             letter-spacing: 6px;
             text-transform: uppercase;
-            opacity: 0.8;
         }
 
         /* Divider */
@@ -153,11 +152,12 @@
         .menu {
             display: flex;
             flex-direction: column;
-            gap: 1px;
-            background: var(--gold-border);
+            gap: 0;
+            background: rgba(184,151,46,0.1);
             border-radius: 16px;
             overflow: hidden;
-            border: 1px solid var(--gold-border);
+            border: 1px solid rgba(184,151,46,0.15);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
         }
 
         .menu-item {
@@ -170,6 +170,7 @@
             color: var(--text);
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
+            border-bottom: 1px solid rgba(184,151,46,0.06);
         }
 
         .menu-item::before {
@@ -189,7 +190,7 @@
         }
 
         .menu-item:hover {
-            background: var(--surface2);
+            background: #fdfcf8;
         }
 
         .menu-item .icon {
@@ -201,7 +202,7 @@
             border: 1px solid var(--gold-border);
             border-radius: 12px;
             transition: all 0.4s ease;
-            background: var(--black);
+            background: #f8f6f0;
         }
 
         .menu-item .icon svg {
@@ -259,7 +260,7 @@
         /* Footer */
         .footer {
             margin-top: 60px;
-            color: var(--text-muted);
+            color: rgba(26,26,26,0.35);
             font-size: 0.65em;
             letter-spacing: 3px;
             text-transform: uppercase;
@@ -368,25 +369,6 @@
                     </svg>
                 </div>
             </a>
-            
-            <a href="profissional.html" class="menu-item">
-                <div class="icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                    </svg>
-                </div>
-                <div class="text">
-                    <h3>Profissional</h3>
-                    <p>Apostas e controle</p>
-                </div>
-                <div class="arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <polyline points="9 18 15 12 9 6"/>
-                    </svg>
-                </div>
-            </a>
-            
             <a href="agenda.html" class="menu-item">
                 <div class="icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
