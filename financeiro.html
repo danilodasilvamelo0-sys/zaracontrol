@@ -4831,36 +4831,26 @@ tr.grupo-pausado td {
     }
 
     function toggleRecebido(id) {
-        // Procurar nas receitas antigas
-        let item = financeiro.receitas.find(r => r.id === id);
-        if (item) {
-            item.recebido = !item.recebido;
-            salvarDados();
-            renderizar();
-            return;
-        }
-        
-        // Procurar nas receitas fixas (por mês)
-        const key = getMesAnoKey();
-        item = (financeiro.receitasMes[key] || []).find(r => r.id === id);
-        if (item) {
-            item.recebido = !item.recebido;
-            salvarDados();
-            renderizar();
-            return;
+        id = Number(id);
+        let item = financeiro.receitas.find(r => Number(r.id) === id);
+        if (item) { item.recebido = !item.recebido; salvarDados(); renderizar(); return; }
+
+        // Buscar em todos os meses
+        for (const key of Object.keys(financeiro.receitasMes || {})) {
+            item = (financeiro.receitasMes[key] || []).find(r => Number(r.id) === id);
+            if (item) { item.recebido = !item.recebido; salvarDados(); renderizar(); return; }
         }
 
-        // Procurar nas receitas variáveis (avulsas)
-        item = financeiro.receitasAvulsas.find(r => r.id === id);
-        if (item) {
-            item.recebido = !item.recebido;
-            salvarDados();
-            renderizar();
-        }
+        item = financeiro.receitasAvulsas.find(r => Number(r.id) === id);
+        if (item) { item.recebido = !item.recebido; salvarDados(); renderizar(); }
     }
 
     function deletarReceita(id) {
-        let idx = financeiro.receitas.findIndex(r => r.id === id);
+        // Normalizar id para número (vem como number do onclick)
+        id = Number(id);
+
+        // 1. Buscar em financeiro.receitas (legado)
+        let idx = financeiro.receitas.findIndex(r => Number(r.id) === id);
         if (idx !== -1) {
             confirmar('Excluir esta receita permanentemente?', () => {
                 financeiro.receitas.splice(idx, 1);
@@ -4868,23 +4858,35 @@ tr.grupo-pausado td {
             });
             return;
         }
-        const key = getMesAnoKey();
-        const receitasMes = financeiro.receitasMes[key] || [];
-        const receita = receitasMes.find(r => r.id === id);
-        if (receita) {
-            confirmar('Excluir esta receita do mês atual?', () => {
-                financeiro.receitasMes[key] = receitasMes.filter(r => r.id !== id);
-                salvarDados(); renderizar();
-            });
-            return;
+
+        // 2. Buscar em TODOS os meses de receitasMes (não só o mês atual)
+        for (const key of Object.keys(financeiro.receitasMes || {})) {
+            const arr = financeiro.receitasMes[key] || [];
+            const idx2 = arr.findIndex(r => Number(r.id) === id);
+            if (idx2 !== -1) {
+                const receita = arr[idx2];
+                const msg = receita.recorrente
+                    ? 'Excluir apenas esta ocorrência da receita recorrente neste mês?'
+                    : 'Excluir esta receita permanentemente?';
+                confirmar(msg, () => {
+                    financeiro.receitasMes[key] = arr.filter(r => Number(r.id) !== id);
+                    salvarDados(); renderizar();
+                });
+                return;
+            }
         }
-        idx = financeiro.receitasAvulsas.findIndex(r => r.id === id);
+
+        // 3. Buscar em receitasAvulsas
+        idx = financeiro.receitasAvulsas.findIndex(r => Number(r.id) === id);
         if (idx !== -1) {
             confirmar('Excluir esta receita variável?', () => {
                 financeiro.receitasAvulsas.splice(idx, 1);
                 salvarDados(); renderizar();
             });
+            return;
         }
+
+        console.warn('deletarReceita: id não encontrado:', id);
     }
 
     function encerrarReceitaRecorrente(modeloId) {
@@ -4925,22 +4927,25 @@ tr.grupo-pausado td {
     }
 
     function editarReceita(id) {
-        // Procurar nas receitas antigas
-        let item = financeiro.receitas.find(r => r.id === id);
+        id = Number(id);
+        let item = financeiro.receitas.find(r => Number(r.id) === id);
         let isNovoSistema = false;
         let isAvulsa = false;
-        
+
         if (!item) {
-            const key = getMesAnoKey();
-            item = (financeiro.receitasMes[key] || []).find(r => r.id === id);
+            // Buscar em TODOS os meses
+            for (const key of Object.keys(financeiro.receitasMes || {})) {
+                item = (financeiro.receitasMes[key] || []).find(r => Number(r.id) === id);
+                if (item) break;
+            }
             isNovoSistema = true;
         }
         if (!item) {
-            item = financeiro.receitasAvulsas.find(r => r.id === id);
+            item = financeiro.receitasAvulsas.find(r => Number(r.id) === id);
             isAvulsa = true;
             isNovoSistema = false;
         }
-        if (!item) return;
+        if (!item) { console.warn('editarReceita: id não encontrado:', id); return; }
 
         itemEditando = { tipo: 'receita', id: id, isNovoSistema: isNovoSistema, isAvulsa: isAvulsa };
         
@@ -4977,14 +4982,18 @@ tr.grupo-pausado td {
 
     function salvarEdicaoReceita() {
         let item = null;
-        
+        const eid = Number(itemEditando.id);
+
         if (itemEditando.isAvulsa) {
-            item = financeiro.receitasAvulsas.find(r => r.id === itemEditando.id);
+            item = financeiro.receitasAvulsas.find(r => Number(r.id) === eid);
         } else if (itemEditando.isNovoSistema) {
-            const key = getMesAnoKey();
-            item = (financeiro.receitasMes[key] || []).find(r => r.id === itemEditando.id);
+            // Buscar em todos os meses
+            for (const key of Object.keys(financeiro.receitasMes || {})) {
+                item = (financeiro.receitasMes[key] || []).find(r => Number(r.id) === eid);
+                if (item) break;
+            }
         } else {
-            item = financeiro.receitas.find(r => r.id === itemEditando.id);
+            item = financeiro.receitas.find(r => Number(r.id) === eid);
         }
         
         if (item) {
