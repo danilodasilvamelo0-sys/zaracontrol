@@ -1073,12 +1073,12 @@ tr.grupo-pausado td {
 /* ========== FORMULÁRIOS ========== */
 .form-container {
     display: none;
-    background: #1c1c1e;
+    background: #ffffff;
     border-radius: 14px;
     padding: 25px;
     margin-bottom: 20px;
-    border: 1px solid rgba(255,255,255,0.06);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    border: 1px solid rgba(184,151,46,0.15);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
 }
 
 .form-container.active {
@@ -1155,12 +1155,12 @@ tr.grupo-pausado td {
 }
 .form-group textarea::placeholder { color: rgba(26,26,26,0.35); }
 .form-container .form-group textarea {
-    background: #2a2a2e;
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #fff;
+    background: #f8f6f0;
+    border: 1px solid rgba(26,26,26,0.12);
+    color: #1a1a1a;
 }
-.form-container .form-group textarea:focus { background: #313136; border-color: #b8972e; }
-.form-container .form-group textarea::placeholder { color: rgba(255,255,255,0.3); }
+.form-container .form-group textarea:focus { background: #fff; border-color: #b8972e; box-shadow: 0 0 0 3px rgba(184,151,46,0.1); }
+.form-container .form-group textarea::placeholder { color: rgba(26,26,26,0.35); }
 .form-group input[type="file"] {
     padding: 11px;
     font-size: 0.9em;
@@ -4040,6 +4040,22 @@ tr.grupo-pausado td {
 </div>
     </div>
 
+<!-- Modal de Confirmação Customizado (substitui confirm() nativo) -->
+<div class="modal" id="modalConfirm" style="z-index:99999;">
+    <div class="modal-content" style="max-width:380px;">
+        <div class="modal-header" style="padding:20px 24px;">
+            <h3 id="modalConfirmTitle" style="font-size:1.1em;">Confirmar</h3>
+        </div>
+        <div class="modal-body" style="padding:16px 24px 24px;">
+            <p id="modalConfirmMsg" style="color:rgba(26,26,26,0.75);font-size:0.95em;line-height:1.5;margin-bottom:20px;"></p>
+            <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <button class="btn-cancelar" onclick="confirmarResposta(false)" style="padding:10px 20px;">Cancelar</button>
+                <button id="modalConfirmOkBtn" class="btn-salvar" onclick="confirmarResposta(true)" style="padding:10px 20px;background:#e74c3c;">Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -4347,6 +4363,32 @@ tr.grupo-pausado td {
     function fecharModal(id) {
         document.getElementById(id).classList.remove('active');
     }
+
+    // ==========================================
+    // MODAL DE CONFIRMAÇÃO (substitui confirm() nativo)
+    // ==========================================
+    let _confirmCallback = null;
+
+    function confirmar(mensagem, callback, titulo = 'Confirmar exclusão', okLabel = 'Excluir', okColor = '#e74c3c') {
+        document.getElementById('modalConfirmMsg').textContent = mensagem;
+        document.getElementById('modalConfirmTitle').textContent = titulo;
+        const btn = document.getElementById('modalConfirmOkBtn');
+        btn.textContent = okLabel;
+        btn.style.background = okColor;
+        _confirmCallback = callback;
+        document.getElementById('modalConfirm').classList.add('active');
+    }
+
+    function confirmarResposta(ok) {
+        document.getElementById('modalConfirm').classList.remove('active');
+        if (_confirmCallback) {
+            const cb = _confirmCallback;
+            _confirmCallback = null;
+            if (ok) cb();
+        }
+    }
+
+
 
     // Fechar modal ao clicar no X ou fora
     document.querySelectorAll('.modal-close').forEach(btn => {
@@ -4818,74 +4860,46 @@ tr.grupo-pausado td {
     }
 
     function deletarReceita(id) {
-        // Procurar nas receitas antigas
         let idx = financeiro.receitas.findIndex(r => r.id === id);
         if (idx !== -1) {
-            if (!confirm('Excluir esta receita?')) return;
-            financeiro.receitas.splice(idx, 1);
-            salvarDados();
-            renderizar();
+            confirmar('Excluir esta receita permanentemente?', () => {
+                financeiro.receitas.splice(idx, 1);
+                salvarDados(); renderizar();
+            });
             return;
         }
-        
-        // Procurar nas receitas fixas do mês
         const key = getMesAnoKey();
         const receitasMes = financeiro.receitasMes[key] || [];
         const receita = receitasMes.find(r => r.id === id);
-        
-        if (receita && receita.recorrente && receita.modeloId) {
-            const opcao = confirm(
-                'Esta é uma receita recorrente.\n\n' +
-                'OK = Excluir APENAS esta do mês atual\n' +
-                'Cancelar = Não excluir'
-            );
-            
-            if (opcao) {
-                financeiro.receitasMes[key] = receitasMes.filter(r => r.id !== id);
-                salvarDados();
-                renderizar();
-            }
-            return;
-        }
-        
         if (receita) {
-            if (!confirm('Excluir esta receita?')) return;
-            financeiro.receitasMes[key] = receitasMes.filter(r => r.id !== id);
-            salvarDados();
-            renderizar();
+            confirmar('Excluir esta receita do mês atual?', () => {
+                financeiro.receitasMes[key] = receitasMes.filter(r => r.id !== id);
+                salvarDados(); renderizar();
+            });
             return;
         }
-
-        // Procurar nas receitas variáveis (avulsas)
         idx = financeiro.receitasAvulsas.findIndex(r => r.id === id);
         if (idx !== -1) {
-            if (!confirm('Excluir esta receita variável?')) return;
-            financeiro.receitasAvulsas.splice(idx, 1);
-            salvarDados();
-            renderizar();
+            confirmar('Excluir esta receita variável?', () => {
+                financeiro.receitasAvulsas.splice(idx, 1);
+                salvarDados(); renderizar();
+            });
         }
     }
 
     function encerrarReceitaRecorrente(modeloId) {
         const modelo = financeiro.receitasFixas.find(rf => rf.id === modeloId);
         if (!modelo) return;
-
-        if (!confirm(`Encerrar receita recorrente "${modelo.descricao}"?\n\nIsso removerá esta receita dos meses FUTUROS.`)) return;
-
-        // Desativar o modelo
-        modelo.ativa = false;
-
-        // Remover instâncias futuras (meses após o atual)
-        const keyAtual = getMesAnoKey();
-        Object.keys(financeiro.receitasMes).forEach(key => {
-            if (key > keyAtual) {
-                financeiro.receitasMes[key] = (financeiro.receitasMes[key] || []).filter(r => r.modeloId !== modeloId);
-            }
-        });
-
-        salvarDados();
-        renderizar();
-        mostrarStatus('Receita recorrente encerrada', 'success');
+        confirmar(`Encerrar receita recorrente "${modelo.descricao}"? Ela deixará de aparecer nos próximos meses.`, () => {
+            modelo.ativa = false;
+            const keyAtual = getMesAnoKey();
+            Object.keys(financeiro.receitasMes).forEach(key => {
+                if (key > keyAtual)
+                    financeiro.receitasMes[key] = (financeiro.receitasMes[key] || []).filter(r => r.modeloId !== modeloId);
+            });
+            salvarDados(); renderizar();
+            mostrarStatus('Receita recorrente encerrada', 'success');
+        }, 'Encerrar Receita', 'Encerrar', '#e67e22');
     }
 
     function arquivarReceita(id) {
@@ -5424,18 +5438,16 @@ tr.grupo-pausado td {
         renderizar();
     }
 
-    // Encerrar despesa fixa (não aparece mais nos próximos meses)
     function encerrarDespesaFixa(modeloId) {
-        if (!confirm('Encerrar esta despesa fixa?\nEla não aparecerá nos próximos meses, mas o histórico será mantido.')) return;
-        
-        const modelo = financeiro.despesasFixas.find(df => df.id === modeloId);
-        if (modelo) {
-            modelo.ativa = false;
-            modelo.encerradaEm = new Date().toISOString();
-            salvarDados();
-            renderizar();
-            mostrarStatus('Despesa encerrada', 'success');
-        }
+        confirmar('Encerrar esta despesa fixa? Ela não aparecerá nos próximos meses, mas o histórico é mantido.', () => {
+            const modelo = financeiro.despesasFixas.find(df => df.id === modeloId);
+            if (modelo) {
+                modelo.ativa = false;
+                modelo.encerradaEm = new Date().toISOString();
+                salvarDados(); renderizar();
+                mostrarStatus('Despesa encerrada', 'success');
+            }
+        }, 'Encerrar Despesa', 'Encerrar', '#e67e22');
     }
 
     // ==========================================
@@ -5563,10 +5575,10 @@ tr.grupo-pausado td {
     }
 
     function deletarDespesaVariavel(id) {
-        if (!confirm('Excluir esta despesa?')) return;
-        financeiro.despesasVariaveis = financeiro.despesasVariaveis.filter(d => d.id !== id);
-        salvarDados();
-        renderizar();
+        confirmar('Excluir esta despesa?', () => {
+            financeiro.despesasVariaveis = financeiro.despesasVariaveis.filter(d => d.id !== id);
+            salvarDados(); renderizar();
+        });
     }
 
     // ==========================================
@@ -5669,14 +5681,16 @@ tr.grupo-pausado td {
         const nome = parcelasDoGrupo[0].descricao;
         const totalRestante = parcelasDoGrupo.reduce((s, p) => s + p.valor, 0);
 
-        if (!confirm(
-            `Quitar "${nome}"?\n\n` +
-            `${parcelasDoGrupo.length} parcelas pendentes\n` +
-            `Total: ${formatarMoeda(totalRestante)}\n\n` +
-            `Todas serão movidas para o mês atual e marcadas como pagas.`
-        )) return;
+        confirmar(
+            `Quitar "${nome}"? ${parcelasDoGrupo.length} parcelas pendentes. Total: ${formatarMoeda(totalRestante)}. Todas serão marcadas como pagas.`,
+            () => { _doQuitarParcelas(parcelasDoGrupo); },
+            'Quitar Dívida', 'Quitar', '#27ae60'
+        ); return;
 
-        // Usar data de HOJE (não o mês selecionado na tela)
+        // (bloco movido para _doQuitarParcelas)
+    }
+
+    function _doQuitarParcelas(parcelasDoGrupo) {
         const hoje = new Date();
         const hojeStr = hoje.toISOString().split('T')[0];
         const mesHoje = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
@@ -6214,10 +6228,10 @@ tr.grupo-pausado td {
     }
 
     function deletarDespesaAvulsa(id) {
-        if (!confirm('Excluir esta despesa variável?')) return;
-        financeiro.despesasAvulsas = financeiro.despesasAvulsas.filter(d => d.id !== id);
-        salvarDados();
-        renderizar();
+        confirmar('Excluir esta despesa variável?', () => {
+            financeiro.despesasAvulsas = financeiro.despesasAvulsas.filter(d => d.id !== id);
+            salvarDados(); renderizar();
+        });
     }
 
     // ==========================================
@@ -6520,10 +6534,10 @@ tr.grupo-pausado td {
     }
 
     function deletarEmprestimo(id) {
-        if (!confirm('Excluir este empréstimo e todo seu histórico?')) return;
-        financeiro.emprestimos = financeiro.emprestimos.filter(e => e.id !== id);
-        salvarDados();
-        renderizar();
+        confirmar('Excluir este empréstimo e todo seu histórico?', () => {
+            financeiro.emprestimos = financeiro.emprestimos.filter(e => e.id !== id);
+            salvarDados(); renderizar();
+        });
     }
 
     // Toggle menu de ações
@@ -6662,22 +6676,16 @@ tr.grupo-pausado td {
     function restaurarEmprestimo(id) {
         const emp = financeiro.emprestimos.find(e => e.id === id);
         if (!emp) return;
-        
-        const confirma = confirm(
-            `Restaurar "${emp.descricao}"?\n\n` +
-            `A dívida voltará para a lista de dívidas ativas.\n` +
-            `Saldo devedor: ${formatarMoeda(emp.principal || 0)}`
+        confirmar(
+            `Restaurar "${emp.descricao}"? A dívida voltará para a lista ativa. Saldo: ${formatarMoeda(emp.principal || 0)}`,
+            () => {
+                emp.arquivado = false;
+                emp.arquivadoEm = null;
+                salvarDados(); renderizar();
+                mostrarStatus('Dívida restaurada para lista ativa', 'success');
+            },
+            'Restaurar Dívida', 'Restaurar', '#27ae60'
         );
-        
-        if (!confirma) return;
-        
-        // Remover flags de arquivamento
-        emp.arquivado = false;
-        emp.arquivadoEm = null;
-        
-        salvarDados();
-        renderizar();
-        mostrarStatus('Dívida restaurada para lista ativa', 'success');
     }
 
     // ==========================================
@@ -6723,7 +6731,7 @@ tr.grupo-pausado td {
         const reserva = financeiro.economias.find(e => e.id === id);
         if (!reserva) return;
         
-        if (!confirm(`Excluir a reserva "${reserva.descricao}"?\n\nSaldo atual: ${formatarMoeda(reserva.saldo || 0)}\nTodo o histórico será perdido.`)) return;
+        // já tratado via confirmar()
         
         financeiro.economias = financeiro.economias.filter(e => e.id !== id);
         salvarDados();
