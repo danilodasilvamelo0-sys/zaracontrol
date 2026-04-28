@@ -1164,7 +1164,7 @@ tr.grupo-pausado td {
 .form-group input[type="file"] {
     padding: 11px;
     font-size: 0.9em;
-    color: rgba(255,255,255,0.7);
+    color: rgba(26,26,26,0.6);
 }
 
 .form-buttons {
@@ -1256,8 +1256,11 @@ tr.grupo-pausado td {
     transition: background 0.2s;
 }
 
-.accordion-table tbody tr.acc-row:hover {
-    background: rgba(184, 151, 46, 0.05);
+.accordion-table tbody tr.acc-row td[onclick]:hover {
+    background: rgba(184, 151, 46, 0.06);
+}
+.accordion-table tbody tr.acc-row:hover td {
+    background: rgba(184, 151, 46, 0.03);
 }
 
 .accordion-table tbody tr.acc-detail-row td {
@@ -1471,7 +1474,7 @@ tr.grupo-pausado td {
 /* Cor texto tabela acc */
 .acc-descricao { font-weight: 600; color: #111111; }
 .acc-condicao { color: rgba(26,26,26,0.65); font-size: 0.85em; }
-.acc-valor-total { font-weight: 600; color: #fff; }
+.acc-valor-total { font-weight: 700; color: #111111; }
 .acc-juros-val { color: #e74c3c; font-weight: 500; }
 .acc-saldo-val { color: #e74c3c; }
 .acc-original-val { color: rgba(26,26,26,0.8); font-weight: 500; }
@@ -2677,7 +2680,7 @@ tr.grupo-pausado td {
     justify-content: center;
     font-size: 0.85em;
     font-weight: 600;
-    color: #fff;
+    color: #ffffff;
     flex-shrink: 0;
 }
 
@@ -6445,7 +6448,7 @@ tr.grupo-pausado td {
         const detail = document.getElementById(detailId);
         const chev = document.getElementById('chev-' + detailId);
         if (!detail) return;
-        const isOpen = detail.style.display !== 'none';
+        const isOpen = detail.style.display === 'table-row';
         detail.style.display = isOpen ? 'none' : 'table-row';
         if (chev) chev.classList.toggle('open', !isOpen);
     }
@@ -7180,13 +7183,13 @@ tr.grupo-pausado td {
             const hasAtrasadas = atrasadas.length > 0;
 
             htmlFixas += `
-                <tr class="acc-row" onclick="toggleAccordion('${detailId}', this)">
-                    <td>
+                <tr class="acc-row">
+                    <td style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
                         <span class="acc-chevron" id="chev-${detailId}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </span>
                     </td>
-                    <td class="acc-descricao">${despesaRef.descricao}</td>
+                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">${despesaRef.descricao}</td>
                     <td><span class="categoria">${despesaRef.categoria}</span></td>
                     <td class="acc-condicao">${formatarData(despesaRef.dia ? (getMesAnoKey() + '-' + String(despesaRef.dia).padStart(2,'0')) : despesaRef.data)}</td>
                     <td>
@@ -7311,15 +7314,15 @@ tr.grupo-pausado td {
             const condicao = `${totalParcelas}x de ${formatarMoeda(primeiraParcela.valor)}`;
 
             htmlVariaveis += `
-                <tr class="acc-row${estaPausado ? ' grupo-pausado' : ''}" onclick="toggleAccordion('${detailId}', this)">
-                    <td>
+                <tr class="acc-row${estaPausado ? ' grupo-pausado' : ''}">
+                    <td style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
                         <span class="acc-chevron" id="chev-${detailId}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                         </span>
                     </td>
-                    <td class="acc-descricao">
+                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
                         ${primeiraParcela.descricao}
                         ${estaPausado ? '<span class="badge pausado" style="margin-left:6px;">⏸</span>' : ''}
                         ${atrasadasDoGrupo.length > 0 ? `<span style="margin-left:6px;background:rgba(231,76,60,0.15);color:#e74c3c;padding:2px 7px;border-radius:8px;font-size:0.72em;font-weight:600;">${atrasadasDoGrupo.length} em atraso</span>` : ''}
@@ -7431,15 +7434,15 @@ tr.grupo-pausado td {
                 : '<div class="emp-historico-vazio">Nenhum histórico registrado.</div>';
 
             return `
-                <tr class="acc-row" onclick="toggleAccordion('${detailId}', this)">
-                    <td>
+                <tr class="acc-row">
+                    <td style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
                         <span class="acc-chevron" id="chev-${detailId}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                         </span>
                     </td>
-                    <td class="acc-descricao">${e.descricao}</td>
+                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">${e.descricao}</td>
                     <td class="acc-taxa-val">${e.taxaJuros}% a.m.</td>
                     <td class="acc-original-val">${formatarMoeda(e.principalOriginal)}</td>
                     <td class="acc-saldo-val">${formatarMoeda(e.principal)}</td>
