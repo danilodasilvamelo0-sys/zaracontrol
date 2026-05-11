@@ -3571,34 +3571,28 @@ tr.grupo-pausado td {
     }
     @media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } }
     
-/* ── Modal edição de parcela individual ── */
-.parcela-item {
-    position: relative;
-}
-.parcela-item .parcela-edit-btn {
-    position: absolute;
-    top: 6px; right: 6px;
-    width: 22px; height: 22px;
-    border-radius: 6px; border: none;
-    background: rgba(184,151,46,0.12);
-    color: #8a6d1a; cursor: pointer;
-    display: none; align-items: center; justify-content: center;
-    transition: all 0.2s;
-}
-.parcela-item:hover .parcela-edit-btn { display: flex; }
-.parcela-item .parcela-edit-btn:hover { background: rgba(184,151,46,0.25); }
-.parcela-item .parcela-edit-btn svg { width: 11px; height: 11px; stroke: currentColor; }
-
+/* ── Parcela nota ── */
 .parcela-nota-txt {
     font-size: 0.68em;
     color: rgba(26,26,26,0.45);
     font-style: italic;
     margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 120px;
 }
+
+/* ── Parcela edit inline ── */
+.parcela-edit-inline {
+    width: 26px; height: 26px;
+    border-radius: 7px; border: 1px solid rgba(184,151,46,0.2);
+    background: rgba(184,151,46,0.08);
+    color: #8a6d1a; cursor: pointer; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+}
+.parcela-edit-inline:hover {
+    background: rgba(184,151,46,0.2);
+    border-color: rgba(184,151,46,0.5);
+}
+.parcela-edit-inline svg { width: 12px; height: 12px; stroke: currentColor; }
 </style>
 
 </head>
@@ -7561,17 +7555,19 @@ tr.grupo-pausado td {
                                     const hoje2 = new Date(); hoje2.setHours(0,0,0,0);
                                     const isVencida = dataP && dataP < hoje2 && !isPago;
                                     return `
-                                        <div class="parcela-item${isPago ? ' pago' : ''}${isVencida ? ' vencida' : ''}" onclick="togglePagoVariavel(${p.id})">
-                                            <div class="parcela-check${isPago ? ' checked' : ''}"></div>
-                                            <div class="parcela-info-box">
+                                        <div class="parcela-item${isPago ? ' pago' : ''}${isVencida ? ' vencida' : ''}">
+                                            <div class="parcela-check${isPago ? ' checked' : ''}" onclick="event.stopPropagation();togglePagoVariavel(${p.id})" style="cursor:pointer;"></div>
+                                            <div class="parcela-info-box" onclick="event.stopPropagation();togglePagoVariavel(${p.id})" style="cursor:pointer;flex:1;">
                                                 <div class="parcela-nome">Parcela ${p.parcelaAtual}/${p.totalParcelas}</div>
                                                 <div class="parcela-data-txt">${p.data ? p.data.split('-').reverse().join('/') : '—'}</div>
-                                                ${p.notaParcela ? `<div class="parcela-nota-txt">${p.notaParcela}</div>` : ''}
+                                                ${p.notaParcela ? `<div class="parcela-nota-txt">📝 ${p.notaParcela}</div>` : ''}
                                             </div>
-                                            <div class="parcela-valor-txt">${formatarMoeda(p.valor)}</div>
-                                            <button class="parcela-edit-btn" onclick="event.stopPropagation();editarParcelaIndividual(${p.id})" title="Editar parcela">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                            </button>
+                                            <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                                                <div class="parcela-valor-txt">${formatarMoeda(p.valor)}</div>
+                                                <button class="parcela-edit-inline" onclick="event.stopPropagation();editarParcelaIndividual(${p.id})" title="Editar valor/data/nota desta parcela">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                                </button>
+                                            </div>
                                         </div>
                                     `;
                                 }).join('')}
