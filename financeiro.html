@@ -4343,28 +4343,28 @@ tr.grupo-pausado td {
     // Funções auxiliares para visualizar comprovantes por tipo
     function verComprovanteFixa(id) {
         const key = getMesAnoKey();
-        const item = financeiro.despesasFixasMes[key]?.find(d => d.id === id);
+        const item = financeiro.despesasFixasMes[key]?.find(d => String(d.id) === String(id));
         if (item?.comprovante) {
             verComprovante(item.comprovante);
         }
     }
 
     function verComprovanteVariavel(id) {
-        const item = financeiro.despesasVariaveis.find(d => d.id === id);
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
         if (item?.comprovante) {
             verComprovante(item.comprovante);
         }
     }
 
     function verComprovanteAvulsa(id) {
-        const item = financeiro.despesasAvulsas.find(d => d.id === id);
+        const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(id));
         if (item?.comprovante) {
             verComprovante(item.comprovante);
         }
     }
 
     function verComprovanteHistorico(emprestimoId, historicoIdx) {
-        const emp = financeiro.emprestimos.find(e => e.id === emprestimoId);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoId));
         if (emp?.historico?.[historicoIdx]?.comprovante) {
             verComprovante(emp.historico[historicoIdx].comprovante);
         }
@@ -4372,9 +4372,9 @@ tr.grupo-pausado td {
 
     function verComprovanteHistoricoArquivado(emprestimoId, historicoIdx) {
         // Busca tanto em ativos quanto em arquivados
-        let emp = financeiro.emprestimos.find(e => e.id === emprestimoId);
+        let emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoId));
         if (!emp) {
-            emp = financeiro.arquivados?.emprestimos?.find(e => e.id === emprestimoId);
+            emp = financeiro.arquivados?.emprestimos?.find(e => String(e.id) === String(emprestimoId));
         }
         if (emp?.historico?.[historicoIdx]?.comprovante) {
             verComprovante(emp.historico[historicoIdx].comprovante);
@@ -4940,7 +4940,7 @@ tr.grupo-pausado td {
     }
 
     function encerrarReceitaRecorrente(modeloId) {
-        const modelo = financeiro.receitasFixas.find(rf => rf.id === modeloId);
+        const modelo = financeiro.receitasFixas.find(rf => String(rf.id) === String(modeloId));
         if (!modelo) return;
         confirmar(`Encerrar receita recorrente "${modelo.descricao}"? Ela deixará de aparecer nos próximos meses.`, () => {
             modelo.ativa = false;
@@ -4956,7 +4956,7 @@ tr.grupo-pausado td {
 
     function arquivarReceita(id) {
         // Procurar nas receitas antigas
-        let idx = financeiro.receitas.findIndex(r => r.id === id);
+        let idx = financeiro.receitas.findIndex(r => String(r.id) === String(id));
         if (idx !== -1) {
             const item = financeiro.receitas.splice(idx, 1)[0];
             financeiro.arquivados.receitas.push(item);
@@ -4967,7 +4967,7 @@ tr.grupo-pausado td {
         
         // Procurar nas receitas do mês
         const key = getMesAnoKey();
-        idx = (financeiro.receitasMes[key] || []).findIndex(r => r.id === id);
+        idx = (financeiro.receitasMes[key] || []).findIndex(r => String(r.id) === String(id));
         if (idx !== -1) {
             const item = financeiro.receitasMes[key].splice(idx, 1)[0];
             financeiro.arquivados.receitas.push(item);
@@ -5122,7 +5122,7 @@ tr.grupo-pausado td {
         // LIMPAR instâncias atrasadas cujo original já foi pago
         financeiro.despesasFixasMes[key] = financeiro.despesasFixasMes[key].filter(d => {
             if (d.atrasada && d.idOriginal && d.mesOriginal) {
-                const original = (financeiro.despesasFixasMes[d.mesOriginal] || []).find(o => o.id === d.idOriginal);
+                const original = (financeiro.despesasFixasMes[d.mesOriginal] || []).find(o => String(o.id) === String(d.idOriginal));
                 // Se o original foi pago, remover a instância atrasada (a menos que esta também já tenha sido paga)
                 if (original && original.pago && !d.pago) {
                     return false;
@@ -5182,7 +5182,7 @@ tr.grupo-pausado td {
         // Retornar todas as despesas (do mês atual + atrasadas de meses anteriores)
         return despesas.filter(d => {
             // Verificar se o modelo ainda está ativo
-            const modelo = financeiro.despesasFixas.find(df => df.id === d.modeloId);
+            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(d.modeloId));
             return modelo && modelo.ativa !== false;
         });
     }
@@ -5195,7 +5195,7 @@ tr.grupo-pausado td {
         if (tipo === 'fixa') {
             // Procurar em todas as chaves de mês
             for (const k of Object.keys(financeiro.despesasFixasMes)) {
-                const found = financeiro.despesasFixasMes[k]?.find(d => d.id === id);
+                const found = financeiro.despesasFixasMes[k]?.find(d => String(d.id) === String(id));
                 if (found) {
                     item = found;
                     break;
@@ -5206,7 +5206,7 @@ tr.grupo-pausado td {
         if (!item) return;
 
         const valorAtual = item.valor;
-        const modelo = financeiro.despesasFixas.find(df => df.id === item.modeloId);
+        const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(item.modeloId));
         const valorOriginal = modelo ? modelo.valor : valorAtual;
         const diferenca = valorAtual - valorOriginal;
 
@@ -5246,7 +5246,7 @@ tr.grupo-pausado td {
 
         // Procurar o item em todas as chaves de mês
         for (const k of Object.keys(financeiro.despesasFixasMes)) {
-            const item = financeiro.despesasFixasMes[k]?.find(d => d.id === id);
+            const item = financeiro.despesasFixasMes[k]?.find(d => String(d.id) === String(id));
             if (item) {
                 item.valor = novoValor;
                 item.motivoAlteracao = motivo;
@@ -5262,9 +5262,9 @@ tr.grupo-pausado td {
 
     function resetarValorInstancia(id) {
         for (const k of Object.keys(financeiro.despesasFixasMes)) {
-            const item = financeiro.despesasFixasMes[k]?.find(d => d.id === id);
+            const item = financeiro.despesasFixasMes[k]?.find(d => String(d.id) === String(id));
             if (item) {
-                const modelo = financeiro.despesasFixas.find(df => df.id === item.modeloId);
+                const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(item.modeloId));
                 if (modelo) {
                     item.valor = modelo.valor;
                     item.motivoAlteracao = null;
@@ -5280,7 +5280,7 @@ tr.grupo-pausado td {
 
     // Função para editar valor de uma parcela
     function editarValorParcela(id) {
-        const item = financeiro.despesasVariaveis.find(d => d.id === id);
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
         if (!item) return;
 
         const body = document.getElementById('modalEditarBody');
@@ -5315,7 +5315,7 @@ tr.grupo-pausado td {
             return;
         }
 
-        const item = financeiro.despesasVariaveis.find(d => d.id === id);
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
         if (item) {
             item.valor = novoValor;
             item.motivoAlteracao = motivo;
@@ -5328,7 +5328,7 @@ tr.grupo-pausado td {
 
     function togglePagoFixa(id) {
         const key = getMesAnoKey();
-        const item = financeiro.despesasFixasMes[key]?.find(d => d.id === id);
+        const item = financeiro.despesasFixasMes[key]?.find(d => String(d.id) === String(id));
         if (!item) return;
 
         if (!item.pago) {
@@ -5371,7 +5371,7 @@ tr.grupo-pausado td {
         const fileInput = document.getElementById('pagamentoComprovante');
 
         if (itemEditando.tipo === 'despesaFixa') {
-            const item = financeiro.despesasFixasMes[itemEditando.key]?.find(d => d.id === itemEditando.id);
+            const item = financeiro.despesasFixasMes[itemEditando.key]?.find(d => String(d.id) === String(itemEditando.id));
             if (item) {
                 // Criar comprovante com metadados completos
                 const comprovante = await criarComprovante(
@@ -5387,7 +5387,7 @@ tr.grupo-pausado td {
 
                 // Se é uma despesa atrasada, marcar a original como paga também
                 if (item.atrasada && item.idOriginal && item.mesOriginal) {
-                    const original = financeiro.despesasFixasMes[item.mesOriginal]?.find(d => d.id === item.idOriginal);
+                    const original = financeiro.despesasFixasMes[item.mesOriginal]?.find(d => String(d.id) === String(item.idOriginal));
                     if (original) {
                         original.pago = true;
                         original.dataPagamento = data;
@@ -5408,7 +5408,7 @@ tr.grupo-pausado td {
                 }
             }
         } else if (itemEditando.tipo === 'despesaVariavel') {
-            const item = financeiro.despesasVariaveis.find(d => d.id === itemEditando.id);
+            const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(itemEditando.id));
             if (item) {
                 // Criar comprovante com metadados completos
                 const comprovante = await criarComprovante(
@@ -5423,7 +5423,7 @@ tr.grupo-pausado td {
                 item.comprovante = comprovante;
             }
         } else if (itemEditando.tipo === 'despesaAvulsa') {
-            const item = financeiro.despesasAvulsas.find(d => d.id === itemEditando.id);
+            const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(itemEditando.id));
             if (item) {
                 const comprovante = await criarComprovante(
                     fileInput, 
@@ -5446,7 +5446,8 @@ tr.grupo-pausado td {
 
     // Editar modelo da despesa fixa (afeta próximos meses)
     function editarDespesaFixaModelo(modeloId) {
-        const modelo = financeiro.despesasFixas.find(df => df.id === modeloId);
+        modeloId = isNaN(modeloId) ? modeloId : Number(modeloId);
+        const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(modeloId));
         if (!modelo) return;
 
         itemEditando = { tipo: 'despesaFixaModelo', id: modeloId };
@@ -5485,7 +5486,7 @@ tr.grupo-pausado td {
     }
 
     function salvarEdicaoModelo() {
-        const modelo = financeiro.despesasFixas.find(df => df.id === itemEditando.id);
+        const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(itemEditando.id));
         if (modelo) {
             modelo.descricao = document.getElementById('editDescricao').value.trim();
             modelo.valor = parseFloat(document.getElementById('editValor').value) || modelo.valor;
@@ -5499,7 +5500,7 @@ tr.grupo-pausado td {
 
     function encerrarDespesaFixa(modeloId) {
         confirmar('Encerrar esta despesa fixa? Ela não aparecerá nos próximos meses, mas o histórico é mantido.', () => {
-            const modelo = financeiro.despesasFixas.find(df => df.id === modeloId);
+            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(modeloId));
             if (modelo) {
                 modelo.ativa = false;
                 modelo.encerradaEm = new Date().toISOString();
@@ -5602,8 +5603,9 @@ tr.grupo-pausado td {
     // Atualiza o valor total da dívida automaticamente
     // ==========================================
     function editarParcelaIndividual(id) {
-        const parcela = financeiro.despesasVariaveis.find(d => d.id === id);
-        if (!parcela) return;
+        id = isNaN(id) ? id : Number(id);
+        const parcela = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
+        if (!parcela) { console.warn('editarParcelaIndividual: parcela não encontrada', id); return; }
 
         // Todas as parcelas do mesmo grupo
         const grupo = financeiro.despesasVariaveis.filter(d =>
@@ -5660,7 +5662,8 @@ tr.grupo-pausado td {
 
     function atualizarPreviewParcela(id, somaOriginal) {
         const novoValor = parseFloat(document.getElementById('parcelaNovoValor')?.value) || 0;
-        const parcela = financeiro.despesasVariaveis.find(d => d.id === id);
+        id = isNaN(id) ? id : Number(id);
+        const parcela = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
         if (!parcela) return;
 
         const diferenca = novoValor - (parcela.valor || 0);
@@ -5695,7 +5698,8 @@ tr.grupo-pausado td {
             return;
         }
 
-        const parcela = financeiro.despesasVariaveis.find(d => d.id === id);
+        id = isNaN(id) ? id : Number(id);
+        const parcela = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
         if (!parcela) return;
 
         const valorAntigo = parcela.valor || 0;
@@ -5726,7 +5730,8 @@ tr.grupo-pausado td {
     }
 
     function togglePagoVariavel(id) {
-        const item = financeiro.despesasVariaveis.find(d => d.id === id);
+        id = isNaN(id) ? id : Number(id);
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
         if (!item) return;
 
         if (!item.pago) {
@@ -5764,7 +5769,7 @@ tr.grupo-pausado td {
 
     function deletarDespesaVariavel(id) {
         confirmar('Excluir esta despesa?', () => {
-            financeiro.despesasVariaveis = financeiro.despesasVariaveis.filter(d => d.id !== id);
+            financeiro.despesasVariaveis = financeiro.despesasVariaveis.filter(d => String(d.id) !== String(id));
             salvarDados(); renderizar();
         });
     }
@@ -5819,7 +5824,7 @@ tr.grupo-pausado td {
     }
 
     function deletarTodasParcelas(id) {
-        const despesa = financeiro.despesasVariaveis.find(d => d.id === id);
+        const despesa = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
         if (!despesa || !despesa.grupoParcelaId) return;
         
         const gid = String(despesa.grupoParcelaId);
@@ -5896,7 +5901,7 @@ tr.grupo-pausado td {
     }
 
     function editarDespesaVariavel(id) {
-        const item = financeiro.despesasVariaveis.find(d => d.id === id);
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
         if (!item) return;
 
         itemEditando = { tipo: 'despesaVariavelEdit', id: id };
@@ -6166,7 +6171,7 @@ tr.grupo-pausado td {
 
     // Salvar edição de despesa parcelada
     function salvarEdicaoParcelada() {
-        const item = financeiro.despesasVariaveis.find(d => d.id === itemEditando.id);
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(itemEditando.id));
         if (!item || !item.grupoParcelaId) return;
 
         const novaDescricao = document.getElementById('editDescricao').value.trim();
@@ -6283,7 +6288,7 @@ tr.grupo-pausado td {
     }
 
     function salvarEdicaoDespesaVariavel() {
-        const item = financeiro.despesasVariaveis.find(d => d.id === itemEditando.id);
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(itemEditando.id));
         if (item) {
             item.descricao = document.getElementById('editDescricao').value.trim();
             item.valor = parseFloat(document.getElementById('editValor').value) || item.valor;
@@ -6328,7 +6333,7 @@ tr.grupo-pausado td {
     }
 
     function togglePagoAvulsa(id) {
-        const item = financeiro.despesasAvulsas.find(d => d.id === id);
+        const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(id));
         if (!item) return;
 
         if (!item.pago) {
@@ -6365,7 +6370,8 @@ tr.grupo-pausado td {
     }
 
     function editarDespesaAvulsa(id) {
-        const item = financeiro.despesasAvulsas.find(d => d.id === id);
+        id = isNaN(id) ? id : Number(id);
+        const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(id));
         if (!item) return;
 
         itemEditando = { tipo: 'despesaAvulsa', id: id };
@@ -6402,7 +6408,7 @@ tr.grupo-pausado td {
     }
 
     function salvarEdicaoAvulsa() {
-        const item = financeiro.despesasAvulsas.find(d => d.id === itemEditando.id);
+        const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(itemEditando.id));
         if (!item) return;
 
         item.descricao = document.getElementById('editDescricao').value.trim();
@@ -6417,7 +6423,7 @@ tr.grupo-pausado td {
 
     function deletarDespesaAvulsa(id) {
         confirmar('Excluir esta despesa variável?', () => {
-            financeiro.despesasAvulsas = financeiro.despesasAvulsas.filter(d => d.id !== id);
+            financeiro.despesasAvulsas = financeiro.despesasAvulsas.filter(d => String(d.id) !== String(id));
             salvarDados(); renderizar();
         });
     }
@@ -6456,7 +6462,7 @@ tr.grupo-pausado td {
 
     // Gerar juros do mês (manual)
     function gerarJurosMes(id) {
-        const emp = financeiro.emprestimos.find(e => e.id === id);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
         if (!emp || emp.principal <= 0) return;
 
         const valorJuros = (emp.principal * emp.taxaJuros) / 100;
@@ -6476,7 +6482,7 @@ tr.grupo-pausado td {
 
     // Pagar Juros (NÃO reduz principal)
     function abrirModalPagarJuros(id) {
-        const emp = financeiro.emprestimos.find(e => e.id === id);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
         if (!emp) return;
 
         emprestimoSelecionado = id;
@@ -6513,7 +6519,7 @@ tr.grupo-pausado td {
     }
 
     async function confirmarPagarJuros() {
-        const emp = financeiro.emprestimos.find(e => e.id === emprestimoSelecionado);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoSelecionado));
         if (!emp) return;
 
         const valor = parseFloat(document.getElementById('pagarJurosValor').value) || 0;
@@ -6557,7 +6563,7 @@ tr.grupo-pausado td {
 
     // Amortizar (REDUZ principal)
     function abrirModalAmortizar(id) {
-        const emp = financeiro.emprestimos.find(e => e.id === id);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
         if (!emp) return;
 
         emprestimoSelecionado = id;
@@ -6594,7 +6600,7 @@ tr.grupo-pausado td {
     }
 
     async function confirmarAmortizar() {
-        const emp = financeiro.emprestimos.find(e => e.id === emprestimoSelecionado);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoSelecionado));
         if (!emp) return;
 
         const valor = parseFloat(document.getElementById('amortizarValor').value) || 0;
@@ -6663,7 +6669,8 @@ tr.grupo-pausado td {
     }
 
     function editarEmprestimo(id) {
-        const emp = financeiro.emprestimos.find(e => e.id === id);
+        id = isNaN(id) ? id : Number(id);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
         if (!emp) return;
 
         emprestimoSelecionado = id;
@@ -6702,7 +6709,7 @@ tr.grupo-pausado td {
     }
 
     function salvarEdicaoEmprestimo() {
-        const emp = financeiro.emprestimos.find(e => e.id === emprestimoSelecionado);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoSelecionado));
         if (!emp) return;
 
         emp.descricao = document.getElementById('editEmpDescricao').value.trim();
@@ -6723,7 +6730,7 @@ tr.grupo-pausado td {
 
     function deletarEmprestimo(id) {
         confirmar('Excluir este empréstimo e todo seu histórico?', () => {
-            financeiro.emprestimos = financeiro.emprestimos.filter(e => e.id !== id);
+            financeiro.emprestimos = financeiro.emprestimos.filter(e => String(e.id) !== String(id));
             salvarDados(); renderizar();
         });
     }
@@ -6756,7 +6763,7 @@ tr.grupo-pausado td {
 
     // Iniciar processo de exclusão com modal
     function iniciarExclusaoEmprestimo(id, teveMovimentacao) {
-        const emp = financeiro.emprestimos.find(e => e.id === id);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
         if (!emp) return;
 
         itemEditando = { tipo: 'excluirEmprestimo', id: id };
@@ -6852,7 +6859,7 @@ tr.grupo-pausado td {
         const idExcluir = itemEditando.id;
         console.log('Excluindo empréstimo ID:', idExcluir);
         
-        financeiro.emprestimos = financeiro.emprestimos.filter(e => e.id !== idExcluir);
+        financeiro.emprestimos = financeiro.emprestimos.filter(e => String(e.id) !== String(idExcluir));
         
         salvarDados();
         fecharModal('modalExcluir');
@@ -6862,7 +6869,7 @@ tr.grupo-pausado td {
 
     // Restaurar empréstimo arquivado (desfazer quitação)
     function restaurarEmprestimo(id) {
-        const emp = financeiro.emprestimos.find(e => e.id === id);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
         if (!emp) return;
         confirmar(
             `Restaurar "${emp.descricao}"? A dívida voltará para a lista ativa. Saldo: ${formatarMoeda(emp.principal || 0)}`,
@@ -6916,19 +6923,19 @@ tr.grupo-pausado td {
     }
 
     function deletarEconomia(id) {
-        const reserva = financeiro.economias.find(e => e.id === id);
+        const reserva = financeiro.economias.find(e => String(e.id) === String(id));
         if (!reserva) return;
         
         // já tratado via confirmar()
         
-        financeiro.economias = financeiro.economias.filter(e => e.id !== id);
+        financeiro.economias = financeiro.economias.filter(e => String(e.id) !== String(id));
         salvarDados();
         renderizar();
         mostrarStatus('Reserva excluída', 'success');
     }
 
     function editarEconomia(id) {
-        const item = financeiro.economias.find(e => e.id === id);
+        const item = financeiro.economias.find(e => String(e.id) === String(id));
         if (!item) return;
 
         itemEditando = { tipo: 'economia', id: id };
@@ -6961,7 +6968,7 @@ tr.grupo-pausado td {
     }
 
     function salvarEdicaoEconomia() {
-        const item = financeiro.economias.find(e => e.id === itemEditando.id);
+        const item = financeiro.economias.find(e => String(e.id) === String(itemEditando.id));
         if (item) {
             item.descricao = document.getElementById('editDescricao').value.trim();
             item.categoria = document.getElementById('editCategoria').value;
@@ -6973,7 +6980,7 @@ tr.grupo-pausado td {
 
     // Depositar na reserva
     function depositarReserva(id) {
-        const reserva = financeiro.economias.find(e => e.id === id);
+        const reserva = financeiro.economias.find(e => String(e.id) === String(id));
         if (!reserva) return;
 
         itemEditando = { tipo: 'depositarReserva', id: id };
@@ -7003,7 +7010,7 @@ tr.grupo-pausado td {
     }
 
     function confirmarDeposito() {
-        const reserva = financeiro.economias.find(e => e.id === itemEditando.id);
+        const reserva = financeiro.economias.find(e => String(e.id) === String(itemEditando.id));
         if (!reserva) return;
 
         const valor = parseFloat(document.getElementById('depositoValor').value) || 0;
@@ -7032,7 +7039,7 @@ tr.grupo-pausado td {
 
     // Retirar da reserva
     function retirarReserva(id) {
-        const reserva = financeiro.economias.find(e => e.id === id);
+        const reserva = financeiro.economias.find(e => String(e.id) === String(id));
         if (!reserva) return;
 
         itemEditando = { tipo: 'retirarReserva', id: id };
@@ -7062,7 +7069,7 @@ tr.grupo-pausado td {
     }
 
     function confirmarRetirada() {
-        const reserva = financeiro.economias.find(e => e.id === itemEditando.id);
+        const reserva = financeiro.economias.find(e => String(e.id) === String(itemEditando.id));
         if (!reserva) return;
 
         const valor = parseFloat(document.getElementById('retiradaValor').value) || 0;
@@ -8097,7 +8104,7 @@ tr.grupo-pausado td {
                         if (d.mesOriginal < '2026-01') return false;
                         
                         const originais = financeiro.despesasFixasMes[d.mesOriginal] || [];
-                        const original = originais.find(o => o.id === d.idOriginal);
+                        const original = originais.find(o => String(o.id) === String(d.idOriginal));
                         
                         // Se o original não existe mais, remover
                         if (!original) return false;
