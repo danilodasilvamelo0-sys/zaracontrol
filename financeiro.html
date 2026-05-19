@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZARA | Financeiro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
 
 <style>
     /* ========== RESET E BASE ========== */
@@ -63,6 +63,8 @@
         color: #1a1a1a;
         transition: padding-left 0.3s;
         -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: geometricPrecision;
     }
 
     body::before, body::after {
@@ -501,7 +503,15 @@
     font-size: var(--font-sm);
     color: rgba(26, 26, 26, 0.4);
     font-weight: var(--fw-regular);
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
 }
+.subtotal .sub-pago   { color: #27ae60; font-weight: var(--fw-semi); }
+.subtotal .sub-total  { color: rgba(26,26,26,0.55); font-weight: var(--fw-medium); }
+.subtotal .sub-pendente { color: #e74c3c; font-weight: var(--fw-semi); }
+.subtotal .sub-sep    { color: rgba(26,26,26,0.25); font-weight: var(--fw-regular); }
 
 .btn-add {
     background: rgba(212, 175, 125, 0.12);
@@ -538,12 +548,12 @@
 .transacoes-table th {
     text-align: center;
     padding: 16px 12px;
-    color: #7a5c10;
+    color: #2a1a00;
     font-size: var(--font-xs);
-    font-weight: var(--fw-medium);
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    border-bottom: 1px solid rgba(212, 175, 125, 0.2);
+    border-bottom: 2px solid rgba(212, 175, 125, 0.3);
     background: transparent;
 }
 
@@ -1272,12 +1282,12 @@ tr.grupo-pausado td {
 .accordion-table th {
     text-align: left;
     padding: 10px 16px;
-    color: #7a5c10;
+    color: #2a1a00;
     font-size: var(--font-xs);
-    font-weight: var(--fw-medium);
+    font-weight: var(--fw-bold);
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    border-bottom: 1px solid rgba(184, 151, 46, 0.1);
+    border-bottom: 2px solid rgba(184, 151, 46, 0.25);
 }
 
 .accordion-table td {
@@ -2485,6 +2495,10 @@ tr.grupo-pausado td {
     padding: 30px;
     margin-top: 30px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    font-family: 'Montserrat', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 .sugestoes-header {
@@ -2494,16 +2508,22 @@ tr.grupo-pausado td {
 
 .sugestoes-header h3 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.5em;
-    color: #7a5c10;
+    font-size: var(--font-xl);
+    font-weight: var(--fw-bold);
+    color: #5a3e08;
     margin-bottom: 8px;
-    letter-spacing: 2px;
+    letter-spacing: 0.3px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
 }
 
 .sugestoes-subtitulo {
-    font-size: 0.85em;
-    color: rgba(26, 26, 26, 0.6);
-    font-style: italic;
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--font-sm);
+    font-weight: var(--fw-regular);
+    color: rgba(26, 26, 26, 0.55);
+    font-style: normal;
 }
 
 /* Citação do Dia */
@@ -2519,8 +2539,9 @@ tr.grupo-pausado td {
 }
 
 .citacao-icone {
-    font-size: 2em;
+    font-size: 1.6em;
     flex-shrink: 0;
+    line-height: 1;
 }
 
 .citacao-conteudo {
@@ -2528,17 +2549,21 @@ tr.grupo-pausado td {
 }
 
 .citacao-texto {
-    font-size: 0.97em;
-    color: #2a2a2a;
-    font-style: italic;
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--font-base);
+    font-weight: var(--fw-medium);
+    color: #1a1a1a;
+    font-style: normal;
     line-height: 1.7;
     margin-bottom: 8px;
+    -webkit-font-smoothing: antialiased;
 }
 
 .citacao-fonte {
-    font-size: 0.85em;
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--font-sm);
+    font-weight: var(--fw-semi);
     color: #7a5c10;
-    font-weight: 600;
 }
 
 /* Diagnóstico Financeiro */
@@ -2551,12 +2576,13 @@ tr.grupo-pausado td {
 }
 
 .diagnostico-container h4 {
-    font-size: 0.85em;
-    color: rgba(26,26,26,0.65);
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--font-xs);
+    color: rgba(26,26,26,0.55);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
     margin-bottom: 15px;
-    font-weight: 500;
+    font-weight: var(--fw-bold);
 }
 
 .diagnostico-grid {
@@ -2657,9 +2683,12 @@ tr.grupo-pausado td {
 }
 
 .sugestao-fonte {
-    font-size: 0.75em;
+    font-size: var(--font-xs);
     color: #7a5c10;
     font-style: italic;
+    font-weight: var(--fw-medium);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .sugestao-acao {
@@ -7617,15 +7646,44 @@ tr.grupo-pausado td {
             previsaoDetalhe.innerHTML = `<span class="kpi-badge negativo">Déficit previsto</span>`;
         }
 
-        // Subtotais (mantém compatibilidade)
+        // Subtotais — formato: Pago | Total | Pendente
         const recFixasRecebidas = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
         const recVarRecebidas = receitasVariaveisMesArr.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
-        document.getElementById('subtotalReceitasFixas').textContent = `(${formatarMoeda(recFixasRecebidas)} de ${formatarMoeda(totalRecFixas)})`;
-        document.getElementById('subtotalReceitasVariaveis').textContent = `(${formatarMoeda(recVarRecebidas)} de ${formatarMoeda(totalRecVariaveis)})`;
-        document.getElementById('subtotalFixas').textContent = `(${formatarMoeda(fixasPagas)})`;
-        document.getElementById('subtotalVariaveis').textContent = `(${formatarMoeda(parceladasPagas)})`;
-        document.getElementById('subtotalAvulsas').textContent = `(${formatarMoeda(avulsasPagas)})`;
-        document.getElementById('subtotalEconomias').textContent = `(${formatarMoeda(totalEconomizado)})`;
+        const recFixasPendentes = totalRecFixas - recFixasRecebidas;
+        const recVarPendentes = totalRecVariaveis - recVarRecebidas;
+
+        document.getElementById('subtotalReceitasFixas').innerHTML =
+            `<span class="sub-pago">Recebido: ${formatarMoeda(recFixasRecebidas)}</span>`+
+            `<span class="sub-sep">·</span>`+
+            `<span class="sub-total">Total: ${formatarMoeda(totalRecFixas)}</span>`+
+            (recFixasPendentes > 0 ? `<span class="sub-sep">·</span><span class="sub-pendente">Pendente: ${formatarMoeda(recFixasPendentes)}</span>` : '');
+
+        document.getElementById('subtotalReceitasVariaveis').innerHTML =
+            `<span class="sub-pago">Recebido: ${formatarMoeda(recVarRecebidas)}</span>`+
+            `<span class="sub-sep">·</span>`+
+            `<span class="sub-total">Total: ${formatarMoeda(totalRecVariaveis)}</span>`+
+            (recVarPendentes > 0 ? `<span class="sub-sep">·</span><span class="sub-pendente">Pendente: ${formatarMoeda(recVarPendentes)}</span>` : '');
+
+        document.getElementById('subtotalFixas').innerHTML =
+            `<span class="sub-pago">Pago: ${formatarMoeda(fixasPagas)}</span>`+
+            `<span class="sub-sep">·</span>`+
+            `<span class="sub-total">Total: ${formatarMoeda(totalFixasMes)}</span>`+
+            (fixasPendentes > 0 ? `<span class="sub-sep">·</span><span class="sub-pendente">Pendente: ${formatarMoeda(fixasPendentes)}</span>` : '');
+
+        document.getElementById('subtotalVariaveis').innerHTML =
+            `<span class="sub-pago">Pago: ${formatarMoeda(parceladasPagas)}</span>`+
+            `<span class="sub-sep">·</span>`+
+            `<span class="sub-total">Total: ${formatarMoeda(totalParceladasMes)}</span>`+
+            (parceladasPendentes > 0 ? `<span class="sub-sep">·</span><span class="sub-pendente">Pendente: ${formatarMoeda(parceladasPendentes)}</span>` : '');
+
+        document.getElementById('subtotalAvulsas').innerHTML =
+            `<span class="sub-pago">Pago: ${formatarMoeda(avulsasPagas)}</span>`+
+            `<span class="sub-sep">·</span>`+
+            `<span class="sub-total">Total: ${formatarMoeda(totalAvulsasMes)}</span>`+
+            (avulsasPendentes > 0 ? `<span class="sub-sep">·</span><span class="sub-pendente">Pendente: ${formatarMoeda(avulsasPendentes)}</span>` : '');
+
+        document.getElementById('subtotalEconomias').innerHTML =
+            `<span class="sub-total">Total: ${formatarMoeda(totalEconomizado)}</span>`;
 
         // === TABELA RECEITAS FIXAS ===
         const recFixasTable = document.getElementById('receitasFixasTable');
