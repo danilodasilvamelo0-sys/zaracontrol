@@ -4876,15 +4876,45 @@ tr.grupo-pausado td {
                     campo.options.forEach(opt => html += `<option value="${opt}">${opt}</option>`);
                     html += '</select>';
                 } else {
+                    const isDateField = campo.type === 'date';
+                    const isParcelaData = campo.id === 'despesaVariavelData';
+                    const isAvulsaData = campo.id === 'despesaAvulsaData';
+                    const isReceitaVariavelData = campo.id === 'receitaVariavelData';
+
+                    // Valor padrão para campos de data
+                    let defaultValue = '';
+                    if (isParcelaData) {
+                        defaultValue = `${anoSelecionado}-${mesSelecionado}-01`;
+                    } else if (isAvulsaData || isReceitaVariavelData) {
+                        const hoje = new Date();
+                        const diaHoje = String(hoje.getDate()).padStart(2, '0');
+                        // Se o mês selecionado é o mês atual, usa dia de hoje; senão usa dia 1
+                        const mesHoje = String(hoje.getMonth() + 1).padStart(2, '0');
+                        const anoHoje = String(hoje.getFullYear());
+                        if (mesSelecionado === mesHoje && String(anoSelecionado) === anoHoje) {
+                            defaultValue = `${anoSelecionado}-${mesSelecionado}-${diaHoje}`;
+                        } else {
+                            defaultValue = `${anoSelecionado}-${mesSelecionado}-01`;
+                        }
+                    }
+
                     html += `<input type="${campo.type}" id="${campo.id}"`;
                     if (campo.step) html += ` step="${campo.step}"`;
                     if (campo.min) html += ` min="${campo.min}"`;
                     if (campo.max) html += ` max="${campo.max}"`;
                     if (campo.placeholder) html += ` placeholder="${campo.placeholder}"`;
+                    if (defaultValue) html += ` value="${defaultValue}"`;
                     if (isParcelasField || isValorTotal) {
                         html += ` oninput="atualizarPreviewParcelas()"`;
                     }
                     html += '>';
+
+                    // Hint para campos de data — pode ser qualquer mês
+                    if (isParcelaData) {
+                        html += `<span style="font-size:11px;color:rgba(26,26,26,0.45);margin-top:4px;display:block;">📅 Pode ser em qualquer mês — as parcelas serão distribuídas a partir desta data</span>`;
+                    } else if (isAvulsaData) {
+                        html += `<span style="font-size:11px;color:rgba(26,26,26,0.45);margin-top:4px;display:block;">📅 Pode ser em qualquer mês — aparecerá no mês correspondente</span>`;
+                    }
                 }
                 html += '</div>';
             }
@@ -5139,7 +5169,14 @@ tr.grupo-pausado td {
         if (!desc || !valor) return alert('Preencha descrição e valor!');
         
         if (!data) {
-            data = `${anoSelecionado}-${mesSelecionado}-${String(new Date().getDate()).padStart(2, '0')}`;
+            const hoje = new Date();
+            const mesHoje = String(hoje.getMonth() + 1).padStart(2, '0');
+            const anoHoje = String(hoje.getFullYear());
+            if (mesSelecionado === mesHoje && String(anoSelecionado) === anoHoje) {
+                data = `${anoSelecionado}-${mesSelecionado}-${String(hoje.getDate()).padStart(2, '0')}`;
+            } else {
+                data = `${anoSelecionado}-${mesSelecionado}-01`;
+            }
         }
         
         financeiro.receitasAvulsas.push({
@@ -5881,7 +5918,7 @@ tr.grupo-pausado td {
         
         if (!desc || !valorTotal) return alert('Preencha descrição e valor!');
         
-        // Se não informou data, usa o mês/ano selecionado
+        // Data obrigatória — campo já vem pré-preenchido
         if (!data) {
             data = `${anoSelecionado}-${mesSelecionado}-01`;
         }
@@ -6670,8 +6707,11 @@ tr.grupo-pausado td {
         if (!desc || !valor) return alert('Preencha descrição e valor!');
 
         if (!data) {
-            data = `${anoSelecionado}-${mesSelecionado}-${String(new Date().getDate()).padStart(2, '0')}`;
+            // Fallback: usa o mês/ano selecionado com dia 1
+            data = `${anoSelecionado}-${mesSelecionado}-01`;
         }
+
+        // A despesa aparecerá no mês da data cadastrada (não necessariamente o mês selecionado)
 
         financeiro.despesasAvulsas.push({
             id: gerarId(),
