@@ -1519,7 +1519,7 @@ renderCompetencias();renderDiarioCampo();
 }
 function renderTracosLicitos(){
 const grid=document.getElementById('tracosLicitosGrid');if(!grid)return;
-grid.innerHTML=TRACOS_LICITOS.map(t=>{
+grid.innerHTML=TRACOS_LICITOS.map(t=>{=
 const v=shelbyData.tracosLicitos[t.id]||0;
 return `<div class="traco-shelby"><h5>${t.nome}</h5><div class="traco-shelby-bar"><div class="traco-shelby-fill" style="width:${v}%"></div></div><div class="traco-shelby-controls"><span class="traco-shelby-percent">${v}%</span><div class="traco-shelby-btns"><button class="traco-shelby-btn" onclick="ajustarTracoShelby('licitos','${t.id}',-5)">−</button><button class="traco-shelby-btn" onclick="ajustarTracoShelby('licitos','${t.id}',5)">+</button></div></div></div>`;
 }).join('');
