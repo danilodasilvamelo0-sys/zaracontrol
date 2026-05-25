@@ -1221,6 +1221,70 @@ tr.grupo-pausado td {
     margin-top: 22px;
 }
 
+/* ========== BARRA DE RESUMO NO TOPO DO FORM DE PARCELAS ========== */
+.form-top-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: linear-gradient(135deg, #fdfcf8 0%, #f5f2ea 100%);
+    border: 1px solid rgba(184,151,46,0.25);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(184,151,46,0.08);
+}
+
+.form-top-summary-valores {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.form-top-summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.form-top-summary-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(26,26,26,0.45);
+    font-weight: 500;
+}
+
+.form-top-summary-valor {
+    font-size: 15px;
+    font-weight: 700;
+    color: #7a5c10;
+    transition: color 0.2s;
+}
+
+.form-top-summary-status {
+    display: flex;
+    align-items: center;
+}
+
+.form-top-summary-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+    .form-top-summary {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .form-top-summary-actions {
+        justify-content: flex-end;
+    }
+}
+
 .btn-salvar {
     background: #b8972e;
     color: #fff;
@@ -4920,6 +4984,33 @@ tr.grupo-pausado td {
             }
         });
         html += '</div>';
+
+        // Para despesas parceladas, adicionar barra de resumo + botões no TOPO (sticky)
+        if (tipo === 'despesaVariavel') {
+            const salvarFn = `salvar${tipo.charAt(0).toUpperCase() + tipo.slice(1)}()`;
+            const topBar = `
+                <div class="form-top-summary" id="formTopSummary" style="display:none;">
+                    <div class="form-top-summary-valores">
+                        <div class="form-top-summary-item">
+                            <span class="form-top-summary-label">Soma das parcelas:</span>
+                            <span class="form-top-summary-valor" id="somaParcelasTop">R$ 0,00</span>
+                        </div>
+                        <div class="form-top-summary-item">
+                            <span class="form-top-summary-label">Valor total:</span>
+                            <span class="form-top-summary-valor" id="valorTotalTop">R$ 0,00</span>
+                        </div>
+                        <div class="form-top-summary-status" id="statusTop"></div>
+                    </div>
+                    <div class="form-top-summary-actions">
+                        <button class="btn-cancelar" onclick="esconderForm('${tipo}')">Cancelar</button>
+                        <button class="btn-salvar" onclick="${salvarFn}">Salvar</button>
+                    </div>
+                </div>
+            `;
+            // Inserir no início do html
+            html = topBar + html;
+        }
+
         html += `<div class="form-buttons">
             <button class="btn-cancelar" onclick="esconderForm('${tipo}')">Cancelar</button>
             <button class="btn-salvar" onclick="salvar${tipo.charAt(0).toUpperCase() + tipo.slice(1)}()">Salvar</button>
@@ -5019,6 +5110,29 @@ tr.grupo-pausado td {
         
         previewContainer.innerHTML = html;
         previewContainer.style.display = 'block';
+
+        // Atualizar barra de resumo no topo
+        atualizarTopSummary(somaAtual, valorTotal, diferenca);
+    }
+
+    function atualizarTopSummary(soma, total, diferenca) {
+        const topBar = document.getElementById('formTopSummary');
+        const somaTopEl = document.getElementById('somaParcelasTop');
+        const totalTopEl = document.getElementById('valorTotalTop');
+        const statusEl = document.getElementById('statusTop');
+        if (!topBar) return;
+        topBar.style.display = 'flex';
+        if (somaTopEl) somaTopEl.textContent = formatarMoeda(soma);
+        if (totalTopEl) totalTopEl.textContent = formatarMoeda(total);
+        if (statusEl) {
+            if (Math.abs(diferenca) < 0.01) {
+                statusEl.innerHTML = '<span class="soma-ok" style="font-size:12px;color:#2ecc71;">✓ Valores corretos</span>';
+                if (somaTopEl) { somaTopEl.style.color = '#2ecc71'; }
+            } else {
+                statusEl.innerHTML = `<span style="color:#e74c3c;font-size:12px;">Diferença: ${formatarMoeda(diferenca)}</span>`;
+                if (somaTopEl) { somaTopEl.style.color = '#e74c3c'; }
+            }
+        }
     }
     
     // Funções para criação de novas parcelas
@@ -5049,6 +5163,7 @@ tr.grupo-pausado td {
         if (previewSoma) {
             previewSoma.className = 'preview-soma ' + (Math.abs(diferenca) < 0.01 ? 'ok' : 'erro');
         }
+        atualizarTopSummary(somaAtual, valorTotal, diferenca);
     }
     
     function ajustarUltimaParcelaNovo() {
