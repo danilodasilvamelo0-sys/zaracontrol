@@ -153,7 +153,7 @@ body.war-mode #warBanner{transform:translateY(0)}
 .ch-badge{font-family:'Inter',sans-serif;font-size:.65em;letter-spacing:.5px;font-weight:600;padding:3px 7px;text-transform:uppercase;flex-shrink:0;border:1px solid}
 .b-phys{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.14)}
 .b-mind{background:rgba(212,168,67,.08);color:rgba(240,192,64,.75);border-color:rgba(212,168,67,.2)}
-.b-fail{background:rgba(180,0,0,.2);color:rgba(255,100,100,.9);border-color:rgba(200,0,0,.4)}
+.b-fail{background:rgba(180,0,0,.2);color:rgba(255,100,100,.9);border-color:rgba(200,0,0,.4)}.b-habit{background:rgba(80,180,120,.08);color:rgba(100,220,150,.7);border-color:rgba(80,180,120,.15)}
 /* WAR ALERT */
 .war-alert{display:none;background:linear-gradient(135deg,#200000,#100000);border-top:1px solid rgba(255,0,0,.4);padding:16px 20px}
 .war-alert.show{display:block;animation:aIn .4s ease}
@@ -244,6 +244,17 @@ body.war-mode #warBanner{transform:translateY(0)}
 .toast{position:fixed;bottom:22px;right:18px;padding:10px 18px;background:var(--s3);border:1px solid var(--bm);font-family:'Inter',sans-serif;font-size:.78em;letter-spacing:.5px;color:var(--text);z-index:99999;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none;max-width:240px}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast.war{border-color:rgba(120,0,0,.5);background:#0a0000;color:rgba(210,120,120,.8)}
+.add-task-btn{background:transparent;border:1px solid rgba(212,168,67,.25);color:rgba(212,168,67,.6);width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:3px;transition:all .2s;padding:4px}
+.add-task-btn:hover{border-color:#d4a843;color:#d4a843;background:rgba(212,168,67,.08)}
+.add-task-btn svg{width:14px;height:14px}
+.cat-opt{padding:6px 14px;background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-family:Inter,sans-serif;font-size:.65em;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .2s;text-transform:uppercase;border-radius:2px}
+.cat-opt.active{border-color:rgba(212,168,67,.4);color:#f0c040;background:rgba(212,168,67,.08)}
+.dyn-task-actions{display:flex;gap:4px;flex-shrink:0;opacity:0;transition:opacity .2s}
+.check-row:hover .dyn-task-actions{opacity:1}
+.task-act-btn{background:transparent;border:none;cursor:pointer;padding:4px;color:rgba(255,255,255,.3);transition:color .2s;display:flex;align-items:center}
+.task-act-btn:hover{color:rgba(255,255,255,.7)}
+.task-act-btn.del:hover{color:#ff4444}
+.task-act-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media(max-width:600px){
   .hdr{padding:30px 18px 20px}.hdr-date{display:none}
   .wrap{padding:16px 12px 70px}
@@ -355,44 +366,41 @@ body.war-mode #warBanner{transform:translateY(0)}
       <div class="sec">
         <div class="sec-hdr">
           <span class="sec-hdr-title">Protocolo Diário</span>
-          <span class="sec-hdr-count" id="t-count">0/7</span>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="sec-hdr-count" id="t-count">0/7</span>
+            <button class="add-task-btn" onclick="openAddTask()" title="Adicionar tarefa">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </button>
+          </div>
         </div>
-        <div class="checklist" id="toji-checklist">
-          <label class="check-row" id="row-acordar">
-            <div class="cbx"><input type="checkbox" id="ch-acordar" onchange="handleCheck('acordar','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Acordar até 08:00</div><div class="ch-sub">Eu não precisava de alarme. Você precisa de desculpa.</div></div>
-            <span class="ch-badge b-phys">FÍSICO</span>
-          </label>
-          <label class="check-row" id="row-treino">
-            <div class="cbx"><input type="checkbox" id="ch-treino" onchange="handleCheck('treino','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Treino</div><div class="ch-sub">Sem treino, você é só um homem comum tentando ser diferente.</div></div>
-            <span class="ch-badge b-phys">FÍSICO</span>
-          </label>
-          <label class="check-row" id="row-cardio">
-            <div class="cbx"><input type="checkbox" id="ch-cardio" onchange="handleCheck('cardio','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Cardio</div><div class="ch-sub">Cardio é o que separa quem sobrevive de quem desiste.</div></div>
-            <span class="ch-badge b-phys">FÍSICO</span>
-          </label>
-          <label class="check-row" id="row-agua">
-            <div class="cbx"><input type="checkbox" id="ch-agua" onchange="handleCheck('agua','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">3L de água</div><div class="ch-sub">Corpo desidratado é corpo que falha quando importa.</div></div>
-            <span class="ch-badge b-phys">FÍSICO</span>
-          </label>
-          <label class="check-row" id="row-alim">
-            <div class="cbx"><input type="checkbox" id="ch-alim" onchange="handleCheck('alim','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Alimentação limpa</div><div class="ch-sub">Você coloca lixo no corpo e espera resultado de elite.</div></div>
-            <span class="ch-badge b-phys">FÍSICO</span>
-          </label>
-          <label class="check-row" id="row-dormir">
-            <div class="cbx"><input type="checkbox" id="ch-dormir" onchange="handleCheck('dormir','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Dormir antes de 00:00</div><div class="ch-sub">Dormir tarde é sabotagem. Simples assim.</div></div>
-            <span class="ch-badge b-phys">FÍSICO</span>
-          </label>
-          <label class="check-row" id="row-scelular">
-            <div class="cbx"><input type="checkbox" id="ch-scelular" onchange="handleCheck('scelular','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">30min sem celular ao acordar</div><div class="ch-sub">Primeiro pensamento do dia é seu. Não entregue pro celular.</div></div>
-            <span class="ch-badge b-phys">MENTAL</span>
-          </label>
+        <div id="toji-dynamic-checklist"></div>
+      </div>
+
+      <!-- ADD/EDIT TASK MODAL -->
+      <div id="taskModal" style="display:none;position:fixed;inset:0;z-index:9800;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.85)">
+        <div style="background:#1e1e27;border:1px solid rgba(212,168,67,.2);border-radius:4px;padding:28px 24px;max-width:420px;width:100%;position:relative">
+          <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,168,67,.4),transparent)"></div>
+          <div style="font-family:Inter,sans-serif;font-size:.82em;font-weight:700;letter-spacing:.5px;color:#f0c040;text-transform:uppercase;margin-bottom:18px" id="taskModalTitle">Nova Tarefa</div>
+          <div style="margin-bottom:14px">
+            <div style="font-family:Inter,sans-serif;font-size:.65em;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Tarefa</div>
+            <input id="taskLabelInp" type="text" maxlength="60" placeholder="Ex: Meditação 10min" style="width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.15);color:#fff;font-family:Inter,sans-serif;font-size:.95em;padding:8px 0;outline:none" />
+          </div>
+          <div style="margin-bottom:20px">
+            <div style="font-family:Inter,sans-serif;font-size:.65em;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Descrição <span style="opacity:.5;font-weight:400">(opcional)</span></div>
+            <input id="taskSubInp" type="text" maxlength="80" placeholder="Frase do Toji ou descrição curta" style="width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.15);color:#fff;font-family:Inter,sans-serif;font-size:.88em;padding:8px 0;outline:none" />
+          </div>
+          <div style="margin-bottom:20px">
+            <div style="font-family:Inter,sans-serif;font-size:.65em;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Categoria</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap" id="taskCatBtns">
+              <button class="cat-opt active" data-cat="FÍSICO" onclick="selectCat(this)">FÍSICO</button>
+              <button class="cat-opt" data-cat="MENTAL" onclick="selectCat(this)">MENTAL</button>
+              <button class="cat-opt" data-cat="HÁBITO" onclick="selectCat(this)">HÁBITO</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button onclick="saveTask()" style="flex:1;padding:11px;background:rgba(212,168,67,.12);border:1px solid rgba(212,168,67,.35);color:#f0c040;font-family:Inter,sans-serif;font-size:.7em;font-weight:700;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:all .2s" onmouseover="this.style.background='rgba(212,168,67,.2)'" onmouseout="this.style.background='rgba(212,168,67,.12)'">SALVAR</button>
+            <button onclick="closeTaskModal()" style="padding:11px 18px;background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-family:Inter,sans-serif;font-size:.7em;cursor:pointer;transition:all .2s" onmouseover="this.style.color='rgba(255,255,255,.7)'" onmouseout="this.style.color='rgba(255,255,255,.4)'">CANCELAR</button>
+          </div>
         </div>
       </div>
 
@@ -578,6 +586,15 @@ body.war-mode #warBanner{transform:translateY(0)}
 
 <script>
 // ========= CONSTANTS =========
+const DEFAULT_TOJI_TASKS=[
+  {id:'acordar',label:'Acordar até 08:00',sub:'Eu não precisava de alarme. Você precisa de desculpa.',cat:'FÍSICO',fixed:true},
+  {id:'treino',label:'Treino',sub:'Sem treino, você é só um homem comum tentando ser diferente.',cat:'FÍSICO',fixed:true},
+  {id:'cardio',label:'Cardio',sub:'Cardio é o que separa quem sobrevive de quem desiste.',cat:'FÍSICO',fixed:true},
+  {id:'agua',label:'3L de água',sub:'Corpo desidratado é corpo que falha quando importa.',cat:'FÍSICO',fixed:true},
+  {id:'alim',label:'Alimentação limpa',sub:'Você coloca lixo no corpo e espera resultado de elite.',cat:'FÍSICO',fixed:true},
+  {id:'dormir',label:'Dormir antes de 00:00',sub:'Dormir tarde é sabotagem. Simples assim.',cat:'FÍSICO',fixed:true},
+  {id:'scelular',label:'30min sem celular ao acordar',sub:'Primeiro pensamento do dia é seu. Não entregue pro celular.',cat:'MENTAL',fixed:true},
+];
 const TOJI_POS=['acordar','treino','cardio','agua','alim','dormir','scelular'];
 const THOMAS_POS=['estudo','leitura','gastos','presenca','plano','emocao'];
 const ROTATING=[
@@ -834,13 +851,13 @@ function calcEstado(){
 
 // UI Update
 function updateUI(){
-  const ts=tojiScore(),thms=thomasScore();
+  const ts=tojiScoreDynamic(),thms=thomasScore();
   const yk=yesterdayKey();
   const ty=S.toji.history[yk],thy=S.thomas.history[yk];
 
   setText('t-streak',S.toji.streak||0);
   setText('t-score',`${ts}/7`);
-  setText('t-count',`${ts}/7`);
+  renderDynamicChecklist();
   setText('t-yest',ty?`${ty.score}/7`:'—');
   setText('t-fase',S.fase||1);
 
@@ -850,11 +867,7 @@ function updateUI(){
   setText('th-yest',thy?`${thy.score}/6`:'—');
   setText('th-fase',S.fase||1);
 
-  // Sync checkboxes
-  [...TOJI_POS,'porno'].forEach(k=>{
-    const el=document.getElementById(`ch-${k}`);if(el)el.checked=!!S.toji.checks[k];
-    const row=document.getElementById(`row-${k}`);if(row){if(S.toji.checks[k])row.classList.add('done');else row.classList.remove('done');}
-  });
+  // Sync checkboxes - Thomas only (Toji uses dynamic render)
   [...THOMAS_POS,'aposta'].forEach(k=>{
     const el=document.getElementById(`ch-${k}`);if(el)el.checked=!!S.thomas.checks[k];
     const row=document.getElementById(`row-${k}`);if(row){if(S.thomas.checks[k])row.classList.add('done');else row.classList.remove('done');}
@@ -985,8 +998,150 @@ function enterApp(){
   document.getElementById('app').classList.add('on');
 }
 
+// ===== DYNAMIC TASKS =====
+let editingTaskId=null;
+let selectedCat='FÍSICO';
+
+function getTasks(){
+  if(!S.toji.customTasks) S.toji.customTasks=[];
+  return [...DEFAULT_TOJI_TASKS,...S.toji.customTasks];
+}
+
+function tojiScoreDynamic(){
+  const tasks=getTasks();
+  return tasks.filter(t=>S.toji.checks[t.id]).length;
+}
+
+function renderDynamicChecklist(){
+  const tasks=getTasks();
+  const total=tasks.length;
+  const done=tasks.filter(t=>S.toji.checks[t.id]).length;
+  setText('t-count',`${done}/${total}`);
+
+  const catColors={
+    'FÍSICO':'b-phys',
+    'MENTAL':'b-mind',
+    'HÁBITO':'b-habit',
+  };
+
+  const c=document.getElementById('toji-dynamic-checklist');
+  if(!c)return;
+  c.innerHTML=tasks.map(task=>{
+    const checked=!!S.toji.checks[task.id];
+    const isCustom=!task.fixed;
+    return `<div class="check-row${checked?' done':''}" id="row-${task.id}" style="display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.025);transition:background .2s;position:relative">
+      <div class="cbx" onclick="toggleDynTask('${task.id}')">
+        <input type="checkbox" ${checked?'checked':''} style="position:absolute;opacity:0;width:0;height:0">
+        <div class="cbx-box" style="${checked?'background:#a8822a;border-color:var(--gold);box-shadow:0 0 10px rgba(201,165,90,.25)':''}">
+          ${checked?'<div style="position:absolute;width:4px;height:8px;border:1.5px solid #080808;border-width:0 1.5px 1.5px 0;top:47%;left:50%;transform:translate(-50%,-60%) rotate(45deg)"></div>':''}
+        </div>
+      </div>
+      <div class="ch-info" style="flex:1;min-width:0;cursor:pointer" onclick="toggleDynTask('${task.id}')">
+        <div class="ch-label" style="${checked?'color:rgba(255,255,255,.3);text-decoration:line-through':'color:#ffffff'}">${task.label}</div>
+        ${task.sub?`<div class="ch-sub" style="${checked?'opacity:.3':''}color:rgba(255,255,255,.5)">${task.sub}</div>`:''}
+      </div>
+      <span class="ch-badge ${catColors[task.cat]||'b-phys'}">${task.cat}</span>
+      <div class="dyn-task-actions">
+        <button class="task-act-btn" onclick="openEditTask('${task.id}')" title="Editar">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        ${isCustom?`<button class="task-act-btn del" onclick="deleteTask('${task.id}')" title="Excluir">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDynTask(id){
+  S.toji.checks[id]=!S.toji.checks[id];
+  updateUI();saveState();
+}
+
+function openAddTask(){
+  editingTaskId=null;
+  selectedCat='FÍSICO';
+  document.getElementById('taskModalTitle').textContent='Nova Tarefa';
+  document.getElementById('taskLabelInp').value='';
+  document.getElementById('taskSubInp').value='';
+  document.querySelectorAll('.cat-opt').forEach(b=>{b.classList.toggle('active',b.dataset.cat==='FÍSICO');});
+  document.getElementById('taskModal').style.display='flex';
+  setTimeout(()=>document.getElementById('taskLabelInp').focus(),100);
+}
+
+function openEditTask(id){
+  const tasks=getTasks();
+  const task=tasks.find(t=>t.id===id);
+  if(!task)return;
+  editingTaskId=id;
+  selectedCat=task.cat||'FÍSICO';
+  document.getElementById('taskModalTitle').textContent='Editar Tarefa';
+  document.getElementById('taskLabelInp').value=task.label;
+  document.getElementById('taskSubInp').value=task.sub||'';
+  document.querySelectorAll('.cat-opt').forEach(b=>{b.classList.toggle('active',b.dataset.cat===selectedCat);});
+  document.getElementById('taskModal').style.display='flex';
+  setTimeout(()=>document.getElementById('taskLabelInp').focus(),100);
+}
+
+function selectCat(btn){
+  document.querySelectorAll('.cat-opt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedCat=btn.dataset.cat;
+}
+
+function saveTask(){
+  const label=document.getElementById('taskLabelInp').value.trim();
+  if(!label)return;
+  const sub=document.getElementById('taskSubInp').value.trim();
+  if(!S.toji.customTasks)S.toji.customTasks=[];
+
+  if(editingTaskId){
+    // Check if it's a custom task
+    const idx=S.toji.customTasks.findIndex(t=>t.id===editingTaskId);
+    if(idx>=0){
+      S.toji.customTasks[idx]={...S.toji.customTasks[idx],label,sub,cat:selectedCat};
+    } else {
+      // It's a fixed task being "relabeled" — store override
+      if(!S.toji.taskOverrides)S.toji.taskOverrides={};
+      S.toji.taskOverrides[editingTaskId]={label,sub,cat:selectedCat};
+    }
+  } else {
+    const newId='task_'+Date.now();
+    S.toji.customTasks.push({id:newId,label,sub,cat:selectedCat,fixed:false});
+  }
+
+  saveState();
+  closeTaskModal();
+  renderDynamicChecklist();
+  updateUI();
+  showToast(editingTaskId?'Tarefa atualizada.':'Tarefa adicionada.',false);
+}
+
+function deleteTask(id){
+  if(!S.toji.customTasks)return;
+  S.toji.customTasks=S.toji.customTasks.filter(t=>t.id!==id);
+  delete S.toji.checks[id];
+  saveState();
+  renderDynamicChecklist();
+  updateUI();
+  showToast('Tarefa removida.',false);
+}
+
+function closeTaskModal(){
+  document.getElementById('taskModal').style.display='none';
+  editingTaskId=null;
+}
+
+// Handle enter key in task modal
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeTaskModal();
+  if(e.key==='Enter'&&document.getElementById('taskModal').style.display==='flex'){
+    e.preventDefault();saveTask();
+  }
+});
+
 function init(){
-  loadState();updateDate();setLicao();updateUI();
+  loadState();updateDate();setLicao();renderDynamicChecklist();updateUI();
   rotatePhrase();setInterval(rotatePhrase,6000);
   // Auto-show app after 3.5s if user doesn't click
   setTimeout(()=>{if(!document.getElementById('app').classList.contains('on'))enterApp();},3500);
