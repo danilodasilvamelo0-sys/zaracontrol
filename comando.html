@@ -317,14 +317,15 @@ body.war-mode #warBanner{transform:translateY(0)}
     <div class="wrap">
 
       <div class="estado-block" id="estadoBlock">
-        <div class="estado-label">Estado Operacional — Toji avalia</div>
+        <div class="estado-label">Estado Operacional &nbsp;·&nbsp; Toji + Thomas</div>
         <div class="estado-main">
           <div class="estado-indicator"></div>
           <span class="estado-name" id="estadoName">FRACO</span>
           <span class="estado-sub" id="estadoSub">sem dados suficientes</span>
         </div>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
-          <div style="font-family:Inter,sans-serif;font-size:.82em;font-style:italic;color:rgba(255,255,255,.65);line-height:1.6" id="tojiVoice">—</div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:6px">
+          <div style="font-family:Inter,sans-serif;font-size:.82em;font-style:italic;color:rgba(255,255,255,.7);line-height:1.6" id="tojiVoice">—</div>
+          <div style="font-family:Inter,sans-serif;font-size:.72em;font-weight:600;color:rgba(212,168,67,.7);letter-spacing:.3px" id="tojiNext"></div>
         </div>
       </div>
 
@@ -809,28 +810,48 @@ function switchTab(t){
 
 // Estado Operacional Toji
 function calcEstado(){
-  const s=S.toji;
-  const streak=s.streak||0;
-  const score=tojiScore();
-  const hasPorno=s.checks.porno;
-  const acordou=s.checks.acordar;
-  const treinou=s.checks.treino;
+  const tStreak=S.toji.streak||0;
+  const thStreak=S.thomas.streak||0;
+  const tScore=tojiScore();
+  const thScore=thomasScore();
+  const hasPorno=S.toji.checks.porno;
+  const hasAposta=S.thomas.checks.aposta;
+  const acordou=S.toji.checks.acordar;
+  const treinou=S.toji.checks.treino;
+  const hasFail=hasPorno||hasAposta;
+  const streak=Math.min(tStreak,thStreak); // ambos contam
+
+  // What's missing for next level
+  function missing(){
+    const gaps=[];
+    if(hasFail) return'Elimine as falhas críticas primeiro.';
+    if(tScore<5) gaps.push(`${5-tScore} tarefa(s) Toji`);
+    if(thScore<4) gaps.push(`${4-thScore} tarefa(s) Thomas`);
+    if(streak<3) gaps.push(`${3-streak} dia(s) de sequência`);
+    if(gaps.length===0&&tScore<6) gaps.push('1 tarefa Toji');
+    if(gaps.length===0&&thScore<5) gaps.push('1 tarefa Thomas');
+    if(gaps.length===0&&streak<7) gaps.push(`${7-streak} dias para IMPLACÁVEL`);
+    if(gaps.length===0&&(!acordou||!treinou)) gaps.push('acordar cedo + treinar');
+    return gaps.length?'Falta: '+gaps.join(' · '):'Continue.';
+  }
 
   const voices={
+    fraco_aposta:"Aposta registrada. Você não perdeu dinheiro — perdeu controle. Isso é pior.",
     fraco_porno:"Recaída. Eu esperava mais de você. Mas talvez esse seja o seu nível.",
     fraco_zero:"Você não fez nada ainda. Isso não é descanso. É evitação.",
     fraco_pouco:"Começou. Mas começar sem terminar é pior do que não começar.",
     instavel:"Você está se movendo. Mas instabilidade não constrói nada sólido.",
-    operacional:"Funcionando. É o mínimo. Mantenha.",
-    implacavel:`${streak} dias. Agora você começa a parecer alguém que leva isso a sério.`,
+    operacional:"Funcionando. É o mínimo. Mantenha e suba.",
+    implacavel:`${streak} dias consecutivos. Agora você começa a parecer alguém que leva isso a sério.`,
   };
 
-  if(hasPorno) return{cls:'estado-fraco',name:'FRACO',sub:'recaída registrada',voice:voices.fraco_porno};
-  if(score===0) return{cls:'estado-fraco',name:'FRACO',sub:'nenhuma tarefa executada',voice:voices.fraco_zero};
-  if(score<=2) return{cls:'estado-fraco',name:'FRACO',sub:'execução insuficiente',voice:voices.fraco_pouco};
-  if(score<=4||streak<3) return{cls:'estado-instavel',name:'INSTÁVEL',sub:'consistência insuficiente',voice:voices.instavel};
-  if(score>=6&&streak>=7&&acordou&&treinou) return{cls:'estado-implacavel',name:'IMPLACÁVEL',sub:`${streak} dias consecutivos`,voice:voices.implacavel};
-  return{cls:'estado-operacional',name:'OPERACIONAL',sub:`sequência: ${streak} dias`,voice:voices.operacional};
+  if(hasAposta) return{cls:'estado-fraco',name:'FRACO',sub:'aposta registrada — controle perdido',voice:voices.fraco_aposta,next:missing()};
+  if(hasPorno) return{cls:'estado-fraco',name:'FRACO',sub:'recaída registrada',voice:voices.fraco_porno,next:missing()};
+  if(tScore===0&&thScore===0) return{cls:'estado-fraco',name:'FRACO',sub:'nenhuma tarefa executada',voice:voices.fraco_zero,next:missing()};
+  if(tScore<=2&&thScore<=1) return{cls:'estado-fraco',name:'FRACO',sub:'execução insuficiente',voice:voices.fraco_pouco,next:missing()};
+  if(tScore<=4||thScore<=3||streak<3) return{cls:'estado-instavel',name:'INSTÁVEL',sub:'cumpra Toji + Thomas para avançar',voice:voices.instavel,next:missing()};
+  if(tScore>=6&&thScore>=5&&streak>=7&&acordou&&treinou&&!hasFail) return{cls:'estado-implacavel',name:'IMPLACÁVEL',sub:`${streak} dias consecutivos`,voice:voices.implacavel,next:'Você está no topo. Não desça.'};
+  return{cls:'estado-operacional',name:'OPERACIONAL',sub:`Toji ${tScore}/7 · Thomas ${thScore}/6 · ${streak} dias`,voice:voices.operacional,next:missing()};
 }
 
 // UI Update
@@ -877,6 +898,7 @@ function updateUI(){
   if(eb){eb.className='estado-block '+est.cls;}
   setText('estadoName',est.name);setText('estadoSub',est.sub);
   setText('tojiVoice',est.voice||'—');
+  setText('tojiNext',est.next||'');
 
   // War
   const anyFail=S.toji.checks.porno||S.thomas.checks.aposta;
