@@ -99,18 +99,18 @@ body.war-mode #warBanner{transform:translateY(0)}
 .estado-label{font-family:'Inter',sans-serif;font-size:.68em;letter-spacing:1px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;margin-bottom:10px}
 .estado-main{display:flex;align-items:center;gap:16px}
 .estado-indicator{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.estado-fraco .estado-indicator{background:#3a0000;box-shadow:0 0 8px #3a0000}
-.estado-instavel .estado-indicator{background:#6b2a00;box-shadow:0 0 8px #6b2a00;animation:blink 2s ease-in-out infinite}
-.estado-operacional .estado-indicator{background:#2a5a20;box-shadow:0 0 8px #2a5a20}
+.estado-fraco .estado-indicator{background:#ff2222;box-shadow:0 0 10px rgba(255,34,34,.6)}
+.estado-instavel .estado-indicator{background:#ff8800;box-shadow:0 0 10px rgba(255,136,0,.6);animation:blink 2s ease-in-out infinite}
+.estado-operacional .estado-indicator{background:#22cc44;box-shadow:0 0 10px rgba(34,204,68,.6)}
 .estado-implacavel .estado-indicator{background:var(--gold);box-shadow:0 0 12px rgba(201,165,90,.5);animation:goldPulse 2s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
 @keyframes goldPulse{0%,100%{box-shadow:0 0 8px rgba(201,165,90,.4)}50%{box-shadow:0 0 18px rgba(201,165,90,.8)}}
 .estado-name{font-family:'Cinzel',serif;font-size:1em;letter-spacing:2px}
-.estado-fraco .estado-name{color:#5a1a1a}
-.estado-instavel .estado-name{color:#8b5020}
-.estado-operacional .estado-name{color:#3a7a30}
-.estado-implacavel .estado-name{color:var(--gold-b)}
-.estado-sub{font-family:'Inter',sans-serif;font-size:.78em;font-weight:500;font-style:italic;color:var(--tf);margin-left:auto}
+.estado-fraco .estado-name{color:#ff4444}
+.estado-instavel .estado-name{color:#ff9922}
+.estado-operacional .estado-name{color:#33dd55}
+.estado-implacavel .estado-name{color:#f0c040}
+.estado-sub{font-family:'Inter',sans-serif;font-size:.78em;font-weight:500;color:rgba(255,255,255,.65);font-style:italic;color:var(--tf);margin-left:auto}
 /* CONTADORES TOJI */
 .counters-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
 .counter-card{background:var(--s1);border:1px solid var(--border);padding:14px 12px;text-align:center}
@@ -324,7 +324,7 @@ body.war-mode #warBanner{transform:translateY(0)}
           <span class="estado-sub" id="estadoSub">sem dados suficientes</span>
         </div>
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
-          <div style="font-family:Inter,sans-serif;font-size:.78em;font-style:italic;color:rgba(255,255,255,.4);line-height:1.6" id="tojiVoice">—</div>
+          <div style="font-family:Inter,sans-serif;font-size:.82em;font-style:italic;color:rgba(255,255,255,.65);line-height:1.6" id="tojiVoice">—</div>
         </div>
       </div>
 
