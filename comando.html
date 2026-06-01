@@ -12,11 +12,11 @@
   --bg:#111116;--s1:#18181f;--s2:#1e1e27;--s3:#24242e;
   --text:#ffffff;--td:rgba(255,255,255,.75);--tf:rgba(255,255,255,.5);
   --border:rgba(255,255,255,.1);--bm:rgba(212,168,67,.35);
-  --war:#4a0000;--warb:#7f0000;--warg:rgba(100,0,0,.3);
+  --war:#7f0000;--warb:#cc0000;--warg:rgba(200,0,0,.4);
 }
 html{background:var(--bg);scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background 1.5s}
-body.war-mode{background:#0a0000}
+body.war-mode{background:#0d0000}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(201,165,90,.15)}
 
 /* SPLASH */
@@ -31,32 +31,32 @@ body.war-mode{background:#0a0000}
 #warLayer{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:0;transition:opacity 2s;background:radial-gradient(ellipse at center,rgba(100,0,0,.2) 0%,rgba(40,0,0,.1) 60%,transparent 100%)}
 #warRing{position:fixed;inset:0;pointer-events:none;z-index:8999;opacity:0;transition:opacity 2s;box-shadow:inset 0 0 150px rgba(100,0,0,.0)}
 body.war-mode #warLayer{opacity:1;animation:warBreathe 5s ease-in-out infinite}
-body.war-mode #warRing{opacity:1;box-shadow:inset 0 0 150px rgba(100,0,0,.3),0 0 0 1px rgba(120,0,0,.25);animation:warRingPulse 5s ease-in-out infinite}
-@keyframes warBreathe{0%,100%{opacity:.5}50%{opacity:1}}
-@keyframes warRingPulse{0%,100%{box-shadow:inset 0 0 120px rgba(80,0,0,.2),0 0 0 1px rgba(100,0,0,.2)}50%{box-shadow:inset 0 0 220px rgba(130,0,0,.45),0 0 0 1px rgba(160,0,0,.5)}}
+body.war-mode #warRing{opacity:1;box-shadow:inset 0 0 200px rgba(200,0,0,.45),0 0 0 2px rgba(220,0,0,.5);animation:warRingPulse 5s ease-in-out infinite}
+@keyframes warBreathe{0%,100%{opacity:.7}50%{opacity:1}}
+@keyframes warRingPulse{0%,100%{box-shadow:inset 0 0 160px rgba(180,0,0,.35),0 0 0 2px rgba(200,0,0,.3)}50%{box-shadow:inset 0 0 300px rgba(220,0,0,.6),0 0 0 2px rgba(255,0,0,.6)}}
 /* WAR BANNER */
-#warBanner{position:fixed;top:0;left:0;right:0;z-index:9500;transform:translateY(-100%);transition:transform .9s cubic-bezier(.16,1,.3,1);background:linear-gradient(180deg,rgba(30,0,0,.97),rgba(16,0,0,.95));border-bottom:1px solid rgba(120,0,0,.4);backdrop-filter:blur(16px);padding:16px 30px;text-align:center}
+#warBanner{position:fixed;top:0;left:0;right:0;z-index:9500;transform:translateY(-100%);transition:transform .9s cubic-bezier(.16,1,.3,1);background:linear-gradient(180deg,rgba(80,0,0,.98),rgba(30,0,0,.97));border-bottom:1px solid rgba(220,0,0,.5);backdrop-filter:blur(16px);padding:16px 30px;text-align:center}
 body.war-mode #warBanner{transform:translateY(0)}
 .wb-title{font-family:'Inter',sans-serif;font-size:.65em;letter-spacing:2px;font-weight:700;color:rgba(220,80,80,.9);text-transform:uppercase;margin-bottom:5px}
-.wb-msg{font-family:'Inter',sans-serif;font-size:.95em;color:rgba(255,160,160,.9);letter-spacing:.3px}
+.wb-msg{font-family:'Inter',sans-serif;font-size:.95em;color:rgba(255,180,180,.95);letter-spacing:.3px}
 .wb-close{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:rgba(160,60,60,.5);cursor:pointer;font-size:1em;padding:8px;transition:color .2s}
 .wb-close:hover{color:rgba(210,80,80,.8)}
 /* IMPACT */
-#impactFlash{position:fixed;inset:0;background:rgba(120,0,0,.3);z-index:9960;pointer-events:none;opacity:0}
+#impactFlash{position:fixed;inset:0;background:rgba(200,0,0,.4);z-index:9960;pointer-events:none;opacity:0}
 #impactFlash.go{animation:impact .8s ease-out forwards}
-@keyframes impact{0%{opacity:.7}100%{opacity:0}}
+@keyframes impact{0%{opacity:.9}100%{opacity:0}}
 /* TRIGGER MODAL */
 #triggerModal{display:none;position:fixed;inset:0;z-index:9900;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.88)}
 #triggerModal.show{display:flex;animation:mIn .5s cubic-bezier(.16,1,.3,1)}
 @keyframes mIn{from{opacity:0;backdrop-filter:blur(0)}to{opacity:1;backdrop-filter:blur(4px)}}
-.modal{background:var(--s2);border:1px solid rgba(100,0,0,.4);border-radius:2px;padding:32px 28px;max-width:400px;width:100%;position:relative}
-.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(140,0,0,.6),transparent)}
-.m-title{font-family:'Inter',sans-serif;font-size:.82em;letter-spacing:.5px;font-weight:700;color:rgba(220,80,80,.9);text-transform:uppercase;margin-bottom:5px}
+.modal{background:var(--s2);border:1px solid rgba(220,0,0,.5);border-radius:2px;padding:32px 28px;max-width:400px;width:100%;position:relative}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,0,0,.5),transparent)}
+.m-title{font-family:'Inter',sans-serif;font-size:.82em;letter-spacing:.5px;font-weight:700;color:rgba(255,60,60,1);text-transform:uppercase;margin-bottom:5px}
 .m-sub{font-family:'Inter',sans-serif;font-size:.85em;color:rgba(255,255,255,.6);margin-bottom:22px;line-height:1.5}
 .trig-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
 .trig-opt{padding:11px;background:transparent;border:1px solid var(--border);color:rgba(255,255,255,.75);font-family:'Inter',sans-serif;font-size:.8em;letter-spacing:.3px;font-weight:500;cursor:pointer;transition:all .2s;text-transform:uppercase;border-radius:1px}
-.trig-opt:hover,.trig-opt.sel{border-color:rgba(120,0,0,.4);color:rgba(200,100,100,.8);background:rgba(100,0,0,.1)}
-.m-confirm{width:100%;padding:12px;background:rgba(100,0,0,.15);border:1px solid rgba(100,0,0,.35);color:rgba(190,80,80,.8);font-family:'Cinzel',serif;font-size:.65em;letter-spacing:2.5px;cursor:pointer;transition:all .2s;text-transform:uppercase;margin-bottom:8px}
+.trig-opt:hover,.trig-opt.sel{border-color:rgba(220,0,0,.5);color:rgba(255,120,120,.9);background:rgba(150,0,0,.15)}
+.m-confirm{width:100%;padding:12px;background:rgba(160,0,0,.2);border:1px solid rgba(220,0,0,.5);color:rgba(255,100,100,.95);font-family:'Cinzel',serif;font-size:.65em;letter-spacing:2.5px;cursor:pointer;transition:all .2s;text-transform:uppercase;margin-bottom:8px}
 .m-confirm:hover{background:rgba(100,0,0,.25)}
 .m-skip{width:100%;padding:8px;background:transparent;border:none;color:var(--tf);font-family:'Inter',sans-serif;font-size:.75em;cursor:pointer;letter-spacing:1px;transition:color .2s}
 .m-skip:hover{color:var(--td)}
@@ -110,7 +110,7 @@ body.war-mode #warBanner{transform:translateY(0)}
 .estado-instavel .estado-name{color:#8b5020}
 .estado-operacional .estado-name{color:#3a7a30}
 .estado-implacavel .estado-name{color:var(--gold-b)}
-.estado-sub{font-family:'Inter',sans-serif;font-size:.8em;font-style:italic;color:var(--tf);margin-left:auto}
+.estado-sub{font-family:'Inter',sans-serif;font-size:.78em;font-weight:500;font-style:italic;color:var(--tf);margin-left:auto}
 /* CONTADORES TOJI */
 .counters-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
 .counter-card{background:var(--s1);border:1px solid var(--border);padding:14px 12px;text-align:center}
@@ -145,7 +145,7 @@ body.war-mode #warBanner{transform:translateY(0)}
 .cbx-box::after{content:'';position:absolute;width:4px;height:8px;border:1.5px solid #080808;border-width:0 1.5px 1.5px 0;top:47%;left:50%;transform:translate(-50%,-60%) rotate(45deg) scale(0);transition:transform .2s cubic-bezier(.16,1,.3,1)}
 .cbx input:checked~.cbx-box::after{transform:translate(-50%,-60%) rotate(45deg) scale(1)}
 .cbx-fail .cbx-box{border-color:rgba(120,0,0,.3)}
-.cbx-fail input:checked~.cbx-box{background:#5a0000;border-color:#8b0000;box-shadow:0 0 14px rgba(120,0,0,.4)}
+.cbx-fail input:checked~.cbx-box{background:#aa0000;border-color:#ff2222;box-shadow:0 0 16px rgba(220,0,0,.6)}
 .cbx-fail input:checked~.cbx-box::after{border-color:rgba(255,140,140,.7)}
 .ch-info{flex:1;min-width:0}
 .ch-label{font-family:'Inter',sans-serif;font-size:.95em;font-weight:600;color:#ffffff;transition:color .3s;letter-spacing:.3px}
@@ -153,13 +153,13 @@ body.war-mode #warBanner{transform:translateY(0)}
 .ch-badge{font-family:'Inter',sans-serif;font-size:.65em;letter-spacing:.5px;font-weight:600;padding:3px 7px;text-transform:uppercase;flex-shrink:0;border:1px solid}
 .b-phys{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.14)}
 .b-mind{background:rgba(212,168,67,.08);color:rgba(240,192,64,.75);border-color:rgba(212,168,67,.2)}
-.b-fail{background:rgba(140,0,0,.15);color:rgba(220,80,80,.8);border-color:rgba(140,0,0,.3)}
+.b-fail{background:rgba(180,0,0,.2);color:rgba(255,100,100,.9);border-color:rgba(200,0,0,.4)}
 /* WAR ALERT */
-.war-alert{display:none;background:linear-gradient(135deg,#0c0000,#080000);border-top:1px solid rgba(100,0,0,.3);padding:16px 20px}
+.war-alert{display:none;background:linear-gradient(135deg,#200000,#100000);border-top:1px solid rgba(255,0,0,.4);padding:16px 20px}
 .war-alert.show{display:block;animation:aIn .4s ease}
 @keyframes aIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
-.wa-title{font-family:'Inter',sans-serif;font-size:.68em;letter-spacing:1px;font-weight:700;color:rgba(180,50,50,.85);text-transform:uppercase;margin-bottom:5px}
-.wa-quote{font-family:'Inter',sans-serif;font-size:.95em;font-style:italic;color:rgba(210,120,120,.65);line-height:1.5}
+.wa-title{font-family:'Inter',sans-serif;font-size:.68em;letter-spacing:1px;font-weight:700;color:rgba(255,60,60,.95);text-transform:uppercase;margin-bottom:5px}
+.wa-quote{font-family:'Inter',sans-serif;font-size:.95em;color:rgba(255,180,180,.85);font-style:italic;color:rgba(210,120,120,.65);line-height:1.5}
 /* FASE */
 .fase-block{background:var(--s1);border:1px solid var(--border);padding:18px 22px;margin-bottom:14px;position:relative}
 .fase-block::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-mid),transparent)}
@@ -317,11 +317,14 @@ body.war-mode #warBanner{transform:translateY(0)}
     <div class="wrap">
 
       <div class="estado-block" id="estadoBlock">
-        <div class="estado-label">Estado Operacional</div>
+        <div class="estado-label">Estado Operacional — Toji avalia</div>
         <div class="estado-main">
           <div class="estado-indicator"></div>
           <span class="estado-name" id="estadoName">FRACO</span>
           <span class="estado-sub" id="estadoSub">sem dados suficientes</span>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
+          <div style="font-family:Inter,sans-serif;font-size:.78em;font-style:italic;color:rgba(255,255,255,.4);line-height:1.6" id="tojiVoice">—</div>
         </div>
       </div>
 
@@ -344,50 +347,50 @@ body.war-mode #warBanner{transform:translateY(0)}
 
       <div class="alvo-block">
         <div class="alvo-inner">
-          <input class="alvo-inp" id="alvo-toji" type="text" placeholder="O que você vai eliminar hoje?" />
+          <input class="alvo-inp" id="alvo-toji" type="text" placeholder="Defina o alvo. Toji não erra dois tiros." />
           <button class="alvo-btn" id="alvo-toji-btn" onclick="saveAlvo('toji')">ELIMINAR</button>
         </div>
       </div>
 
       <div class="sec">
         <div class="sec-hdr">
-          <span class="sec-hdr-title">Execução Física</span>
+          <span class="sec-hdr-title">Protocolo Diário</span>
           <span class="sec-hdr-count" id="t-count">0/7</span>
         </div>
         <div class="checklist" id="toji-checklist">
           <label class="check-row" id="row-acordar">
             <div class="cbx"><input type="checkbox" id="ch-acordar" onchange="handleCheck('acordar','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Acordar até 08:00</div><div class="ch-sub">Disciplina começa antes de sair da cama</div></div>
+            <div class="ch-info"><div class="ch-label">Acordar até 08:00</div><div class="ch-sub">Eu não precisava de alarme. Você precisa de desculpa.</div></div>
             <span class="ch-badge b-phys">FÍSICO</span>
           </label>
           <label class="check-row" id="row-treino">
             <div class="cbx"><input type="checkbox" id="ch-treino" onchange="handleCheck('treino','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Treino</div><div class="ch-sub">Força ou resistência — sem negociação</div></div>
+            <div class="ch-info"><div class="ch-label">Treino</div><div class="ch-sub">Sem treino, você é só um homem comum tentando ser diferente.</div></div>
             <span class="ch-badge b-phys">FÍSICO</span>
           </label>
           <label class="check-row" id="row-cardio">
             <div class="cbx"><input type="checkbox" id="ch-cardio" onchange="handleCheck('cardio','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Cardio</div><div class="ch-sub">Mínimo 20 minutos contínuos</div></div>
+            <div class="ch-info"><div class="ch-label">Cardio</div><div class="ch-sub">Cardio é o que separa quem sobrevive de quem desiste.</div></div>
             <span class="ch-badge b-phys">FÍSICO</span>
           </label>
           <label class="check-row" id="row-agua">
             <div class="cbx"><input type="checkbox" id="ch-agua" onchange="handleCheck('agua','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">3L de água</div><div class="ch-sub">Hidratação é protocolo, não opção</div></div>
+            <div class="ch-info"><div class="ch-label">3L de água</div><div class="ch-sub">Corpo desidratado é corpo que falha quando importa.</div></div>
             <span class="ch-badge b-phys">FÍSICO</span>
           </label>
           <label class="check-row" id="row-alim">
             <div class="cbx"><input type="checkbox" id="ch-alim" onchange="handleCheck('alim','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Alimentação limpa</div><div class="ch-sub">Corpo é ferramenta — trate como tal</div></div>
+            <div class="ch-info"><div class="ch-label">Alimentação limpa</div><div class="ch-sub">Você coloca lixo no corpo e espera resultado de elite.</div></div>
             <span class="ch-badge b-phys">FÍSICO</span>
           </label>
           <label class="check-row" id="row-dormir">
             <div class="cbx"><input type="checkbox" id="ch-dormir" onchange="handleCheck('dormir','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Dormir antes de 00:00</div><div class="ch-sub">Recuperação é parte da missão</div></div>
+            <div class="ch-info"><div class="ch-label">Dormir antes de 00:00</div><div class="ch-sub">Dormir tarde é sabotagem. Simples assim.</div></div>
             <span class="ch-badge b-phys">FÍSICO</span>
           </label>
           <label class="check-row" id="row-scelular">
             <div class="cbx"><input type="checkbox" id="ch-scelular" onchange="handleCheck('scelular','toji',false)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">30min sem celular ao acordar</div><div class="ch-sub">Mente soberana antes da informação externa</div></div>
+            <div class="ch-info"><div class="ch-label">30min sem celular ao acordar</div><div class="ch-sub">Primeiro pensamento do dia é seu. Não entregue pro celular.</div></div>
             <span class="ch-badge b-phys">MENTAL</span>
           </label>
         </div>
@@ -395,13 +398,13 @@ body.war-mode #warBanner{transform:translateY(0)}
 
       <div class="sec">
         <div class="sec-hdr">
-          <span class="sec-hdr-title">Falha Crítica</span>
+          <span class="sec-hdr-title">Registro de Falha</span>
           <span class="ch-badge b-fail">Registre se ocorreu</span>
         </div>
         <div>
           <label class="check-row" id="row-porno">
             <div class="cbx cbx-fail"><input type="checkbox" id="ch-porno" onchange="handleCheck('porno','toji',true)"><div class="cbx-box"></div></div>
-            <div class="ch-info"><div class="ch-label">Pornografia</div><div class="ch-sub">Marque com honestidade — sem negação</div></div>
+            <div class="ch-info"><div class="ch-label">Pornografia</div><div class="ch-sub">Você sabe o que fez. Eu sei o que você fez.</div></div>
             <span class="ch-badge b-fail">FALHA</span>
           </label>
         </div>
@@ -421,7 +424,7 @@ body.war-mode #warBanner{transform:translateY(0)}
 
       <div class="diary-block">
         <span class="diary-l">Diário Operacional</span>
-        <textarea class="diary-ta" id="diary-toji" placeholder="O que destruiu meu foco hoje?" rows="3" oninput="saveDiary('toji')"></textarea>
+        <textarea class="diary-ta" id="diary-toji" placeholder="O que te fez fraco hoje? Seja honesto. Eu estaria." rows="3" oninput="saveDiary('toji')"></textarea>
       </div>
 
       <div class="ftr"><div class="ftr-txt">⏰ Reset automático · Segunda-feira · 05:00</div></div>
@@ -494,7 +497,7 @@ body.war-mode #warBanner{transform:translateY(0)}
 
       <div class="sec">
         <div class="sec-hdr">
-          <span class="sec-hdr-title">Falha Crítica</span>
+          <span class="sec-hdr-title">Registro de Falha</span>
           <span class="ch-badge b-fail">Registre se ocorreu</span>
         </div>
         <div>
@@ -599,10 +602,11 @@ const LICOES=[
   "Impulso é caro. Disciplina é gratuita.",
 ];
 const QUOTES_PORNO=[
-  "Impulso detectado. Controle comprometido.",
-  "Isso drena o que deveria alimentar sua ambição.",
-  "Cada vez que cede, treina o cérebro a buscar prazer fácil.",
-  "Um predador não se distrai com ilusão.",
+  "Isso não é fraqueza de um dia. É um padrão. E você sabe disso.",
+  "Eu lutei contra curadores especiais sem hesitar. Você não consegue resistir a uma tela.",
+  "Cada vez que cede, você está treinando seu cérebro a fugir da dificuldade.",
+  "Predador não se distrai com ilusão. Você acabou de provar que ainda não é um.",
+  "A energia que você desperdiçou agora era para construção. Foi embora.",
 ];
 const QUOTES_APOSTA=[
   "Você não perdeu dinheiro. Perdeu controle.",
@@ -811,11 +815,22 @@ function calcEstado(){
   const hasPorno=s.checks.porno;
   const acordou=s.checks.acordar;
   const treinou=s.checks.treino;
-  if(hasPorno) return{cls:'estado-fraco',name:'FRACO',sub:'recaída registrada'};
-  if(score<=1) return{cls:'estado-fraco',name:'FRACO',sub:'sem execução suficiente'};
-  if(score<=3||streak<3) return{cls:'estado-instavel',name:'INSTÁVEL',sub:'consistência insuficiente'};
-  if(score>=6&&streak>=7&&acordou&&treinou) return{cls:'estado-implacavel',name:'IMPLACÁVEL',sub:`${streak} dias de sequência`};
-  return{cls:'estado-operacional',name:'OPERACIONAL',sub:`sequência: ${streak} dias`};
+
+  const voices={
+    fraco_porno:"Recaída. Eu esperava mais de você. Mas talvez esse seja o seu nível.",
+    fraco_zero:"Você não fez nada ainda. Isso não é descanso. É evitação.",
+    fraco_pouco:"Começou. Mas começar sem terminar é pior do que não começar.",
+    instavel:"Você está se movendo. Mas instabilidade não constrói nada sólido.",
+    operacional:"Funcionando. É o mínimo. Mantenha.",
+    implacavel:`${streak} dias. Agora você começa a parecer alguém que leva isso a sério.`,
+  };
+
+  if(hasPorno) return{cls:'estado-fraco',name:'FRACO',sub:'recaída registrada',voice:voices.fraco_porno};
+  if(score===0) return{cls:'estado-fraco',name:'FRACO',sub:'nenhuma tarefa executada',voice:voices.fraco_zero};
+  if(score<=2) return{cls:'estado-fraco',name:'FRACO',sub:'execução insuficiente',voice:voices.fraco_pouco};
+  if(score<=4||streak<3) return{cls:'estado-instavel',name:'INSTÁVEL',sub:'consistência insuficiente',voice:voices.instavel};
+  if(score>=6&&streak>=7&&acordou&&treinou) return{cls:'estado-implacavel',name:'IMPLACÁVEL',sub:`${streak} dias consecutivos`,voice:voices.implacavel};
+  return{cls:'estado-operacional',name:'OPERACIONAL',sub:`sequência: ${streak} dias`,voice:voices.operacional};
 }
 
 // UI Update
@@ -861,6 +876,7 @@ function updateUI(){
   const eb=document.getElementById('estadoBlock');
   if(eb){eb.className='estado-block '+est.cls;}
   setText('estadoName',est.name);setText('estadoSub',est.sub);
+  setText('tojiVoice',est.voice||'—');
 
   // War
   const anyFail=S.toji.checks.porno||S.thomas.checks.aposta;
