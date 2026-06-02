@@ -9173,44 +9173,43 @@ tr.grupo-pausado td {
 function simPopularSelect(){
     const sel = document.getElementById('simDivida');
     if(!sel) return;
-    const empData = JSON.parse(localStorage.getItem('zara_emprestimos') || localStorage.getItem('emprestimos') || '[]');
-    // Try multiple storage keys
-    let dividas = empData;
-    if(!dividas.length){
-        // Try state object
-        const st = JSON.parse(localStorage.getItem('finState') || localStorage.getItem('zara_fin') || '{}');
-        dividas = st.emprestimos || st.dividas || [];
+
+    // Use the financeiro object directly (already loaded from Supabase)
+    let dividas = [];
+    if(typeof financeiro !== 'undefined' && financeiro.emprestimos){
+        dividas = financeiro.emprestimos.filter(e => !e.arquivado);
     }
-    sel.innerHTML = '<option value="">— Selecione uma dívida —</option>';
-    dividas.forEach((d,i)=>{
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = `${d.descricao || d.nome || 'Dívida '+(i+1)} — R$ ${parseFloat(d.saldo||d.valor||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
-        opt.dataset.saldo = d.saldo || d.valor || 0;
-        opt.dataset.taxa = d.taxa || d.juros || 0;
-        opt.dataset.parcela = d.parcela || d.pagamento || 0;
-        sel.appendChild(opt);
-    });
-    // Also try getting from rendered table
-    const rows = document.querySelectorAll('#emprestimosContainer tr[data-id]');
-    if(rows.length && !dividas.length){
-        sel.innerHTML = '<option value="">— Selecione uma dívida —</option>';
+
+    // Fallback: read from rendered DOM table
+    if(!dividas.length){
+        const rows = document.querySelectorAll('#emprestimosContainer tr[data-id]');
         rows.forEach(row=>{
             const cells = row.querySelectorAll('td');
             if(cells.length >= 5){
-                const opt = document.createElement('option');
-                opt.value = row.dataset.id||'';
-                opt.textContent = cells[1]?.textContent?.trim()||'Dívida';
-                // parse values from cells
-                const saldoTxt = cells[4]?.textContent?.replace(/[^0-9,.]/g,'').replace(',','.')||'0';
-                const taxaTxt = cells[2]?.textContent?.replace(/[^0-9,.]/g,'').replace(',','.')||'0';
-                opt.dataset.saldo = parseFloat(saldoTxt)||0;
-                opt.dataset.taxa = parseFloat(taxaTxt)||0;
-                opt.dataset.parcela = 0;
-                sel.appendChild(opt);
+                const saldoTxt = cells[4]?.textContent?.replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.') || '0';
+                const taxaTxt  = cells[2]?.textContent?.replace(/[^0-9,.]/g,'').replace(',','.') || '0';
+                const parcTxt  = cells[5]?.textContent?.replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.') || '0';
+                dividas.push({
+                    descricao: cells[1]?.textContent?.trim() || 'Dívida',
+                    saldoDevedor: parseFloat(saldoTxt)||0,
+                    taxaJuros: parseFloat(taxaTxt)||0,
+                    parcela: parseFloat(parcTxt)||0,
+                });
             }
         });
     }
+
+    sel.innerHTML = '<option value="">— Selecione uma dívida —</option>';
+    dividas.forEach((d,i)=>{
+        const saldo = d.saldoDevedor || d.principal || d.valor || 0;
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${d.descricao || 'Dívida '+(i+1)} — R$ ${parseFloat(saldo).toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+        opt.dataset.saldo   = saldo;
+        opt.dataset.taxa    = d.taxaJuros || d.taxa || 2.5;
+        opt.dataset.parcela = d.parcela || d.pagamentoMensal || 0;
+        sel.appendChild(opt);
+    });
 }
 
 function simRecalcular(){
@@ -9381,64 +9380,61 @@ function renderGraficos(){
 }
 
 function obterDadosParaGraficos(){
-    // Lê os KPIs já calculados da página
-    const getNum = id => {
-        const el = document.getElementById(id);
-        if(!el) return 0;
-        const txt = el.textContent.replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');
-        return parseFloat(txt)||0;
-    };
-
-    // Categorias de despesas: ler do DOM
-    const pizzaDespesas = [];
     const cats = {};
+    let totalReceitas = 0, totalDespesas = 0;
 
-    // Despesas fixas
-    document.querySelectorAll('#despesasFixasContainer tr[data-id], #despesasFixasContainer .item-row').forEach(row=>{
-        const cat = row.dataset.categoria || row.querySelector('[data-cat]')?.dataset.cat || 'Fixas';
-        const valTxt = row.querySelector('.col-valor, td:nth-child(2)')?.textContent||'0';
-        const val = parseFloat(valTxt.replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.'))||0;
-        if(val > 0) cats[cat] = (cats[cat]||0) + val;
-    });
+    // Use financeiro object if available (loaded from Supabase)
+    if(typeof financeiro !== 'undefined'){
+        // Despesas fixas por categoria
+        (financeiro.despesasFixas||[]).forEach(d=>{
+            if(!d.pausado){
+                const cat = d.categoria||'Fixas';
+                cats[cat] = (cats[cat]||0) + (d.valor||0);
+            }
+        });
+        // Despesas variáveis
+        (financeiro.despesasVariaveis||[]).forEach(d=>{
+            if(!d.pausado){
+                const cat = d.categoria||'Variáveis';
+                cats[cat] = (cats[cat]||0) + (d.valor||0);
+            }
+        });
+        // Parceladas
+        const parcTotal = (financeiro.despesasParceladas||[]).reduce((s,d)=>s+(d.valorParcela||0),0);
+        if(parcTotal>0) cats['Parceladas'] = parcTotal;
+        // Empréstimos
+        const empTotal = (financeiro.emprestimos||[]).filter(e=>!e.arquivado).reduce((s,e)=>s+(e.parcela||e.pagamentoMensal||0),0);
+        if(empTotal>0) cats['Empréstimos'] = empTotal;
 
-    // Despesas variáveis
-    document.querySelectorAll('#despesasVariaveisContainer tr, #tabelaDespesasVar tr[data-id]').forEach(row=>{
-        const cat = row.dataset.categoria||'Variáveis';
-        const valTxt = row.querySelector('td:nth-child(2), .col-valor')?.textContent||'0';
-        const val = parseFloat(valTxt.replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.'))||0;
-        if(val > 0) cats[cat] = (cats[cat]||0) + val;
-    });
+        // Receitas
+        totalReceitas = [...(financeiro.receitasFixas||[]),...(financeiro.receitasVariaveis||[])].reduce((s,r)=>s+(r.valor||0),0);
+        totalDespesas = Object.values(cats).reduce((s,v)=>s+v,0);
+    } else {
+        // Fallback: read KPI elements from DOM
+        const getNum = id => {
+            const el = document.getElementById(id); if(!el) return 0;
+            return parseFloat(el.textContent.replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.'))||0;
+        };
+        totalReceitas = getNum('kpiReceita');
+        totalDespesas = getNum('kpiDespesas');
+        if(totalDespesas>0) cats['Despesas'] = totalDespesas;
+    }
 
-    // Parceladas
-    const totalParc = getNum('subtotalParceladas')||getNum('totalParceladas');
-    if(totalParc>0) cats['Parceladas'] = totalParc;
+    const pizzaDespesas = Object.entries(cats).filter(([,v])=>v>0).map(([k,v])=>({label:k,valor:v}));
 
-    // Empréstimos
-    const totalEmp = getNum('subtotalEmprestimos')||getNum('totalEmprestimos');
-    if(totalEmp>0) cats['Empréstimos'] = totalEmp;
-
-    Object.entries(cats).forEach(([k,v])=>{ if(v>0) pizzaDespesas.push({label:k,valor:v}); });
-
-    // Totais gerais
-    const totalReceitas = getNum('kpiReceita')||getNum('totalReceitas')||0;
-    const totalDespesas = getNum('kpiDespesas')||getNum('totalDespesas')||0;
-
-    // Histórico mensal: tenta localStorage
+    // Histórico: 6 meses com valores reais no mês atual
     const historico = [];
-    try{
-        const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-        const hoje = new Date();
-        for(let i=5;i>=0;i--){
-            const d = new Date(hoje.getFullYear(), hoje.getMonth()-i, 1);
-            historico.push({
-                mes: meses[d.getMonth()],
-                rec: totalReceitas * (0.9 + Math.random()*0.2),
-                desp: totalDespesas * (0.85 + Math.random()*0.3),
-            });
-        }
-        // Replace last with actual
-        if(historico.length) historico[historico.length-1] = {mes:meses[hoje.getMonth()], rec:totalReceitas, desp:totalDespesas};
-    } catch(e){}
+    const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const hoje = new Date();
+    for(let i=5;i>=0;i--){
+        const d = new Date(hoje.getFullYear(), hoje.getMonth()-i, 1);
+        const isAtual = i===0;
+        historico.push({
+            mes: meses[d.getMonth()],
+            rec: isAtual ? totalReceitas : totalReceitas*(0.85+Math.random()*0.3),
+            desp: isAtual ? totalDespesas : totalDespesas*(0.8+Math.random()*0.4),
+        });
+    }
 
     return { pizzaDespesas, totalReceitas, totalDespesas, historico };
 }
@@ -9526,28 +9522,14 @@ function exportarRelatorioJSON(){
     a.download = `relatorio_${new Date().toISOString().split('T')[0]}.json`; a.click();
 }
 
-// Hook into page load
-(function hookFinanceiro(){
-    const orig = window.onload;
-    window.addEventListener('load', function(){
-        setTimeout(()=>{
-            simPopularSelect();
-            renderGraficos();
-            renderRelatorio();
-        }, 800);
-    });
-
-    // Re-render on tab/section visibility
-    const obs = new MutationObserver(()=>{
-        const grafSec = document.getElementById('sectionGraficos');
-        if(grafSec && !grafSec.classList.contains('collapsed')){
-            renderGraficos();
-        }
-        renderRelatorio();
+// Hook into page - runs AFTER Supabase/init finishes
+window.addEventListener('load', function(){
+    setTimeout(()=>{
         simPopularSelect();
-    });
-    obs.observe(document.body, {childList:true, subtree:true, attributes:false});
-})();
+        renderGraficos();
+        renderRelatorio();
+    }, 2000); // wait 2s for Supabase to load
+});
 
 </script>
 
