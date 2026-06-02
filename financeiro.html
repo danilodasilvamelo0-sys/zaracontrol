@@ -8844,11 +8844,15 @@ tr.grupo-pausado td {
         renderizar();
     }
 
-    // Conectar Sabedoria ao renderizar
+    // Conectar Sabedoria + Gráficos + Relatório ao renderizar
     const originalRenderizar = renderizar;
     renderizar = function() {
         originalRenderizar();
         atualizarSugestoesSabedoria();
+        // Renderizar seções novas após cada ciclo de dados
+        try { simPopularSelect(); } catch(e){}
+        try { renderGraficos(); } catch(e){}
+        try { renderRelatorio(); } catch(e){}
     };
 
     // Iniciar aplicação
@@ -9522,14 +9526,7 @@ function exportarRelatorioJSON(){
     a.download = `relatorio_${new Date().toISOString().split('T')[0]}.json`; a.click();
 }
 
-// Hook into page - runs AFTER Supabase/init finishes
-window.addEventListener('load', function(){
-    setTimeout(()=>{
-        simPopularSelect();
-        renderGraficos();
-        renderRelatorio();
-    }, 2000); // wait 2s for Supabase to load
-});
+// Renders now hooked into renderizar() directly
 
 </script>
 
