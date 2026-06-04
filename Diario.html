@@ -103,7 +103,7 @@ body{padding-left:70px;padding-bottom:40px;transition:background .3s}
 .writing-area{flex:1;padding:40px;max-width:780px;width:100%}
 .page-title-inp{width:100%;background:transparent;border:none;color:var(--text);font-family:'Montserrat',sans-serif;font-size:1.5em;font-weight:600;letter-spacing:.5px;outline:none;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.04)}
 .page-title-inp::placeholder{color:rgba(255,255,255,.12)}
-.writing-inp{width:100%;background:transparent;border:none;color:var(--td);font-family:'Crimson Pro',serif;font-size:1.15em;line-height:1.9;outline:none;resize:none;min-height:60vh;letter-spacing:.2px}
+.writing-inp{width:100%;background:transparent;border:none;color:rgba(255,255,255,.88);font-family:'Crimson Pro',serif;font-size:1.18em;line-height:1.95;outline:none;resize:none;min-height:60vh;letter-spacing:.2px;text-align:justify}
 .writing-inp::placeholder{color:rgba(255,255,255,.1);font-style:italic}
 
 /* ── EMPTY EDITOR ── */
@@ -136,7 +136,31 @@ body{padding-left:70px;padding-bottom:40px;transition:background .3s}
 @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
 @keyframes loadbar{from{width:0}to{width:100%}}
 
-/* ── PDF EXPORT ── */
+/* ── CONTENTEDITABLE ── */
+.writing-inp[contenteditable]:empty::before{content:attr(data-placeholder);color:rgba(255,255,255,.1);font-style:italic;pointer-events:none}
+.writing-inp[contenteditable]:focus{outline:none}
+.writing-inp[contenteditable] b,.writing-inp[contenteditable] strong{font-weight:700}
+.writing-inp[contenteditable] i,.writing-inp[contenteditable] em{font-style:italic}
+.writing-inp[contenteditable] u{text-decoration:underline}
+.writing-inp[contenteditable] s{text-decoration:line-through}
+
+/* ── CONTEXT MENU ── */
+.ctx-item{display:flex;align-items:center;gap:10px;padding:7px 14px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:.78em;color:rgba(255,255,255,.7);transition:background .15s}
+.ctx-item:hover{background:rgba(212,168,67,.08);color:#fff}
+.ctx-item span:first-child{font-family:'Montserrat',sans-serif;color:var(--gold);flex-shrink:0}
+.ctx-short{margin-left:auto;font-size:.7em;color:rgba(255,255,255,.25);font-family:'Montserrat',sans-serif}
+.ctx-sep{height:1px;background:rgba(255,255,255,.06);margin:4px 0}
+.ctx-label{font-family:'Montserrat',sans-serif;font-size:.58em;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;padding:6px 14px 2px}
+.ctx-color{width:20px;height:20px;border-radius:50%;cursor:pointer;transition:transform .2s;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.6em;color:#000}
+.ctx-color:hover{transform:scale(1.25)}
+
+/* ── FLOATING TOOLBAR (aparece ao selecionar texto) ── */
+#floatToolbar{display:none;position:fixed;z-index:9991;background:#1a1a22;border:1px solid rgba(212,168,67,.25);border-radius:4px;padding:4px 8px;gap:4px;align-items:center;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.ftb-btn{background:transparent;border:none;color:rgba(255,255,255,.6);font-family:'Montserrat',sans-serif;font-size:.82em;font-weight:700;cursor:pointer;padding:4px 8px;border-radius:2px;transition:all .2s;line-height:1}
+.ftb-btn:hover{background:rgba(212,168,67,.1);color:#fff}
+.ftb-sep{width:1px;height:16px;background:rgba(255,255,255,.1)}
+
+/* ── PDF EXPORT ── *//* ── PDF EXPORT ── */
 @media print{
   .sidebar,.mobile-nav,.sidebar-list,.editor-toolbar,.tags-row,.editor-actions,.timeline-panel,.toast,.loader{display:none!important}
   body{padding:0;background:#fff;color:#1a1a1a}
@@ -246,7 +270,47 @@ body{padding-left:70px;padding-bottom:40px;transition:background .3s}
 
       <div class="writing-area" id="writingArea" style="display:none">
         <input class="page-title-inp" id="editorTitulo" type="text" placeholder="Título (opcional)" maxlength="100" />
-        <textarea class="writing-inp" id="editorTexto" placeholder="Escreva o que quiser..."></textarea>
+        <div class="writing-inp" id="editorTexto" contenteditable="true" data-placeholder="Escreva o que quiser..." oncontextmenu="showContextMenu(event)" oninput="onEditorInput()" onkeydown="onEditorKeydown(event)"></div>
+
+<!-- CONTEXT MENU -->
+<div id="ctxMenu" style="display:none;position:fixed;z-index:9990;background:#1a1a22;border:1px solid rgba(212,168,67,.2);box-shadow:0 8px 32px rgba(0,0,0,.6);padding:6px 0;min-width:180px">
+  <div class="ctx-item" onclick="fmt('bold')">
+    <span style="font-weight:700;width:20px;text-align:center">B</span>
+    <span>Negrito</span>
+    <span class="ctx-short">Ctrl+B</span>
+  </div>
+  <div class="ctx-item" onclick="fmt('italic')">
+    <span style="font-style:italic;width:20px;text-align:center">I</span>
+    <span>Itálico</span>
+    <span class="ctx-short">Ctrl+I</span>
+  </div>
+  <div class="ctx-item" onclick="fmt('underline')">
+    <span style="text-decoration:underline;width:20px;text-align:center">U</span>
+    <span>Sublinhado</span>
+    <span class="ctx-short">Ctrl+U</span>
+  </div>
+  <div class="ctx-item" onclick="fmt('strikeThrough')">
+    <span style="text-decoration:line-through;width:20px;text-align:center">S</span>
+    <span>Riscado</span>
+  </div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-label">Cor do texto</div>
+  <div style="display:flex;gap:6px;padding:6px 14px;flex-wrap:wrap">
+    <div class="ctx-color" style="background:#f0c040" onclick="fmtColor('#f0c040')" title="Dourado"></div>
+    <div class="ctx-color" style="background:#ff6b6b" onclick="fmtColor('#ff6b6b')" title="Vermelho"></div>
+    <div class="ctx-color" style="background:#69db7c" onclick="fmtColor('#69db7c')" title="Verde"></div>
+    <div class="ctx-color" style="background:#74c0fc" onclick="fmtColor('#74c0fc')" title="Azul"></div>
+    <div class="ctx-color" style="background:#da77f2" onclick="fmtColor('#da77f2')" title="Roxo"></div>
+    <div class="ctx-color" style="background:#ff922b" onclick="fmtColor('#ff922b')" title="Laranja"></div>
+    <div class="ctx-color" style="background:#ffffff" onclick="fmtColor('#ffffff')" title="Branco"></div>
+    <div class="ctx-color" style="background:rgba(241,241,245,.5)" onclick="fmtColor('')" title="Padrão" style="border:1px solid rgba(255,255,255,.3)">✕</div>
+  </div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="fmt('removeFormat')">
+    <span style="width:20px;text-align:center;font-size:.8em">✕</span>
+    <span>Remover formatação</span>
+  </div>
+</div>
       </div>
 
       <div class="editor-empty" id="editorEmpty">
@@ -259,6 +323,22 @@ body{padding-left:70px;padding-bottom:40px;transition:background .3s}
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- FLOATING TOOLBAR ao selecionar texto -->
+<div id="floatToolbar">
+  <button class="ftb-btn" onclick="fmt('bold')" title="Negrito"><b>B</b></button>
+  <button class="ftb-btn" onclick="fmt('italic')" title="Itálico"><i>I</i></button>
+  <button class="ftb-btn" onclick="fmt('underline')" title="Sublinhado"><u>U</u></button>
+  <button class="ftb-btn" onclick="fmt('strikeThrough')" title="Riscado"><s>S</s></button>
+  <div class="ftb-sep"></div>
+  <button class="ftb-btn" style="color:#f0c040" onclick="fmtColor('#f0c040')" title="Dourado">A</button>
+  <button class="ftb-btn" style="color:#ff6b6b" onclick="fmtColor('#ff6b6b')" title="Vermelho">A</button>
+  <button class="ftb-btn" style="color:#69db7c" onclick="fmtColor('#69db7c')" title="Verde">A</button>
+  <button class="ftb-btn" style="color:#74c0fc" onclick="fmtColor('#74c0fc')" title="Azul">A</button>
+  <button class="ftb-btn" style="color:#da77f2" onclick="fmtColor('#da77f2')" title="Roxo">A</button>
+  <div class="ftb-sep"></div>
+  <button class="ftb-btn" onclick="fmt('removeFormat')" title="Limpar" style="font-size:.7em">✕</button>
+</div>
 
 <script>
 const SUPABASE_URL = 'https://ltwamldgdwqzyssoukzl.supabase.co';
@@ -377,7 +457,7 @@ function abrirEditor(existente) {
   document.getElementById('editorDate').value = entradaAtual.data || hoje();
   document.getElementById('editorEstado').value = entradaAtual.estado || '';
   document.getElementById('editorTitulo').value = entradaAtual.titulo || '';
-  document.getElementById('editorTexto').value = entradaAtual.texto || '';
+  document.getElementById('editorTexto').innerHTML = entradaAtual.texto || '';
 
   // Tags
   document.querySelectorAll('.tag-btn').forEach(btn => {
@@ -408,7 +488,7 @@ async function salvarEntrada() {
   entradaAtual.data = document.getElementById('editorDate').value || hoje();
   entradaAtual.estado = document.getElementById('editorEstado').value.trim();
   entradaAtual.titulo = document.getElementById('editorTitulo').value.trim();
-  entradaAtual.texto = document.getElementById('editorTexto').value;
+  entradaAtual.texto = document.getElementById('editorTexto').innerHTML;
   entradaAtual.tags = [...tagsSel];
   entradaAtual.humor = calcHumor(entradaAtual.texto + ' ' + entradaAtual.estado);
 
@@ -543,14 +623,113 @@ function showToast(msg) {
 }
 
 // Auto-save ao digitar
+// Input handled by onEditorInput() and title/estado fields
 document.addEventListener('input', (e) => {
-  if (['editorTexto','editorTitulo','editorEstado'].includes(e.target.id)) {
+  if (['editorTitulo','editorEstado'].includes(e.target.id)) {
     clearTimeout(autoSaveTimer);
     autoSaveTimer = setTimeout(() => { if (entradaAtual) salvarEntrada(); }, 3000);
   }
 });
 
 // ── INIT ──
+// ── FORMATAÇÃO ──
+function fmt(cmd) {
+  document.getElementById('editorTexto').focus();
+  document.execCommand(cmd, false, null);
+  hideContextMenu();
+  hideFloatToolbar();
+}
+
+function fmtColor(color) {
+  document.getElementById('editorTexto').focus();
+  if (color) {
+    document.execCommand('styleWithCSS', false, true);
+    document.execCommand('foreColor', false, color);
+  } else {
+    document.execCommand('removeFormat', false, null);
+  }
+  hideContextMenu();
+  hideFloatToolbar();
+}
+
+// Context menu (botão direito)
+function showContextMenu(e) {
+  // Only show if inside editor
+  e.preventDefault();
+  const menu = document.getElementById('ctxMenu');
+  menu.style.display = 'block';
+  // Position - keep inside viewport
+  let x = e.clientX, y = e.clientY;
+  setTimeout(() => {
+    const mw = menu.offsetWidth, mh = menu.offsetHeight;
+    if (x + mw > window.innerWidth) x = window.innerWidth - mw - 8;
+    if (y + mh > window.innerHeight) y = window.innerHeight - mh - 8;
+    menu.style.left = x + 'px';
+    menu.style.top = y + 'px';
+  }, 0);
+}
+
+function hideContextMenu() {
+  document.getElementById('ctxMenu').style.display = 'none';
+}
+
+// Floating toolbar ao selecionar texto
+function showFloatToolbar(sel) {
+  const tb = document.getElementById('floatToolbar');
+  const range = sel.getRangeAt(0);
+  const rect = range.getBoundingClientRect();
+  tb.style.display = 'flex';
+  let x = rect.left + rect.width / 2 - 100;
+  let y = rect.top - 48;
+  if (y < 8) y = rect.bottom + 8;
+  if (x < 8) x = 8;
+  if (x + 220 > window.innerWidth) x = window.innerWidth - 228;
+  tb.style.left = x + 'px';
+  tb.style.top = y + 'px';
+}
+
+function hideFloatToolbar() {
+  document.getElementById('floatToolbar').style.display = 'none';
+}
+
+// Keyboard shortcuts
+function onEditorKeydown(e) {
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'b') { e.preventDefault(); fmt('bold'); }
+    if (e.key === 'i') { e.preventDefault(); fmt('italic'); }
+    if (e.key === 'u') { e.preventDefault(); fmt('underline'); }
+    if (e.key === 's') { e.preventDefault(); salvarEntrada(); }
+  }
+}
+
+function onEditorInput() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => { if (entradaAtual) salvarEntrada(); }, 3000);
+}
+
+// Global listeners
+document.addEventListener('mouseup', () => {
+  const sel = window.getSelection();
+  const editor = document.getElementById('editorTexto');
+  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+    const node = sel.getRangeAt(0).commonAncestorContainer;
+    if (editor && editor.contains(node)) {
+      showFloatToolbar(sel);
+      return;
+    }
+  }
+  hideFloatToolbar();
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#ctxMenu')) hideContextMenu();
+  if (!e.target.closest('#floatToolbar') && !e.target.closest('#editorTexto')) hideFloatToolbar();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { hideContextMenu(); hideFloatToolbar(); }
+});
+
 async function init() {
   await initSupabase();
   setTimeout(() => {
