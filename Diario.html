@@ -11,12 +11,27 @@
 :root{
   --bg:#080808;--s1:#0f0f0f;--s2:#141414;--s3:#1a1a1a;
   --gold:#d4a843;--gold-b:#f0c040;--gold-dim:rgba(212,168,67,.08);--gold-mid:rgba(212,168,67,.28);
-  --text:#f1f1f5;--td:rgba(241,241,245,.62);--tf:rgba(241,241,245,.35);
+  --text:#f1f1f5;--td:rgba(241,241,245,.75);--tf:rgba(241,241,245,.35);
   --border:rgba(255,255,255,.07);--bm:rgba(212,168,67,.25);
 }
 html,body{background:var(--bg);color:var(--text);font-family:'Montserrat',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
-body{padding-left:70px;padding-bottom:40px;transition:background .3s}
+body{padding-left:70px}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(212,168,67,.2)}
+
+/* ── LOCK SCREEN ── */
+#lockScreen{position:fixed;inset:0;background:var(--bg);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0}
+#lockScreen.gone{display:none}
+.lock-box{display:flex;flex-direction:column;align-items:center;gap:28px;padding:48px 40px;border:1px solid rgba(212,168,67,.12);background:var(--s1);max-width:360px;width:90%;position:relative;overflow:hidden}
+.lock-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.lock-icon{width:52px;height:52px;border:1px solid rgba(212,168,67,.25);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.lock-icon svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:1.5}
+.lock-title{font-family:'Montserrat',sans-serif;font-size:.72em;font-weight:700;letter-spacing:4px;color:var(--td);text-transform:uppercase;text-align:center}
+.lock-sub{font-size:.65em;color:var(--tf);letter-spacing:.5px;text-align:center;margin-top:-16px}
+.lock-inp{width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.12);color:#fff;font-family:'Montserrat',sans-serif;font-size:1.1em;letter-spacing:4px;padding:10px 0;outline:none;text-align:center;transition:border-color .3s}
+.lock-inp:focus{border-bottom-color:var(--gold-mid)}
+.lock-btn{width:100%;padding:12px;background:var(--gold-dim);border:1px solid var(--bm);color:var(--gold);font-family:'Montserrat',sans-serif;font-size:.72em;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .25s;text-transform:uppercase}
+.lock-btn:hover{background:rgba(212,168,67,.15);border-color:var(--gold)}
+.lock-err{font-size:.7em;color:#ff6b6b;letter-spacing:.5px;min-height:16px;text-align:center;transition:opacity .3s}
 
 /* ── SIDEBAR ── */
 .sidebar{position:fixed;top:0;left:0;width:60px;height:100vh;background:linear-gradient(180deg,#0f0f18,#0a0a12);border-right:1px solid rgba(212,168,67,.1);z-index:1000;display:flex;flex-direction:column;align-items:center;padding:16px 0;transition:width .3s cubic-bezier(.16,1,.3,1);overflow:hidden}
@@ -46,144 +61,156 @@ body{padding-left:70px;padding-bottom:40px;transition:background .3s}
 @media(max-width:768px){body{padding-left:0!important;padding-bottom:80px!important}.sidebar{display:none!important}.mobile-nav{display:block}}
 @media(min-width:769px){.mobile-nav{display:none!important}}
 
-/* ── LAYOUT ── */
-.layout{display:grid;grid-template-columns:280px 1fr;min-height:100vh;max-width:1200px;margin:0 auto}
-.sidebar-list{border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:hidden}
-.main-area{padding:0}
+/* ── MAIN LAYOUT ── */
+.app-layout{display:flex;height:100vh;overflow:hidden}
+.list-col{width:300px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh}
+.editor-col{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
 
-/* ── LISTA DE ENTRADAS ── */
-.list-header{padding:24px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.list-title{font-family:'Montserrat',sans-serif;font-size:.72em;font-weight:700;letter-spacing:3px;color:var(--td);text-transform:uppercase}
-.btn-nova{background:transparent;border:1px solid var(--bm);color:var(--gold);padding:7px 14px;font-family:'Montserrat',sans-serif;font-size:.65em;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .25s;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+/* ── TABS ── */
+.tabs-bar{display:flex;border-bottom:1px solid var(--border);background:var(--s1)}
+.tab-btn{flex:1;padding:14px 10px;background:transparent;border:none;color:rgba(255,255,255,.4);font-family:'Montserrat',sans-serif;font-size:.68em;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .3s;text-transform:uppercase;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab-btn.on{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-btn.noir{color:rgba(180,180,180,.4)}
+.tab-btn.noir.on{color:#c0c0c0;border-bottom-color:#888}
+.tab-panel{display:none;flex:1;overflow:hidden;flex-direction:column}
+.tab-panel.on{display:flex}
+
+/* ── LIST COLUMN ── */
+.list-header{padding:20px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.list-title{font-size:.65em;font-weight:700;letter-spacing:3px;color:var(--tf);text-transform:uppercase}
+.btn-nova{background:transparent;border:1px solid var(--bm);color:var(--gold);padding:6px 12px;font-family:'Montserrat',sans-serif;font-size:.62em;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .25s;text-transform:uppercase;display:flex;align-items:center;gap:5px}
 .btn-nova:hover{background:var(--gold-dim);border-color:var(--gold)}
-.btn-nova svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5}
+.btn-nova svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5}
+.btn-nova.noir-btn{border-color:rgba(180,180,180,.2);color:#aaa}
+.btn-nova.noir-btn:hover{background:rgba(180,180,180,.06);border-color:#999}
 
-.search-wrap{padding:12px 16px;border-bottom:1px solid var(--border)}
-.search-inp{width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:'Montserrat',sans-serif;font-size:.78em;padding:8px 12px;outline:none;transition:border-color .2s}
+.search-wrap{padding:10px 14px;border-bottom:1px solid var(--border)}
+.search-inp{width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:'Montserrat',sans-serif;font-size:.75em;padding:7px 11px;outline:none;transition:border-color .2s}
 .search-inp:focus{border-color:var(--gold-mid)}
 .search-inp::placeholder{color:var(--tf)}
 
-.entries-scroll{flex:1;overflow-y:auto;padding:8px 0}
-.entry-item{padding:14px 20px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.03);transition:background .2s;position:relative;border-left:2px solid transparent}
+.entries-scroll{flex:1;overflow-y:auto}
+.entry-item{padding:14px 18px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.03);transition:background .2s;border-left:2px solid transparent}
 .entry-item:hover{background:rgba(255,255,255,.02)}
 .entry-item.active{background:rgba(212,168,67,.05);border-left-color:var(--gold)}
-.entry-item-date{font-size:.62em;font-weight:600;letter-spacing:1px;color:var(--tf);text-transform:uppercase;margin-bottom:4px}
-.entry-item-title{font-size:.85em;font-weight:500;color:var(--td);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.entry-item-preview{font-size:.75em;color:var(--tf);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic}
-.entry-item-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
-.tag-chip{font-size:.55em;padding:2px 7px;border:1px solid rgba(212,168,67,.2);color:rgba(212,168,67,.5);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.entry-item.noir-active{background:rgba(150,150,150,.04);border-left-color:#888}
+.entry-item-date{font-size:.6em;font-weight:600;letter-spacing:1px;color:var(--tf);text-transform:uppercase;margin-bottom:3px}
+.entry-item-title{font-size:.82em;font-weight:500;color:var(--td);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.entry-item-preview{font-size:.72em;color:var(--tf);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic}
+.entry-item-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.tag-chip{font-size:.52em;padding:2px 6px;border:1px solid rgba(212,168,67,.2);color:rgba(212,168,67,.5);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.tag-chip.noir-tag{border-color:rgba(180,180,180,.15);color:rgba(180,180,180,.4)}
+.empty-list{padding:40px 20px;text-align:center;color:var(--tf);font-size:.78em;font-style:italic;line-height:2}
 
-.empty-list{padding:40px 20px;text-align:center;color:var(--tf);font-size:.8em;font-style:italic;line-height:1.8}
-
-/* ── EDITOR ── */
-.editor-wrap{min-height:100vh;display:flex;flex-direction:column}
-.editor-toolbar{padding:20px 40px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.editor-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.editor-date-inp{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--td);font-family:'Montserrat',sans-serif;font-size:.75em;padding:4px 0;outline:none;cursor:pointer;transition:border-color .2s;width:130px}
+/* ── EDITOR COLUMN ── */
+.editor-topbar{padding:16px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;flex-shrink:0}
+.editor-meta{display:flex;align-items:center;gap:20px;flex-wrap:wrap;flex:1}
+.editor-date-inp{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--tf);font-family:'Montserrat',sans-serif;font-size:.72em;padding:4px 0;outline:none;cursor:pointer;transition:border-color .2s;width:120px}
 .editor-date-inp:focus{border-bottom-color:var(--gold-mid)}
-.editor-estado-inp{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--td);font-family:'Crimson Pro',serif;font-size:.95em;font-style:italic;padding:4px 0;outline:none;transition:border-color .2s;min-width:200px}
+.editor-estado-inp{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--td);font-family:'Crimson Pro',serif;font-size:.98em;font-style:italic;padding:4px 0;outline:none;transition:border-color .2s;flex:1;min-width:160px}
 .editor-estado-inp:focus{border-bottom-color:var(--gold-mid)}
 .editor-estado-inp::placeholder{color:var(--tf);font-style:italic}
 
-.editor-actions{display:flex;align-items:center;gap:10px}
+.editor-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .btn-salvar{background:var(--gold-dim);border:1px solid var(--bm);color:var(--gold);padding:8px 20px;font-family:'Montserrat',sans-serif;font-size:.65em;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .25s;text-transform:uppercase}
-.btn-salvar:hover{background:rgba(212,168,67,.18);border-color:var(--gold)}
+.btn-salvar:hover{background:rgba(212,168,67,.18)}
 .btn-salvar.saved{border-color:rgba(100,200,100,.4);color:rgba(100,200,100,.8);background:rgba(100,200,100,.06)}
-.btn-del{background:transparent;border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.25);padding:8px 12px;font-family:'Montserrat',sans-serif;font-size:.65em;cursor:pointer;transition:all .25s}
+.btn-del{background:transparent;border:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.22);padding:8px 12px;font-family:'Montserrat',sans-serif;font-size:.65em;cursor:pointer;transition:all .25s}
 .btn-del:hover{border-color:rgba(200,50,50,.4);color:rgba(200,80,80,.7)}
 
-/* ── TAGS ── */
-.tags-row{padding:12px 40px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.tags-label{font-size:.6em;font-weight:700;letter-spacing:2px;color:var(--tf);text-transform:uppercase;margin-right:4px}
-.tag-btn{padding:4px 12px;border:1px solid var(--border);color:var(--tf);font-family:'Montserrat',sans-serif;font-size:.62em;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:all .2s;text-transform:uppercase;background:transparent}
+/* ── NOIR TOPBAR ── */
+.noir-topbar{background:var(--s1);border-bottom:1px solid rgba(180,180,180,.08)}
+.noir-topbar .editor-date-inp{color:rgba(180,180,180,.5)}
+.noir-topbar .editor-estado-inp{color:rgba(220,220,220,.7);font-family:'Montserrat',sans-serif;font-style:normal;font-size:.78em;letter-spacing:1px}
+.noir-topbar .btn-salvar{border-color:rgba(180,180,180,.2);color:#aaa;background:rgba(180,180,180,.04)}
+.noir-topbar .btn-salvar:hover{background:rgba(180,180,180,.08)}
+.noir-topbar .btn-salvar.saved{border-color:rgba(100,200,100,.35);color:rgba(120,200,120,.8)}
+
+/* ── TAGS ROW ── */
+.tags-row{padding:10px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0}
+.tags-label{font-size:.58em;font-weight:700;letter-spacing:2px;color:var(--tf);text-transform:uppercase;margin-right:4px;flex-shrink:0}
+.tag-btn{padding:4px 11px;border:1px solid var(--border);color:var(--tf);font-family:'Montserrat',sans-serif;font-size:.6em;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:all .2s;text-transform:uppercase;background:transparent}
 .tag-btn:hover{border-color:var(--bm);color:var(--td)}
 .tag-btn.on{border-color:var(--gold-mid);color:var(--gold);background:var(--gold-dim)}
 
-/* ── ÁREA DE ESCRITA ── */
-.writing-area{flex:1;padding:40px;max-width:780px;width:100%}
-.page-title-inp{width:100%;background:transparent;border:none;color:var(--text);font-family:'Montserrat',sans-serif;font-size:1.5em;font-weight:600;letter-spacing:.5px;outline:none;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.04)}
-.page-title-inp::placeholder{color:rgba(255,255,255,.12)}
-.writing-inp{width:100%;background:transparent;border:none;color:rgba(255,255,255,.88);font-family:'Crimson Pro',serif;font-size:1.18em;line-height:1.95;outline:none;resize:none;min-height:60vh;letter-spacing:.2px;text-align:justify}
-.writing-inp::placeholder{color:rgba(255,255,255,.1);font-style:italic}
+/* ── WRITING AREA ── */
+.writing-scroll{flex:1;overflow-y:auto;padding:36px 32px 60px}
+.page-title-inp{width:100%;background:transparent;border:none;color:#fff;font-family:'Montserrat',sans-serif;font-size:1.35em;font-weight:600;letter-spacing:.3px;outline:none;margin-bottom:22px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.04)}
+.page-title-inp::placeholder{color:rgba(255,255,255,.1)}
 
-/* ── EMPTY EDITOR ── */
-.editor-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;text-align:center;gap:16px}
-.editor-empty-title{font-family:'Crimson Pro',serif;font-size:1.4em;font-style:italic;color:rgba(255,255,255,.15)}
-.editor-empty-sub{font-size:.72em;color:rgba(255,255,255,.1);letter-spacing:.5px}
+.writing-inp{width:100%;background:transparent;border:none;color:rgba(255,255,255,.88);font-family:'Crimson Pro',serif;font-size:1.18em;line-height:1.95;outline:none;min-height:65vh;letter-spacing:.2px;text-align:justify}
+.writing-inp[contenteditable]:empty::before{content:attr(data-placeholder);color:rgba(255,255,255,.1);font-style:italic;pointer-events:none}
+.writing-inp[contenteditable]:focus{outline:none}
 
-/* ── LINHA DO TEMPO ── */
-.timeline-btn{background:transparent;border:1px solid var(--border);color:var(--tf);padding:7px 14px;font-family:'Montserrat',sans-serif;font-size:.62em;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .2s;text-transform:uppercase}
-.timeline-btn:hover{border-color:var(--bm);color:var(--td)}
-.timeline-panel{display:none;padding:24px 40px;border-bottom:1px solid var(--border);background:var(--s1)}
-.timeline-panel.show{display:block}
-.timeline-title{font-size:.62em;font-weight:700;letter-spacing:2px;color:var(--tf);text-transform:uppercase;margin-bottom:16px}
-.timeline-bars{display:flex;align-items:flex-end;gap:4px;height:60px}
-.tbar{flex:1;background:var(--gold-dim);border-radius:2px 2px 0 0;transition:height .4s;position:relative;cursor:default;min-width:8px}
-.tbar:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--s3);border:1px solid var(--border);padding:4px 8px;font-family:'Montserrat',sans-serif;font-size:.6em;color:var(--td);white-space:nowrap;pointer-events:none;z-index:10}
-.tbar-labels{display:flex;gap:4px;margin-top:4px}
-.tbar-label{flex:1;font-size:.52em;color:var(--tf);text-align:center;text-transform:uppercase;letter-spacing:.3px;min-width:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* ── NOIR WRITING AREA ── */
+.noir-writing .page-title-inp{color:#d0d0d0;font-family:'Montserrat',sans-serif;font-size:1.1em;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom-color:rgba(180,180,180,.08)}
+.noir-writing .page-title-inp::placeholder{color:rgba(180,180,180,.1)}
+.noir-writing .writing-inp{color:rgba(220,220,220,.8);font-family:'Montserrat',sans-serif;font-size:.95em;line-height:1.85;letter-spacing:.3px;text-align:left}
+.noir-writing .writing-inp[contenteditable]:empty::before{color:rgba(180,180,180,.15);font-style:normal}
+
+/* ── EDITOR EMPTY ── */
+.editor-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;opacity:.3}
+.editor-empty svg{width:36px;height:36px;stroke:var(--gold);fill:none;stroke-width:1}
+.editor-empty p{font-size:.72em;letter-spacing:1px;color:var(--td)}
+
+/* ── TIMELINE ── */
+.timeline-bar-wrap{padding:0 32px;border-bottom:1px solid var(--border);flex-shrink:0}
+.timeline-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+.timeline-info{font-size:.6em;font-weight:600;letter-spacing:2px;color:var(--tf);text-transform:uppercase}
+.timeline-btns{display:flex;gap:8px}
+.tl-btn{background:transparent;border:1px solid var(--border);color:var(--tf);padding:5px 12px;font-family:'Montserrat',sans-serif;font-size:.58em;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.tl-btn:hover{border-color:var(--bm);color:var(--td)}
+.timeline-chart{overflow:hidden;max-height:0;transition:max-height .4s ease}
+.timeline-chart.open{max-height:100px}
+.tl-bars{display:flex;align-items:flex-end;gap:3px;height:56px;padding-bottom:0}
+.tbar{flex:1;border-radius:2px 2px 0 0;min-width:6px;position:relative;cursor:default;transition:opacity .2s}
+.tbar:hover{opacity:.8}
+.tbar:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:var(--s3);border:1px solid var(--border);padding:3px 7px;font-family:'Montserrat',sans-serif;font-size:.58em;color:var(--td);white-space:nowrap;pointer-events:none;z-index:10}
+.tl-labels{display:flex;gap:3px;margin-top:3px;padding-bottom:10px}
+.tl-label{flex:1;font-size:.5em;color:var(--tf);text-align:center;min-width:6px;overflow:hidden}
+
+/* ── CONTEXT MENU ── */
+#ctxMenu{display:none;position:fixed;z-index:9990;background:#16161e;border:1px solid rgba(212,168,67,.18);box-shadow:0 8px 40px rgba(0,0,0,.7);padding:6px 0;min-width:190px}
+.ctx-item{display:flex;align-items:center;gap:10px;padding:7px 14px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:.75em;color:rgba(255,255,255,.65);transition:background .15s;user-select:none}
+.ctx-item:hover{background:rgba(212,168,67,.07);color:#fff}
+.ctx-key{margin-left:auto;font-size:.65em;color:rgba(255,255,255,.2);font-family:'Montserrat',sans-serif}
+.ctx-sep{height:1px;background:rgba(255,255,255,.06);margin:4px 0}
+.ctx-label{font-family:'Montserrat',sans-serif;font-size:.56em;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase;padding:6px 14px 2px}
+.ctx-colors{display:flex;gap:7px;padding:6px 14px 8px;flex-wrap:wrap}
+.ctx-dot{width:20px;height:20px;border-radius:50%;cursor:pointer;transition:transform .2s;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:.55em}
+.ctx-dot:hover{transform:scale(1.3)}
+
+/* ── FLOAT TOOLBAR ── */
+#floatTB{display:none;position:fixed;z-index:9991;background:#16161e;border:1px solid rgba(212,168,67,.2);border-radius:3px;padding:4px 6px;gap:2px;align-items:center;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+.ftb{background:transparent;border:none;color:rgba(255,255,255,.55);font-family:'Montserrat',sans-serif;font-size:.82em;font-weight:700;cursor:pointer;padding:4px 7px;border-radius:2px;transition:all .2s;line-height:1}
+.ftb:hover{background:rgba(212,168,67,.1);color:#fff}
+.ftb-sep{width:1px;height:14px;background:rgba(255,255,255,.1)}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:20px;padding:10px 18px;background:var(--s3);border:1px solid var(--bm);font-family:'Montserrat',sans-serif;font-size:.75em;color:var(--text);z-index:9999;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 
-/* ── LOADER ── */
-.loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity .5s}
-.loader.gone{opacity:0;pointer-events:none}
-.loader-text{font-family:'Montserrat',sans-serif;font-size:.65em;letter-spacing:3px;color:var(--tf);text-transform:uppercase;animation:pulse 1.5s ease-in-out infinite}
-.loader-bar{width:120px;height:1px;background:rgba(212,168,67,.15);overflow:hidden}
-.loader-fill{height:100%;background:var(--gold);animation:loadbar 1.5s ease-out forwards}
-@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
-@keyframes loadbar{from{width:0}to{width:100%}}
-
-/* ── CONTENTEDITABLE ── */
-.writing-inp[contenteditable]:empty::before{content:attr(data-placeholder);color:rgba(255,255,255,.1);font-style:italic;pointer-events:none}
-.writing-inp[contenteditable]:focus{outline:none}
-.writing-inp[contenteditable] b,.writing-inp[contenteditable] strong{font-weight:700}
-.writing-inp[contenteditable] i,.writing-inp[contenteditable] em{font-style:italic}
-.writing-inp[contenteditable] u{text-decoration:underline}
-.writing-inp[contenteditable] s{text-decoration:line-through}
-
-/* ── CONTEXT MENU ── */
-.ctx-item{display:flex;align-items:center;gap:10px;padding:7px 14px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:.78em;color:rgba(255,255,255,.7);transition:background .15s}
-.ctx-item:hover{background:rgba(212,168,67,.08);color:#fff}
-.ctx-item span:first-child{font-family:'Montserrat',sans-serif;color:var(--gold);flex-shrink:0}
-.ctx-short{margin-left:auto;font-size:.7em;color:rgba(255,255,255,.25);font-family:'Montserrat',sans-serif}
-.ctx-sep{height:1px;background:rgba(255,255,255,.06);margin:4px 0}
-.ctx-label{font-family:'Montserrat',sans-serif;font-size:.58em;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;padding:6px 14px 2px}
-.ctx-color{width:20px;height:20px;border-radius:50%;cursor:pointer;transition:transform .2s;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.6em;color:#000}
-.ctx-color:hover{transform:scale(1.25)}
-
-/* ── FLOATING TOOLBAR (aparece ao selecionar texto) ── */
-#floatToolbar{display:none;position:fixed;z-index:9991;background:#1a1a22;border:1px solid rgba(212,168,67,.25);border-radius:4px;padding:4px 8px;gap:4px;align-items:center;box-shadow:0 4px 20px rgba(0,0,0,.5)}
-.ftb-btn{background:transparent;border:none;color:rgba(255,255,255,.6);font-family:'Montserrat',sans-serif;font-size:.82em;font-weight:700;cursor:pointer;padding:4px 8px;border-radius:2px;transition:all .2s;line-height:1}
-.ftb-btn:hover{background:rgba(212,168,67,.1);color:#fff}
-.ftb-sep{width:1px;height:16px;background:rgba(255,255,255,.1)}
-
-/* ── PDF EXPORT ── *//* ── PDF EXPORT ── */
-@media print{
-  .sidebar,.mobile-nav,.sidebar-list,.editor-toolbar,.tags-row,.editor-actions,.timeline-panel,.toast,.loader{display:none!important}
-  body{padding:0;background:#fff;color:#1a1a1a}
-  .layout{display:block}
-  .writing-area{padding:40px;max-width:100%}
-  .page-title-inp,.writing-inp{color:#1a1a1a;font-size:14pt}
-}
-
-@media(max-width:900px){
-  .layout{grid-template-columns:1fr}
-  .sidebar-list{display:none}
-  .mobile-entries-btn{display:flex}
-}
+@media print{.sidebar,.mobile-nav,.list-col,.editor-topbar,.tags-row,.timeline-bar-wrap,#ctxMenu,#floatTB,.toast,#lockScreen{display:none!important}body{padding:0;background:#fff;color:#111}.writing-scroll{padding:40px;overflow:visible}.writing-inp,.page-title-inp{color:#111;font-size:13pt}}
 </style>
 </head>
 <body>
 
-<div class="loader" id="loader">
-  <div class="loader-bar"><div class="loader-fill"></div></div>
-  <div class="loader-text">Carregando diário</div>
+<!-- ── LOCK SCREEN ── -->
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-icon">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <div class="lock-title">Acesso Privado</div>
+    <div class="lock-sub">ZARA · Diário</div>
+    <input class="lock-inp" id="lockInp" type="password" placeholder="••••••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')verificarSenha()" autocomplete="off" />
+    <div class="lock-err" id="lockErr">&nbsp;</div>
+    <button class="lock-btn" onclick="verificarSenha()">ENTRAR</button>
+  </div>
 </div>
 
-<!-- SIDEBAR -->
+<!-- ── SIDEBAR ── -->
 <nav class="sidebar">
   <a href="index.html" class="sidebar-logo">Z</a>
   <div class="sidebar-menu">
@@ -197,7 +224,7 @@ body{padding-left:70px;padding-bottom:40px;transition:background .3s}
   <div class="sidebar-footer"><p><span class="inst">ZARA</span>Private Access</p></div>
 </nav>
 
-<!-- MOBILE NAV -->
+<!-- ── MOBILE NAV ── -->
 <nav class="mobile-nav">
   <div class="mobile-nav-items">
     <a href="index.html" class="mobile-nav-item"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início</a>
@@ -208,536 +235,556 @@ body{padding-left:70px;padding-bottom:40px;transition:background .3s}
   </div>
 </nav>
 
-<!-- MAIN LAYOUT -->
-<div class="layout">
+<!-- ── APP ── -->
+<div class="app-layout" id="appLayout" style="display:none">
 
-  <!-- COLUNA ESQUERDA: lista de entradas -->
-  <div class="sidebar-list">
-    <div class="list-header">
-      <span class="list-title">Entradas</span>
-      <button class="btn-nova" onclick="novaEntrada()">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Nova
-      </button>
+  <!-- LIST COLUMN -->
+  <div class="list-col">
+    <div class="tabs-bar">
+      <button class="tab-btn on" id="tab-diario" onclick="switchTab('diario')">Diário</button>
+      <button class="tab-btn noir" id="tab-noir" onclick="switchTab('noir')">Livro Negro</button>
     </div>
-    <div class="search-wrap">
-      <input class="search-inp" id="searchInp" type="text" placeholder="Buscar..." oninput="filtrarEntradas()" />
+
+    <!-- Diário list -->
+    <div class="tab-panel on" id="panel-list-diario" style="flex-direction:column">
+      <div class="list-header">
+        <span class="list-title">Entradas</span>
+        <button class="btn-nova" onclick="novaEntrada('diario')">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova
+        </button>
+      </div>
+      <div class="search-wrap">
+        <input class="search-inp" id="searchDiario" type="text" placeholder="Buscar..." oninput="filtrar('diario')" />
+      </div>
+      <div class="entries-scroll" id="listDiario"></div>
     </div>
-    <div class="entries-scroll" id="entriesList"></div>
+
+    <!-- Noir list -->
+    <div class="tab-panel" id="panel-list-noir" style="flex-direction:column">
+      <div class="list-header">
+        <span class="list-title" style="color:rgba(180,180,180,.35)">Registros</span>
+        <button class="btn-nova noir-btn" onclick="novaEntrada('noir')">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo
+        </button>
+      </div>
+      <div class="search-wrap">
+        <input class="search-inp" id="searchNoir" type="text" placeholder="Buscar..." oninput="filtrar('noir')" style="border-color:rgba(180,180,180,.08)" />
+      </div>
+      <div class="entries-scroll" id="listNoir"></div>
+    </div>
   </div>
 
-  <!-- COLUNA DIREITA: editor -->
-  <div class="main-area">
+  <!-- EDITOR COLUMN -->
+  <div class="editor-col">
 
-    <!-- Timeline toggle -->
-    <div style="padding:14px 40px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-      <div style="font-size:.62em;font-weight:600;letter-spacing:2px;color:var(--tf);text-transform:uppercase" id="totalLabel"></div>
-      <div style="display:flex;gap:8px">
-        <button class="timeline-btn" onclick="toggleTimeline()">Linha do tempo</button>
-        <button class="timeline-btn" onclick="exportarPDF()">↓ PDF</button>
-      </div>
-    </div>
-
-    <div class="timeline-panel" id="timelinePanel">
-      <div class="timeline-title">Humor — últimas entradas</div>
-      <div class="timeline-bars" id="timelineBars"></div>
-      <div class="tbar-labels" id="timelineLabels"></div>
-    </div>
-
-    <!-- Editor -->
-    <div class="editor-wrap" id="editorWrap">
-
-      <div class="editor-toolbar" id="editorToolbar" style="display:none">
-        <div class="editor-meta">
-          <input class="editor-date-inp" type="date" id="editorDate" />
-          <input class="editor-estado-inp" id="editorEstado" type="text" placeholder="Como você está hoje?" maxlength="80" />
+    <!-- Diário editor -->
+    <div class="tab-panel on" id="panel-editor-diario" style="flex-direction:column">
+      <div class="timeline-bar-wrap">
+        <div class="timeline-toggle">
+          <span class="timeline-info" id="totalDiario">0 entradas</span>
+          <div class="timeline-btns">
+            <button class="tl-btn" onclick="toggleTimeline()">Humor</button>
+            <button class="tl-btn" onclick="exportarPDF()">↓ PDF</button>
+          </div>
         </div>
-        <div class="editor-actions">
-          <button class="btn-del" id="btnDel" onclick="deletarAtual()" style="display:none">Excluir</button>
-          <button class="btn-salvar" id="btnSalvar" onclick="salvarEntrada()">Salvar</button>
+        <div class="timeline-chart" id="timelineChart">
+          <div class="tl-bars" id="tlBars"></div>
+          <div class="tl-labels" id="tlLabels"></div>
         </div>
       </div>
 
-      <div class="tags-row" id="tagsRow" style="display:none">
-        <span class="tags-label">Marcar</span>
-        <button class="tag-btn" data-tag="vitória" onclick="toggleTag(this)">Vitória</button>
-        <button class="tag-btn" data-tag="falha" onclick="toggleTag(this)">Falha</button>
-        <button class="tag-btn" data-tag="insight" onclick="toggleTag(this)">Insight</button>
-        <button class="tag-btn" data-tag="decisão" onclick="toggleTag(this)">Decisão</button>
-        <button class="tag-btn" data-tag="gratidão" onclick="toggleTag(this)">Gratidão</button>
-        <button class="tag-btn" data-tag="recaída" onclick="toggleTag(this)">Recaída</button>
+      <div id="editorEmpty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;opacity:.25">
+        <svg viewBox="0 0 24 24" style="width:36px;height:36px;stroke:var(--gold);fill:none;stroke-width:1"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <p style="font-size:.72em;letter-spacing:1px;color:var(--td)">Selecione ou crie uma entrada</p>
       </div>
 
-      <div class="writing-area" id="writingArea" style="display:none">
-        <input class="page-title-inp" id="editorTitulo" type="text" placeholder="Título (opcional)" maxlength="100" />
-        <div class="writing-inp" id="editorTexto" contenteditable="true" data-placeholder="Escreva o que quiser..." oncontextmenu="showContextMenu(event)" oninput="onEditorInput()" onkeydown="onEditorKeydown(event)"></div>
+      <div id="editorActive" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+        <div class="editor-topbar">
+          <div class="editor-meta">
+            <input class="editor-date-inp" type="date" id="dDate" />
+            <input class="editor-estado-inp" id="dEstado" type="text" placeholder="Como você está hoje?" maxlength="80" />
+          </div>
+          <div class="editor-actions">
+            <button class="btn-del" id="dBtnDel" onclick="deletar('diario')">Excluir</button>
+            <button class="btn-salvar" id="dBtnSalvar" onclick="salvar('diario')">Salvar</button>
+          </div>
+        </div>
+        <div class="tags-row">
+          <span class="tags-label">Marcar</span>
+          <button class="tag-btn" data-tag="vitória" onclick="toggleTag(this,'diario')">Vitória</button>
+          <button class="tag-btn" data-tag="falha" onclick="toggleTag(this,'diario')">Falha</button>
+          <button class="tag-btn" data-tag="insight" onclick="toggleTag(this,'diario')">Insight</button>
+          <button class="tag-btn" data-tag="decisão" onclick="toggleTag(this,'diario')">Decisão</button>
+          <button class="tag-btn" data-tag="gratidão" onclick="toggleTag(this,'diario')">Gratidão</button>
+          <button class="tag-btn" data-tag="recaída" onclick="toggleTag(this,'diario')">Recaída</button>
+        </div>
+        <div class="writing-scroll">
+          <input class="page-title-inp" id="dTitulo" type="text" placeholder="Título (opcional)" maxlength="100" />
+          <div class="writing-inp" id="dTexto" contenteditable="true" data-placeholder="Escreva o que quiser..." oncontextmenu="showCtx(event)" oninput="onInput('diario')"></div>
+        </div>
+      </div>
+    </div>
 
-<!-- CONTEXT MENU -->
-<div id="ctxMenu" style="display:none;position:fixed;z-index:9990;background:#1a1a22;border:1px solid rgba(212,168,67,.2);box-shadow:0 8px 32px rgba(0,0,0,.6);padding:6px 0;min-width:180px">
-  <div class="ctx-item" onclick="fmt('bold')">
-    <span style="font-weight:700;width:20px;text-align:center">B</span>
-    <span>Negrito</span>
-    <span class="ctx-short">Ctrl+B</span>
-  </div>
-  <div class="ctx-item" onclick="fmt('italic')">
-    <span style="font-style:italic;width:20px;text-align:center">I</span>
-    <span>Itálico</span>
-    <span class="ctx-short">Ctrl+I</span>
-  </div>
-  <div class="ctx-item" onclick="fmt('underline')">
-    <span style="text-decoration:underline;width:20px;text-align:center">U</span>
-    <span>Sublinhado</span>
-    <span class="ctx-short">Ctrl+U</span>
-  </div>
-  <div class="ctx-item" onclick="fmt('strikeThrough')">
-    <span style="text-decoration:line-through;width:20px;text-align:center">S</span>
-    <span>Riscado</span>
-  </div>
-  <div class="ctx-sep"></div>
-  <div class="ctx-label">Cor do texto</div>
-  <div style="display:flex;gap:6px;padding:6px 14px;flex-wrap:wrap">
-    <div class="ctx-color" style="background:#f0c040" onclick="fmtColor('#f0c040')" title="Dourado"></div>
-    <div class="ctx-color" style="background:#ff6b6b" onclick="fmtColor('#ff6b6b')" title="Vermelho"></div>
-    <div class="ctx-color" style="background:#69db7c" onclick="fmtColor('#69db7c')" title="Verde"></div>
-    <div class="ctx-color" style="background:#74c0fc" onclick="fmtColor('#74c0fc')" title="Azul"></div>
-    <div class="ctx-color" style="background:#da77f2" onclick="fmtColor('#da77f2')" title="Roxo"></div>
-    <div class="ctx-color" style="background:#ff922b" onclick="fmtColor('#ff922b')" title="Laranja"></div>
-    <div class="ctx-color" style="background:#ffffff" onclick="fmtColor('#ffffff')" title="Branco"></div>
-    <div class="ctx-color" style="background:rgba(241,241,245,.5)" onclick="fmtColor('')" title="Padrão" style="border:1px solid rgba(255,255,255,.3)">✕</div>
-  </div>
-  <div class="ctx-sep"></div>
-  <div class="ctx-item" onclick="fmt('removeFormat')">
-    <span style="width:20px;text-align:center;font-size:.8em">✕</span>
-    <span>Remover formatação</span>
+    <!-- Noir editor -->
+    <div class="tab-panel" id="panel-editor-noir" style="flex-direction:column">
+      <div style="padding:12px 32px;border-bottom:1px solid rgba(180,180,180,.06);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <span style="font-size:.6em;font-weight:700;letter-spacing:3px;color:rgba(180,180,180,.3);text-transform:uppercase" id="totalNoir">0 registros</span>
+        <button class="tl-btn" onclick="exportarPDF('noir')">↓ PDF</button>
+      </div>
+
+      <div id="noirEmpty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;opacity:.2">
+        <svg viewBox="0 0 24 24" style="width:36px;height:36px;stroke:#888;fill:none;stroke-width:1"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <p style="font-size:.72em;letter-spacing:1px;color:#aaa">Selecione ou crie um registro</p>
+      </div>
+
+      <div id="noirActive" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+        <div class="editor-topbar noir-topbar">
+          <div class="editor-meta">
+            <input class="editor-date-inp" type="date" id="nDate" />
+            <input class="editor-estado-inp" id="nTema" type="text" placeholder="Tema / Objetivo" maxlength="80" style="font-family:'Montserrat',sans-serif;font-style:normal;font-size:.78em;letter-spacing:1px" />
+          </div>
+          <div class="editor-actions">
+            <button class="btn-del" id="nBtnDel" onclick="deletar('noir')">Excluir</button>
+            <button class="btn-salvar noir-topbar" id="nBtnSalvar" onclick="salvar('noir')" style="border-color:rgba(180,180,180,.2);color:#aaa;background:rgba(180,180,180,.04)">Salvar</button>
+          </div>
+        </div>
+        <div class="writing-scroll noir-writing">
+          <input class="page-title-inp" id="nTitulo" type="text" placeholder="TÍTULO DO REGISTRO" maxlength="100" style="font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:3px;text-transform:uppercase;font-size:1em;color:#d0d0d0" />
+          <div class="writing-inp" id="nTexto" contenteditable="true" data-placeholder="Estratégia, plano, decisão..." oncontextmenu="showCtx(event)" oninput="onInput('noir')" style="color:rgba(220,220,220,.8);font-family:'Montserrat',sans-serif;font-size:.92em;line-height:1.85;text-align:left"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
-      </div>
 
-      <div class="editor-empty" id="editorEmpty">
-        <div class="editor-empty-title">Seu espaço de escrita</div>
-        <div class="editor-empty-sub">Selecione uma entrada ou crie uma nova</div>
-      </div>
-
-    </div>
+<!-- ── CONTEXT MENU ── -->
+<div id="ctxMenu">
+  <div class="ctx-item" onclick="fmt('bold')"><b style="width:18px;text-align:center;color:var(--gold)">B</b> Negrito <span class="ctx-key">Ctrl+B</span></div>
+  <div class="ctx-item" onclick="fmt('italic')"><i style="width:18px;text-align:center;color:var(--gold)">I</i> Itálico <span class="ctx-key">Ctrl+I</span></div>
+  <div class="ctx-item" onclick="fmt('underline')"><u style="width:18px;text-align:center;color:var(--gold)">U</u> Sublinhado <span class="ctx-key">Ctrl+U</span></div>
+  <div class="ctx-item" onclick="fmt('strikeThrough')"><s style="width:18px;text-align:center;color:var(--gold)">S</s> Riscado</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-label">Cor do texto</div>
+  <div class="ctx-colors">
+    <div class="ctx-dot" style="background:#f0c040" onclick="fmtCor('#f0c040')" title="Dourado"></div>
+    <div class="ctx-dot" style="background:#ff6b6b" onclick="fmtCor('#ff6b6b')" title="Vermelho"></div>
+    <div class="ctx-dot" style="background:#69db7c" onclick="fmtCor('#69db7c')" title="Verde"></div>
+    <div class="ctx-dot" style="background:#74c0fc" onclick="fmtCor('#74c0fc')" title="Azul"></div>
+    <div class="ctx-dot" style="background:#da77f2" onclick="fmtCor('#da77f2')" title="Roxo"></div>
+    <div class="ctx-dot" style="background:#ff922b" onclick="fmtCor('#ff922b')" title="Laranja"></div>
+    <div class="ctx-dot" style="background:#fff" onclick="fmtCor('#ffffff')" title="Branco"></div>
+    <div class="ctx-dot" style="background:#333;color:#aaa;font-size:.7em" onclick="fmtCor('')" title="Remover cor">✕</div>
   </div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="fmt('removeFormat')"><span style="width:18px;text-align:center;color:var(--gold);font-size:.8em">✕</span> Remover formatação</div>
+</div>
+
+<!-- ── FLOAT TOOLBAR ── -->
+<div id="floatTB" style="display:none;position:fixed;z-index:9991;background:#16161e;border:1px solid rgba(212,168,67,.2);border-radius:3px;padding:4px 6px;gap:2px;align-items:center;box-shadow:0 4px 20px rgba(0,0,0,.6)">
+  <button class="ftb" onclick="fmt('bold')"><b>B</b></button>
+  <button class="ftb" onclick="fmt('italic')"><i>I</i></button>
+  <button class="ftb" onclick="fmt('underline')"><u>U</u></button>
+  <button class="ftb" onclick="fmt('strikeThrough')"><s>S</s></button>
+  <div class="ftb-sep"></div>
+  <button class="ftb" style="color:#f0c040" onclick="fmtCor('#f0c040')">A</button>
+  <button class="ftb" style="color:#ff6b6b" onclick="fmtCor('#ff6b6b')">A</button>
+  <button class="ftb" style="color:#69db7c" onclick="fmtCor('#69db7c')">A</button>
+  <button class="ftb" style="color:#74c0fc" onclick="fmtCor('#74c0fc')">A</button>
+  <button class="ftb" style="color:#da77f2" onclick="fmtCor('#da77f2')">A</button>
+  <div class="ftb-sep"></div>
+  <button class="ftb" style="font-size:.65em" onclick="fmt('removeFormat')">✕</button>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- FLOATING TOOLBAR ao selecionar texto -->
-<div id="floatToolbar">
-  <button class="ftb-btn" onclick="fmt('bold')" title="Negrito"><b>B</b></button>
-  <button class="ftb-btn" onclick="fmt('italic')" title="Itálico"><i>I</i></button>
-  <button class="ftb-btn" onclick="fmt('underline')" title="Sublinhado"><u>U</u></button>
-  <button class="ftb-btn" onclick="fmt('strikeThrough')" title="Riscado"><s>S</s></button>
-  <div class="ftb-sep"></div>
-  <button class="ftb-btn" style="color:#f0c040" onclick="fmtColor('#f0c040')" title="Dourado">A</button>
-  <button class="ftb-btn" style="color:#ff6b6b" onclick="fmtColor('#ff6b6b')" title="Vermelho">A</button>
-  <button class="ftb-btn" style="color:#69db7c" onclick="fmtColor('#69db7c')" title="Verde">A</button>
-  <button class="ftb-btn" style="color:#74c0fc" onclick="fmtColor('#74c0fc')" title="Azul">A</button>
-  <button class="ftb-btn" style="color:#da77f2" onclick="fmtColor('#da77f2')" title="Roxo">A</button>
-  <div class="ftb-sep"></div>
-  <button class="ftb-btn" onclick="fmt('removeFormat')" title="Limpar" style="font-size:.7em">✕</button>
-</div>
-
 <script>
-const SUPABASE_URL = 'https://ltwamldgdwqzyssoukzl.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
-const USER_ID = 'default';
-const TABLE = 'diario';
+// ── CONFIG ──
+const SB_URL = 'https://ltwamldgdwqzyssoukzl.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
+const UID = 'default';
+// Hash SHA-256 — não é a senha, é uma impressão digital de mão única
+const PH = 'c26302fce3d3af8faf9056b40a6f4a8c6db1832e7eba08ed1fabfac617d23f08';
 
 let sb = null;
-let entradas = [];
-let entradaAtual = null;
-let tagsSel = [];
-let autoSaveTimer = null;
+let dados = { diario: [], noir: [] };
+let atual = { diario: null, noir: null };
+let tags = { diario: [], noir: [] };
+let aTimer = null;
+let modoAtual = 'diario';
+
+// ── SENHA ──
+async function hashStr(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function verificarSenha() {
+  const inp = document.getElementById('lockInp');
+  const err = document.getElementById('lockErr');
+  const val = inp.value;
+  if (!val) { err.textContent = 'Digite a senha.'; return; }
+  err.textContent = '...';
+  const h = await hashStr(val);
+  if (h === PH) {
+    sessionStorage.setItem('zara_auth', '1');
+    document.getElementById('lockScreen').classList.add('gone');
+    document.getElementById('appLayout').style.display = 'flex';
+    await init();
+  } else {
+    err.textContent = 'Senha incorreta.';
+    inp.value = '';
+    inp.focus();
+    setTimeout(() => { err.textContent = '\u00a0'; }, 2500);
+  }
+}
 
 // ── SUPABASE ──
-async function initSupabase() {
+async function initSB() {
   try {
-    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    await carregar();
-  } catch(e) {
-    console.warn('Supabase falhou, usando localStorage:', e);
-    carregarLocal();
-  }
+    sb = supabase.createClient(SB_URL, SB_KEY);
+    await carregar('diario');
+    await carregar('noir');
+  } catch(e) { carregarLocal(); }
 }
 
-async function carregar() {
+async function carregar(modo) {
   try {
-    const { data, error } = await sb.from(TABLE)
-      .select('*')
-      .eq('user_id', USER_ID)
-      .order('data', { ascending: false });
+    const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
+    const { data, error } = await sb.from(tabela).select('*').eq('user_id', UID).order('data', { ascending: false });
     if (error) throw error;
-    entradas = data || [];
-  } catch(e) {
-    console.warn('Fallback localStorage:', e);
-    carregarLocal();
-  }
-  renderLista();
-  renderTimeline();
+    dados[modo] = data || [];
+  } catch(e) { dados[modo] = carregarLocalModo(modo); }
+  renderLista(modo);
+  if (modo === 'diario') renderTimeline();
 }
 
-function carregarLocal() {
-  try { entradas = JSON.parse(localStorage.getItem('diario_v1') || '[]'); } catch(e) { entradas = []; }
+function carregarLocalModo(modo) {
+  try { return JSON.parse(localStorage.getItem('zara_' + modo) || '[]'); } catch(e) { return []; }
 }
+function salvarLocal(modo) { localStorage.setItem('zara_' + modo, JSON.stringify(dados[modo])); }
 
-async function salvarSupabase(entrada) {
-  if (!sb) { salvarLocal(); return; }
+async function salvarSB(modo, entrada) {
   try {
-    const { error } = await sb.from(TABLE).upsert({
-      id: entrada.id,
-      user_id: USER_ID,
-      data: entrada.data,
-      titulo: entrada.titulo,
-      estado: entrada.estado,
-      texto: entrada.texto,
-      tags: entrada.tags,
-      humor: entrada.humor,
-      criado_em: entrada.criadoEm,
+    const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
+    await sb.from(tabela).upsert({
+      id: entrada.id, user_id: UID,
+      data: entrada.data, titulo: entrada.titulo,
+      estado: entrada.estado || entrada.tema || '',
+      texto: entrada.texto, tags: entrada.tags || [],
+      humor: entrada.humor || 5,
       atualizado_em: new Date().toISOString()
     }, { onConflict: 'id' });
-    if (error) throw error;
-  } catch(e) {
-    console.warn('Supabase save falhou:', e);
-    salvarLocal();
-  }
+  } catch(e) { console.warn('SB save:', e); }
 }
 
-async function deletarSupabase(id) {
-  if (!sb) { salvarLocal(); return; }
+async function deletarSB(modo, id) {
   try {
-    await sb.from(TABLE).delete().eq('id', id).eq('user_id', USER_ID);
-  } catch(e) { console.warn('Delete falhou:', e); }
+    const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
+    await sb.from(tabela).delete().eq('id', id).eq('user_id', UID);
+  } catch(e) { console.warn('SB del:', e); }
 }
 
-function salvarLocal() {
-  localStorage.setItem('diario_v1', JSON.stringify(entradas));
+// ── TABS ──
+function switchTab(tab) {
+  modoAtual = tab;
+  ['diario','noir'].forEach(m => {
+    document.getElementById('tab-' + m).classList.toggle('on', m === tab);
+    document.getElementById('panel-list-' + m).classList.toggle('on', m === tab);
+    document.getElementById('panel-editor-' + m).classList.toggle('on', m === tab);
+  });
 }
 
 // ── ENTRADAS ──
-function gerarId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 function hoje() { return new Date().toISOString().split('T')[0]; }
 
-function novaEntrada() {
-  entradaAtual = {
-    id: gerarId(),
-    data: hoje(),
-    titulo: '',
-    estado: '',
-    texto: '',
-    tags: [],
-    humor: 5,
-    criadoEm: new Date().toISOString()
-  };
-  tagsSel = [];
-  abrirEditor(false);
+function novaEntrada(modo) {
+  atual[modo] = { id: uid(), data: hoje(), titulo: '', estado: '', tema: '', texto: '', tags: [], humor: 5 };
+  tags[modo] = [];
+  abrirEditor(modo, false);
 }
 
-function abrirEntrada(id) {
-  const e = entradas.find(x => x.id === id);
+function abrirEntrada(modo, id) {
+  const e = dados[modo].find(x => x.id === id);
   if (!e) return;
-  entradaAtual = {...e};
-  tagsSel = [...(e.tags || [])];
-  // Mark active
-  document.querySelectorAll('.entry-item').forEach(el => el.classList.remove('active'));
+  atual[modo] = { ...e };
+  tags[modo] = [...(e.tags || [])];
+  document.querySelectorAll(`#listDiario .entry-item, #listNoir .entry-item`).forEach(el => el.classList.remove('active','noir-active'));
   const el = document.querySelector(`[data-id="${id}"]`);
-  if (el) el.classList.add('active');
-  abrirEditor(true);
+  if (el) el.classList.add(modo === 'noir' ? 'noir-active' : 'active');
+  abrirEditor(modo, true);
 }
 
-function abrirEditor(existente) {
-  document.getElementById('editorEmpty').style.display = 'none';
-  document.getElementById('editorToolbar').style.display = 'flex';
-  document.getElementById('tagsRow').style.display = 'flex';
-  document.getElementById('writingArea').style.display = 'block';
-  document.getElementById('btnDel').style.display = existente ? 'block' : 'none';
-
-  document.getElementById('editorDate').value = entradaAtual.data || hoje();
-  document.getElementById('editorEstado').value = entradaAtual.estado || '';
-  document.getElementById('editorTitulo').value = entradaAtual.titulo || '';
-  document.getElementById('editorTexto').innerHTML = entradaAtual.texto || '';
-
-  // Tags
-  document.querySelectorAll('.tag-btn').forEach(btn => {
-    btn.classList.toggle('on', tagsSel.includes(btn.dataset.tag));
-  });
-
-  // Reset save btn
-  const btn = document.getElementById('btnSalvar');
-  btn.textContent = 'Salvar';
-  btn.classList.remove('saved');
-
-  document.getElementById('editorTexto').focus();
-}
-
-function toggleTag(btn) {
-  const tag = btn.dataset.tag;
-  if (tagsSel.includes(tag)) {
-    tagsSel = tagsSel.filter(t => t !== tag);
-    btn.classList.remove('on');
+function abrirEditor(modo, existente) {
+  if (modo === 'diario') {
+    document.getElementById('editorEmpty').style.display = 'none';
+    document.getElementById('editorActive').style.display = 'flex';
+    document.getElementById('dDate').value = atual[modo].data || hoje();
+    document.getElementById('dEstado').value = atual[modo].estado || '';
+    document.getElementById('dTitulo').value = atual[modo].titulo || '';
+    document.getElementById('dTexto').innerHTML = atual[modo].texto || '';
+    document.getElementById('dBtnDel').style.display = existente ? 'block' : 'none';
+    document.querySelectorAll('.tag-btn').forEach(b => b.classList.toggle('on', tags[modo].includes(b.dataset.tag)));
+    resetSalvarBtn('d');
+    document.getElementById('dTexto').focus();
   } else {
-    tagsSel.push(tag);
-    btn.classList.add('on');
+    document.getElementById('noirEmpty').style.display = 'none';
+    document.getElementById('noirActive').style.display = 'flex';
+    document.getElementById('nDate').value = atual[modo].data || hoje();
+    document.getElementById('nTema').value = atual[modo].estado || atual[modo].tema || '';
+    document.getElementById('nTitulo').value = atual[modo].titulo || '';
+    document.getElementById('nTexto').innerHTML = atual[modo].texto || '';
+    document.getElementById('nBtnDel').style.display = existente ? 'block' : 'none';
+    resetSalvarBtn('n');
+    document.getElementById('nTexto').focus();
   }
 }
 
-async function salvarEntrada() {
-  if (!entradaAtual) return;
-  entradaAtual.data = document.getElementById('editorDate').value || hoje();
-  entradaAtual.estado = document.getElementById('editorEstado').value.trim();
-  entradaAtual.titulo = document.getElementById('editorTitulo').value.trim();
-  entradaAtual.texto = document.getElementById('editorTexto').innerHTML;
-  entradaAtual.tags = [...tagsSel];
-  entradaAtual.humor = calcHumor(entradaAtual.texto + ' ' + entradaAtual.estado);
-
-  const idx = entradas.findIndex(e => e.id === entradaAtual.id);
-  if (idx >= 0) entradas[idx] = {...entradaAtual};
-  else entradas.unshift({...entradaAtual});
-
-  entradas.sort((a, b) => b.data.localeCompare(a.data));
-
-  await salvarSupabase(entradaAtual);
-  salvarLocal();
-  renderLista();
-  renderTimeline();
-
-  const btn = document.getElementById('btnSalvar');
-  btn.textContent = '✓ Salvo';
-  btn.classList.add('saved');
-  setTimeout(() => { btn.textContent = 'Salvar'; btn.classList.remove('saved'); }, 2000);
-  showToast('Entrada salva.');
+function resetSalvarBtn(p) {
+  const b = document.getElementById(p + 'BtnSalvar');
+  b.textContent = 'Salvar'; b.classList.remove('saved');
 }
 
-async function deletarAtual() {
-  if (!entradaAtual) return;
-  if (!confirm('Excluir esta entrada?')) return;
-  entradas = entradas.filter(e => e.id !== entradaAtual.id);
-  await deletarSupabase(entradaAtual.id);
-  salvarLocal();
-  entradaAtual = null;
-  tagsSel = [];
-  document.getElementById('editorEmpty').style.display = 'flex';
-  document.getElementById('editorToolbar').style.display = 'none';
-  document.getElementById('tagsRow').style.display = 'none';
-  document.getElementById('writingArea').style.display = 'none';
-  renderLista();
-  renderTimeline();
-  showToast('Entrada excluída.');
+function toggleTag(btn, modo) {
+  const t = btn.dataset.tag;
+  if (tags[modo].includes(t)) { tags[modo] = tags[modo].filter(x => x !== t); btn.classList.remove('on'); }
+  else { tags[modo].push(t); btn.classList.add('on'); }
+}
+
+async function salvar(modo) {
+  if (!atual[modo]) return;
+  if (modo === 'diario') {
+    atual[modo].data = document.getElementById('dDate').value || hoje();
+    atual[modo].estado = document.getElementById('dEstado').value.trim();
+    atual[modo].titulo = document.getElementById('dTitulo').value.trim();
+    atual[modo].texto = document.getElementById('dTexto').innerHTML;
+    atual[modo].tags = [...tags[modo]];
+    atual[modo].humor = calcHumor(atual[modo].texto + ' ' + atual[modo].estado);
+  } else {
+    atual[modo].data = document.getElementById('nDate').value || hoje();
+    atual[modo].estado = document.getElementById('nTema').value.trim();
+    atual[modo].titulo = document.getElementById('nTitulo').value.trim();
+    atual[modo].texto = document.getElementById('nTexto').innerHTML;
+    atual[modo].tags = [];
+  }
+  const idx = dados[modo].findIndex(e => e.id === atual[modo].id);
+  if (idx >= 0) dados[modo][idx] = { ...atual[modo] };
+  else dados[modo].unshift({ ...atual[modo] });
+  dados[modo].sort((a, b) => b.data.localeCompare(a.data));
+  await salvarSB(modo, atual[modo]);
+  salvarLocal(modo);
+  renderLista(modo);
+  if (modo === 'diario') renderTimeline();
+  const p = modo === 'diario' ? 'd' : 'n';
+  const b = document.getElementById(p + 'BtnSalvar');
+  b.textContent = '✓ Salvo'; b.classList.add('saved');
+  setTimeout(() => resetSalvarBtn(p), 2000);
+  showToast('Salvo.');
+}
+
+async function deletar(modo) {
+  if (!atual[modo] || !confirm('Excluir este registro?')) return;
+  dados[modo] = dados[modo].filter(e => e.id !== atual[modo].id);
+  await deletarSB(modo, atual[modo].id);
+  salvarLocal(modo);
+  atual[modo] = null; tags[modo] = [];
+  if (modo === 'diario') {
+    document.getElementById('editorEmpty').style.display = 'flex';
+    document.getElementById('editorActive').style.display = 'none';
+  } else {
+    document.getElementById('noirEmpty').style.display = 'flex';
+    document.getElementById('noirActive').style.display = 'none';
+  }
+  renderLista(modo);
+  if (modo === 'diario') renderTimeline();
+  showToast('Excluído.');
+}
+
+function onInput(modo) {
+  clearTimeout(aTimer);
+  aTimer = setTimeout(() => { if (atual[modo]) salvar(modo); }, 3500);
 }
 
 // ── RENDER LISTA ──
-function formatData(iso) {
+function fmtData(iso) {
   if (!iso) return '';
   const d = new Date(iso + 'T12:00:00');
   return d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
 }
 
-function renderLista(filtro) {
-  const list = document.getElementById('entriesList');
-  const busca = (filtro || document.getElementById('searchInp')?.value || '').toLowerCase().trim();
-
-  let dados = [...entradas];
-  if (busca) dados = dados.filter(e =>
+function renderLista(modo) {
+  const busca = (document.getElementById('search' + (modo === 'diario' ? 'Diario' : 'Noir'))?.value || '').toLowerCase();
+  let lista = [...dados[modo]];
+  if (busca) lista = lista.filter(e =>
     (e.texto || '').toLowerCase().includes(busca) ||
     (e.titulo || '').toLowerCase().includes(busca) ||
-    (e.estado || '').toLowerCase().includes(busca) ||
-    (e.tags || []).some(t => t.includes(busca))
+    (e.estado || '').toLowerCase().includes(busca)
   );
-
-  document.getElementById('totalLabel').textContent =
-    entradas.length + ' ' + (entradas.length === 1 ? 'entrada' : 'entradas');
-
-  if (!dados.length) {
-    list.innerHTML = `<div class="empty-list">${busca ? 'Nenhum resultado.' : 'Nenhuma entrada ainda.\nClique em + Nova para começar.'}</div>`;
+  const el = document.getElementById('list' + (modo === 'diario' ? 'Diario' : 'Noir'));
+  const tot = document.getElementById('total' + (modo === 'diario' ? 'Diario' : 'Noir'));
+  if (tot) tot.textContent = dados[modo].length + (modo === 'diario' ? ' entradas' : ' registros');
+  if (!lista.length) {
+    el.innerHTML = `<div class="empty-list">${busca ? 'Nenhum resultado.' : 'Nenhum registro ainda.'}</div>`;
     return;
   }
-
-  list.innerHTML = dados.map(e => {
-    const isActive = entradaAtual && entradaAtual.id === e.id;
-    const tags = (e.tags || []).map(t => `<span class="tag-chip">${t}</span>`).join('');
-    const preview = (e.texto || '').slice(0, 60).replace(/\n/g, ' ');
-    return `<div class="entry-item${isActive ? ' active' : ''}" data-id="${e.id}" onclick="abrirEntrada('${e.id}')">
-      <div class="entry-item-date">${formatData(e.data)}</div>
+  const atId = atual[modo]?.id;
+  el.innerHTML = lista.map(e => {
+    const isA = atId === e.id;
+    const tagHtml = (e.tags || []).map(t => `<span class="tag-chip${modo === 'noir' ? ' noir-tag' : ''}">${t}</span>`).join('');
+    const prev = (e.texto || '').replace(/<[^>]+>/g, '').slice(0, 55);
+    return `<div class="entry-item${isA ? (modo === 'noir' ? ' noir-active' : ' active') : ''}" data-id="${e.id}" onclick="abrirEntrada('${modo}','${e.id}')">
+      <div class="entry-item-date">${fmtData(e.data)}</div>
       <div class="entry-item-title">${e.titulo || e.estado || 'Sem título'}</div>
-      ${preview ? `<div class="entry-item-preview">${preview}</div>` : ''}
-      ${tags ? `<div class="entry-item-tags">${tags}</div>` : ''}
+      ${prev ? `<div class="entry-item-preview">${prev}</div>` : ''}
+      ${tagHtml ? `<div class="entry-item-tags">${tagHtml}</div>` : ''}
     </div>`;
   }).join('');
 }
 
-function filtrarEntradas() {
-  renderLista(document.getElementById('searchInp').value);
-}
+function filtrar(modo) { renderLista(modo); }
 
 // ── TIMELINE ──
-function calcHumor(texto) {
-  const pos = ['bem', 'ótimo', 'feliz', 'confiante', 'vitória', 'consegui', 'foco', 'calmo', 'gratidão', 'conquista', 'progresso', 'disciplina'];
-  const neg = ['mal', 'ruim', 'ansioso', 'ansiedade', 'raiva', 'recaída', 'falha', 'fraco', 'cansado', 'errei', 'perdi', 'medo', 'culpa'];
-  const t = texto.toLowerCase();
-  let score = 5;
-  pos.forEach(p => { if (t.includes(p)) score = Math.min(10, score + 1); });
-  neg.forEach(n => { if (t.includes(n)) score = Math.max(1, score - 1); });
-  return score;
+function calcHumor(txt) {
+  const t = txt.toLowerCase().replace(/<[^>]+>/g, '');
+  const pos = ['bem','ótimo','feliz','confiante','vitória','consegui','foco','calmo','gratidão','conquista','progresso','disciplina','força'];
+  const neg = ['mal','ruim','ansioso','ansiedade','raiva','recaída','falha','fraco','cansado','errei','perdi','medo','culpa','apostei'];
+  let s = 5;
+  pos.forEach(p => { if (t.includes(p)) s = Math.min(10, s + 1); });
+  neg.forEach(n => { if (t.includes(n)) s = Math.max(1, s - 1); });
+  return s;
 }
 
 function toggleTimeline() {
-  const p = document.getElementById('timelinePanel');
-  p.classList.toggle('show');
+  document.getElementById('timelineChart').classList.toggle('open');
 }
 
 function renderTimeline() {
-  const ultimas = [...entradas].slice(0, 14).reverse();
-  const bars = document.getElementById('timelineBars');
-  const labels = document.getElementById('timelineLabels');
-  if (!bars || !ultimas.length) return;
-
-  const max = Math.max(...ultimas.map(e => e.humor || 5), 1);
-  bars.innerHTML = ultimas.map(e => {
-    const h = Math.round(((e.humor || 5) / 10) * 56) + 4;
-    const opacity = 0.3 + ((e.humor || 5) / 10) * 0.7;
+  const ult = [...dados.diario].slice(0, 14).reverse();
+  const bars = document.getElementById('tlBars');
+  const lbls = document.getElementById('tlLabels');
+  if (!bars || !ult.length) return;
+  bars.innerHTML = ult.map(e => {
+    const h = Math.round(((e.humor || 5) / 10) * 50) + 4;
+    const op = 0.3 + ((e.humor || 5) / 10) * 0.7;
     const d = new Date((e.data || '') + 'T12:00:00');
-    const label = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-    return `<div class="tbar" style="height:${h}px;opacity:${opacity};background:linear-gradient(180deg,var(--gold-b),var(--gold))" data-tip="${label} · humor ${e.humor || 5}/10"></div>`;
+    return `<div class="tbar" style="height:${h}px;opacity:${op};background:linear-gradient(180deg,var(--gold-b),var(--gold))" data-tip="${d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})} · ${e.humor||5}/10"></div>`;
   }).join('');
-  labels.innerHTML = ultimas.map(e => {
+  lbls.innerHTML = ult.map(e => {
     const d = new Date((e.data || '') + 'T12:00:00');
-    return `<div class="tbar-label">${d.toLocaleDateString('pt-BR', {day:'2-digit'})}</div>`;
+    return `<div class="tl-label">${d.getDate()}</div>`;
   }).join('');
 }
 
+// ── FORMATAÇÃO ──
+function getActiveEditor() {
+  const el = document.activeElement;
+  if (el && el.contentEditable === 'true') return el;
+  return null;
+}
+
+function fmt(cmd) {
+  const ed = getActiveEditor();
+  if (ed) ed.focus();
+  document.execCommand(cmd, false, null);
+  hideCtx(); hideFloat();
+}
+
+function fmtCor(cor) {
+  const ed = getActiveEditor();
+  if (ed) ed.focus();
+  if (cor) { document.execCommand('styleWithCSS', false, true); document.execCommand('foreColor', false, cor); }
+  else document.execCommand('removeFormat', false, null);
+  hideCtx(); hideFloat();
+}
+
+function showCtx(e) {
+  e.preventDefault();
+  const m = document.getElementById('ctxMenu');
+  m.style.display = 'block';
+  let x = e.clientX, y = e.clientY;
+  setTimeout(() => {
+    const mw = m.offsetWidth, mh = m.offsetHeight;
+    if (x + mw > window.innerWidth) x = window.innerWidth - mw - 8;
+    if (y + mh > window.innerHeight) y = window.innerHeight - mh - 8;
+    m.style.left = x + 'px'; m.style.top = y + 'px';
+  }, 0);
+}
+function hideCtx() { document.getElementById('ctxMenu').style.display = 'none'; }
+
+document.addEventListener('mouseup', () => {
+  const sel = window.getSelection();
+  const editors = [document.getElementById('dTexto'), document.getElementById('nTexto')];
+  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+    const node = sel.getRangeAt(0).commonAncestorContainer;
+    if (editors.some(ed => ed && ed.contains(node))) {
+      const tb = document.getElementById('floatTB');
+      const rect = sel.getRangeAt(0).getBoundingClientRect();
+      tb.style.display = 'flex';
+      let x = rect.left + rect.width / 2 - 100;
+      let y = rect.top - 46;
+      if (y < 8) y = rect.bottom + 8;
+      if (x < 8) x = 8;
+      if (x + 220 > window.innerWidth) x = window.innerWidth - 228;
+      tb.style.left = x + 'px'; tb.style.top = y + 'px';
+      return;
+    }
+  }
+  hideFloat();
+});
+function hideFloat() { document.getElementById('floatTB').style.display = 'none'; }
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#ctxMenu')) hideCtx();
+  if (!e.target.closest('#floatTB') && !e.target.closest('[contenteditable]')) hideFloat();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { hideCtx(); hideFloat(); }
+  if ((e.ctrlKey || e.metaKey)) {
+    if (e.key === 'b') { e.preventDefault(); fmt('bold'); }
+    if (e.key === 'i') { e.preventDefault(); fmt('italic'); }
+    if (e.key === 'u') { e.preventDefault(); fmt('underline'); }
+    if (e.key === 's') { e.preventDefault(); salvar(modoAtual); }
+  }
+  if (e.key === 'Enter' && document.getElementById('lockScreen') && !document.getElementById('lockScreen').classList.contains('gone')) {
+    verificarSenha();
+  }
+});
+
 // ── PDF ──
-function exportarPDF() {
-  if (!entradaAtual) { showToast('Abra uma entrada para exportar.'); return; }
+function exportarPDF(modo) {
   window.print();
 }
 
-// ── UTILS ──
+// ── TOAST ──
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove('show'), 2500);
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// Auto-save ao digitar
-// Input handled by onEditorInput() and title/estado fields
-document.addEventListener('input', (e) => {
-  if (['editorTitulo','editorEstado'].includes(e.target.id)) {
-    clearTimeout(autoSaveTimer);
-    autoSaveTimer = setTimeout(() => { if (entradaAtual) salvarEntrada(); }, 3000);
+// ── INPUT HANDLERS (título/estado auto-save) ──
+document.addEventListener('input', e => {
+  if (['dTitulo','dEstado','nTitulo','nTema'].includes(e.target.id)) {
+    clearTimeout(aTimer);
+    aTimer = setTimeout(() => { if (atual[modoAtual]) salvar(modoAtual); }, 3500);
   }
 });
 
 // ── INIT ──
-// ── FORMATAÇÃO ──
-function fmt(cmd) {
-  document.getElementById('editorTexto').focus();
-  document.execCommand(cmd, false, null);
-  hideContextMenu();
-  hideFloatToolbar();
-}
-
-function fmtColor(color) {
-  document.getElementById('editorTexto').focus();
-  if (color) {
-    document.execCommand('styleWithCSS', false, true);
-    document.execCommand('foreColor', false, color);
-  } else {
-    document.execCommand('removeFormat', false, null);
-  }
-  hideContextMenu();
-  hideFloatToolbar();
-}
-
-// Context menu (botão direito)
-function showContextMenu(e) {
-  // Only show if inside editor
-  e.preventDefault();
-  const menu = document.getElementById('ctxMenu');
-  menu.style.display = 'block';
-  // Position - keep inside viewport
-  let x = e.clientX, y = e.clientY;
-  setTimeout(() => {
-    const mw = menu.offsetWidth, mh = menu.offsetHeight;
-    if (x + mw > window.innerWidth) x = window.innerWidth - mw - 8;
-    if (y + mh > window.innerHeight) y = window.innerHeight - mh - 8;
-    menu.style.left = x + 'px';
-    menu.style.top = y + 'px';
-  }, 0);
-}
-
-function hideContextMenu() {
-  document.getElementById('ctxMenu').style.display = 'none';
-}
-
-// Floating toolbar ao selecionar texto
-function showFloatToolbar(sel) {
-  const tb = document.getElementById('floatToolbar');
-  const range = sel.getRangeAt(0);
-  const rect = range.getBoundingClientRect();
-  tb.style.display = 'flex';
-  let x = rect.left + rect.width / 2 - 100;
-  let y = rect.top - 48;
-  if (y < 8) y = rect.bottom + 8;
-  if (x < 8) x = 8;
-  if (x + 220 > window.innerWidth) x = window.innerWidth - 228;
-  tb.style.left = x + 'px';
-  tb.style.top = y + 'px';
-}
-
-function hideFloatToolbar() {
-  document.getElementById('floatToolbar').style.display = 'none';
-}
-
-// Keyboard shortcuts
-function onEditorKeydown(e) {
-  if (e.ctrlKey || e.metaKey) {
-    if (e.key === 'b') { e.preventDefault(); fmt('bold'); }
-    if (e.key === 'i') { e.preventDefault(); fmt('italic'); }
-    if (e.key === 'u') { e.preventDefault(); fmt('underline'); }
-    if (e.key === 's') { e.preventDefault(); salvarEntrada(); }
-  }
-}
-
-function onEditorInput() {
-  clearTimeout(autoSaveTimer);
-  autoSaveTimer = setTimeout(() => { if (entradaAtual) salvarEntrada(); }, 3000);
-}
-
-// Global listeners
-document.addEventListener('mouseup', () => {
-  const sel = window.getSelection();
-  const editor = document.getElementById('editorTexto');
-  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
-    const node = sel.getRangeAt(0).commonAncestorContainer;
-    if (editor && editor.contains(node)) {
-      showFloatToolbar(sel);
-      return;
-    }
-  }
-  hideFloatToolbar();
-});
-
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#ctxMenu')) hideContextMenu();
-  if (!e.target.closest('#floatToolbar') && !e.target.closest('#editorTexto')) hideFloatToolbar();
-});
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') { hideContextMenu(); hideFloatToolbar(); }
-});
-
 async function init() {
-  await initSupabase();
-  setTimeout(() => {
-    document.getElementById('loader').classList.add('gone');
-  }, 800);
+  await initSB();
 }
 
-init();
+// Se já autenticado nesta sessão, pula o lock
+if (sessionStorage.getItem('zara_auth') === '1') {
+  document.getElementById('lockScreen').classList.add('gone');
+  document.getElementById('appLayout').style.display = 'flex';
+  init();
+} else {
+  setTimeout(() => document.getElementById('lockInp')?.focus(), 200);
+}
 </script>
 </body>
 </html>
