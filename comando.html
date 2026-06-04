@@ -19,12 +19,13 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--text);
 body.war-mode{background:#0d0000}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(201,165,90,.15)}
 
-
-#splash.gone{opacity:0;visibility:hidden;pointer-events:none}
-
+/* SPLASH */
 
 
-.splash-enter:hover{background:var(--gold-dim);border-color:var(--gold);letter-spacing:5px}
+
+
+
+
 to{opacity:1;transform:translateY(0)}}
 /* WAR LAYERS */
 #warLayer{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:0;transition:opacity 2s;background:radial-gradient(ellipse at center,rgba(100,0,0,.2) 0%,rgba(40,0,0,.1) 60%,transparent 100%)}
@@ -369,8 +370,6 @@ body.war-mode #warBanner{transform:translateY(0)}
         </div>
     </nav>
 
-<div id="splash">
-  <div class="splash-quote">&ldquo;Disciplina não é motivação.<br>É repetição sob pressão.&rdquo;</div>
   <div class="splash-line"></div>
   <button class="splash-enter" onclick="enterApp()">ENTRAR</button>
 </div>
@@ -1092,8 +1091,6 @@ function setLicao(){
   setText('licaoText',`"${LICOES[idx]}"`);
 }
 
-
-
 // ===== DYNAMIC TASKS =====
 let editingTaskId=null;
 let selectedCat='FÍSICO';
@@ -1238,7 +1235,6 @@ document.addEventListener('keydown',e=>{
 
 function init(){
   loadState();updateDate();setLicao();renderDynamicChecklist();updateUI();
-  document.getElementById('app').classList.add('on');
   rotatePhrase();setInterval(rotatePhrase,6000);
   // Auto-show app after 3.5s if user doesn't click
   
