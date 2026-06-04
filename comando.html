@@ -19,14 +19,13 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--text);
 body.war-mode{background:#0d0000}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(201,165,90,.15)}
 
-/* SPLASH */
-#splash{position:fixed;inset:0;background:var(--bg);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px;transition:opacity 1.2s ease,visibility 1.2s}
+
 #splash.gone{opacity:0;visibility:hidden;pointer-events:none}
-.splash-quote{font-family:'Montserrat',sans-serif;font-size:clamp(.95em,2.5vw,1.15em);font-weight:300;letter-spacing:.5px;color:rgba(240,192,64,.9);text-align:center;max-width:500px;line-height:1.8;padding:0 30px;animation:fadeUpSlow 1.8s ease forwards}
-.splash-line{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.splash-enter{padding:13px 40px;background:transparent;border:1px solid rgba(201,165,90,.3);color:var(--gold);font-family:'Montserrat',sans-serif;font-size:.75em;font-weight:600;letter-spacing:3px;cursor:pointer;transition:all .4s;text-transform:uppercase;animation:fadeUpSlow 1.8s ease .4s both}
+
+
+
 .splash-enter:hover{background:var(--gold-dim);border-color:var(--gold);letter-spacing:5px}
-@keyframes fadeUpSlow{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+to{opacity:1;transform:translateY(0)}}
 /* WAR LAYERS */
 #warLayer{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:0;transition:opacity 2s;background:radial-gradient(ellipse at center,rgba(100,0,0,.2) 0%,rgba(40,0,0,.1) 60%,transparent 100%)}
 #warRing{position:fixed;inset:0;pointer-events:none;z-index:8999;opacity:0;transition:opacity 2s;box-shadow:inset 0 0 150px rgba(100,0,0,.0)}
@@ -61,7 +60,7 @@ body.war-mode #warBanner{transform:translateY(0)}
 .m-skip{width:100%;padding:8px;background:transparent;border:none;color:var(--tf);font-family:'Montserrat',sans-serif;font-size:.75em;cursor:pointer;letter-spacing:1px;transition:color .2s}
 .m-skip:hover{color:var(--td)}
 /* APP */
-#app{opacity:0;transition:opacity .8s}
+#app{opacity:1}
 #app.on{opacity:1}
 /* HEADER */
 .hdr{padding:36px 28px 24px;text-align:center;position:relative;border-bottom:1px solid var(--border);background:var(--s1)}
@@ -1093,10 +1092,7 @@ function setLicao(){
   setText('licaoText',`"${LICOES[idx]}"`);
 }
 
-function enterApp(){
-  document.getElementById('splash').classList.add('gone');
-  document.getElementById('app').classList.add('on');
-}
+
 
 // ===== DYNAMIC TASKS =====
 let editingTaskId=null;
@@ -1242,9 +1238,10 @@ document.addEventListener('keydown',e=>{
 
 function init(){
   loadState();updateDate();setLicao();renderDynamicChecklist();updateUI();
+  document.getElementById('app').classList.add('on');
   rotatePhrase();setInterval(rotatePhrase,6000);
   // Auto-show app after 3.5s if user doesn't click
-  setTimeout(()=>{if(!document.getElementById('app').classList.contains('on'))enterApp();},3500);
+  
 }
 init();
 </script>
