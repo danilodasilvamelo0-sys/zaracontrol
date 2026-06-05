@@ -5961,12 +5961,9 @@ tr.grupo-pausado td {
 
         itemEditando = { tipo: 'despesaFixaModelo', id: modeloId };
         const body = document.getElementById('modalEditarBody');
-        const _kEdit = getMesAnoKey();
-        const _instEdit = (financeiro.despesasFixasMes[_kEdit]||[]).find(d=>String(d.modeloId)===String(modelo.id)&&!d.atrasada);
-        const _vMesEdit = _instEdit ? _instEdit.valor : modelo.valor;
         body.innerHTML = `
             <div class="info-box warning">
-                💡 <strong>Valor deste Mês</strong>: altera só o mês atual (energia variável). <strong>Valor Padrão</strong>: próximos meses.
+                Alterações afetam apenas os <strong>próximos meses</strong>. O histórico é preservado.
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -5974,24 +5971,18 @@ tr.grupo-pausado td {
                     <input type="text" id="editDescricao" value="${modelo.descricao}">
                 </div>
                 <div class="form-group">
-                    <label>Valor deste Mês (R$)</label>
-                    <input type="number" id="editValorMes" step="0.01" value="${_vMesEdit}" style="border-color:rgba(212,175,125,.5);font-weight:600">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Valor Padrão (próximos meses)</label>
+                    <label>Valor</label>
                     <input type="number" id="editValor" step="0.01" value="${modelo.valor}">
-                </div>
-                <div class="form-group">
-                    <label>Dia Vencimento</label>
-                    <input type="number" id="editDia" min="1" max="31" value="${modelo.diaVencimento}">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Categoria</label>
                     <input type="text" id="editCategoria" value="${modelo.categoria}">
+                </div>
+                <div class="form-group">
+                    <label>Dia Vencimento</label>
+                    <input type="number" id="editDia" min="1" max="31" value="${modelo.diaVencimento}">
                 </div>
             </div>
             <div class="form-buttons">
@@ -6012,36 +6003,18 @@ tr.grupo-pausado td {
             modelo.diaVencimento = parseInt(document.getElementById('editDia').value) || modelo.diaVencimento;
             salvarDados();
         }
-    function salvarEdicaoModelo() {
-        const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(itemEditando.id));
-        if (modelo) {
-            const novoDesc = document.getElementById('editDescricao').value.trim();
-            const novoValorPadrao = parseFloat(document.getElementById('editValor')?.value) || modelo.valor;
-            const _elMes = document.getElementById('editValorMes');
-            const novoValorMes = _elMes ? parseFloat(_elMes.value) : NaN;
-            const novaCat = document.getElementById('editCategoria').value.trim();
-            const novoDia = parseInt(document.getElementById('editDia')?.value) || modelo.diaVencimento;
-
-            // Atualiza modelo (proximos meses)
-            modelo.descricao = novoDesc;
-            modelo.valor = novoValorPadrao;
-            modelo.categoria = novaCat;
-            modelo.diaVencimento = novoDia;
-
-            // Atualiza instancia do mes atual com valor proprio
-            const _k = getMesAnoKey();
-            const _insts = financeiro.despesasFixasMes[_k] || [];
-            const _inst = _insts.find(d => String(d.modeloId) === String(modelo.id) && !d.atrasada);
-            if (_inst) {
-                _inst.descricao = novoDesc;
-                _inst.valor = (!isNaN(novoValorMes) && novoValorMes > 0) ? novoValorMes : novoValorPadrao;
-                _inst.categoria = novaCat;
-            }
-            salvarDados();
-        }
         fecharModal('modalEditar');
         renderizar();
     }
+
+    function encerrarDespesaFixa(modeloId) {
+        confirmar('Encerrar esta despesa fixa? Ela não aparecerá nos próximos meses, mas o histórico é mantido.', () => {
+            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(modeloId));
+            if (modelo) {
+                modelo.ativa = false;
+                modelo.encerradaEm = new Date().toISOString();
+                salvarDados(); renderizar();
+                mostrarStatus('Despesa encerrada', 'success');
             }
         }, 'Encerrar Despesa', 'Encerrar', '#e67e22');
     }
