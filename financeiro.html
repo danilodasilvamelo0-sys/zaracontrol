@@ -6082,9 +6082,14 @@ tr.grupo-pausado td {
 
         itemEditando = { tipo: 'despesaFixaModelo', id: modeloId };
         const body = document.getElementById('modalEditarBody');
+        // Check if there's already a current month instance with different value
+        const keyAtualEdit = getMesAnoKey();
+        const instAtual = (financeiro.despesasFixasMes[keyAtualEdit] || []).find(d => String(d.modeloId) === String(modelo.id) && !d.atrasada);
+        const valorInstancia = instAtual ? instAtual.valor : modelo.valor;
+
         body.innerHTML = `
-            <div class="info-box warning">
-                Alterações afetam apenas os <strong>próximos meses</strong>. O histórico é preservado.
+            <div style="background:rgba(212,175,125,.06);border:1px solid rgba(212,175,125,.15);border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:rgba(212,175,125,.7)">
+                💡 Altere o <strong>Valor deste Mês</strong> para despesas variáveis (ex: energia). O <strong>Valor Padrão</strong> é o valor recorrente dos próximos meses.
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -6092,18 +6097,24 @@ tr.grupo-pausado td {
                     <input type="text" id="editDescricao" value="${modelo.descricao}">
                 </div>
                 <div class="form-group">
-                    <label>Valor</label>
+                    <label>Valor deste Mês (R$)</label>
+                    <input type="number" id="editValorMes" step="0.01" value="${valorInstancia}" style="border-color:rgba(212,175,125,.4)">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Valor Padrão (próximos meses)</label>
                     <input type="number" id="editValor" step="0.01" value="${modelo.valor}">
+                </div>
+                <div class="form-group">
+                    <label>Dia Vencimento</label>
+                    <input type="number" id="editDia" min="1" max="31" value="${modelo.diaVencimento}">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Categoria</label>
                     <input type="text" id="editCategoria" value="${modelo.categoria}">
-                </div>
-                <div class="form-group">
-                    <label>Dia Vencimento</label>
-                    <input type="number" id="editDia" min="1" max="31" value="${modelo.diaVencimento}">
                 </div>
             </div>
             <div class="form-buttons">
@@ -6118,10 +6129,28 @@ tr.grupo-pausado td {
     function salvarEdicaoModelo() {
         const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(itemEditando.id));
         if (modelo) {
-            modelo.descricao = document.getElementById('editDescricao').value.trim();
-            modelo.valor = parseFloat(document.getElementById('editValor').value) || modelo.valor;
-            modelo.categoria = document.getElementById('editCategoria').value;
-            modelo.diaVencimento = parseInt(document.getElementById('editDia').value) || modelo.diaVencimento;
+            const novoDesc = document.getElementById('editDescricao').value.trim();
+            const novoValor = parseFloat(document.getElementById('editValor')?.value) || modelo.valor;
+            const novoValorMes = parseFloat(document.getElementById('editValorMes')?.value);
+            const novaCat = document.getElementById('editCategoria').value;
+            const novoDia = parseInt(document.getElementById('editDia').value) || modelo.diaVencimento;
+
+            // Update model (affects future months)
+            modelo.descricao = novoDesc;
+            modelo.valor = novoValor;
+            modelo.categoria = novaCat;
+            modelo.diaVencimento = novoDia;
+
+            // Update current month instance with its own value (can differ from model)
+            const key = getMesAnoKey();
+            const instancias = financeiro.despesasFixasMes[key] || [];
+            const instancia = instancias.find(d => String(d.modeloId) === String(modelo.id) && !d.atrasada);
+            if (instancia) {
+                instancia.descricao = novoDesc;
+                instancia.valor = !isNaN(novoValorMes) ? novoValorMes : novoValor;
+                instancia.categoria = novaCat;
+            }
+
             salvarDados();
         }
         fecharModal('modalEditar');
