@@ -443,51 +443,131 @@ async function verificarSenha() {
 async function initSB() {
   try {
     sb = supabase.createClient(SB_URL, SB_KEY);
-    await carregar('diario');
-    await carregar('noir');
-  } catch(e) { carregarLocal(); }
+    // Test connection
+    await sb.from('diario').select('id').limit(1);
+    console.log('Supabase conectado');
+  } catch(e) {
+    console.warn('Supabase indisponivel:', e.message);
+    sb = null;
+  }
+
+  // Load data
+  await carregar('diario');
+  await carregar('noir');
+
+  // Migrate localStorage to Supabase if needed
+  if (sb) {
+    await migrarLocalParaSupabase('diario');
+    await migrarLocalParaSupabase('noir');
+  }
 }
 
 async function carregar(modo) {
-  try {
-    const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
-    const { data, error } = await sb.from(tabela).select('*').eq('user_id', UID).order('data', { ascending: false });
-    if (error) throw error;
-    dados[modo] = data || [];
-  } catch(e) { dados[modo] = carregarLocalModo(modo); }
+  if (sb) {
+    try {
+      const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
+      const { data, error } = await sb.from(tabela)
+        .select('*')
+        .eq('user_id', UID)
+        .order('data', { ascending: false });
+      if (error) throw error;
+      dados[modo] = data || [];
+      // Keep localStorage in sync
+      salvarLocal(modo);
+    } catch(e) {
+      console.warn('Carregar Supabase falhou:', e.message);
+      dados[modo] = carregarLocalModo(modo);
+    }
+  } else {
+    dados[modo] = carregarLocalModo(modo);
+  }
   renderLista(modo);
   if (modo === 'diario') renderTimeline();
+}
+
+async function migrarLocalParaSupabase(modo) {
+  const chave = 'zara_' + modo + '_migrado';
+  if (localStorage.getItem(chave)) return; // já migrado
+
+  const local = carregarLocalModo(modo);
+  if (!local || local.length === 0) {
+    localStorage.setItem(chave, '1');
+    return;
+  }
+
+  try {
+    const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
+    // Check if Supabase already has data
+    const { data } = await sb.from(tabela).select('id').eq('user_id', UID);
+    if (data && data.length > 0) {
+      // Already has data in Supabase, don't overwrite
+      localStorage.setItem(chave, '1');
+      return;
+    }
+    // Migrate all local entries to Supabase
+    const rows = local.map(e => ({
+      id: e.id,
+      user_id: UID,
+      data: e.data,
+      titulo: e.titulo || '',
+      estado: e.estado || e.tema || '',
+      texto: e.texto || '',
+      tags: e.tags || [],
+      humor: e.humor || 5,
+      atualizado_em: e.atualizado_em || new Date().toISOString()
+    }));
+    const { error } = await sb.from(tabela).upsert(rows, { onConflict: 'id' });
+    if (!error) {
+      localStorage.setItem(chave, '1');
+      await carregar(modo); // Reload from Supabase
+      console.log(`Migrado ${rows.length} entradas do localStorage para Supabase (${modo})`);
+    }
+  } catch(e) {
+    console.warn('Migracao falhou:', e.message);
+  }
 }
 
 function carregarLocalModo(modo) {
   try { return JSON.parse(localStorage.getItem('zara_' + modo) || '[]'); } catch(e) { return []; }
 }
-function salvarLocal(modo) { localStorage.setItem('zara_' + modo, JSON.stringify(dados[modo])); }
+
+function salvarLocal(modo) {
+  localStorage.setItem('zara_' + modo, JSON.stringify(dados[modo]));
+}
 
 async function salvarSB(modo, entrada) {
-  // localStorage salvo SEMPRE primeiro — garantido
+  // Always save localStorage as backup
   salvarLocal(modo);
+
   if (!sb) return;
   try {
     const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
-    await sb.from(tabela).upsert({
-      id: entrada.id, user_id: UID,
-      data: entrada.data, titulo: entrada.titulo,
+    const { error } = await sb.from(tabela).upsert({
+      id: entrada.id,
+      user_id: UID,
+      data: entrada.data,
+      titulo: entrada.titulo || '',
       estado: entrada.estado || entrada.tema || '',
-      texto: entrada.texto, tags: entrada.tags || [],
+      texto: entrada.texto || '',
+      tags: entrada.tags || [],
       humor: entrada.humor || 5,
       atualizado_em: new Date().toISOString()
     }, { onConflict: 'id' });
+    if (error) throw error;
   } catch(e) {
     console.warn('Supabase save falhou, localStorage ok:', e.message);
   }
 }
 
 async function deletarSB(modo, id) {
+  salvarLocal(modo);
+  if (!sb) return;
   try {
     const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
     await sb.from(tabela).delete().eq('id', id).eq('user_id', UID);
-  } catch(e) { console.warn('SB del:', e); }
+  } catch(e) {
+    console.warn('Supabase delete falhou:', e.message);
+  }
 }
 
 // ── TABS ──
