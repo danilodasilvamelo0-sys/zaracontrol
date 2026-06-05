@@ -6082,13 +6082,9 @@ tr.grupo-pausado td {
 
         itemEditando = { tipo: 'despesaFixaModelo', id: modeloId };
         const body = document.getElementById('modalEditarBody');
-        // Buscar valor da instancia do mes atual
-        const _keyEdit = getMesAnoKey();
-        const _instEdit = (financeiro.despesasFixasMes[_keyEdit]||[]).find(d=>String(d.modeloId)===String(modelo.id)&&!d.atrasada);
-        const _valMesEdit = _instEdit ? _instEdit.valor : modelo.valor;
         body.innerHTML = `
-            <div style="background:rgba(212,175,125,.06);border:1px solid rgba(212,175,125,.15);border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:rgba(212,175,125,.7)">
-                💡 <strong>Valor deste Mês</strong>: altera só o mês atual (ex: conta de energia variável). <strong>Valor Padrão</strong>: altera os próximos meses.
+            <div class="info-box warning">
+                Alterações afetam apenas os <strong>próximos meses</strong>. O histórico é preservado.
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -6096,24 +6092,18 @@ tr.grupo-pausado td {
                     <input type="text" id="editDescricao" value="${modelo.descricao}">
                 </div>
                 <div class="form-group">
-                    <label>Valor deste Mês (R$)</label>
-                    <input type="number" id="editValorMes" step="0.01" value="${_valMesEdit}" style="border-color:rgba(212,175,125,.5);font-weight:600">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Valor Padrão — próximos meses (R$)</label>
+                    <label>Valor</label>
                     <input type="number" id="editValor" step="0.01" value="${modelo.valor}">
-                </div>
-                <div class="form-group">
-                    <label>Dia Vencimento</label>
-                    <input type="number" id="editDia" min="1" max="31" value="${modelo.diaVencimento}">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Categoria</label>
                     <input type="text" id="editCategoria" value="${modelo.categoria}">
+                </div>
+                <div class="form-group">
+                    <label>Dia Vencimento</label>
+                    <input type="number" id="editDia" min="1" max="31" value="${modelo.diaVencimento}">
                 </div>
             </div>
             <div class="form-buttons">
@@ -6130,27 +6120,31 @@ tr.grupo-pausado td {
         if (modelo) {
             const novoDesc = document.getElementById('editDescricao').value.trim();
             const novoValorPadrao = parseFloat(document.getElementById('editValor')?.value) || modelo.valor;
-            const novoValorMes = parseFloat(document.getElementById('editValorMes')?.value);
+            const novoValorMesEl = document.getElementById('editValorMes');
+            const novoValorMes = novoValorMesEl ? parseFloat(novoValorMesEl.value) : NaN;
             const novaCat = document.getElementById('editCategoria').value.trim();
-            const novoDia = parseInt(document.getElementById('editDia')?.value) || modelo.diaVencimento;
+            const novoDiaEl = document.getElementById('editDia');
+            const novoDia = novoDiaEl ? (parseInt(novoDiaEl.value) || modelo.diaVencimento) : modelo.diaVencimento;
 
-            // Atualiza modelo (proximos meses)
             modelo.descricao = novoDesc;
             modelo.valor = novoValorPadrao;
             modelo.categoria = novaCat;
             modelo.diaVencimento = novoDia;
 
-            // Atualiza instancia do mes atual com valor proprio (pode ser diferente)
+            // Update current month instance (variable value like energy bill)
             const key = getMesAnoKey();
             const instancias = financeiro.despesasFixasMes[key] || [];
             const inst = instancias.find(d => String(d.modeloId) === String(modelo.id) && !d.atrasada);
             if (inst) {
                 inst.descricao = novoDesc;
-                inst.valor = !isNaN(novoValorMes) && novoValorMes > 0 ? novoValorMes : novoValorPadrao;
+                inst.valor = (!isNaN(novoValorMes) && novoValorMes > 0) ? novoValorMes : novoValorPadrao;
                 inst.categoria = novaCat;
             }
             salvarDados();
         }
+        fecharModal('modalEditar');
+        renderizar();
+    }
         fecharModal('modalEditar');
         renderizar();
     }
@@ -8969,10 +8963,8 @@ tr.grupo-pausado td {
         const cats = {};
         (financeiro.despesasFixas||[]).filter(d=>!d.pausado).forEach(d=>{ const c=d.categoria||'Fixas'; cats[c]=(cats[c]||0)+(d.valor||0); });
         (financeiro.despesasVariaveis||[]).filter(d=>d.data&&d.data.startsWith(key)).forEach(d=>{ const c=d.categoria||'Variáveis'; cats[c]=(cats[c]||0)+(d.valor||0); });
-        // Parceladas sempre agrupadas como 'Compras Parceladas'
-        const _varMesGraf=(financeiro.despesasVariaveis||[]).filter(d=>!d.pausado&&!d.pago&&d.data&&d.data.startsWith(key));
-        const _totalParcGraf=_varMesGraf.reduce((s,d)=>s+(d.valor||0),0);
-        if(_totalParcGraf>0) cats['Compras Parceladas']=_totalParcGraf;
+        const pT = (financeiro.despesasParceladas||[]).filter(p=>!p.quitada).reduce((s,p)=>s+(p.valorParcela||0),0);
+        if (pT>0) cats['Parceladas']=pT;
         const eT = (financeiro.emprestimos||[]).filter(e=>!e.arquivado).reduce((s,e)=>s+(e.parcela||0),0);
         if (eT>0) cats['Empréstimos']=eT;
         const totalDesp = Object.values(cats).reduce((s,v)=>s+v,0);
