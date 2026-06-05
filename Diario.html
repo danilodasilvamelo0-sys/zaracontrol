@@ -441,44 +441,11 @@ async function verificarSenha() {
 
 // ── SUPABASE ──
 async function initSB() {
-  // localStorage is ALWAYS primary — load it first, instantly
-  dados.diario = carregarLocalModo('diario');
-  dados.noir = carregarLocalModo('noir');
-  renderLista('diario');
-  renderLista('noir');
-  renderTimeline();
-
-  // Then try Supabase in background — if it works, merge and update
   try {
     sb = supabase.createClient(SB_URL, SB_KEY);
-    await sincronizarDoSupabase('diario');
-    await sincronizarDoSupabase('noir');
-  } catch(e) {
-    console.warn('Supabase indisponivel, usando localStorage:', e.message);
-  }
-}
-
-async function sincronizarDoSupabase(modo) {
-  try {
-    const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
-    const { data, error } = await sb.from(tabela)
-      .select('*').eq('user_id', UID).order('data', { ascending: false });
-    if (error) throw error;
-    if (data && data.length > 0) {
-      // Merge: Supabase wins on conflict (more up to date)
-      const local = dados[modo];
-      const sbIds = new Set(data.map(d => d.id));
-      const localOnly = local.filter(d => !sbIds.has(d.id));
-      dados[modo] = [...data, ...localOnly];
-      dados[modo].sort((a, b) => (b.data||'').localeCompare(a.data||''));
-      salvarLocal(modo);
-      renderLista(modo);
-      if (modo === 'diario') renderTimeline();
-    }
-  } catch(e) {
-    // Silently keep localStorage data
-    console.warn('Supabase sync falhou para', modo, ':', e.message);
-  }
+    await carregar('diario');
+    await carregar('noir');
+  } catch(e) { carregarLocal(); }
 }
 
 async function carregar(modo) {
@@ -498,6 +465,9 @@ function carregarLocalModo(modo) {
 function salvarLocal(modo) { localStorage.setItem('zara_' + modo, JSON.stringify(dados[modo])); }
 
 async function salvarSB(modo, entrada) {
+  // localStorage salvo SEMPRE primeiro — garantido
+  salvarLocal(modo);
+  if (!sb) return;
   try {
     const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
     await sb.from(tabela).upsert({
@@ -508,17 +478,16 @@ async function salvarSB(modo, entrada) {
       humor: entrada.humor || 5,
       atualizado_em: new Date().toISOString()
     }, { onConflict: 'id' });
-  } catch(e) { console.warn('SB save:', e); }
+  } catch(e) {
+    console.warn('Supabase save falhou, localStorage ok:', e.message);
+  }
 }
 
 async function deletarSB(modo, id) {
-  // Already removed from dados[] before this call, just persist
-  salvarLocal(modo);
-  if (!sb) return;
   try {
     const tabela = modo === 'noir' ? 'diario_noir' : 'diario';
     await sb.from(tabela).delete().eq('id', id).eq('user_id', UID);
-  } catch(e) { console.warn('Supabase delete falhou, removido do localStorage:', e.message); }
+  } catch(e) { console.warn('SB del:', e); }
 }
 
 // ── TABS ──
@@ -608,7 +577,8 @@ async function salvar(modo) {
   if (idx >= 0) dados[modo][idx] = { ...atual[modo] };
   else dados[modo].unshift({ ...atual[modo] });
   dados[modo].sort((a, b) => b.data.localeCompare(a.data));
-  await salvarSB(modo, atual[modo]); // salvarSB already calls salvarLocal
+  await salvarSB(modo, atual[modo]);
+  salvarLocal(modo);
   renderLista(modo);
   if (modo === 'diario') renderTimeline();
   const p = modo === 'diario' ? 'd' : 'n';
@@ -621,7 +591,8 @@ async function salvar(modo) {
 async function deletar(modo) {
   if (!atual[modo] || !confirm('Excluir este registro?')) return;
   dados[modo] = dados[modo].filter(e => e.id !== atual[modo].id);
-  await deletarSB(modo, atual[modo].id); // deletarSB already calls salvarLocal
+  await deletarSB(modo, atual[modo].id);
+  salvarLocal(modo);
   atual[modo] = null; tags[modo] = [];
   if (modo === 'diario') {
     document.getElementById('editorEmpty').style.display = 'flex';
