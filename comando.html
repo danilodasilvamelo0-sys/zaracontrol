@@ -456,7 +456,7 @@ body.war-mode #warBanner{transform:translateY(0)}
 
       <div class="alvo-block">
         <div class="alvo-inner">
-          <input class="alvo-inp" id="alvo-toji" type="text" placeholder="Defina o alvo. Toji não erra dois tiros." />
+          <input class="alvo-inp" id="alvo-toji" spellcheck="true" lang="pt-BR" type="text" placeholder="Defina o alvo. Toji não erra dois tiros." />
           <button class="alvo-btn" id="alvo-toji-btn" onclick="saveAlvo('toji')">ELIMINAR</button>
         </div>
       </div>
@@ -481,11 +481,11 @@ body.war-mode #warBanner{transform:translateY(0)}
           <div style="font-family:'Montserrat',sans-serif;font-size:.82em;font-weight:700;letter-spacing:.5px;color:#f0c040;text-transform:uppercase;margin-bottom:18px" id="taskModalTitle">Nova Tarefa</div>
           <div style="margin-bottom:14px">
             <div style="font-family:'Montserrat',sans-serif;font-size:.65em;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Tarefa</div>
-            <input id="taskLabelInp" type="text" maxlength="60" placeholder="Ex: Meditação 10min" style="width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.15);color:#fff;font-family:'Montserrat',sans-serif;font-size:.95em;padding:8px 0;outline:none" />
+            <input id="taskLabelInp" spellcheck="true" lang="pt-BR" type="text" maxlength="60" placeholder="Ex: Meditação 10min" style="width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.15);color:#fff;font-family:'Montserrat',sans-serif;font-size:.95em;padding:8px 0;outline:none" />
           </div>
           <div style="margin-bottom:20px">
             <div style="font-family:'Montserrat',sans-serif;font-size:.65em;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Descrição <span style="opacity:.5;font-weight:400">(opcional)</span></div>
-            <input id="taskSubInp" type="text" maxlength="80" placeholder="Frase do Toji ou descrição curta" style="width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.15);color:#fff;font-family:'Montserrat',sans-serif;font-size:.88em;padding:8px 0;outline:none" />
+            <input id="taskSubInp" spellcheck="true" lang="pt-BR" type="text" maxlength="80" placeholder="Frase do Toji ou descrição curta" style="width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.15);color:#fff;font-family:'Montserrat',sans-serif;font-size:.88em;padding:8px 0;outline:none" />
           </div>
           <div style="margin-bottom:20px">
             <div style="font-family:'Montserrat',sans-serif;font-size:.65em;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Categoria</div>
@@ -530,7 +530,7 @@ body.war-mode #warBanner{transform:translateY(0)}
 
       <div class="diary-block">
         <span class="diary-l">Diário Operacional</span>
-        <textarea class="diary-ta" id="diary-toji" placeholder="O que te fez fraco hoje? Seja honesto. Eu estaria." rows="3" oninput="saveDiary('toji')"></textarea>
+        <textarea class="diary-ta" id="diary-toji" spellcheck="true" lang="pt-BR" placeholder="O que te fez fraco hoje? Seja honesto. Eu estaria." rows="3" oninput="saveDiary('toji')"></textarea>
       </div>
 
       <div class="ftr"><div class="ftr-txt">⏰ Reset automático · Segunda-feira · 05:00</div></div>
@@ -557,7 +557,7 @@ body.war-mode #warBanner{transform:translateY(0)}
 
       <div class="alvo-block">
         <div class="alvo-inner">
-          <input class="alvo-inp" id="alvo-thomas" type="text" placeholder="Qual movimento estratégico hoje?" />
+          <input class="alvo-inp" id="alvo-thomas" spellcheck="true" lang="pt-BR" type="text" placeholder="Qual movimento estratégico hoje?" />
           <button class="alvo-btn" id="alvo-thomas-btn" onclick="saveAlvo('thomas')">EXECUTAR</button>
         </div>
       </div>
@@ -635,7 +635,7 @@ body.war-mode #warBanner{transform:translateY(0)}
         </div>
         <div class="cofre-list" id="cofreList"></div>
         <div class="cofre-add">
-          <input class="cofre-add-inp" id="cofreInp" type="text" placeholder="Registrar princípio ou aprendizado..." maxlength="200" onkeydown="if(event.key==='Enter')addCofre()" />
+          <input class="cofre-add-inp" id="cofreInp" spellcheck="true" lang="pt-BR" type="text" placeholder="Registrar princípio ou aprendizado..." maxlength="200" onkeydown="if(event.key==='Enter')addCofre()" />
           <button class="cofre-add-btn" onclick="addCofre()">+ GUARDAR</button>
         </div>
       </div>
@@ -650,7 +650,7 @@ body.war-mode #warBanner{transform:translateY(0)}
 
       <div class="diary-block">
         <span class="diary-l">Diário Operacional</span>
-        <textarea class="diary-ta" id="diary-thomas" placeholder="O que destruiu meu foco hoje?" rows="3" oninput="saveDiary('thomas')"></textarea>
+        <textarea class="diary-ta" id="diary-thomas" spellcheck="true" lang="pt-BR" placeholder="O que destruiu meu foco hoje?" rows="3" oninput="saveDiary('thomas')"></textarea>
       </div>
 
       <div class="ftr"><div class="ftr-txt">⏰ Reset automático · Segunda-feira · 05:00</div></div>
@@ -891,7 +891,7 @@ function renderLivros(){
           <span class="livro-inp-label">Tempo (min)</span>
           <input class="livro-inp" type="number" min="0" value="${ld.tempo||0}" placeholder="0 min" onchange="saveLivro('${lv.id}','tempo',this.value)" />
         </div>
-        <textarea class="insight-area" rows="2" placeholder="Insight estratégico de hoje..." onchange="saveLivro('${lv.id}','insights',this.value)">${ld.insights||''}</textarea>
+        <textarea class="insight-area" spellcheck="true" lang="pt-BR" rows="2" placeholder="Insight estratégico de hoje..." onchange="saveLivro('${lv.id}','insights',this.value)">${ld.insights||''}</textarea>
       </div>
     </div>`;
   });
