@@ -1,0 +1,4654 @@
+/* ==========================================================
+   FINANCEIRO.JS
+   Logica extraida de financeiro.html (separacao de
+   responsabilidades: HTML / CSS / JS)
+   Depende do script do Supabase carregado antes deste arquivo.
+   ========================================================== */
+
+    // ==========================================
+    // CONFIGURAÇÃO E INICIALIZAÇÃO
+    // ==========================================
+    
+    const SUPABASE_URL = 'https://ltwamldgdwqzyssoukzl.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
+    const USER_ID = 'default_user';
+    
+    let supabaseClient = null;
+    let useSupabase = false;
+    
+    try {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        useSupabase = true;
+    } catch (e) {
+        console.log('Supabase indisponível, usando localStorage');
+    }
+
+    // ==========================================
+    // ESTRUTURA DE DADOS
+    // ==========================================
+    
+    const dadosVazios = {
+        receitas: [],
+        despesasFixas: [],           // Modelos de despesas recorrentes
+        despesasFixasMes: {},        // Instâncias mensais: {"2025-01": [...]}
+        despesasVariaveis: [],       // Despesas parceladas
+        despesasAvulsas: [],         // Despesas variáveis (avulsas, não recorrentes)
+        emprestimos: [],
+        economias: [],
+        receitasFixas: [], // Modelos de receitas recorrentes
+        receitasMes: {}, // Instâncias de receitas fixas por mês
+        receitasAvulsas: [], // Receitas variáveis (avulsas, manuais)
+        arquivados: {
+            receitas: [],
+            despesasFixas: [],
+            despesasVariaveis: [],
+            despesasAvulsas: [],
+            emprestimos: [],
+            economias: []
+        }
+    };
+
+    let financeiro = JSON.parse(localStorage.getItem('financeiro_v5')) || JSON.parse(JSON.stringify(dadosVazios));
+    
+    // Garantir estrutura completa
+    if (!financeiro.arquivados) financeiro.arquivados = JSON.parse(JSON.stringify(dadosVazios.arquivados));
+    if (!financeiro.despesasFixasMes) financeiro.despesasFixasMes = {};
+    if (!financeiro.receitasFixas) financeiro.receitasFixas = [];
+    if (!financeiro.receitasMes) financeiro.receitasMes = {};
+    if (!financeiro.receitasAvulsas) financeiro.receitasAvulsas = [];
+    if (!financeiro.despesasAvulsas) financeiro.despesasAvulsas = [];
+
+    // Estado da aplicação
+    let mesSelecionado = '';
+    let anoSelecionado = new Date().getFullYear();
+    let viewMode = 'ativos';
+    let itemEditando = null;
+    let emprestimoSelecionado = null;
+
+    // ==========================================
+    // UTILITÁRIOS
+    // ==========================================
+    
+    function getMesAnoKey() {
+        return `${anoSelecionado}-${mesSelecionado}`;
+    }
+
+    function getMesAnteriorKey() {
+        let mes = parseInt(mesSelecionado);
+        let ano = parseInt(anoSelecionado);
+
+        mes--;
+        if (mes < 1) {
+            mes = 12;
+            ano--;
+        }
+
+        const mesStr = String(mes).padStart(2, '0');
+        return `${ano}-${mesStr}`;
+    }
+
+    function formatarMoeda(valor) {
+        return new Intl.NumberFormat('pt-BR', { 
+            style: 'currency', 
+            currency: 'BRL' 
+        }).format(valor || 0);
+    }
+
+    function formatarData(data) {
+        if (!data) return '-';
+        return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+    }
+
+    function getDataVencimento(dia) {
+        const d = String(dia).padStart(2, '0');
+        return `${anoSelecionado}-${mesSelecionado}-${d}`;
+    }
+
+    function filtrarPorMes(lista) {
+        return (lista || []).filter(item => 
+            item.data?.substring(0, 7) === getMesAnoKey()
+        );
+    }
+
+    function getStatusVencimento(dataStr, pago) {
+        if (pago) return { classe: '', badge: '' };
+        
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        const vencimento = new Date(dataStr + 'T00:00:00');
+        const diffDias = Math.ceil((vencimento - hoje) / 86400000);
+        
+        if (diffDias < 0) {
+            return { 
+                classe: 'vencido', 
+                badge: `<span class="badge vencido"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> ${Math.abs(diffDias)}d</span>` 
+            };
+        }
+        if (diffDias <= 3) {
+            return { 
+                classe: 'proximo', 
+                badge: `<span class="badge proximo"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> ${diffDias === 0 ? 'Hoje' : diffDias + 'd'}</span>` 
+            };
+        }
+        return { classe: '', badge: '' };
+    }
+
+    function gerarId() {
+        return Date.now() + Math.random();
+    }
+
+    // ==========================================
+    // COMPROVANTES (Base64)
+    // ==========================================
+    
+    async function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            if (!file) { resolve(null); return; }
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Criar objeto de comprovante com metadados
+    async function criarComprovante(fileInput, tipo, valor, descricao) {
+        const file = fileInput?.files?.[0];
+        if (!file) return null;
+        
+        const base64 = await fileToBase64(file);
+        return {
+            arquivo: base64,
+            nomeArquivo: file.name,
+            tipoArquivo: file.type,
+            dataPagamento: new Date().toISOString(),
+            valorPago: valor,
+            tipoPagamento: tipo, // 'despesa_fixa', 'despesa_variavel', 'juros', 'amortizacao'
+            descricao: descricao
+        };
+    }
+
+    // Visualizar comprovante com informações completas
+    function verComprovante(comprovante) {
+        const viewer = document.getElementById('modalComprovanteBody');
+        
+        // Se for string antiga (apenas base64), compatibilidade
+        if (typeof comprovante === 'string') {
+            if (comprovante.includes('application/pdf')) {
+                viewer.innerHTML = `
+                    <embed src="${comprovante}" type="application/pdf" width="100%" height="450px" style="border-radius:8px;">
+                    <div class="form-buttons" style="margin-top:15px;">
+                        <button class="btn-salvar" onclick="baixarComprovante('${comprovante}', 'comprovante')">⬇️ Baixar</button>
+                    </div>
+                `;
+            } else {
+                viewer.innerHTML = `
+                    <img src="${comprovante}" style="max-width:100%; border-radius:8px;">
+                    <div class="form-buttons" style="margin-top:15px;">
+                        <button class="btn-salvar" onclick="baixarComprovante('${comprovante}', 'comprovante')">⬇️ Baixar</button>
+                    </div>
+                `;
+            }
+            abrirModal('modalComprovante');
+            return;
+        }
+
+        // Comprovante com metadados completos
+        const tiposLabel = {
+            'despesa_fixa': 'Despesa Fixa',
+            'despesa_variavel': 'Despesa Variável',
+            'juros': 'Pagamento de Juros',
+            'amortizacao': 'Amortização'
+        };
+
+        let previewHTML = '';
+        if (comprovante.arquivo.includes('application/pdf')) {
+            previewHTML = `<embed src="${comprovante.arquivo}" type="application/pdf" width="100%" height="350px" style="border-radius:8px;">`;
+        } else {
+            previewHTML = `<img src="${comprovante.arquivo}" style="max-width:100%; border-radius:8px; max-height:350px; object-fit:contain;">`;
+        }
+
+        viewer.innerHTML = `
+            <div class="info-box" style="margin-bottom:15px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div><strong>Tipo:</strong> ${tiposLabel[comprovante.tipoPagamento] || comprovante.tipoPagamento}</div>
+                    <div><strong>Valor:</strong> ${formatarMoeda(comprovante.valorPago)}</div>
+                    <div><strong>Data:</strong> ${formatarData(comprovante.dataPagamento?.split('T')[0])}</div>
+                    <div><strong>Arquivo:</strong> ${comprovante.nomeArquivo || 'comprovante'}</div>
+                </div>
+                ${comprovante.descricao ? `<div style="margin-top:8px;"><strong>Ref:</strong> ${comprovante.descricao}</div>` : ''}
+            </div>
+            ${previewHTML}
+            <div class="form-buttons" style="margin-top:15px;">
+                <button class="btn-salvar" onclick="baixarComprovanteObj(comprovanteAtual)">⬇️ Baixar Arquivo</button>
+            </div>
+        `;
+        
+        // Guardar referência para download
+        window.comprovanteAtual = comprovante;
+        abrirModal('modalComprovante');
+    }
+
+    // Baixar comprovante (base64 direto)
+    function baixarComprovante(base64, nome) {
+        const link = document.createElement('a');
+        link.href = base64;
+        link.download = nome + (base64.includes('application/pdf') ? '.pdf' : '.jpg');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Baixar comprovante (objeto com metadados)
+    function baixarComprovanteObj(comprovante) {
+        if (!comprovante?.arquivo) return;
+        const link = document.createElement('a');
+        link.href = comprovante.arquivo;
+        
+        // Determinar extensão
+        let ext = '.jpg';
+        if (comprovante.tipoArquivo?.includes('pdf')) ext = '.pdf';
+        else if (comprovante.tipoArquivo?.includes('png')) ext = '.png';
+        else if (comprovante.nomeArquivo) ext = '.' + comprovante.nomeArquivo.split('.').pop();
+        
+        link.download = (comprovante.nomeArquivo || 'comprovante_' + comprovante.tipoPagamento) ;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Funções auxiliares para visualizar comprovantes por tipo
+    function verComprovanteFixa(id) {
+        const key = getMesAnoKey();
+        const item = financeiro.despesasFixasMes[key]?.find(d => String(d.id) === String(id));
+        if (item?.comprovante) {
+            verComprovante(item.comprovante);
+        }
+    }
+
+    function verComprovanteVariavel(id) {
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
+        if (item?.comprovante) {
+            verComprovante(item.comprovante);
+        }
+    }
+
+    function verComprovanteAvulsa(id) {
+        const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(id));
+        if (item?.comprovante) {
+            verComprovante(item.comprovante);
+        }
+    }
+
+    function verComprovanteHistorico(emprestimoId, historicoIdx) {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoId));
+        if (emp?.historico?.[historicoIdx]?.comprovante) {
+            verComprovante(emp.historico[historicoIdx].comprovante);
+        }
+    }
+
+    function verComprovanteHistoricoArquivado(emprestimoId, historicoIdx) {
+        // Busca tanto em ativos quanto em arquivados
+        let emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoId));
+        if (!emp) {
+            emp = financeiro.arquivados?.emprestimos?.find(e => String(e.id) === String(emprestimoId));
+        }
+        if (emp?.historico?.[historicoIdx]?.comprovante) {
+            verComprovante(emp.historico[historicoIdx].comprovante);
+        }
+    }
+
+    // ==========================================
+    // MODAIS
+    // ==========================================
+    
+    function abrirModal(id) {
+        document.getElementById(id).classList.add('active');
+    }
+
+    function fecharModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+
+    // ==========================================
+    // MODAL DE CONFIRMAÇÃO (substitui confirm() nativo)
+    // ==========================================
+    let _confirmCallback = null;
+
+    function confirmar(mensagem, callback, titulo = 'Confirmar exclusão', okLabel = 'Excluir', okColor = '#e74c3c') {
+        document.getElementById('modalConfirmMsg').textContent = mensagem;
+        document.getElementById('modalConfirmTitle').textContent = titulo;
+        const btn = document.getElementById('modalConfirmOkBtn');
+        btn.textContent = okLabel;
+        btn.style.background = okColor;
+        _confirmCallback = callback;
+        document.getElementById('modalConfirm').classList.add('active');
+    }
+
+    function confirmarResposta(ok) {
+        document.getElementById('modalConfirm').classList.remove('active');
+        if (_confirmCallback) {
+            const cb = _confirmCallback;
+            _confirmCallback = null;
+            if (ok) cb();
+        }
+    }
+
+
+
+    // Fechar modal ao clicar no X ou fora
+    document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('.modal').classList.remove('active');
+        });
+    });
+
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+    });
+
+    // ==========================================
+    // RECOLHER SEÇÕES
+    // ==========================================
+    function toggleSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+        section.classList.toggle('collapsed');
+        // Persistir estado
+        const colapsados = JSON.parse(localStorage.getItem('secoes_colapsadas') || '{}');
+        colapsados[sectionId] = section.classList.contains('collapsed');
+        localStorage.setItem('secoes_colapsadas', JSON.stringify(colapsados));
+    }
+
+    // Restaurar estado de seções recolhidas
+    (function restaurarColapsados() {
+        const colapsados = JSON.parse(localStorage.getItem('secoes_colapsadas') || '{}');
+        Object.entries(colapsados).forEach(([id, collapsed]) => {
+            if (collapsed) {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('collapsed');
+            }
+        });
+    })();
+
+    // ==========================================
+    // CATEGORIAS EDITÁVEIS
+    // ==========================================
+    const CATEGORIAS_DEFAULT = {
+        receitaFixa: ['Salário', 'Pensão', 'Aluguel Recebido', 'Outros'],
+        receitaVariavel: ['Freelance', 'Investimentos', 'Vendas', 'Bônus', 'Presente', 'Outros'],
+        despesaFixa: ['Moradia', 'Internet', 'Energia', 'Água', 'Escola', 'Streaming', 'Plano de Saúde', 'Outros'],
+        despesaVariavel: ['Alimentação', 'Transporte', 'Lazer', 'Compras', 'Saúde', 'Cartão', 'Outros'],
+        emprestimo: ['Agiota', 'Banco', 'Financeira', 'Pessoa Física', 'Cartão', 'Outros'],
+        despesaAvulsa: ['Alimentação', 'Transporte', 'Lazer', 'Compras', 'Saúde', 'Educação', 'Outros'],
+        economia: ['Reserva', 'Poupança', 'Investimento', 'Objetivo', 'Viagem', 'Outros']
+    };
+
+    const CATEGORIAS_LABELS = {
+        receitaFixa: 'Receitas Fixas',
+        receitaVariavel: 'Receitas Variáveis',
+        despesaFixa: 'Despesas Fixas',
+        despesaVariavel: 'Despesas Parceladas',
+        emprestimo: 'Empréstimos',
+        despesaAvulsa: 'Despesas Variáveis',
+        economia: 'Reservas / Economias'
+    };
+
+    function getCategorias(tipo) {
+        const salvas = JSON.parse(localStorage.getItem('categorias_custom') || '{}');
+        return salvas[tipo] || [...CATEGORIAS_DEFAULT[tipo]];
+    }
+
+    function setCategorias(tipo, lista) {
+        const salvas = JSON.parse(localStorage.getItem('categorias_custom') || '{}');
+        salvas[tipo] = lista;
+        localStorage.setItem('categorias_custom', JSON.stringify(salvas));
+    }
+
+    let _categoriaModalTipo = null;
+    let _categoriaModalLista = [];
+
+    function abrirEditarCategorias(tipo) {
+        _categoriaModalTipo = tipo;
+        _categoriaModalLista = [...getCategorias(tipo)];
+        document.getElementById('modalCategoriasTitle').textContent = 'Categorias — ' + (CATEGORIAS_LABELS[tipo] || tipo);
+        renderCategoriasModal();
+        document.getElementById('modalCategorias').classList.add('active');
+    }
+
+    function renderCategoriasModal() {
+        const lista = document.getElementById('modalCategoriasLista');
+        lista.innerHTML = _categoriaModalLista.map((cat, i) => `
+            <span class="categoria-chip">
+                ${cat}
+                <button class="chip-remove" onclick="_categoriaModalLista.splice(${i},1);renderCategoriasModal();" title="Remover">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </span>
+        `).join('');
+    }
+
+    function adicionarCategoriaModal() {
+        const input = document.getElementById('novaCategoriaNome');
+        const nome = input.value.trim();
+        if (!nome) return;
+        if (!_categoriaModalLista.includes(nome)) {
+            _categoriaModalLista.push(nome);
+            renderCategoriasModal();
+        }
+        input.value = '';
+        input.focus();
+    }
+
+    function salvarCategoriasModal() {
+        if (_categoriaModalTipo) {
+            setCategorias(_categoriaModalTipo, _categoriaModalLista);
+        }
+        document.getElementById('modalCategorias').classList.remove('active');
+        // Atualiza o formulário se aberto
+        renderizarListas();
+    }
+
+    // ==========================================
+    // FORMULÁRIOS DINÂMICOS
+    // ==========================================
+    
+    function criarFormulario(tipo) {
+        const configs = {
+            receitaFixa: {
+                campos: [
+                    { id: 'receitaFixaDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Salário' },
+                    { id: 'receitaFixaValor', label: 'Valor', type: 'number', step: '0.01' },
+                    { id: 'receitaFixaCategoria', label: 'Categoria', type: 'select', categoriaKey: 'receitaFixa' },
+                    { id: 'receitaFixaDia', label: 'Dia Recebimento', type: 'number', min: 1, max: 31, placeholder: '5' }
+                ]
+            },
+            receitaVariavel: {
+                campos: [
+                    { id: 'receitaVariavelDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Freelance, Bônus' },
+                    { id: 'receitaVariavelValor', label: 'Valor', type: 'number', step: '0.01' },
+                    { id: 'receitaVariavelCategoria', label: 'Categoria', type: 'select', categoriaKey: 'receitaVariavel' },
+                    { id: 'receitaVariavelData', label: 'Data', type: 'date' }
+                ]
+            },
+            despesaFixa: {
+                campos: [
+                    { id: 'despesaFixaDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Aluguel' },
+                    { id: 'despesaFixaValor', label: 'Valor', type: 'number', step: '0.01' },
+                    { id: 'despesaFixaCategoria', label: 'Categoria', type: 'select', categoriaKey: 'despesaFixa' },
+                    { id: 'despesaFixaDia', label: 'Dia Vencimento', type: 'number', min: 1, max: 31, placeholder: '10' }
+                ]
+            },
+            despesaVariavel: {
+                campos: [
+                    { id: 'despesaVariavelDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Compra no cartão' },
+                    { id: 'despesaVariavelValorTotal', label: 'Valor Total', type: 'number', step: '0.01', placeholder: 'Ex: 1800.00' },
+                    { id: 'despesaVariavelCategoria', label: 'Categoria', type: 'select', categoriaKey: 'despesaVariavel' },
+                    { id: 'despesaVariavelData', label: 'Data da 1ª Parcela', type: 'date' },
+                    { id: 'despesaVariavelParcelado', label: 'Parcelado?', type: 'checkbox' },
+                    { id: 'despesaVariavelTotalParcelas', label: 'Quantidade de Parcelas', type: 'number', min: '2', max: '48', placeholder: 'Ex: 12' }
+                ]
+            },
+            emprestimo: {
+                campos: [
+                    { id: 'emprestimoDescricao', label: 'Credor / Descrição', type: 'text', placeholder: 'Ex: Banco X' },
+                    { id: 'emprestimoPrincipal', label: 'Valor Principal', type: 'number', step: '0.01' },
+                    { id: 'emprestimoJuros', label: 'Taxa Juros (%)', type: 'number', step: '0.1', placeholder: '10' },
+                    { id: 'emprestimoCategoria', label: 'Categoria', type: 'select', categoriaKey: 'emprestimo' }
+                ]
+            },
+            despesaAvulsa: {
+                campos: [
+                    { id: 'despesaAvulsaDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Farmácia, Uber, etc.' },
+                    { id: 'despesaAvulsaValor', label: 'Valor', type: 'number', step: '0.01' },
+                    { id: 'despesaAvulsaCategoria', label: 'Categoria', type: 'select', categoriaKey: 'despesaAvulsa' },
+                    { id: 'despesaAvulsaData', label: 'Data', type: 'date' }
+                ]
+            },
+            economia: {
+                campos: [
+                    { id: 'economiaDescricao', label: 'Nome da Reserva', type: 'text', placeholder: 'Ex: Reserva de emergência' },
+                    { id: 'economiaValorInicial', label: 'Valor Inicial', type: 'number', step: '0.01', placeholder: '0.00' },
+                    { id: 'economiaCategoria', label: 'Categoria', type: 'select', categoriaKey: 'economia' }
+                ]
+            }
+        };
+
+        const config = configs[tipo];
+        if (!config) return '';
+
+        let html = '<div class="form-row">';
+        config.campos.forEach(campo => {
+            if (campo.type === 'checkbox') {
+                html += `<div class="form-group form-group-checkbox">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="${campo.id}" onchange="toggleParcelasField()">
+                        <span>${campo.label}</span>
+                    </label>
+                </div>`;
+            } else {
+                const isParcelasField = campo.id.includes('TotalParcelas');
+                const isValorTotal = campo.id.includes('ValorTotal');
+                html += `<div class="form-group${isParcelasField ? ' parcelas-field hidden' : ''}"><label style="display:flex;align-items:center;gap:4px;">${campo.label}`;
+                if (campo.categoriaKey) {
+                    html += `<button type="button" class="btn-edit-categorias" onclick="abrirEditarCategorias('${campo.categoriaKey}')" title="Editar categorias"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> editar</button>`;
+                }
+                html += `</label>`;
+                if (campo.type === 'select' && campo.categoriaKey) {
+                    const opts = getCategorias(campo.categoriaKey);
+                    html += `<select id="${campo.id}"><option value="">Selecione...</option>`;
+                    opts.forEach(opt => html += `<option value="${opt}">${opt}</option>`);
+                    html += '</select>';
+                } else if (campo.type === 'select' && campo.options) {
+                    html += `<select id="${campo.id}"><option value="">Selecione...</option>`;
+                    campo.options.forEach(opt => html += `<option value="${opt}">${opt}</option>`);
+                    html += '</select>';
+                } else {
+                    const isDateField = campo.type === 'date';
+                    const isParcelaData = campo.id === 'despesaVariavelData';
+                    const isAvulsaData = campo.id === 'despesaAvulsaData';
+                    const isReceitaVariavelData = campo.id === 'receitaVariavelData';
+
+                    // Valor padrão para campos de data
+                    let defaultValue = '';
+                    if (isParcelaData) {
+                        defaultValue = `${anoSelecionado}-${mesSelecionado}-01`;
+                    } else if (isAvulsaData || isReceitaVariavelData) {
+                        const hoje = new Date();
+                        const diaHoje = String(hoje.getDate()).padStart(2, '0');
+                        // Se o mês selecionado é o mês atual, usa dia de hoje; senão usa dia 1
+                        const mesHoje = String(hoje.getMonth() + 1).padStart(2, '0');
+                        const anoHoje = String(hoje.getFullYear());
+                        if (mesSelecionado === mesHoje && String(anoSelecionado) === anoHoje) {
+                            defaultValue = `${anoSelecionado}-${mesSelecionado}-${diaHoje}`;
+                        } else {
+                            defaultValue = `${anoSelecionado}-${mesSelecionado}-01`;
+                        }
+                    }
+
+                    html += `<input type="${campo.type}" id="${campo.id}"`;
+                    if (campo.step) html += ` step="${campo.step}"`;
+                    if (campo.min) html += ` min="${campo.min}"`;
+                    if (campo.max) html += ` max="${campo.max}"`;
+                    if (campo.placeholder) html += ` placeholder="${campo.placeholder}"`;
+                    if (defaultValue) html += ` value="${defaultValue}"`;
+                    if (isParcelasField || isValorTotal) {
+                        html += ` oninput="atualizarPreviewParcelas()"`;
+                    }
+                    html += '>';
+
+                    // Hint para campos de data — pode ser qualquer mês
+                    if (isParcelaData) {
+                        html += `<span style="font-size:11px;color:rgba(26,26,26,0.45);margin-top:4px;display:block;">📅 Pode ser em qualquer mês — as parcelas serão distribuídas a partir desta data</span>`;
+                    } else if (isAvulsaData) {
+                        html += `<span style="font-size:11px;color:rgba(26,26,26,0.45);margin-top:4px;display:block;">📅 Pode ser em qualquer mês — aparecerá no mês correspondente</span>`;
+                    }
+                }
+                html += '</div>';
+            }
+        });
+        html += '</div>';
+
+        // Para despesas parceladas, adicionar barra de resumo + botões no TOPO (sticky)
+        if (tipo === 'despesaVariavel') {
+            const salvarFn = `salvar${tipo.charAt(0).toUpperCase() + tipo.slice(1)}()`;
+            const topBar = `
+                <div class="form-top-summary" id="formTopSummary" style="display:none;">
+                    <div class="form-top-summary-valores">
+                        <div class="form-top-summary-item">
+                            <span class="form-top-summary-label">Soma das parcelas:</span>
+                            <span class="form-top-summary-valor" id="somaParcelasTop">R$ 0,00</span>
+                        </div>
+                        <div class="form-top-summary-item">
+                            <span class="form-top-summary-label">Valor total:</span>
+                            <span class="form-top-summary-valor" id="valorTotalTop">R$ 0,00</span>
+                        </div>
+                        <div class="form-top-summary-status" id="statusTop"></div>
+                    </div>
+                    <div class="form-top-summary-actions">
+                        <button class="btn-cancelar" onclick="esconderForm('${tipo}')">Cancelar</button>
+                        <button class="btn-salvar" onclick="${salvarFn}">Salvar</button>
+                    </div>
+                </div>
+            `;
+            // Inserir no início do html
+            html = topBar + html;
+        }
+
+        html += `<div class="form-buttons">
+            <button class="btn-cancelar" onclick="esconderForm('${tipo}')">Cancelar</button>
+            <button class="btn-salvar" onclick="salvar${tipo.charAt(0).toUpperCase() + tipo.slice(1)}()">Salvar</button>
+        </div>`;
+        
+        return html;
+    }
+
+    function toggleParcelasField() {
+        const checkbox = document.getElementById('despesaVariavelParcelado');
+        const parcelasField = document.querySelector('.parcelas-field');
+        const previewContainer = document.getElementById('parcelasPreview');
+        
+        if (parcelasField) {
+            if (checkbox && checkbox.checked) {
+                parcelasField.classList.remove('hidden');
+                // Adicionar preview se não existir
+                if (!previewContainer) {
+                    const formRow = parcelasField.closest('.form-row');
+                    const previewDiv = document.createElement('div');
+                    previewDiv.id = 'parcelasPreview';
+                    previewDiv.className = 'parcelas-preview';
+                    previewDiv.style.display = 'none';
+                    formRow.after(previewDiv);
+                }
+                atualizarPreviewParcelas();
+            } else {
+                parcelasField.classList.add('hidden');
+                const input = parcelasField.querySelector('input');
+                if (input) input.value = '';
+                if (previewContainer) previewContainer.style.display = 'none';
+            }
+        }
+    }
+
+    // Atualizar preview das parcelas em tempo real
+    function atualizarPreviewParcelas() {
+        const valorTotalInput = document.getElementById('despesaVariavelValorTotal');
+        const totalParcelasInput = document.getElementById('despesaVariavelTotalParcelas');
+        const previewContainer = document.getElementById('parcelasPreview');
+        
+        if (!previewContainer) return;
+        
+        const valorTotal = parseFloat(valorTotalInput?.value) || 0;
+        const totalParcelas = parseInt(totalParcelasInput?.value) || 0;
+        
+        if (valorTotal <= 0 || totalParcelas < 2) {
+            previewContainer.style.display = 'none';
+            return;
+        }
+        
+        // Inicializar valores personalizados se necessário
+        if (!window.parcelasPersonalizadas || window.parcelasPersonalizadas.length !== totalParcelas) {
+            window.parcelasPersonalizadas = calcularParcelas(valorTotal, totalParcelas);
+        }
+        
+        let html = '<div class="preview-header">Valores das parcelas (editável):</div>';
+        html += '<div class="preview-list-editable">';
+        window.parcelasPersonalizadas.forEach((valor, idx) => {
+            html += `
+                <div class="preview-item-editable">
+                    <span class="parcela-num">${idx + 1}/${totalParcelas}</span>
+                    <input type="number" 
+                           class="parcela-valor-input-novo" 
+                           value="${valor.toFixed(2)}" 
+                           step="0.01" 
+                           min="0"
+                           onchange="atualizarValorParcelaNovo(${idx}, this.value)"
+                           oninput="atualizarSomaParcelasNovo()">
+                </div>
+            `;
+        });
+        html += '</div>';
+        
+        const somaAtual = window.parcelasPersonalizadas.reduce((s, v) => s + v, 0);
+        const diferenca = valorTotal - somaAtual;
+        const statusClass = Math.abs(diferenca) < 0.01 ? 'ok' : 'erro';
+        
+        html += `
+            <div class="preview-soma ${statusClass}">
+                <div class="soma-linha">
+                    <span>Soma das parcelas:</span>
+                    <span id="somaParcelasNovo">${formatarMoeda(somaAtual)}</span>
+                </div>
+                <div class="soma-linha">
+                    <span>Valor total:</span>
+                    <span>${formatarMoeda(valorTotal)}</span>
+                </div>
+                ${Math.abs(diferenca) >= 0.01 ? `
+                    <div class="soma-diferenca">
+                        Diferença: ${formatarMoeda(diferenca)} 
+                        <button type="button" class="btn-ajustar" onclick="ajustarUltimaParcelaNovo()">Ajustar última</button>
+                    </div>
+                ` : '<div class="soma-ok">✓ Valores corretos</div>'}
+            </div>
+        `;
+        
+        previewContainer.innerHTML = html;
+        previewContainer.style.display = 'block';
+
+        // Atualizar barra de resumo no topo
+        atualizarTopSummary(somaAtual, valorTotal, diferenca);
+    }
+
+    function atualizarTopSummary(soma, total, diferenca) {
+        const topBar = document.getElementById('formTopSummary');
+        const somaTopEl = document.getElementById('somaParcelasTop');
+        const totalTopEl = document.getElementById('valorTotalTop');
+        const statusEl = document.getElementById('statusTop');
+        if (!topBar) return;
+        topBar.style.display = 'flex';
+        if (somaTopEl) somaTopEl.textContent = formatarMoeda(soma);
+        if (totalTopEl) totalTopEl.textContent = formatarMoeda(total);
+        if (statusEl) {
+            if (Math.abs(diferenca) < 0.01) {
+                statusEl.innerHTML = '<span class="soma-ok" style="font-size:12px;color:#2ecc71;">✓ Valores corretos</span>';
+                if (somaTopEl) { somaTopEl.style.color = '#2ecc71'; }
+            } else {
+                statusEl.innerHTML = `<span style="color:#e74c3c;font-size:12px;">Diferença: ${formatarMoeda(diferenca)}</span>`;
+                if (somaTopEl) { somaTopEl.style.color = '#e74c3c'; }
+            }
+        }
+    }
+    
+    // Funções para criação de novas parcelas
+    function atualizarValorParcelaNovo(index, valor) {
+        if (!window.parcelasPersonalizadas) return;
+        window.parcelasPersonalizadas[index] = parseFloat(valor) || 0;
+        atualizarSomaParcelasNovo();
+    }
+    
+    function atualizarSomaParcelasNovo() {
+        if (!window.parcelasPersonalizadas) return;
+        
+        const valorTotal = parseFloat(document.getElementById('despesaVariavelValorTotal')?.value) || 0;
+        
+        const inputs = document.querySelectorAll('.parcela-valor-input-novo');
+        let somaAtual = 0;
+        inputs.forEach((input, idx) => {
+            const val = parseFloat(input.value) || 0;
+            window.parcelasPersonalizadas[idx] = val;
+            somaAtual += val;
+        });
+        
+        const somaEl = document.getElementById('somaParcelasNovo');
+        if (somaEl) somaEl.textContent = formatarMoeda(somaAtual);
+        
+        const diferenca = valorTotal - somaAtual;
+        const previewSoma = document.querySelector('#parcelasPreview .preview-soma');
+        if (previewSoma) {
+            previewSoma.className = 'preview-soma ' + (Math.abs(diferenca) < 0.01 ? 'ok' : 'erro');
+        }
+        atualizarTopSummary(somaAtual, valorTotal, diferenca);
+    }
+    
+    function ajustarUltimaParcelaNovo() {
+        if (!window.parcelasPersonalizadas || window.parcelasPersonalizadas.length === 0) return;
+        
+        const valorTotal = parseFloat(document.getElementById('despesaVariavelValorTotal')?.value) || 0;
+        const somaExcetoUltima = window.parcelasPersonalizadas.slice(0, -1).reduce((s, v) => s + v, 0);
+        const ultimaParcela = Math.round((valorTotal - somaExcetoUltima) * 100) / 100;
+        
+        const ultimoIndex = window.parcelasPersonalizadas.length - 1;
+        window.parcelasPersonalizadas[ultimoIndex] = ultimaParcela;
+        
+        const inputs = document.querySelectorAll('.parcela-valor-input-novo');
+        if (inputs[ultimoIndex]) {
+            inputs[ultimoIndex].value = ultimaParcela.toFixed(2);
+        }
+        
+        atualizarSomaParcelasNovo();
+        atualizarPreviewParcelas();
+    }
+
+    // Calcular distribuição das parcelas
+    function calcularParcelas(valorTotal, totalParcelas) {
+        if (totalParcelas <= 0) return [];
+        if (totalParcelas === 1) return [valorTotal];
+        
+        // Calcula valor base (arredondado para 2 casas)
+        const valorBase = Math.floor((valorTotal / totalParcelas) * 100) / 100;
+        
+        // Array de parcelas
+        const parcelas = [];
+        let somaAcumulada = 0;
+        
+        for (let i = 0; i < totalParcelas - 1; i++) {
+            parcelas.push(valorBase);
+            somaAcumulada += valorBase;
+        }
+        
+        // Última parcela ajusta a diferença
+        const ultimaParcela = Math.round((valorTotal - somaAcumulada) * 100) / 100;
+        parcelas.push(ultimaParcela);
+        
+        return parcelas;
+    }
+
+    function mostrarForm(tipo) {
+        const container = document.getElementById('form' + tipo.charAt(0).toUpperCase() + tipo.slice(1));
+        if (!container.innerHTML.trim()) {
+            container.innerHTML = criarFormulario(tipo);
+        }
+        container.classList.add('active');
+        
+        // Preencher data atual
+        const dataInput = document.getElementById(tipo + 'Data');
+        if (dataInput) dataInput.value = new Date().toISOString().split('T')[0];
+    }
+
+    function esconderForm(tipo) {
+        const container = document.getElementById('form' + tipo.charAt(0).toUpperCase() + tipo.slice(1));
+        container.classList.remove('active');
+        container.querySelectorAll('input').forEach(i => i.value = '');
+        container.querySelectorAll('select').forEach(s => s.value = '');
+        
+        // Limpar valores personalizados de parcelas
+        if (tipo === 'despesaVariavel') {
+            window.parcelasPersonalizadas = null;
+            const preview = document.getElementById('parcelasPreview');
+            if (preview) preview.style.display = 'none';
+        }
+    }
+
+    // Event listeners dos botões
+    document.getElementById('btnAddReceitaFixa').onclick = () => mostrarForm('receitaFixa');
+    document.getElementById('btnAddReceitaVariavel').onclick = () => mostrarForm('receitaVariavel');
+    document.getElementById('btnAddDespesaFixa').onclick = () => mostrarForm('despesaFixa');
+    document.getElementById('btnAddDespesaVariavel').onclick = () => mostrarForm('despesaVariavel');
+    document.getElementById('btnAddDespesaAvulsa').onclick = () => mostrarForm('despesaAvulsa');
+    document.getElementById('btnAddEmprestimo').onclick = () => mostrarForm('emprestimo');
+    document.getElementById('btnAddEconomia').onclick = () => mostrarForm('economia');
+
+    // ==========================================
+    // RECEITAS (com suporte a recorrentes)
+    // ==========================================
+    
+    function salvarReceitaFixa() {
+        const desc = document.getElementById('receitaFixaDescricao').value.trim();
+        const valor = parseFloat(document.getElementById('receitaFixaValor').value) || 0;
+        const cat = document.getElementById('receitaFixaCategoria').value || 'Outros';
+        const dia = parseInt(document.getElementById('receitaFixaDia').value) || 5;
+        
+        if (!desc || !valor) return alert('Preencha descrição e valor!');
+        
+        // Criar receita recorrente (modelo)
+        // mesInicio = mês atual selecionado — só gera instâncias daqui em diante
+        financeiro.receitasFixas.push({
+            id: gerarId(),
+            descricao: desc,
+            valor: valor,
+            categoria: cat,
+            diaRecebimento: dia,
+            ativa: true,
+            mesInicio: getMesAnoKey(),
+            criadoEm: new Date().toISOString()
+        });
+        gerarInstanciasReceitas();
+        
+        salvarDados();
+        esconderForm('receitaFixa');
+        renderizar();
+    }
+
+    function salvarReceitaVariavel() {
+        const desc = document.getElementById('receitaVariavelDescricao').value.trim();
+        const valor = parseFloat(document.getElementById('receitaVariavelValor').value) || 0;
+        const cat = document.getElementById('receitaVariavelCategoria').value || 'Outros';
+        let data = document.getElementById('receitaVariavelData').value;
+        
+        if (!desc || !valor) return alert('Preencha descrição e valor!');
+        
+        if (!data) {
+            const hoje = new Date();
+            const mesHoje = String(hoje.getMonth() + 1).padStart(2, '0');
+            const anoHoje = String(hoje.getFullYear());
+            if (mesSelecionado === mesHoje && String(anoSelecionado) === anoHoje) {
+                data = `${anoSelecionado}-${mesSelecionado}-${String(hoje.getDate()).padStart(2, '0')}`;
+            } else {
+                data = `${anoSelecionado}-${mesSelecionado}-01`;
+            }
+        }
+        
+        financeiro.receitasAvulsas.push({
+            id: gerarId(),
+            descricao: desc,
+            valor: valor,
+            categoria: cat,
+            data: data,
+            recebido: false
+        });
+        
+        salvarDados();
+        esconderForm('receitaVariavel');
+        renderizar();
+    }
+
+    function getDataRecebimento(dia) {
+        const ano = anoSelecionado;
+        const mes = mesSelecionado;
+        const ultimoDia = new Date(ano, parseInt(mes), 0).getDate();
+        const diaReal = Math.min(dia, ultimoDia);
+        return `${ano}-${mes}-${String(diaReal).padStart(2, '0')}`;
+    }
+
+    function gerarInstanciasReceitas() {
+        const key = getMesAnoKey();
+        if (!financeiro.receitasMes[key]) {
+            financeiro.receitasMes[key] = [];
+        }
+
+        // DATA LIMITE: Só gerar receitas a partir de Janeiro/2026
+        if (key < '2026-01') {
+            return;
+        }
+
+        // Gerar instâncias para o mês atual
+        financeiro.receitasFixas.filter(rf => rf.ativa).forEach(modelo => {
+            // Só gerar se o mês atual é >= mesInicio do modelo
+            const mesInicio = modelo.mesInicio || '2026-01';
+            if (key < mesInicio) return;
+
+            const jaExiste = financeiro.receitasMes[key].some(r => r.modeloId === modelo.id);
+            if (!jaExiste) {
+                financeiro.receitasMes[key].push({
+                    id: gerarId(),
+                    modeloId: modelo.id,
+                    descricao: modelo.descricao,
+                    valor: modelo.valor,
+                    categoria: modelo.categoria,
+                    data: getDataRecebimento(modelo.diaRecebimento),
+                    recebido: false,
+                    recorrente: true
+                });
+            }
+        });
+
+        salvarDados();
+    }
+
+    function getReceitasMes() {
+        const key = getMesAnoKey();
+        // Combina receitas antigas (do array receitas) + novas (do objeto receitasMes)
+        const receitasAntigas = (financeiro.receitas || []).filter(r => r.data?.startsWith(key));
+        const receitasNovas = financeiro.receitasMes[key] || [];
+        return [...receitasAntigas, ...receitasNovas];
+    }
+
+    function getReceitasFixasMes() {
+        const key = getMesAnoKey();
+        return (financeiro.receitasMes[key] || []).filter(r => r.recorrente);
+    }
+
+    function getReceitasVariaveisMes() {
+        return filtrarPorMes(financeiro.receitasAvulsas);
+    }
+
+    function toggleRecebido(id) {
+        id = Number(id);
+        let item = financeiro.receitas.find(r => Number(r.id) === id);
+        if (item) { item.recebido = !item.recebido; salvarDados(); renderizar(); return; }
+
+        // Buscar em todos os meses
+        for (const key of Object.keys(financeiro.receitasMes || {})) {
+            item = (financeiro.receitasMes[key] || []).find(r => Number(r.id) === id);
+            if (item) { item.recebido = !item.recebido; salvarDados(); renderizar(); return; }
+        }
+
+        item = financeiro.receitasAvulsas.find(r => Number(r.id) === id);
+        if (item) { item.recebido = !item.recebido; salvarDados(); renderizar(); }
+    }
+
+    function deletarReceita(id) {
+        id = Number(id);
+
+        // 1. Receitas legado (array antigo)
+        let idx = financeiro.receitas.findIndex(r => Number(r.id) === id);
+        if (idx !== -1) {
+            confirmar('Excluir esta receita permanentemente?', () => {
+                financeiro.receitas.splice(idx, 1);
+                salvarDados(); renderizar();
+            });
+            return;
+        }
+
+        // 2. Buscar em receitasMes para achar o modeloId
+        let modeloId = null;
+        let receitaEncontrada = null;
+        for (const key of Object.keys(financeiro.receitasMes || {})) {
+            const encontrada = (financeiro.receitasMes[key] || []).find(r => Number(r.id) === id);
+            if (encontrada) { receitaEncontrada = encontrada; modeloId = encontrada.modeloId; break; }
+        }
+
+        if (receitaEncontrada) {
+            if (modeloId) {
+                // É recorrente — apagar modelo + todas as instâncias futuras e passadas
+                confirmar(
+                    `Excluir a receita "${receitaEncontrada.descricao}" de TODOS os meses?`,
+                    () => {
+                        // Desativar modelo
+                        const modelo = financeiro.receitasFixas.find(rf => Number(rf.id) === Number(modeloId));
+                        if (modelo) modelo.ativa = false;
+                        // Remover instâncias de TODOS os meses
+                        Object.keys(financeiro.receitasMes || {}).forEach(k => {
+                            financeiro.receitasMes[k] = (financeiro.receitasMes[k] || [])
+                                .filter(r => Number(r.modeloId) !== Number(modeloId));
+                        });
+                        salvarDados(); renderizar();
+                        mostrarStatus('Receita removida de todos os meses', 'success');
+                    }
+                );
+            } else {
+                // Receita avulsa dentro do receitasMes
+                confirmar(`Excluir esta receita?`, () => {
+                    Object.keys(financeiro.receitasMes || {}).forEach(k => {
+                        financeiro.receitasMes[k] = (financeiro.receitasMes[k] || [])
+                            .filter(r => Number(r.id) !== id);
+                    });
+                    salvarDados(); renderizar();
+                });
+            }
+            return;
+        }
+
+        // 3. receitasAvulsas
+        idx = financeiro.receitasAvulsas.findIndex(r => Number(r.id) === id);
+        if (idx !== -1) {
+            confirmar('Excluir esta receita variável?', () => {
+                financeiro.receitasAvulsas.splice(idx, 1);
+                salvarDados(); renderizar();
+            });
+            return;
+        }
+
+        console.warn('deletarReceita: id não encontrado:', id);
+    }
+
+    function encerrarReceitaRecorrente(modeloId) {
+        const modelo = financeiro.receitasFixas.find(rf => String(rf.id) === String(modeloId));
+        if (!modelo) return;
+        confirmar(`Encerrar receita recorrente "${modelo.descricao}"? Ela deixará de aparecer nos próximos meses.`, () => {
+            modelo.ativa = false;
+            const keyAtual = getMesAnoKey();
+            Object.keys(financeiro.receitasMes).forEach(key => {
+                if (key > keyAtual)
+                    financeiro.receitasMes[key] = (financeiro.receitasMes[key] || []).filter(r => r.modeloId !== modeloId);
+            });
+            salvarDados(); renderizar();
+            mostrarStatus('Receita recorrente encerrada', 'success');
+        }, 'Encerrar Receita', 'Encerrar', '#e67e22');
+    }
+
+    function arquivarReceita(id) {
+        // Procurar nas receitas antigas
+        let idx = financeiro.receitas.findIndex(r => String(r.id) === String(id));
+        if (idx !== -1) {
+            const item = financeiro.receitas.splice(idx, 1)[0];
+            financeiro.arquivados.receitas.push(item);
+            salvarDados();
+            renderizar();
+            return;
+        }
+        
+        // Procurar nas receitas do mês
+        const key = getMesAnoKey();
+        idx = (financeiro.receitasMes[key] || []).findIndex(r => String(r.id) === String(id));
+        if (idx !== -1) {
+            const item = financeiro.receitasMes[key].splice(idx, 1)[0];
+            financeiro.arquivados.receitas.push(item);
+            salvarDados();
+            renderizar();
+        }
+    }
+
+    function editarReceita(id) {
+        id = Number(id);
+        let item = financeiro.receitas.find(r => Number(r.id) === id);
+        let isNovoSistema = false;
+        let isAvulsa = false;
+
+        if (!item) {
+            // Buscar em TODOS os meses
+            for (const key of Object.keys(financeiro.receitasMes || {})) {
+                item = (financeiro.receitasMes[key] || []).find(r => Number(r.id) === id);
+                if (item) break;
+            }
+            isNovoSistema = true;
+        }
+        if (!item) {
+            item = financeiro.receitasAvulsas.find(r => Number(r.id) === id);
+            isAvulsa = true;
+            isNovoSistema = false;
+        }
+        if (!item) { console.warn('editarReceita: id não encontrado:', id); return; }
+
+        itemEditando = { tipo: 'receita', id: id, isNovoSistema: isNovoSistema, isAvulsa: isAvulsa };
+        
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" id="editDescricao" value="${item.descricao}">
+                </div>
+                <div class="form-group">
+                    <label>Valor</label>
+                    <input type="number" id="editValor" step="0.01" value="${item.valor}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <input type="text" id="editCategoria" value="${item.categoria}">
+                </div>
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="editData" value="${item.data}">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoReceita()">Salvar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Receita';
+        abrirModal('modalEditar');
+    }
+
+    function salvarEdicaoReceita() {
+        let item = null;
+        const eid = Number(itemEditando.id);
+
+        if (itemEditando.isAvulsa) {
+            item = financeiro.receitasAvulsas.find(r => Number(r.id) === eid);
+        } else if (itemEditando.isNovoSistema) {
+            // Buscar em todos os meses
+            for (const key of Object.keys(financeiro.receitasMes || {})) {
+                item = (financeiro.receitasMes[key] || []).find(r => Number(r.id) === eid);
+                if (item) break;
+            }
+        } else {
+            item = financeiro.receitas.find(r => Number(r.id) === eid);
+        }
+        
+        if (item) {
+            item.descricao = document.getElementById('editDescricao').value.trim();
+            item.valor = parseFloat(document.getElementById('editValor').value) || item.valor;
+            item.categoria = document.getElementById('editCategoria').value;
+            item.data = document.getElementById('editData').value;
+            salvarDados();
+        }
+        fecharModal('modalEditar');
+        renderizar();
+    }
+
+    // ==========================================
+    // DESPESAS FIXAS (RECORRÊNCIA REAL)
+    // ==========================================
+    
+    function salvarDespesaFixa() {
+        const desc = document.getElementById('despesaFixaDescricao').value.trim();
+        const valor = parseFloat(document.getElementById('despesaFixaValor').value) || 0;
+        const cat = document.getElementById('despesaFixaCategoria').value || 'Outros';
+        const dia = parseInt(document.getElementById('despesaFixaDia').value) || 10;
+        
+        if (!desc || !valor) return alert('Preencha todos os campos!');
+        
+        // Criar modelo de despesa recorrente
+        financeiro.despesasFixas.push({
+            id: gerarId(),
+            descricao: desc,
+            valor: valor,
+            categoria: cat,
+            diaVencimento: dia,
+            ativa: true,
+            criadaEm: new Date().toISOString()
+        });
+        
+        salvarDados();
+        gerarInstanciasDespesasFixas();
+        esconderForm('despesaFixa');
+        renderizar();
+    }
+
+    // Gera instâncias mensais das despesas fixas ativas
+    function gerarInstanciasDespesasFixas() {
+        const key = getMesAnoKey();
+        
+        // SÓ PROCESSAR MESES DE 2026 EM DIANTE
+        if (key < '2026-01') {
+            return;
+        }
+        
+        if (!financeiro.despesasFixasMes[key]) {
+            financeiro.despesasFixasMes[key] = [];
+        }
+
+        // Gerar instâncias NOVAS para o mês atual
+        financeiro.despesasFixas.filter(df => df.ativa).forEach(modelo => {
+            // Verificar se já existe instância para este modelo neste mês (que não seja atrasada)
+            const jaExiste = financeiro.despesasFixasMes[key].some(d => d.modeloId === modelo.id && !d.atrasada);
+            if (!jaExiste) {
+                financeiro.despesasFixasMes[key].push({
+                    id: gerarId(),
+                    modeloId: modelo.id,
+                    descricao: modelo.descricao,
+                    valor: modelo.valor,
+                    categoria: modelo.categoria,
+                    data: getDataVencimento(modelo.diaVencimento),
+                    pago: false,
+                    dataPagamento: null,
+                    comprovante: null,
+                    atrasada: false
+                });
+            }
+        });
+
+        // LIMPAR instâncias atrasadas cujo original já foi pago
+        financeiro.despesasFixasMes[key] = financeiro.despesasFixasMes[key].filter(d => {
+            if (d.atrasada && d.idOriginal && d.mesOriginal) {
+                const original = (financeiro.despesasFixasMes[d.mesOriginal] || []).find(o => String(o.id) === String(d.idOriginal));
+                // Se o original foi pago, remover a instância atrasada (a menos que esta também já tenha sido paga)
+                if (original && original.pago && !d.pago) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        // Verificar despesas NÃO PAGAS APENAS do MÊS ANTERIOR (não de vários meses)
+        const mesAnteriorKey = getMesAnteriorKey();
+        
+        // Só arrastar se o mês anterior também é de 2026
+        if (mesAnteriorKey >= '2026-01') {
+            const despesasMesAnterior = financeiro.despesasFixasMes[mesAnteriorKey] || [];
+
+            despesasMesAnterior.forEach(despesaAnterior => {
+                // Só arrastar se NÃO foi paga
+                if (!despesaAnterior.pago) {
+                    // Verificar se já não existe uma despesa atrasada para este item específico
+                    const jaExisteAtrasada = financeiro.despesasFixasMes[key].some(
+                        d => d.atrasada && d.idOriginal === despesaAnterior.id
+                    );
+
+                    if (!jaExisteAtrasada) {
+                        // Criar instância atrasada no mês atual
+                        financeiro.despesasFixasMes[key].push({
+                            id: gerarId(),
+                            idOriginal: despesaAnterior.id,
+                            modeloId: despesaAnterior.modeloId,
+                            descricao: despesaAnterior.descricao,
+                            valor: despesaAnterior.valor,
+                            categoria: despesaAnterior.categoria,
+                            data: despesaAnterior.data,
+                            dataOriginal: despesaAnterior.data,
+                            mesOriginal: mesAnteriorKey,
+                            pago: false,
+                            dataPagamento: null,
+                            comprovante: null,
+                            atrasada: true
+                        });
+                    }
+                }
+            });
+        }
+
+        salvarDados();
+    }
+
+    function getDespesasFixasMes() {
+        const key = getMesAnoKey();
+        
+        // Nunca retornar dados de antes de 2026
+        if (key < '2026-01') return [];
+        
+        const despesas = financeiro.despesasFixasMes[key] || [];
+        
+        // Retornar todas as despesas (do mês atual + atrasadas de meses anteriores)
+        return despesas.filter(d => {
+            // Verificar se o modelo ainda está ativo
+            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(d.modeloId));
+            return modelo && modelo.ativa !== false;
+        });
+    }
+
+    // Função para editar valor de uma instância de despesa fixa (ex: adicionar juros)
+    function editarValorInstancia(id, tipo) {
+        const key = getMesAnoKey();
+        let item = null;
+        
+        if (tipo === 'fixa') {
+            // Procurar em todas as chaves de mês
+            for (const k of Object.keys(financeiro.despesasFixasMes)) {
+                const found = financeiro.despesasFixasMes[k]?.find(d => String(d.id) === String(id));
+                if (found) {
+                    item = found;
+                    break;
+                }
+            }
+        }
+        
+        if (!item) return;
+
+        const valorAtual = item.valor;
+        const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(item.modeloId));
+        const valorOriginal = modelo ? modelo.valor : valorAtual;
+        const diferenca = valorAtual - valorOriginal;
+
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="info-box">
+                <strong>${item.descricao}</strong><br>
+                <small>Valor original: ${formatarMoeda(valorOriginal)}</small>
+                ${diferenca !== 0 ? `<br><small style="color: ${diferenca > 0 ? '#e74c3c' : '#2ecc71'};">Diferença atual: ${diferenca > 0 ? '+' : ''}${formatarMoeda(diferenca)}</small>` : ''}
+            </div>
+            <div class="form-group">
+                <label>Novo Valor (apenas para este mês)</label>
+                <input type="number" id="novoValorInstancia" value="${valorAtual.toFixed(2)}" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+                <label>Motivo (opcional)</label>
+                <input type="text" id="motivoAlteracao" placeholder="Ex: Juros de atraso, multa, etc." value="${item.motivoAlteracao || ''}">
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-secondary" onclick="resetarValorInstancia(${id})">Resetar Original</button>
+                <button class="btn-salvar" onclick="salvarValorInstancia(${id})">Salvar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Valor (apenas este mês)';
+        abrirModal('modalEditar');
+    }
+
+    function salvarValorInstancia(id) {
+        const novoValor = parseFloat(document.getElementById('novoValorInstancia').value);
+        const motivo = document.getElementById('motivoAlteracao').value;
+        
+        if (isNaN(novoValor) || novoValor < 0) {
+            alert('Valor inválido!');
+            return;
+        }
+
+        // Procurar o item em todas as chaves de mês
+        for (const k of Object.keys(financeiro.despesasFixasMes)) {
+            const item = financeiro.despesasFixasMes[k]?.find(d => String(d.id) === String(id));
+            if (item) {
+                item.valor = novoValor;
+                item.motivoAlteracao = motivo;
+                item.valorAlterado = true;
+                break;
+            }
+        }
+
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+    }
+
+    function resetarValorInstancia(id) {
+        for (const k of Object.keys(financeiro.despesasFixasMes)) {
+            const item = financeiro.despesasFixasMes[k]?.find(d => String(d.id) === String(id));
+            if (item) {
+                const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(item.modeloId));
+                if (modelo) {
+                    item.valor = modelo.valor;
+                    item.motivoAlteracao = null;
+                    item.valorAlterado = false;
+                }
+                break;
+            }
+        }
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+    }
+
+    // Função para editar valor de uma parcela
+    function editarValorParcela(id) {
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
+        if (!item) return;
+
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="info-box">
+                <strong>${item.descricao}</strong><br>
+                <small>Parcela ${item.parcelaAtual}/${item.totalParcelas}</small>
+            </div>
+            <div class="form-group">
+                <label>Novo Valor (apenas para esta parcela)</label>
+                <input type="number" id="novoValorParcela" value="${item.valor.toFixed(2)}" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+                <label>Motivo (opcional)</label>
+                <input type="text" id="motivoAlteracaoParcela" placeholder="Ex: Juros de atraso, multa, etc." value="${item.motivoAlteracao || ''}">
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarValorParcela(${id})">Salvar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Valor da Parcela';
+        abrirModal('modalEditar');
+    }
+
+    function salvarValorParcela(id) {
+        const novoValor = parseFloat(document.getElementById('novoValorParcela').value);
+        const motivo = document.getElementById('motivoAlteracaoParcela').value;
+        
+        if (isNaN(novoValor) || novoValor < 0) {
+            alert('Valor inválido!');
+            return;
+        }
+
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
+        if (item) {
+            item.valor = novoValor;
+            item.motivoAlteracao = motivo;
+        }
+
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+    }
+
+    function togglePagoFixa(id) {
+        const key = getMesAnoKey();
+        const item = financeiro.despesasFixasMes[key]?.find(d => String(d.id) === String(id));
+        if (!item) return;
+
+        if (!item.pago) {
+            // Abrir modal para registrar pagamento com comprovante
+            itemEditando = { tipo: 'despesaFixa', id: id, key: key };
+            const body = document.getElementById('modalEditarBody');
+            body.innerHTML = `
+                <div class="info-box">
+                    <strong>${item.descricao}</strong> - ${formatarMoeda(item.valor)}
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data do Pagamento</label>
+                        <input type="date" id="pagamentoData" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    <div class="form-group">
+                        <label>Comprovante (opcional)</label>
+                        <input type="file" id="pagamentoComprovante" accept="image/*,.pdf">
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                    <button class="btn-salvar" onclick="confirmarPagamentoDespesa()">Confirmar</button>
+                </div>
+            `;
+            document.querySelector('#modalEditar .modal-header h3').textContent = 'Registrar Pagamento';
+            abrirModal('modalEditar');
+        } else {
+            // Desmarcar como pago
+            item.pago = false;
+            item.dataPagamento = null;
+            item.comprovante = null;
+            salvarDados();
+            renderizar();
+        }
+    }
+
+    async function confirmarPagamentoDespesa() {
+        const data = document.getElementById('pagamentoData').value;
+        const fileInput = document.getElementById('pagamentoComprovante');
+
+        if (itemEditando.tipo === 'despesaFixa') {
+            const item = financeiro.despesasFixasMes[itemEditando.key]?.find(d => String(d.id) === String(itemEditando.id));
+            if (item) {
+                // Criar comprovante com metadados completos
+                const comprovante = await criarComprovante(
+                    fileInput, 
+                    'despesa_fixa', 
+                    item.valor, 
+                    item.descricao
+                );
+                
+                item.pago = true;
+                item.dataPagamento = data;
+                item.comprovante = comprovante;
+
+                // Se é uma despesa atrasada, marcar a original como paga também
+                if (item.atrasada && item.idOriginal && item.mesOriginal) {
+                    const original = financeiro.despesasFixasMes[item.mesOriginal]?.find(d => String(d.id) === String(item.idOriginal));
+                    if (original) {
+                        original.pago = true;
+                        original.dataPagamento = data;
+                        original.comprovante = comprovante;
+                    }
+                }
+
+                // Remover outras instâncias atrasadas desta mesma despesa em outros meses
+                if (item.atrasada && item.idOriginal) {
+                    Object.keys(financeiro.despesasFixasMes).forEach(mesKey => {
+                        if (mesKey !== itemEditando.key) {
+                            financeiro.despesasFixasMes[mesKey] = (financeiro.despesasFixasMes[mesKey] || []).filter(d => {
+                                // Remover se é atrasada e tem o mesmo idOriginal
+                                return !(d.atrasada && d.idOriginal === item.idOriginal);
+                            });
+                        }
+                    });
+                }
+            }
+        } else if (itemEditando.tipo === 'despesaVariavel') {
+            const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(itemEditando.id));
+            if (item) {
+                // Criar comprovante com metadados completos
+                const comprovante = await criarComprovante(
+                    fileInput, 
+                    'despesa_variavel', 
+                    item.valor, 
+                    item.descricao
+                );
+                
+                item.pago = true;
+                item.dataPagamento = data;
+                item.comprovante = comprovante;
+            }
+        } else if (itemEditando.tipo === 'despesaAvulsa') {
+            const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(itemEditando.id));
+            if (item) {
+                const comprovante = await criarComprovante(
+                    fileInput, 
+                    'despesa_avulsa', 
+                    item.valor, 
+                    item.descricao
+                );
+                
+                item.pago = true;
+                item.dataPagamento = data;
+                item.comprovante = comprovante;
+            }
+        }
+
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+        mostrarStatus('Pagamento registrado', 'success');
+    }
+
+    // Editar modelo da despesa fixa (afeta próximos meses)
+    function editarDespesaFixaModelo(modeloId) {
+        modeloId = isNaN(modeloId) ? modeloId : Number(modeloId);
+        const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(modeloId));
+        if (!modelo) return;
+
+        itemEditando = { tipo: 'despesaFixaModelo', id: modeloId };
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="info-box warning">
+                Alterações afetam apenas os <strong>próximos meses</strong>. O histórico é preservado.
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" id="editDescricao" value="${modelo.descricao}">
+                </div>
+                <div class="form-group">
+                    <label>Valor</label>
+                    <input type="number" id="editValor" step="0.01" value="${modelo.valor}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <input type="text" id="editCategoria" value="${modelo.categoria}">
+                </div>
+                <div class="form-group">
+                    <label>Dia Vencimento</label>
+                    <input type="number" id="editDia" min="1" max="31" value="${modelo.diaVencimento}">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoModelo()">Salvar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Despesa Fixa';
+        abrirModal('modalEditar');
+    }
+
+    function salvarEdicaoModelo() {
+        const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(itemEditando.id));
+        if (modelo) {
+            modelo.descricao = document.getElementById('editDescricao').value.trim();
+            modelo.valor = parseFloat(document.getElementById('editValor').value) || modelo.valor;
+            modelo.categoria = document.getElementById('editCategoria').value;
+            modelo.diaVencimento = parseInt(document.getElementById('editDia').value) || modelo.diaVencimento;
+            salvarDados();
+        }
+        fecharModal('modalEditar');
+        renderizar();
+    }
+
+    function encerrarDespesaFixa(modeloId) {
+        confirmar('Encerrar esta despesa fixa? Ela não aparecerá nos próximos meses, mas o histórico é mantido.', () => {
+            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(modeloId));
+            if (modelo) {
+                modelo.ativa = false;
+                modelo.encerradaEm = new Date().toISOString();
+                salvarDados(); renderizar();
+                mostrarStatus('Despesa encerrada', 'success');
+            }
+        }, 'Encerrar Despesa', 'Encerrar', '#e67e22');
+    }
+
+    // ==========================================
+    // DESPESAS VARIÁVEIS
+    // ==========================================
+    
+    function salvarDespesaVariavel() {
+        const desc = document.getElementById('despesaVariavelDescricao').value.trim();
+        const valorTotal = parseFloat(document.getElementById('despesaVariavelValorTotal').value) || 0;
+        const cat = document.getElementById('despesaVariavelCategoria').value || 'Outros';
+        let data = document.getElementById('despesaVariavelData').value;
+        const parcelado = document.getElementById('despesaVariavelParcelado')?.checked || false;
+        const totalParcelas = parseInt(document.getElementById('despesaVariavelTotalParcelas')?.value) || 0;
+        
+        if (!desc || !valorTotal) return alert('Preencha descrição e valor!');
+        
+        // Data obrigatória — campo já vem pré-preenchido
+        if (!data) {
+            data = `${anoSelecionado}-${mesSelecionado}-01`;
+        }
+        
+        if (parcelado && totalParcelas >= 2) {
+            // Usar valores personalizados ou calcular automaticamente
+            const valoresParcelas = window.parcelasPersonalizadas && window.parcelasPersonalizadas.length === totalParcelas
+                ? [...window.parcelasPersonalizadas]
+                : calcularParcelas(valorTotal, totalParcelas);
+            
+            // Validar soma
+            const soma = valoresParcelas.reduce((s, v) => s + v, 0);
+            if (Math.abs(soma - valorTotal) >= 0.01) {
+                alert(`A soma das parcelas (${formatarMoeda(soma)}) não corresponde ao valor total (${formatarMoeda(valorTotal)}).\n\nAjuste os valores antes de salvar.`);
+                return;
+            }
+            
+            // Criar despesas parceladas
+            const grupoId = gerarId(); // ID único para agrupar parcelas
+            const [ano, mes, dia] = data.split('-').map(Number);
+            
+            for (let i = 0; i < totalParcelas; i++) {
+                // Calcular data de cada parcela (suporta virada de ano)
+                let novaMes = mes + i;
+                let novoAno = ano;
+                
+                while (novaMes > 12) {
+                    novaMes -= 12;
+                    novoAno++;
+                }
+                
+                const dataParcela = `${novoAno}-${String(novaMes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+                
+                financeiro.despesasVariaveis.push({
+                    id: gerarId(),
+                    descricao: desc,
+                    valor: valoresParcelas[i], // Valor personalizado para esta parcela
+                    valorTotalDivida: valorTotal, // Armazena valor total para referência
+                    categoria: cat,
+                    data: dataParcela,
+                    pago: false,
+                    dataPagamento: null,
+                    comprovante: null,
+                    // Campos de parcela
+                    parcelado: true,
+                    grupoParcelaId: grupoId,
+                    parcelaAtual: i + 1,
+                    totalParcelas: totalParcelas
+                });
+            }
+            
+            // Limpar valores personalizados
+            window.parcelasPersonalizadas = null;
+        } else {
+            // Despesa única (não parcelada)
+            financeiro.despesasVariaveis.push({
+                id: gerarId(),
+                descricao: desc,
+                valor: valorTotal,
+                categoria: cat,
+                data: data,
+                pago: false,
+                dataPagamento: null,
+                comprovante: null
+            });
+        }
+        
+        salvarDados();
+        esconderForm('despesaVariavel');
+        renderizar();
+    }
+
+
+    // ==========================================
+    // EDITAR PARCELA INDIVIDUAL (valor, data, nota)
+    // Atualiza o valor total da dívida automaticamente
+    // ==========================================
+    function editarParcelaIndividual(id) {
+        id = isNaN(id) ? id : Number(id);
+        const parcela = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
+        if (!parcela) { console.warn('editarParcelaIndividual: parcela não encontrada', id); return; }
+
+        // Todas as parcelas do mesmo grupo
+        const grupo = financeiro.despesasVariaveis.filter(d =>
+            String(d.grupoParcelaId) === String(parcela.grupoParcelaId)
+        );
+        const somaAtual = grupo.reduce((s, p) => s + (p.valor || 0), 0);
+
+        itemEditando = { tipo: 'parcelaIndividual', id };
+
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div style="background:#f8f6f0;border:1px solid rgba(184,151,46,0.15);border-radius:10px;padding:14px;margin-bottom:18px;">
+                <div style="font-size:0.78em;color:rgba(26,26,26,0.5);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Editando</div>
+                <div style="font-weight:600;color:#1a1a1a;font-size:0.95em;">${parcela.descricao} — Parcela ${parcela.parcelaAtual}/${parcela.totalParcelas}</div>
+                <div style="font-size:0.8em;color:rgba(26,26,26,0.55);margin-top:3px;">
+                    Valor atual: <strong>${formatarMoeda(parcela.valor)}</strong> &nbsp;·&nbsp;
+                    Total do grupo: <strong>${formatarMoeda(somaAtual)}</strong>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Novo Valor da Parcela</label>
+                    <input type="number" id="parcelaNovoValor" value="${parcela.valor}" step="0.01" min="0"
+                        placeholder="Ex: 1050.00"
+                        oninput="atualizarPreviewParcela(${parcela.id}, ${somaAtual})">
+                </div>
+                <div class="form-group">
+                    <label>Data de Vencimento</label>
+                    <input type="date" id="parcelaNovaData" value="${parcela.data || ''}">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:16px;">
+                <label>Nota (juros, mora, motivo do ajuste)</label>
+                <input type="text" id="parcelaNota" value="${parcela.notaParcela || ''}"
+                    placeholder="Ex: Acréscimo de R$50 por atraso, juros de 2%...">
+            </div>
+
+            <div id="previewParcela" style="background:#f0ede6;border:1px solid rgba(184,151,46,0.2);border-radius:10px;padding:12px;margin-bottom:16px;font-size:0.82em;color:rgba(26,26,26,0.7);display:none;">
+                <div style="font-weight:600;color:#1a1a1a;margin-bottom:4px;">Impacto no total</div>
+                <div id="previewParcelaTexto"></div>
+            </div>
+
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoParcelaIndividual(${id})">Salvar Parcela</button>
+            </div>
+        `;
+
+        document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Parcela';
+        abrirModal('modalEditar');
+    }
+
+    function atualizarPreviewParcela(id, somaOriginal) {
+        const novoValor = parseFloat(document.getElementById('parcelaNovoValor')?.value) || 0;
+        id = isNaN(id) ? id : Number(id);
+        const parcela = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
+        if (!parcela) return;
+
+        const diferenca = novoValor - (parcela.valor || 0);
+        const novoTotal = somaOriginal + diferenca;
+
+        const preview = document.getElementById('previewParcela');
+        const texto = document.getElementById('previewParcelaTexto');
+        if (!preview || !texto) return;
+
+        if (Math.abs(diferenca) < 0.01) {
+            preview.style.display = 'none';
+            return;
+        }
+
+        preview.style.display = 'block';
+        const sinal = diferenca > 0 ? '+' : '';
+        const cor = diferenca > 0 ? '#dc2626' : '#16a34a';
+        texto.innerHTML = `
+            Valor desta parcela: <strong>${formatarMoeda(parcela.valor)}</strong> → <strong style="color:${cor};">${formatarMoeda(novoValor)}</strong><br>
+            Ajuste: <strong style="color:${cor};">${sinal}${formatarMoeda(diferenca)}</strong><br>
+            Novo total da dívida: <strong>${formatarMoeda(somaOriginal)}</strong> → <strong>${formatarMoeda(novoTotal)}</strong>
+        `;
+    }
+
+    function salvarEdicaoParcelaIndividual(id) {
+        const novoValor = parseFloat(document.getElementById('parcelaNovoValor')?.value);
+        const novaData  = document.getElementById('parcelaNovaData')?.value || '';
+        const novaNota  = document.getElementById('parcelaNota')?.value.trim() || '';
+
+        if (isNaN(novoValor) || novoValor < 0) {
+            mostrarStatus('Valor inválido', 'error');
+            return;
+        }
+
+        id = isNaN(id) ? id : Number(id);
+        const parcela = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
+        if (!parcela) return;
+
+        const valorAntigo = parcela.valor || 0;
+        const diferenca   = novoValor - valorAntigo;
+
+        // Atualizar a parcela
+        parcela.valor        = Math.round(novoValor * 100) / 100;
+        parcela.data         = novaData;
+        parcela.notaParcela  = novaNota;
+        parcela.ajustadoEm   = new Date().toISOString();
+
+        // Atualizar o valorTotalDivida em TODAS as parcelas do grupo
+        // para refletir o novo total real
+        if (Math.abs(diferenca) >= 0.01) {
+            const grupo = financeiro.despesasVariaveis.filter(d =>
+                String(d.grupoParcelaId) === String(parcela.grupoParcelaId)
+            );
+            const novoTotal = grupo.reduce((s, p) => s + (p.valor || 0), 0);
+            grupo.forEach(p => {
+                p.valorTotalDivida = Math.round(novoTotal * 100) / 100;
+            });
+        }
+
+        fecharModal('modalEditar');
+        salvarDados();
+        renderizar();
+        mostrarStatus(`Parcela ${parcela.parcelaAtual} atualizada${Math.abs(diferenca) >= 0.01 ? ' · Total da dívida recalculado' : ''}`, 'success');
+    }
+
+    function togglePagoVariavel(id) {
+        id = isNaN(id) ? id : Number(id);
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
+        if (!item) return;
+
+        if (!item.pago) {
+            itemEditando = { tipo: 'despesaVariavel', id: id };
+            const body = document.getElementById('modalEditarBody');
+            body.innerHTML = `
+                <div class="info-box">
+                    <strong>${item.descricao}</strong> - ${formatarMoeda(item.valor)}
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data do Pagamento</label>
+                        <input type="date" id="pagamentoData" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    <div class="form-group">
+                        <label>Comprovante (opcional)</label>
+                        <input type="file" id="pagamentoComprovante" accept="image/*,.pdf">
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                    <button class="btn-salvar" onclick="confirmarPagamentoDespesa()">Confirmar</button>
+                </div>
+            `;
+            document.querySelector('#modalEditar .modal-header h3').textContent = 'Registrar Pagamento';
+            abrirModal('modalEditar');
+        } else {
+            item.pago = false;
+            item.dataPagamento = null;
+            item.comprovante = null;
+            salvarDados();
+            renderizar();
+        }
+    }
+
+    function deletarDespesaVariavel(id) {
+        confirmar('Excluir esta despesa?', () => {
+            financeiro.despesasVariaveis = financeiro.despesasVariaveis.filter(d => String(d.id) !== String(id));
+            salvarDados(); renderizar();
+        });
+    }
+
+    // ==========================================
+    // PAUSAR/DESPAUSAR GRUPO PARCELADO
+    // ==========================================
+    function togglePauseGrupo(grupoId) {
+        // Buscar todas as parcelas do grupo (comparação com conversão de tipo)
+        const parcelas = financeiro.despesasVariaveis.filter(d => {
+            return d.grupoParcelaId && String(d.grupoParcelaId) === String(grupoId);
+        });
+        
+        if (parcelas.length === 0) {
+            alert('Grupo não encontrado: ' + grupoId);
+            return;
+        }
+        
+        // Verificar estado atual (baseado na primeira parcela)
+        const estaPausado = parcelas[0].pausado === true;
+        const desc = parcelas[0].descricao;
+        
+        if (estaPausado) {
+            // DESPAUSAR: reativar e recalcular datas
+            const hoje = new Date();
+            const parcelasPendentes = parcelas
+                .filter(p => !p.pago)
+                .sort((a, b) => a.parcelaAtual - b.parcelaAtual);
+            
+            parcelasPendentes.forEach((p, idx) => {
+                const diaOriginal = parseInt(p.data.split('-')[2]) || 15;
+                const novaData = new Date(hoje.getFullYear(), hoje.getMonth() + idx, diaOriginal);
+                p.data = novaData.toISOString().split('T')[0];
+                p.pausado = false;
+            });
+            
+            // Marcar pagas como não pausadas também
+            parcelas.filter(p => p.pago).forEach(p => p.pausado = false);
+            
+            alert(`"${desc}" foi REATIVADO!`);
+        } else {
+            // PAUSAR: marcar todas as parcelas como pausadas
+            parcelas.forEach(p => {
+                p.pausado = true;
+            });
+            
+            alert(`"${desc}" foi PAUSADO!`);
+        }
+        
+        salvarDados();
+        renderizar();
+    }
+
+    function deletarTodasParcelas(id) {
+        const despesa = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
+        if (!despesa || !despesa.grupoParcelaId) return;
+        
+        const gid = String(despesa.grupoParcelaId);
+        const parcelasDoGrupo = financeiro.despesasVariaveis.filter(d => String(d.grupoParcelaId) === gid);
+        const parcelasPagas = parcelasDoGrupo.filter(p => p.pago).length;
+        const parcelasPendentes = parcelasDoGrupo.filter(p => !p.pago).length;
+        const totalParcelas = parcelasDoGrupo.length;
+        
+        const opcao = prompt(
+            `"${despesa.descricao}" - ${totalParcelas} parcelas\n\n` +
+            `✅ ${parcelasPagas} pagas\n` +
+            `⏳ ${parcelasPendentes} pendentes\n\n` +
+            `Digite:\n` +
+            `1 = Excluir APENAS pendentes\n` +
+            `2 = Excluir TUDO (pagas + pendentes)\n` +
+            `Cancelar = Manter tudo`
+        );
+        
+        if (opcao === '1') {
+            financeiro.despesasVariaveis = financeiro.despesasVariaveis.filter(
+                d => String(d.grupoParcelaId) !== gid || d.pago
+            );
+            salvarDados();
+            renderizar();
+            mostrarStatus('Parcelas pendentes removidas', 'success');
+        } else if (opcao === '2') {
+            financeiro.despesasVariaveis = financeiro.despesasVariaveis.filter(
+                d => String(d.grupoParcelaId) !== gid
+            );
+            salvarDados();
+            renderizar();
+            mostrarStatus(`"${despesa.descricao}" removida por completo`, 'success');
+        }
+    }
+
+    function quitarDivida(grupoId) {
+        const gid = String(grupoId);
+        const parcelasDoGrupo = financeiro.despesasVariaveis.filter(
+            d => String(d.grupoParcelaId) === gid && !d.pago
+        );
+
+        if (parcelasDoGrupo.length === 0) {
+            alert('Todas as parcelas já estão pagas!');
+            return;
+        }
+
+        const nome = parcelasDoGrupo[0].descricao;
+        const totalRestante = parcelasDoGrupo.reduce((s, p) => s + p.valor, 0);
+
+        confirmar(
+            `Quitar "${nome}"? ${parcelasDoGrupo.length} parcelas pendentes. Total: ${formatarMoeda(totalRestante)}. Todas serão marcadas como pagas.`,
+            () => { _doQuitarParcelas(parcelasDoGrupo); },
+            'Quitar Dívida', 'Quitar', '#27ae60'
+        ); return;
+
+        // (bloco movido para _doQuitarParcelas)
+    }
+
+    function _doQuitarParcelas(parcelasDoGrupo) {
+        const hoje = new Date();
+        const hojeStr = hoje.toISOString().split('T')[0];
+        const mesHoje = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+        const diaHoje = String(hoje.getDate()).padStart(2, '0');
+
+        parcelasDoGrupo.forEach(p => {
+            p.data = `${mesHoje}-${diaHoje}`;
+            p.pago = true;
+            p.dataPagamento = hojeStr;
+        });
+
+        salvarDados();
+        renderizar();
+        mostrarStatus(`"${nome}" quitada! ${formatarMoeda(totalRestante)} no mês atual.`, 'success');
+    }
+
+    function editarDespesaVariavel(id) {
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
+        if (!item) return;
+
+        itemEditando = { tipo: 'despesaVariavelEdit', id: id };
+        const body = document.getElementById('modalEditarBody');
+        
+        // Se for parcelada, mostrar opções de edição de parcelas
+        if (item.parcelado && item.grupoParcelaId) {
+            const parcelasDoGrupo = financeiro.despesasVariaveis
+                .filter(d => String(d.grupoParcelaId) === String(item.grupoParcelaId))
+                .sort((a, b) => a.parcelaAtual - b.parcelaAtual);
+            
+            const parcelasPagas = parcelasDoGrupo.filter(p => p.pago);
+            const parcelasPendentes = parcelasDoGrupo.filter(p => !p.pago);
+            const totalAtual = parcelasDoGrupo.length;
+            
+            // Calcular valor total da dívida (soma de todas as parcelas)
+            const valorTotalAtual = parcelasDoGrupo.reduce((sum, p) => sum + p.valor, 0);
+            // Valor já pago
+            const valorJaPago = parcelasPagas.reduce((sum, p) => sum + p.valor, 0);
+            // Valor restante
+            const valorRestante = parcelasPendentes.reduce((sum, p) => sum + p.valor, 0);
+            
+            body.innerHTML = `
+                <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 10px; border-left: 3px solid #3498db;">
+                    <strong style="font-size: 1.1em;">${item.descricao}</strong>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px;">
+                        <div style="text-align: center;">
+                            <div style="color: rgba(26, 26, 26, 0.65); font-size: 0.75em; text-transform: uppercase;">Total</div>
+                            <div style="color: #3498db; font-weight: 600;">${formatarMoeda(valorTotalAtual)}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="color: rgba(26, 26, 26, 0.65); font-size: 0.75em; text-transform: uppercase;">Pago</div>
+                            <div style="color: #27ae60; font-weight: 600;">${formatarMoeda(valorJaPago)}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="color: rgba(26, 26, 26, 0.65); font-size: 0.75em; text-transform: uppercase;">Restante</div>
+                            <div style="color: #e74c3c; font-weight: 600;">${formatarMoeda(valorRestante)}</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(26, 26, 26, 0.1);">
+                        <small style="color: rgba(26, 26, 26, 0.65);">
+                            ${parcelasPagas.length} de ${totalAtual} parcelas pagas
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <input type="text" id="editDescricao" value="${item.descricao}">
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <input type="text" id="editCategoria" value="${item.categoria}">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Novo Valor Total da Dívida</label>
+                        <input type="number" id="editValorTotal" step="0.01" value="${valorTotalAtual.toFixed(2)}" 
+                               oninput="atualizarPreviewEdicaoParcelas()">
+                        <small style="color: rgba(26, 26, 26, 0.4); font-size: 0.75em;">
+                            Valor já pago (${formatarMoeda(valorJaPago)}) não será alterado
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade de Parcelas</label>
+                        <input type="number" id="editTotalParcelas" min="${parcelasPagas.length || 1}" value="${totalAtual}"
+                               oninput="atualizarPreviewEdicaoParcelas()">
+                        <small style="color: rgba(26, 26, 26, 0.4); font-size: 0.75em;">
+                            Mínimo: ${parcelasPagas.length || 1} (já pagas)
+                        </small>
+                    </div>
+                </div>
+                
+                <div id="previewEdicaoParcelas" class="parcelas-preview" style="display: none;"></div>
+                
+                <div class="form-buttons">
+                    <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                    <button class="btn-salvar" onclick="salvarEdicaoParcelada()">Salvar Alterações</button>
+                </div>
+            `;
+            
+            // Armazenar dados para uso na edição
+            itemEditando.parcelasPagas = parcelasPagas;
+            itemEditando.parcelasPendentes = parcelasPendentes;
+            itemEditando.valorJaPago = valorJaPago;
+            // Inicializar valores personalizados com os valores atuais das parcelas pendentes
+            itemEditando.valoresPersonalizados = parcelasPendentes.map(p => p.valor);
+            
+            document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Despesa Parcelada';
+            
+            // Atualizar preview inicial
+            setTimeout(() => atualizarPreviewEdicaoParcelas(), 100);
+        } else {
+            // Despesa não parcelada - edição simples
+            body.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <input type="text" id="editDescricao" value="${item.descricao}">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor</label>
+                        <input type="number" id="editValor" step="0.01" value="${item.valor}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <input type="text" id="editCategoria" value="${item.categoria}">
+                    </div>
+                    <div class="form-group">
+                        <label>Data</label>
+                        <input type="date" id="editData" value="${item.data}">
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                    <button class="btn-salvar" onclick="salvarEdicaoDespesaVariavel()">Salvar</button>
+                </div>
+            `;
+            document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Despesa';
+        }
+        abrirModal('modalEditar');
+    }
+
+    // Função para atualizar preview de edição de parcelas
+    function atualizarPreviewEdicaoParcelas() {
+        const previewContainer = document.getElementById('previewEdicaoParcelas');
+        if (!previewContainer || !itemEditando) return;
+        
+        const novoValorTotal = parseFloat(document.getElementById('editValorTotal')?.value) || 0;
+        const novoTotalParcelas = parseInt(document.getElementById('editTotalParcelas')?.value) || 0;
+        const valorJaPago = itemEditando.valorJaPago || 0;
+        const qtdPagas = itemEditando.parcelasPagas?.length || 0;
+        
+        if (novoValorTotal <= 0 || novoTotalParcelas < qtdPagas) {
+            previewContainer.style.display = 'none';
+            return;
+        }
+        
+        // Calcular valor restante a distribuir
+        const valorRestante = novoValorTotal - valorJaPago;
+        const qtdPendentes = novoTotalParcelas - qtdPagas;
+        
+        if (valorRestante <= 0 || qtdPendentes <= 0) {
+            previewContainer.innerHTML = '<div style="color: #27ae60; text-align: center; padding: 10px;">Dívida quitada!</div>';
+            previewContainer.style.display = 'block';
+            return;
+        }
+        
+        // Calcular novas parcelas (distribuição automática)
+        const novasParcelas = calcularParcelas(valorRestante, qtdPendentes);
+        
+        // Armazenar valores editáveis
+        if (!itemEditando.valoresPersonalizados || itemEditando.valoresPersonalizados.length !== qtdPendentes) {
+            itemEditando.valoresPersonalizados = [...novasParcelas];
+        }
+        
+        let html = '<div class="preview-header">Valores das parcelas pendentes:</div>';
+        html += '<div class="preview-list-editable">';
+        itemEditando.valoresPersonalizados.forEach((valor, idx) => {
+            const numParcela = qtdPagas + idx + 1;
+            html += `
+                <div class="preview-item-editable">
+                    <span class="parcela-num">${numParcela}/${novoTotalParcelas}</span>
+                    <input type="number" 
+                           class="parcela-valor-input" 
+                           value="${valor.toFixed(2)}" 
+                           step="0.01" 
+                           min="0"
+                           onchange="atualizarValorParcela(${idx}, this.value)"
+                           oninput="atualizarSomaParcelas()">
+                </div>
+            `;
+        });
+        html += '</div>';
+        
+        const somaAtual = itemEditando.valoresPersonalizados.reduce((s, v) => s + v, 0);
+        const diferenca = valorRestante - somaAtual;
+        const statusClass = Math.abs(diferenca) < 0.01 ? 'ok' : 'erro';
+        
+        html += `
+            <div class="preview-soma ${statusClass}">
+                <div class="soma-linha">
+                    <span>Soma das parcelas:</span>
+                    <span id="somaParcelas">${formatarMoeda(somaAtual)}</span>
+                </div>
+                <div class="soma-linha">
+                    <span>Valor restante:</span>
+                    <span>${formatarMoeda(valorRestante)}</span>
+                </div>
+                ${Math.abs(diferenca) >= 0.01 ? `
+                    <div class="soma-diferenca">
+                        Diferença: ${formatarMoeda(diferenca)} 
+                        <button class="btn-ajustar" onclick="ajustarUltimaParcela()">Ajustar última</button>
+                    </div>
+                ` : '<div class="soma-ok">✓ Valores corretos</div>'}
+            </div>
+        `;
+        
+        previewContainer.innerHTML = html;
+        previewContainer.style.display = 'block';
+    }
+    
+    // Atualizar valor de uma parcela específica
+    function atualizarValorParcela(index, valor) {
+        if (!itemEditando.valoresPersonalizados) return;
+        itemEditando.valoresPersonalizados[index] = parseFloat(valor) || 0;
+        atualizarSomaParcelas();
+    }
+    
+    // Atualizar exibição da soma
+    function atualizarSomaParcelas() {
+        if (!itemEditando.valoresPersonalizados) return;
+        
+        const novoValorTotal = parseFloat(document.getElementById('editValorTotal')?.value) || 0;
+        const valorJaPago = itemEditando.valorJaPago || 0;
+        const valorRestante = novoValorTotal - valorJaPago;
+        
+        // Recalcular soma dos inputs
+        const inputs = document.querySelectorAll('.parcela-valor-input');
+        let somaAtual = 0;
+        inputs.forEach((input, idx) => {
+            const val = parseFloat(input.value) || 0;
+            itemEditando.valoresPersonalizados[idx] = val;
+            somaAtual += val;
+        });
+        
+        const somaEl = document.getElementById('somaParcelas');
+        if (somaEl) somaEl.textContent = formatarMoeda(somaAtual);
+        
+        const diferenca = valorRestante - somaAtual;
+        const previewSoma = document.querySelector('.preview-soma');
+        if (previewSoma) {
+            previewSoma.className = 'preview-soma ' + (Math.abs(diferenca) < 0.01 ? 'ok' : 'erro');
+        }
+    }
+    
+    // Ajustar última parcela para fechar o valor
+    function ajustarUltimaParcela() {
+        if (!itemEditando.valoresPersonalizados || itemEditando.valoresPersonalizados.length === 0) return;
+        
+        const novoValorTotal = parseFloat(document.getElementById('editValorTotal')?.value) || 0;
+        const valorJaPago = itemEditando.valorJaPago || 0;
+        const valorRestante = novoValorTotal - valorJaPago;
+        
+        // Calcular soma de todas exceto a última
+        const somaExcetoUltima = itemEditando.valoresPersonalizados.slice(0, -1).reduce((s, v) => s + v, 0);
+        const ultimaParcela = Math.round((valorRestante - somaExcetoUltima) * 100) / 100;
+        
+        // Atualizar última parcela
+        const ultimoIndex = itemEditando.valoresPersonalizados.length - 1;
+        itemEditando.valoresPersonalizados[ultimoIndex] = ultimaParcela;
+        
+        // Atualizar input
+        const inputs = document.querySelectorAll('.parcela-valor-input');
+        if (inputs[ultimoIndex]) {
+            inputs[ultimoIndex].value = ultimaParcela.toFixed(2);
+        }
+        
+        atualizarSomaParcelas();
+        atualizarPreviewEdicaoParcelas();
+    }
+
+    // Salvar edição de despesa parcelada
+    function salvarEdicaoParcelada() {
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(itemEditando.id));
+        if (!item || !item.grupoParcelaId) return;
+
+        const novaDescricao = document.getElementById('editDescricao').value.trim();
+        const novaCategoria = document.getElementById('editCategoria').value;
+        const novoValorTotal = parseFloat(document.getElementById('editValorTotal').value) || 0;
+        const novoTotalParcelas = parseInt(document.getElementById('editTotalParcelas').value);
+
+        // Pegar todas as parcelas do grupo ordenadas
+        const parcelasDoGrupo = financeiro.despesasVariaveis
+            .filter(d => String(d.grupoParcelaId) === String(item.grupoParcelaId))
+            .sort((a, b) => a.parcelaAtual - b.parcelaAtual);
+        
+        const parcelasPagas = parcelasDoGrupo.filter(p => p.pago);
+        const valorJaPago = parcelasPagas.reduce((sum, p) => sum + p.valor, 0);
+
+        // Validar: não pode ter menos parcelas que as já pagas
+        if (novoTotalParcelas < parcelasPagas.length) {
+            alert(`Não é possível reduzir para menos de ${parcelasPagas.length} parcelas (já pagas).`);
+            return;
+        }
+
+        // Validar: novo valor total não pode ser menor que o já pago
+        if (novoValorTotal < valorJaPago) {
+            alert(`O valor total não pode ser menor que ${formatarMoeda(valorJaPago)} (já pago).`);
+            return;
+        }
+
+        // Calcular valor restante e quantidade de parcelas pendentes
+        const valorRestante = novoValorTotal - valorJaPago;
+        const qtdPendentes = novoTotalParcelas - parcelasPagas.length;
+
+        // Validar soma dos valores personalizados
+        const valoresPersonalizados = itemEditando.valoresPersonalizados || [];
+        const somaPersonalizada = valoresPersonalizados.reduce((s, v) => s + v, 0);
+        
+        if (Math.abs(somaPersonalizada - valorRestante) >= 0.01) {
+            alert(`A soma das parcelas (${formatarMoeda(somaPersonalizada)}) não corresponde ao valor restante (${formatarMoeda(valorRestante)}).\n\nAjuste os valores ou clique em "Ajustar última".`);
+            return;
+        }
+
+        // Atualizar descrição e categoria em todas as parcelas pagas
+        parcelasPagas.forEach(p => {
+            p.descricao = novaDescricao;
+            p.categoria = novaCategoria;
+            p.valorTotalDivida = novoValorTotal;
+            p.totalParcelas = novoTotalParcelas;
+        });
+
+        // Excluir todas as parcelas pendentes atuais
+        financeiro.despesasVariaveis = financeiro.despesasVariaveis.filter(
+            d => String(d.grupoParcelaId) !== String(item.grupoParcelaId) || d.pago
+        );
+
+        // Criar novas parcelas pendentes com valores personalizados
+        if (qtdPendentes > 0 && valorRestante > 0) {
+            // Usar valores personalizados ou calcular automaticamente
+            const valoresParcelas = valoresPersonalizados.length === qtdPendentes 
+                ? valoresPersonalizados 
+                : calcularParcelas(valorRestante, qtdPendentes);
+            
+            // Encontrar a data da próxima parcela
+            const ultimaPaga = parcelasPagas.length > 0 
+                ? parcelasPagas.sort((a, b) => new Date(b.data) - new Date(a.data))[0]
+                : null;
+            
+            const parcelasPendentesAntigas = parcelasDoGrupo.filter(p => !p.pago);
+            let [ano, mes, dia] = ultimaPaga 
+                ? ultimaPaga.data.split('-').map(Number)
+                : parcelasPendentesAntigas[0]?.data.split('-').map(Number) || [new Date().getFullYear(), new Date().getMonth() + 1, 1];
+            
+            for (let i = 0; i < qtdPendentes; i++) {
+                // Calcular próximo mês
+                if (ultimaPaga || i > 0) {
+                    mes++;
+                    if (mes > 12) {
+                        mes = 1;
+                        ano++;
+                    }
+                }
+                
+                const dataParcela = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+                
+                financeiro.despesasVariaveis.push({
+                    id: gerarId(),
+                    descricao: novaDescricao,
+                    valor: valoresParcelas[i],
+                    valorTotalDivida: novoValorTotal,
+                    categoria: novaCategoria,
+                    data: dataParcela,
+                    pago: false,
+                    dataPagamento: null,
+                    comprovante: null,
+                    parcelado: true,
+                    grupoParcelaId: item.grupoParcelaId,
+                    parcelaAtual: parcelasPagas.length + i + 1,
+                    totalParcelas: novoTotalParcelas
+                });
+            }
+        }
+
+        // Renumerar parcelas pagas
+        const todasParcelas = financeiro.despesasVariaveis
+            .filter(d => String(d.grupoParcelaId) === String(item.grupoParcelaId))
+            .sort((a, b) => new Date(a.data) - new Date(b.data));
+        
+        todasParcelas.forEach((p, idx) => {
+            p.parcelaAtual = idx + 1;
+        });
+
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+        mostrarStatus('Parcelas atualizadas!', 'success');
+    }
+
+    function salvarEdicaoDespesaVariavel() {
+        const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(itemEditando.id));
+        if (item) {
+            item.descricao = document.getElementById('editDescricao').value.trim();
+            item.valor = parseFloat(document.getElementById('editValor').value) || item.valor;
+            item.categoria = document.getElementById('editCategoria').value;
+            item.data = document.getElementById('editData').value;
+            salvarDados();
+        }
+        fecharModal('modalEditar');
+        renderizar();
+    }
+
+    // ==========================================
+    // DESPESAS VARIÁVEIS (AVULSAS)
+    // ==========================================
+
+    function salvarDespesaAvulsa() {
+        const desc = document.getElementById('despesaAvulsaDescricao').value.trim();
+        const valor = parseFloat(document.getElementById('despesaAvulsaValor').value) || 0;
+        const cat = document.getElementById('despesaAvulsaCategoria').value || 'Outros';
+        let data = document.getElementById('despesaAvulsaData').value;
+
+        if (!desc || !valor) return alert('Preencha descrição e valor!');
+
+        if (!data) {
+            // Fallback: usa o mês/ano selecionado com dia 1
+            data = `${anoSelecionado}-${mesSelecionado}-01`;
+        }
+
+        // A despesa aparecerá no mês da data cadastrada (não necessariamente o mês selecionado)
+
+        financeiro.despesasAvulsas.push({
+            id: gerarId(),
+            descricao: desc,
+            valor: valor,
+            categoria: cat,
+            data: data,
+            pago: false,
+            dataPagamento: null,
+            comprovante: null
+        });
+
+        salvarDados();
+        esconderForm('despesaAvulsa');
+        renderizar();
+    }
+
+    function togglePagoAvulsa(id) {
+        const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(id));
+        if (!item) return;
+
+        if (!item.pago) {
+            itemEditando = { tipo: 'despesaAvulsa', id: id };
+            const body = document.getElementById('modalEditarBody');
+            body.innerHTML = `
+                <div class="info-box">
+                    <strong>${item.descricao}</strong> - ${formatarMoeda(item.valor)}
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data do Pagamento</label>
+                        <input type="date" id="pagamentoData" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    <div class="form-group">
+                        <label>Comprovante (opcional)</label>
+                        <input type="file" id="pagamentoComprovante" accept="image/*,.pdf">
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                    <button class="btn-salvar" onclick="confirmarPagamentoDespesa()">Confirmar</button>
+                </div>
+            `;
+            document.querySelector('#modalEditar .modal-header h3').textContent = 'Registrar Pagamento';
+            abrirModal('modalEditar');
+        } else {
+            item.pago = false;
+            item.dataPagamento = null;
+            item.comprovante = null;
+            salvarDados();
+            renderizar();
+        }
+    }
+
+    function editarDespesaAvulsa(id) {
+        id = isNaN(id) ? id : Number(id);
+        const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(id));
+        if (!item) return;
+
+        itemEditando = { tipo: 'despesaAvulsa', id: id };
+
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" id="editDescricao" value="${item.descricao}">
+                </div>
+                <div class="form-group">
+                    <label>Valor</label>
+                    <input type="number" id="editValor" value="${item.valor.toFixed(2)}" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="editCategoria">
+                        ${['Alimentação', 'Transporte', 'Lazer', 'Compras', 'Saúde', 'Educação', 'Outros'].map(c => `<option value="${c}" ${c === item.categoria ? 'selected' : ''}>${c}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="editData" value="${item.data}">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoAvulsa()">Salvar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Despesa Variável';
+        abrirModal('modalEditar');
+    }
+
+    function salvarEdicaoAvulsa() {
+        const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(itemEditando.id));
+        if (!item) return;
+
+        item.descricao = document.getElementById('editDescricao').value.trim();
+        item.valor = parseFloat(document.getElementById('editValor').value) || item.valor;
+        item.categoria = document.getElementById('editCategoria').value;
+        item.data = document.getElementById('editData').value || item.data;
+
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+    }
+
+    function deletarDespesaAvulsa(id) {
+        confirmar('Excluir esta despesa variável?', () => {
+            financeiro.despesasAvulsas = financeiro.despesasAvulsas.filter(d => String(d.id) !== String(id));
+            salvarDados(); renderizar();
+        });
+    }
+
+    // ==========================================
+    // EMPRÉSTIMOS / DÍVIDAS
+    // ==========================================
+    
+    function salvarEmprestimo() {
+        const desc = document.getElementById('emprestimoDescricao').value.trim();
+        const principal = parseFloat(document.getElementById('emprestimoPrincipal').value) || 0;
+        const juros = parseFloat(document.getElementById('emprestimoJuros').value) || 0;
+        const cat = document.getElementById('emprestimoCategoria').value || 'Outros';
+        
+        if (!desc || !principal) return alert('Preencha os campos obrigatórios!');
+        
+        financeiro.emprestimos.push({
+            id: gerarId(),
+            descricao: desc,
+            categoria: cat,
+            principalOriginal: principal,
+            principal: principal,
+            taxaJuros: juros,
+            jurosAcumulados: 0,
+            totalJurosPagos: 0,
+            totalAmortizado: 0,
+            historico: [],
+            arquivado: false,
+            dataCriacao: new Date().toISOString()
+        });
+        
+        salvarDados();
+        esconderForm('emprestimo');
+        renderizar();
+    }
+
+    // Gerar juros do mês (manual)
+    function gerarJurosMes(id) {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
+        if (!emp || emp.principal <= 0) return;
+
+        const valorJuros = (emp.principal * emp.taxaJuros) / 100;
+        emp.jurosAcumulados = (emp.jurosAcumulados || 0) + valorJuros;
+        
+        emp.historico.push({
+            tipo: 'juros_gerado',
+            valor: valorJuros,
+            data: new Date().toISOString(),
+            mesRef: getMesAnoKey()
+        });
+
+        salvarDados();
+        renderizar();
+        mostrarStatus(`Juros de ${formatarMoeda(valorJuros)} adicionados`, 'success');
+    }
+
+    // Pagar Juros (NÃO reduz principal)
+    function abrirModalPagarJuros(id) {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
+        if (!emp) return;
+
+        emprestimoSelecionado = id;
+        const body = document.getElementById('modalPagarJurosBody');
+        body.innerHTML = `
+            <div class="info-box warning">
+                Este pagamento <strong>NÃO</strong> reduz a dívida principal. Apenas quita os juros acumulados.
+            </div>
+            <div class="info-box" style="background:rgba(243,156,18,0.1);border-color:rgba(243,156,18,0.3)">
+                <strong>Juros Acumulados:</strong> ${formatarMoeda(emp.jurosAcumulados || 0)}
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Valor a Pagar</label>
+                    <input type="number" id="pagarJurosValor" step="0.01" value="${emp.jurosAcumulados || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="pagarJurosData" value="${new Date().toISOString().split('T')[0]}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Comprovante (opcional)</label>
+                    <input type="file" id="pagarJurosComprovante" accept="image/*,.pdf">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalPagarJuros')">Cancelar</button>
+                <button class="btn-salvar" onclick="confirmarPagarJuros()">Confirmar</button>
+            </div>
+        `;
+        abrirModal('modalPagarJuros');
+    }
+
+    async function confirmarPagarJuros() {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoSelecionado));
+        if (!emp) return;
+
+        const valor = parseFloat(document.getElementById('pagarJurosValor').value) || 0;
+        const data = document.getElementById('pagarJurosData').value;
+
+        if (!valor || valor <= 0) return alert('Informe o valor!');
+
+        // Criar comprovante com metadados completos
+        const fileInput = document.getElementById('pagarJurosComprovante');
+        const comprovante = await criarComprovante(
+            fileInput, 
+            'juros', 
+            valor, 
+            emp.descricao + ' - Pagamento de Juros'
+        );
+
+        emp.jurosAcumulados = Math.max(0, (emp.jurosAcumulados || 0) - valor);
+        emp.totalJurosPagos = (emp.totalJurosPagos || 0) + valor;
+
+        emp.historico.push({
+            tipo: 'pagamento_juros',
+            valor: valor,
+            data: data,
+            comprovante: comprovante,
+            jurosRestantes: emp.jurosAcumulados
+        });
+
+        // Adicionar ao histórico de pagamentos para exibição
+        if (!emp.historicoPagamentos) emp.historicoPagamentos = [];
+        emp.historicoPagamentos.push({
+            tipo: 'juros',
+            valor: valor,
+            data: data
+        });
+
+        salvarDados();
+        fecharModal('modalPagarJuros');
+        renderizar();
+        mostrarStatus('Juros pagos: ' + formatarMoeda(valor), 'success');
+    }
+
+    // Amortizar (REDUZ principal)
+    function abrirModalAmortizar(id) {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
+        if (!emp) return;
+
+        emprestimoSelecionado = id;
+        const body = document.getElementById('modalAmortizarBody');
+        body.innerHTML = `
+            <div class="info-box info">
+                Este pagamento <strong>REDUZ</strong> o valor da dívida principal.
+            </div>
+            <div class="info-box" style="background:rgba(52,152,219,0.1);border-color:rgba(52,152,219,0.3)">
+                <strong>Saldo Devedor:</strong> ${formatarMoeda(emp.principal)}
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Valor a Amortizar</label>
+                    <input type="number" id="amortizarValor" step="0.01" placeholder="0,00">
+                </div>
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="amortizarData" value="${new Date().toISOString().split('T')[0]}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Comprovante (opcional)</label>
+                    <input type="file" id="amortizarComprovante" accept="image/*,.pdf">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalAmortizar')">Cancelar</button>
+                <button class="btn-salvar" onclick="confirmarAmortizar()">Confirmar</button>
+            </div>
+        `;
+        abrirModal('modalAmortizar');
+    }
+
+    async function confirmarAmortizar() {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoSelecionado));
+        if (!emp) return;
+
+        const valor = parseFloat(document.getElementById('amortizarValor').value) || 0;
+        const data = document.getElementById('amortizarData').value;
+
+        if (!valor || valor <= 0) return alert('Informe o valor!');
+        if (valor > emp.principal) return alert('Valor maior que a dívida atual!');
+
+        // Criar comprovante com metadados completos
+        const fileInput = document.getElementById('amortizarComprovante');
+        const comprovante = await criarComprovante(
+            fileInput, 
+            'amortizacao', 
+            valor, 
+            emp.descricao + ' - Amortização'
+        );
+
+        emp.principal = emp.principal - valor;
+        emp.totalAmortizado = (emp.totalAmortizado || 0) + valor;
+
+        emp.historico.push({
+            tipo: 'amortizacao',
+            valor: valor,
+            data: data,
+            comprovante: comprovante,
+            saldoRestante: emp.principal
+        });
+
+        // Adicionar ao histórico de pagamentos para exibição
+        if (!emp.historicoPagamentos) emp.historicoPagamentos = [];
+        emp.historicoPagamentos.push({
+            tipo: 'amortizacao',
+            valor: valor,
+            data: data
+        });
+
+        // Arquivar automaticamente se quitado
+        if (emp.principal <= 0 && (emp.jurosAcumulados || 0) <= 0) {
+            emp.arquivado = true;
+            emp.arquivadoEm = new Date().toISOString();
+            financeiro.arquivados.emprestimos.push(emp);
+            mostrarStatus('🎉 Dívida quitada e arquivada!', 'success');
+        } else {
+            mostrarStatus('Amortização: ' + formatarMoeda(valor), 'success');
+        }
+
+        salvarDados();
+        fecharModal('modalAmortizar');
+        renderizar();
+    }
+
+    function toggleAccordion(detailId, rowEl) {
+        const detail = document.getElementById(detailId);
+        const chev = document.getElementById('chev-' + detailId);
+        if (!detail) return;
+        const isOpen = detail.style.display === 'table-row';
+        detail.style.display = isOpen ? 'none' : 'table-row';
+        if (chev) chev.classList.toggle('open', !isOpen);
+    }
+
+    function toggleHistoricoEmprestimo(id) {
+        const lista = document.getElementById('historico-emp-' + id);
+        if (lista) {
+            lista.style.display = lista.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+
+    function editarEmprestimo(id) {
+        id = isNaN(id) ? id : Number(id);
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
+        if (!emp) return;
+
+        emprestimoSelecionado = id;
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="info-box warning">
+                Alterações no principal não afetam o histórico de pagamentos.
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Credor / Descrição</label>
+                    <input type="text" id="editEmpDescricao" value="${emp.descricao}">
+                </div>
+                <div class="form-group">
+                    <label>Valor Principal</label>
+                    <input type="number" id="editEmpPrincipal" step="0.01" value="${emp.principal}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Taxa de Juros (%)</label>
+                    <input type="number" id="editEmpJuros" step="0.1" value="${emp.taxaJuros}">
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <input type="text" id="editEmpCategoria" value="${emp.categoria}">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoEmprestimo()">Salvar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Empréstimo';
+        abrirModal('modalEditar');
+    }
+
+    function salvarEdicaoEmprestimo() {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoSelecionado));
+        if (!emp) return;
+
+        emp.descricao = document.getElementById('editEmpDescricao').value.trim();
+        emp.principal = parseFloat(document.getElementById('editEmpPrincipal').value) || emp.principal;
+        emp.taxaJuros = parseFloat(document.getElementById('editEmpJuros').value) || emp.taxaJuros;
+        emp.categoria = document.getElementById('editEmpCategoria').value;
+
+        emp.historico.push({
+            tipo: 'edicao',
+            data: new Date().toISOString(),
+            descricao: 'Dados editados manualmente'
+        });
+
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+    }
+
+    function deletarEmprestimo(id) {
+        confirmar('Excluir este empréstimo e todo seu histórico?', () => {
+            financeiro.emprestimos = financeiro.emprestimos.filter(e => String(e.id) !== String(id));
+            salvarDados(); renderizar();
+        });
+    }
+
+    // Toggle menu de ações
+    function toggleMenuAcoes(id) {
+        // Fechar todos os outros menus
+        document.querySelectorAll('.menu-acoes-dropdown').forEach(menu => {
+            if (menu.id !== `menuAcoes-${id}`) {
+                menu.classList.remove('active');
+            }
+        });
+        
+        const menu = document.getElementById(`menuAcoes-${id}`);
+        menu.classList.toggle('active');
+    }
+
+    function fecharMenuAcoes() {
+        document.querySelectorAll('.menu-acoes-dropdown').forEach(menu => {
+            menu.classList.remove('active');
+        });
+    }
+
+    // Fechar menu ao clicar fora
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.menu-acoes-container')) {
+            fecharMenuAcoes();
+        }
+    });
+
+    // Iniciar processo de exclusão com modal
+    function iniciarExclusaoEmprestimo(id, teveMovimentacao) {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
+        if (!emp) return;
+
+        itemEditando = { tipo: 'excluirEmprestimo', id: id };
+
+        const body = document.getElementById('modalExcluirBody');
+        
+        // Texto de aviso baseado se teve movimentação
+        const avisoTexto = teveMovimentacao 
+            ? `Esta dívida possui histórico de movimentações (juros pagos e/ou amortizações). 
+               Ao excluir, você perderá todo o registro financeiro, incluindo comprovantes anexados.`
+            : `Esta dívida não possui movimentações registradas. 
+               Ideal para remover cadastros duplicados ou erros de digitação.`;
+
+        const avisoTipo = teveMovimentacao ? 'Atenção: Dívida com histórico' : 'Dívida sem movimentações';
+
+        body.innerHTML = `
+            <div class="exclusao-aviso">
+                <div class="exclusao-aviso-icon">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    ${avisoTipo}
+                </div>
+                <p>${avisoTexto}</p>
+            </div>
+
+            <div class="exclusao-info">
+                <div class="exclusao-info-item">
+                    <label>Descrição</label>
+                    <span>${emp.descricao}</span>
+                </div>
+                <div class="exclusao-info-item">
+                    <label>Valor Original</label>
+                    <span>${formatarMoeda(emp.principalOriginal)}</span>
+                </div>
+                <div class="exclusao-info-item">
+                    <label>Total Juros Pagos</label>
+                    <span>${formatarMoeda(emp.totalJurosPagos || 0)}</span>
+                </div>
+                <div class="exclusao-info-item">
+                    <label>Total Amortizado</label>
+                    <span>${formatarMoeda(emp.totalAmortizado || 0)}</span>
+                </div>
+                <div class="exclusao-info-item">
+                    <label>Comprovantes</label>
+                    <span>${(emp.historico || []).filter(h => h.comprovante).length} anexo(s)</span>
+                </div>
+            </div>
+
+            <div class="exclusao-confirmacao">
+                <label>
+                    <input type="checkbox" id="checkConfirmaExclusao" onchange="habilitarBotaoExclusao()">
+                    <span>Entendo que esta ação é <strong>irreversível</strong> e removerá permanentemente esta dívida, 
+                    todo seu histórico e comprovantes do sistema.</span>
+                </label>
+            </div>
+
+            <button class="btn-excluir-final" id="btnExcluirFinal" onclick="confirmarExclusaoEmprestimo()">
+                Excluir Permanentemente
+            </button>
+        `;
+
+        abrirModal('modalExcluir');
+    }
+
+    function habilitarBotaoExclusao() {
+        const checkbox = document.getElementById('checkConfirmaExclusao');
+        const btn = document.getElementById('btnExcluirFinal');
+        
+        if (!checkbox || !btn) return;
+        
+        if (checkbox.checked) {
+            btn.classList.add('ativo');
+        } else {
+            btn.classList.remove('ativo');
+        }
+    }
+
+    function confirmarExclusaoEmprestimo() {
+        const checkbox = document.getElementById('checkConfirmaExclusao');
+        if (!checkbox || !checkbox.checked) {
+            console.log('Checkbox não marcado');
+            return;
+        }
+
+        if (!itemEditando || !itemEditando.id) {
+            console.log('itemEditando não definido');
+            return;
+        }
+
+        const idExcluir = itemEditando.id;
+        console.log('Excluindo empréstimo ID:', idExcluir);
+        
+        financeiro.emprestimos = financeiro.emprestimos.filter(e => String(e.id) !== String(idExcluir));
+        
+        salvarDados();
+        fecharModal('modalExcluir');
+        renderizar();
+        mostrarStatus('Dívida excluída permanentemente', 'success');
+    }
+
+    // Restaurar empréstimo arquivado (desfazer quitação)
+    function restaurarEmprestimo(id) {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
+        if (!emp) return;
+        confirmar(
+            `Restaurar "${emp.descricao}"? A dívida voltará para a lista ativa. Saldo: ${formatarMoeda(emp.principal || 0)}`,
+            () => {
+                emp.arquivado = false;
+                emp.arquivadoEm = null;
+                salvarDados(); renderizar();
+                mostrarStatus('Dívida restaurada para lista ativa', 'success');
+            },
+            'Restaurar Dívida', 'Restaurar', '#27ae60'
+        );
+    }
+
+    // ==========================================
+    // RESERVAS / ECONOMIAS
+    // ==========================================
+    
+    function salvarEconomia() {
+        const desc = document.getElementById('economiaDescricao').value.trim();
+        const valorInicial = parseFloat(document.getElementById('economiaValorInicial').value) || 0;
+        const cat = document.getElementById('economiaCategoria').value || 'Reserva';
+        
+        if (!desc) return alert('Informe o nome da reserva!');
+        
+        const novaReserva = {
+            id: gerarId(),
+            descricao: desc,
+            categoria: cat,
+            saldo: valorInicial,
+            criadaEm: new Date().toISOString(),
+            movimentacoes: []
+        };
+        
+        // Se tiver valor inicial, criar movimentação
+        if (valorInicial > 0) {
+            novaReserva.movimentacoes.push({
+                id: gerarId(),
+                tipo: 'entrada',
+                valor: valorInicial,
+                observacao: 'Depósito inicial',
+                data: new Date().toISOString()
+            });
+        }
+        
+        financeiro.economias.push(novaReserva);
+        
+        salvarDados();
+        esconderForm('economia');
+        renderizar();
+        mostrarStatus('Reserva criada!', 'success');
+    }
+
+    function deletarEconomia(id) {
+        const reserva = financeiro.economias.find(e => String(e.id) === String(id));
+        if (!reserva) return;
+        
+        // já tratado via confirmar()
+        
+        financeiro.economias = financeiro.economias.filter(e => String(e.id) !== String(id));
+        salvarDados();
+        renderizar();
+        mostrarStatus('Reserva excluída', 'success');
+    }
+
+    function editarEconomia(id) {
+        const item = financeiro.economias.find(e => String(e.id) === String(id));
+        if (!item) return;
+
+        itemEditando = { tipo: 'economia', id: id };
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome da Reserva</label>
+                    <input type="text" id="editDescricao" value="${item.descricao}">
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="editCategoria">
+                        <option value="Reserva" ${item.categoria === 'Reserva' ? 'selected' : ''}>Reserva</option>
+                        <option value="Poupança" ${item.categoria === 'Poupança' ? 'selected' : ''}>Poupança</option>
+                        <option value="Investimento" ${item.categoria === 'Investimento' ? 'selected' : ''}>Investimento</option>
+                        <option value="Objetivo" ${item.categoria === 'Objetivo' ? 'selected' : ''}>Objetivo</option>
+                        <option value="Viagem" ${item.categoria === 'Viagem' ? 'selected' : ''}>Viagem</option>
+                        <option value="Outros" ${item.categoria === 'Outros' ? 'selected' : ''}>Outros</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoEconomia()">Salvar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Reserva';
+        abrirModal('modalEditar');
+    }
+
+    function salvarEdicaoEconomia() {
+        const item = financeiro.economias.find(e => String(e.id) === String(itemEditando.id));
+        if (item) {
+            item.descricao = document.getElementById('editDescricao').value.trim();
+            item.categoria = document.getElementById('editCategoria').value;
+            salvarDados();
+        }
+        fecharModal('modalEditar');
+        renderizar();
+    }
+
+    // Depositar na reserva
+    function depositarReserva(id) {
+        const reserva = financeiro.economias.find(e => String(e.id) === String(id));
+        if (!reserva) return;
+
+        itemEditando = { tipo: 'depositarReserva', id: id };
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; text-align: center;">
+                <div style="font-size: 0.8em; color: rgba(26, 26, 26, 0.65); text-transform: uppercase;">Saldo Atual</div>
+                <div style="font-size: 1.8em; font-weight: 600; color: #2ecc71;">${formatarMoeda(reserva.saldo || 0)}</div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Valor do Depósito</label>
+                    <input type="number" id="depositoValor" step="0.01" min="0.01" placeholder="0,00" autofocus>
+                </div>
+                <div class="form-group">
+                    <label>Observação (opcional)</label>
+                    <input type="text" id="depositoObs" placeholder="Ex: Sobra do mês">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);" onclick="confirmarDeposito()">Depositar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Depositar em ' + reserva.descricao;
+        abrirModal('modalEditar');
+    }
+
+    function confirmarDeposito() {
+        const reserva = financeiro.economias.find(e => String(e.id) === String(itemEditando.id));
+        if (!reserva) return;
+
+        const valor = parseFloat(document.getElementById('depositoValor').value) || 0;
+        const obs = document.getElementById('depositoObs').value.trim() || 'Depósito';
+
+        if (valor <= 0) return alert('Informe um valor válido!');
+
+        // Garantir que movimentacoes existe
+        if (!reserva.movimentacoes) reserva.movimentacoes = [];
+
+        reserva.movimentacoes.push({
+            id: gerarId(),
+            tipo: 'entrada',
+            valor: valor,
+            observacao: obs,
+            data: new Date().toISOString()
+        });
+
+        reserva.saldo = (reserva.saldo || 0) + valor;
+
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+        mostrarStatus(`${formatarMoeda(valor)} depositado!`, 'success');
+    }
+
+    // Retirar da reserva
+    function retirarReserva(id) {
+        const reserva = financeiro.economias.find(e => String(e.id) === String(id));
+        if (!reserva) return;
+
+        itemEditando = { tipo: 'retirarReserva', id: id };
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; text-align: center;">
+                <div style="font-size: 0.8em; color: rgba(26, 26, 26, 0.65); text-transform: uppercase;">Saldo Disponível</div>
+                <div style="font-size: 1.8em; font-weight: 600; color: #2ecc71;">${formatarMoeda(reserva.saldo || 0)}</div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Valor da Retirada</label>
+                    <input type="number" id="retiradaValor" step="0.01" min="0.01" max="${reserva.saldo || 0}" placeholder="0,00" autofocus>
+                </div>
+                <div class="form-group">
+                    <label>Motivo (opcional)</label>
+                    <input type="text" id="retiradaObs" placeholder="Ex: Emergência">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" style="background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);" onclick="confirmarRetirada()">Retirar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Retirar de ' + reserva.descricao;
+        abrirModal('modalEditar');
+    }
+
+    function confirmarRetirada() {
+        const reserva = financeiro.economias.find(e => String(e.id) === String(itemEditando.id));
+        if (!reserva) return;
+
+        const valor = parseFloat(document.getElementById('retiradaValor').value) || 0;
+        const obs = document.getElementById('retiradaObs').value.trim() || 'Retirada';
+
+        if (valor <= 0) return alert('Informe um valor válido!');
+        if (valor > (reserva.saldo || 0)) return alert('Saldo insuficiente!');
+
+        // Garantir que movimentacoes existe
+        if (!reserva.movimentacoes) reserva.movimentacoes = [];
+
+        reserva.movimentacoes.push({
+            id: gerarId(),
+            tipo: 'saida',
+            valor: valor,
+            observacao: obs,
+            data: new Date().toISOString()
+        });
+
+        reserva.saldo = (reserva.saldo || 0) - valor;
+
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+        mostrarStatus(`${formatarMoeda(valor)} retirado`, 'success');
+    }
+
+    // Toggle histórico da reserva
+    function toggleHistoricoReserva(id) {
+        const header = document.querySelector(`#reserva-${id} .reserva-historico-header`);
+        const lista = document.querySelector(`#reserva-${id} .reserva-historico-lista`);
+        
+        if (header && lista) {
+            header.classList.toggle('expanded');
+            lista.classList.toggle('expanded');
+        }
+    }
+
+    // ==========================================
+    // RENDERIZAÇÃO
+    // ==========================================
+    
+    function renderizar() {
+        if (viewMode === 'arquivados') {
+            renderizarArquivados();
+            return;
+        }
+
+        // Restaurar exibição normal (caso venha do modo arquivados)
+        const empTableWrapperNormal = document.querySelector('#sectionEmprestimos .table-container');
+        const empArqContainerNormal = document.getElementById('emprestimosArquivadosContainer');
+        if (empTableWrapperNormal) empTableWrapperNormal.style.display = '';
+        if (empArqContainerNormal) { empArqContainerNormal.style.display = 'none'; empArqContainerNormal.innerHTML = ''; }
+
+        // Gerar instâncias de receitas recorrentes
+        gerarInstanciasReceitas();
+
+        const receitasMes = getReceitasMes();
+        const receitasFixasMesArr = getReceitasFixasMes();
+        const receitasVariaveisMesArr = getReceitasVariaveisMes();
+        const fixasMes = getDespesasFixasMes();
+        const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis);
+        const avulsasMes = filtrarPorMes(financeiro.despesasAvulsas);
+        const emprestimosAtivos = financeiro.emprestimos.filter(e => !e.arquivado);
+
+        // Cálculos do mês (excluindo parcelas pausadas)
+        const variaveisAtivas = variaveisMes.filter(d => d.pausado !== true);
+
+        // Parcelas em atraso (meses anteriores, não pagas, não pausadas)
+        // Aparecem na tabela mas NÃO entram nos cálculos do mês
+        const keyAtual = getMesAnoKey();
+        const parcelasEmAtraso = (financeiro.despesasVariaveis || []).filter(d => {
+            if (!d.data || d.pago || d.pausado) return false;
+            const mesParcela = d.data.substring(0, 7);
+            return mesParcela < keyAtual;
+        });
+        
+        // === CÁLCULOS PARA OS KPIs ===
+        
+        // KPI 1: Receita Total (fixas + variáveis)
+        const totalRecFixas = receitasMes.reduce((s, r) => s + r.valor, 0);
+        const totalRecVariaveis = receitasVariaveisMesArr.reduce((s, r) => s + r.valor, 0);
+        const receitaTotalMes = totalRecFixas + totalRecVariaveis;
+        const receitaRecebida = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0) + receitasVariaveisMesArr.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
+        const receitaPendente = receitaTotalMes - receitaRecebida;
+        
+        // KPI 2: Despesas Totais (fixas + parceladas + avulsas + empréstimos pagos no mês)
+        const totalFixasMes = fixasMes.reduce((s, d) => s + d.valor, 0);
+        const totalParceladasMes = variaveisAtivas.reduce((s, d) => s + d.valor, 0);
+        const totalAvulsasMes = avulsasMes.reduce((s, d) => s + d.valor, 0);
+        
+        // Empréstimos: somar juros pagos + amortizações feitas no mês atual
+        const mesAnoAtual = getMesAnoKey();
+        let empJurosPagosMes = 0;
+        let empAmortizadoMes = 0;
+        (financeiro.emprestimos || []).forEach(e => {
+            (e.historicoPagamentos || []).forEach(p => {
+                if (p.data && p.data.substring(0, 7) === mesAnoAtual) {
+                    if (p.tipo === 'juros') {
+                        empJurosPagosMes += (p.valor || 0);
+                    } else if (p.tipo === 'amortizacao') {
+                        empAmortizadoMes += (p.valor || 0);
+                    } else {
+                        empAmortizadoMes += (p.valor || 0);
+                    }
+                }
+            });
+        });
+        const totalEmpPagoMes = empJurosPagosMes + empAmortizadoMes;
+
+        // Juros acumulados (gerados mas não pagos) — conta como despesa pendente
+        const jurosAcumuladosTotal = emprestimosAtivos.reduce((s, e) => s + (e.jurosAcumulados || 0), 0);
+
+        // Despesas Totais = fixas + parceladas + avulsas + empréstimos (pagos + juros pendentes)
+        const totalEmprestimosMes = totalEmpPagoMes + jurosAcumuladosTotal;
+        const despesasTotaisMes = totalFixasMes + totalParceladasMes + totalAvulsasMes + totalEmprestimosMes;
+        
+        // Para detalhamento: pagas vs pendentes
+        const fixasPagas = fixasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+        const fixasPendentes = totalFixasMes - fixasPagas;
+        const parceladasPagas = variaveisAtivas.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+        const parceladasPendentes = totalParceladasMes - parceladasPagas;
+        const avulsasPagas = avulsasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+        const avulsasPendentes = totalAvulsasMes - avulsasPagas;
+        const totalPago = fixasPagas + parceladasPagas + avulsasPagas + totalEmpPagoMes;
+        
+        // KPI 3: Saldo Disponível (receita recebida - tudo que foi pago incluindo empréstimos)
+        const saldoDisponivel = receitaRecebida - totalPago;
+        
+        // KPI 4: % Comprometido (despesas totais / receita total)
+        const percentComprometido = receitaTotalMes > 0 
+            ? Math.round((despesasTotaisMes / receitaTotalMes) * 100) 
+            : 0;
+        
+        // KPI 5: Economizado (total em reservas)
+        const totalEconomizado = (financeiro.economias || []).reduce((s, e) => s + (e.saldo !== undefined ? e.saldo : (e.valor || 0)), 0);
+        
+        // KPI 6: Previsão Fechamento (receita total - despesas totais)
+        const previsaoFechamento = receitaTotalMes - despesasTotaisMes;
+        
+        // === ATUALIZAR DASHBOARD KPIs ===
+        
+        // KPI 1: Receita Total
+        document.getElementById('kpiReceita').textContent = formatarMoeda(receitaTotalMes);
+        const receitaDetalhe = document.getElementById('kpiReceitaDetalhe');
+        if (receitaPendente > 0) {
+            receitaDetalhe.innerHTML = `<span>Fixas: ${formatarMoeda(totalRecFixas)}</span><span>Variáveis: ${formatarMoeda(totalRecVariaveis)}</span>`;
+        } else {
+            receitaDetalhe.innerHTML = `<span>✓ Tudo recebido</span>`;
+        }
+        
+        // KPI 2: Despesas Totais
+        document.getElementById('kpiDespesas').textContent = formatarMoeda(despesasTotaisMes);
+        document.getElementById('kpiDespesasDetalhe').innerHTML = `
+            <span>Fixas: ${formatarMoeda(totalFixasMes)}</span>
+            <span>Parceladas: ${formatarMoeda(totalParceladasMes)}</span>
+            ${totalAvulsasMes > 0 ? `<span>Variáveis: ${formatarMoeda(totalAvulsasMes)}</span>` : ''}
+            ${totalEmpPagoMes > 0 ? `<span>Emp. Pago: ${formatarMoeda(totalEmpPagoMes)}</span>` : ''}
+            ${jurosAcumuladosTotal > 0 ? `<span style="color:#e74c3c;">Juros Pendentes: ${formatarMoeda(jurosAcumuladosTotal)}</span>` : ''}
+        `;
+        
+        // KPI 3: Saldo Disponível
+        const saldoCard = document.getElementById('kpiSaldoCard');
+        document.getElementById('kpiSaldo').textContent = formatarMoeda(saldoDisponivel);
+        const saldoDetalhe = document.getElementById('kpiSaldoDetalhe');
+        if (saldoDisponivel >= 0) {
+            saldoCard.classList.remove('negativo');
+            if (totalEmpPagoMes > 0) {
+                saldoDetalhe.innerHTML = `<span>Emp: -${formatarMoeda(totalEmpPagoMes)} (juros: ${formatarMoeda(empJurosPagosMes)} + amort: ${formatarMoeda(empAmortizadoMes)})</span>`;
+            } else {
+                saldoDetalhe.innerHTML = `<span>Livre para uso</span>`;
+            }
+        } else {
+            saldoCard.classList.add('negativo');
+            saldoDetalhe.innerHTML = `<span class="kpi-badge negativo">No vermelho</span>`;
+        }
+        
+        // KPI 4: % Comprometido
+        const comprometidoCard = document.getElementById('kpiComprometidoCard');
+        document.getElementById('kpiComprometido').textContent = `${percentComprometido}%`;
+        const badgeComprometido = document.getElementById('kpiBadgeComprometido');
+        comprometidoCard.classList.remove('atencao', 'critico');
+        
+        if (percentComprometido <= 60) {
+            badgeComprometido.textContent = 'Saudável';
+            badgeComprometido.className = 'kpi-badge saudavel';
+        } else if (percentComprometido <= 80) {
+            badgeComprometido.textContent = 'Atenção';
+            badgeComprometido.className = 'kpi-badge atencao';
+            comprometidoCard.classList.add('atencao');
+        } else {
+            badgeComprometido.textContent = 'Crítico';
+            badgeComprometido.className = 'kpi-badge critico';
+            comprometidoCard.classList.add('critico');
+        }
+        
+        // KPI 5: Economizado
+        document.getElementById('kpiEconomia').textContent = formatarMoeda(totalEconomizado);
+        const numReservas = (financeiro.economias || []).length;
+        document.getElementById('kpiEconomiaDetalhe').innerHTML = `<span>${numReservas} reserva${numReservas !== 1 ? 's' : ''} ativa${numReservas !== 1 ? 's' : ''}</span>`;
+        
+        // KPI 6: Previsão Fechamento
+        const previsaoCard = document.getElementById('kpiPrevisaoCard');
+        document.getElementById('kpiPrevisao').textContent = formatarMoeda(previsaoFechamento);
+        const previsaoDetalhe = document.getElementById('kpiPrevisaoDetalhe');
+        previsaoCard.classList.remove('negativo');
+        
+        const despesasPendentes = fixasPendentes + parceladasPendentes + avulsasPendentes + jurosAcumuladosTotal;
+        if (previsaoFechamento >= 0) {
+            if (despesasPendentes > 0) {
+                previsaoDetalhe.innerHTML = `<span>Falta pagar: ${formatarMoeda(despesasPendentes)}</span>`;
+            } else {
+                previsaoDetalhe.innerHTML = `<span class="kpi-badge positivo">Mês fechado</span>`;
+            }
+        } else {
+            previsaoCard.classList.add('negativo');
+            previsaoDetalhe.innerHTML = `<span class="kpi-badge negativo">Déficit previsto</span>`;
+        }
+
+        // Subtotais — formato: Pago | Total | Pendente
+        const recFixasRecebidas = receitasMes.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
+        const recVarRecebidas = receitasVariaveisMesArr.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
+        const recFixasPendentes = totalRecFixas - recFixasRecebidas;
+        const recVarPendentes = totalRecVariaveis - recVarRecebidas;
+
+        document.getElementById('subtotalReceitasFixas').innerHTML =
+            `<span class="sub-pago">Recebido: ${formatarMoeda(recFixasRecebidas)}</span>`+
+            `<span class="sub-sep">·</span>`+
+            `<span class="sub-total">Total: ${formatarMoeda(totalRecFixas)}</span>`+
+            (recFixasPendentes > 0 ? `<span class="sub-sep">·</span><span class="sub-pendente">Pendente: ${formatarMoeda(recFixasPendentes)}</span>` : '');
+
+        document.getElementById('subtotalReceitasVariaveis').innerHTML =
+            `<span class="sub-pago">Recebido: ${formatarMoeda(recVarRecebidas)}</span>`+
+            `<span class="sub-sep">·</span>`+
+            `<span class="sub-total">Total: ${formatarMoeda(totalRecVariaveis)}</span>`+
+            (recVarPendentes > 0 ? `<span class="sub-sep">·</span><span class="sub-pendente">Pendente: ${formatarMoeda(recVarPendentes)}</span>` : '');
+
+        document.getElementById('subtotalFixas').innerHTML =
+            `<span class="sub-pago">Pago: ${formatarMoeda(fixasPagas)}</span>`+
+            `<span class="sub-sep">·</span>`+
+            `<span class="sub-total">Total: ${formatarMoeda(totalFixasMes)}</span>`+
+            (fixasPendentes > 0 ? `<span class="sub-sep">·</span><span class="sub-pendente">Pendente: ${formatarMoeda(fixasPendentes)}</span>` : '');
+
+        document.getElementById('subtotalVariaveis').innerHTML =
+            `<span class="sub-pago">Pago: ${formatarMoeda(parceladasPagas)}</span>`+
+            `<span class="sub-sep">·</span>`+
+            `<span class="sub-total">Total: ${formatarMoeda(totalParceladasMes)}</span>`+
+            (parceladasPendentes > 0 ? `<span class="sub-sep">·</span><span class="sub-pendente">Pendente: ${formatarMoeda(parceladasPendentes)}</span>` : '');
+
+        document.getElementById('subtotalAvulsas').innerHTML =
+            `<span class="sub-pago">Pago: ${formatarMoeda(avulsasPagas)}</span>`+
+            `<span class="sub-sep">·</span>`+
+            `<span class="sub-total">Total: ${formatarMoeda(totalAvulsasMes)}</span>`+
+            (avulsasPendentes > 0 ? `<span class="sub-sep">·</span><span class="sub-pendente">Pendente: ${formatarMoeda(avulsasPendentes)}</span>` : '');
+
+        document.getElementById('subtotalEconomias').innerHTML =
+            `<span class="sub-total">Total: ${formatarMoeda(totalEconomizado)}</span>`;
+
+        // === TABELA RECEITAS FIXAS ===
+        const recFixasTable = document.getElementById('receitasFixasTable');
+        document.getElementById('emptyReceitasFixas').style.display = receitasMes.length ? 'none' : 'block';
+        recFixasTable.innerHTML = receitasMes.map(r => {
+            const badgeSt = r.recebido
+                ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Recebido</span>'
+                : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>';
+            return `
+            <tr>
+                <td>
+                    <span class="acc-chevron" style="cursor:pointer;background:${r.recebido ? 'rgba(46,204,113,0.15)' : 'rgba(26, 26, 26, 0.07)'};"
+                          onclick="toggleRecebido(${r.id})" title="Marcar recebido">
+                        ${r.recebido ? '<svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26, 26, 26, 0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
+                    </span>
+                </td>
+                <td class="acc-descricao">${r.descricao}</td>
+                <td class="col-cat"><span class="categoria">${r.categoria}</span></td>
+                <td class="col-cat acc-condicao">${formatarData(r.data)}</td>
+                <td style="text-align:right;" class="${r.recebido ? 'valor-positivo' : 'valor-negativo'}">${formatarMoeda(r.valor)}</td>
+                <td>
+                    <div style="display:flex;gap:4px;">
+                        <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                        <button class="acc-delete-btn" onclick="deletarReceita(${r.id}, ${r.modeloId || 'null'}, ${!!r.recorrente})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+
+        // === TABELA RECEITAS VARIÁVEIS ===
+        const recVarTable = document.getElementById('receitasVariaveisTable');
+        document.getElementById('emptyReceitasVariaveis').style.display = receitasVariaveisMesArr.length ? 'none' : 'block';
+        recVarTable.innerHTML = receitasVariaveisMesArr.map(r => {
+            return `
+            <tr>
+                <td>
+                    <span class="acc-chevron" style="cursor:pointer;background:${r.recebido ? 'rgba(46,204,113,0.15)' : 'rgba(26, 26, 26, 0.07)'};"
+                          onclick="toggleRecebido(${r.id})" title="Marcar recebido">
+                        ${r.recebido ? '<svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26, 26, 26, 0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
+                    </span>
+                </td>
+                <td class="acc-descricao">${r.descricao}</td>
+                <td class="col-cat"><span class="categoria">${r.categoria}</span></td>
+                <td class="col-cat acc-condicao">${formatarData(r.data)}</td>
+                <td style="text-align:right;" class="${r.recebido ? 'valor-positivo' : 'valor-negativo'}">${formatarMoeda(r.valor)}</td>
+                <td>
+                    <div style="display:flex;gap:4px;">
+                        <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                        <button class="acc-delete-btn" onclick="deletarReceita(${r.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+
+        // === TABELA DESPESAS FIXAS ===
+        const fixasTable = document.getElementById('despesasFixasTable');
+        document.getElementById('emptyDespesasFixas').style.display = fixasMes.length ? 'none' : 'block';
+
+        const despesasAgrupadas = {};
+        fixasMes.forEach(d => {
+            if (!despesasAgrupadas[d.modeloId]) despesasAgrupadas[d.modeloId] = { atual: null, atrasadas: [] };
+            if (d.atrasada) despesasAgrupadas[d.modeloId].atrasadas.push(d);
+            else despesasAgrupadas[d.modeloId].atual = d;
+        });
+
+        let htmlFixas = '';
+        Object.keys(despesasAgrupadas).forEach(modeloId => {
+            const grupo = despesasAgrupadas[modeloId];
+            const atual = grupo.atual;
+            const atrasadas = grupo.atrasadas;
+            if (!atual && atrasadas.length === 0) return;
+            const despesaRef = atual || atrasadas[0];
+            const todasPagas = (!atual || atual.pago) && atrasadas.every(a => a.pago);
+            const totalPendente = (atual && !atual.pago ? atual.valor : 0) + atrasadas.filter(a => !a.pago).reduce((s,a) => s+a.valor, 0);
+            const detailId = 'detail-fixa-' + modeloId;
+            const hasAtrasadas = atrasadas.length > 0;
+
+            htmlFixas += `
+                <tr class="acc-row">
+                    <td style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
+                        <span class="acc-chevron" id="chev-${detailId}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </span>
+                    </td>
+                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">${despesaRef.descricao}</td>
+                    <td><span class="categoria">${despesaRef.categoria}</span></td>
+                    <td class="acc-condicao">${formatarData(despesaRef.dia ? (getMesAnoKey() + '-' + String(despesaRef.dia).padStart(2,'0')) : despesaRef.data)}</td>
+                    <td>
+                        ${todasPagas
+                            ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Pago</span>'
+                            : hasAtrasadas
+                                ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Atrasado</span>'
+                                : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>'}
+                    </td>
+                    <td class="${todasPagas ? 'valor-positivo' : 'valor-negativo'}" style="text-align:right;">
+                        ${formatarMoeda(todasPagas ? (despesaRef.valor || 0) : totalPendente)}
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
+                            <button class="acc-delete-btn" onclick="editarDespesaFixaModelo(${despesaRef.modeloId})" title="Editar" style="color:rgba(212,175,125,0.5);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="acc-delete-btn" onclick="encerrarDespesaFixa(${despesaRef.modeloId})" title="Encerrar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="acc-detail-row" id="${detailId}" style="display:none;">
+                    <td colspan="7">
+                        <div class="parcelas-detail-box">
+                            <div class="parcelas-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                                ${atrasadas.map(d => `
+                                    <div class="parcela-item${d.pago ? ' pago' : ' vencida'}" onclick="togglePagoFixa(${d.id})">
+                                        <div class="parcela-check${d.pago ? ' checked' : ''}"></div>
+                                        <div class="parcela-info-box">
+                                            <div class="parcela-nome" style="color:#e74c3c;">Em atraso</div>
+                                            <div class="parcela-data-txt">${formatarData(d.data)}</div>
+                                        </div>
+                                        <div class="parcela-valor-txt">${formatarMoeda(d.valor)}</div>
+                                    </div>
+                                `).join('')}
+                                ${atual ? `
+                                    <div class="parcela-item${atual.pago ? ' pago' : ''}" onclick="togglePagoFixa(${atual.id})">
+                                        <div class="parcela-check${atual.pago ? ' checked' : ''}"></div>
+                                        <div class="parcela-info-box">
+                                            <div class="parcela-nome">Mês atual</div>
+                                            <div class="parcela-data-txt">${formatarData(atual.data)}</div>
+                                        </div>
+                                        <div class="parcela-valor-txt">${formatarMoeda(atual.valor)}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        fixasTable.innerHTML = htmlFixas;
+
+        // === TABELA DESPESAS VARIÁVEIS ===
+        const variaveisTable = document.getElementById('despesasVariaveisTable');
+        const temConteudoVariaveis = variaveisMes.length > 0 || parcelasEmAtraso.some(d => d.grupoParcelaId);
+        document.getElementById('emptyDespesasVariaveis').style.display = temConteudoVariaveis ? 'none' : 'block';
+
+        // Separar despesas parceladas de não parceladas
+        const naoParceladas = variaveisMes.filter(d => !d.parcelado);
+        const parceladas = variaveisMes.filter(d => d.parcelado && d.grupoParcelaId);
+
+        // Agrupar parceladas por grupoParcelaId
+        const gruposParcelados = {};
+        parceladas.forEach(p => {
+            if (!gruposParcelados[p.grupoParcelaId]) {
+                gruposParcelados[p.grupoParcelaId] = [];
+            }
+            gruposParcelados[p.grupoParcelaId].push(p);
+        });
+
+        // Incluir grupos com SÓ parcelas em atraso
+        parcelasEmAtraso.filter(d => d.grupoParcelaId).forEach(d => {
+            if (!gruposParcelados[d.grupoParcelaId]) {
+                gruposParcelados[d.grupoParcelaId] = [];
+            }
+        });
+
+        let htmlVariaveis = '';
+
+        // Renderizar despesas não parceladas (linha simples, sem accordion)
+        naoParceladas.forEach(d => {
+            const status = getStatusVencimento(d.data, d.pago);
+            const valorClass = d.pago ? 'valor-positivo' : 'valor-negativo';
+            htmlVariaveis += `
+                <tr class="acc-row">
+                    <td></td>
+                    <td class="acc-descricao">${d.descricao}</td>
+                    <td class="acc-condicao">${formatarData(d.data)}</td>
+                    <td>—</td>
+                    <td class="${valorClass}" style="text-align:right;">${formatarMoeda(d.valor)}</td>
+                    <td>
+                        <button class="acc-delete-btn" onclick="deletarDespesaVariavel(${d.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        // Renderizar grupos parcelados com accordion
+        Object.keys(gruposParcelados).forEach(grupoId => {
+            const parcelasDoMes = gruposParcelados[grupoId].sort((a, b) => a.parcelaAtual - b.parcelaAtual);
+            const todasParcelas = financeiro.despesasVariaveis.filter(dv => String(dv.grupoParcelaId) === String(grupoId));
+            if (todasParcelas.length === 0) return;
+
+            const primeiraParcela = parcelasDoMes[0] || todasParcelas[0];
+            // Soma real de todas as parcelas (atualizada quando parcelas individuais são editadas)
+            const valorTotal = todasParcelas.reduce((s, p) => s + (p.valor || 0), 0);
+            const parcelasPagasCount = todasParcelas.filter(p => p.pago).length;
+            const totalParcelas = todasParcelas.length;
+            const percentPago = totalParcelas > 0 ? Math.round((parcelasPagasCount / totalParcelas) * 100) : 0;
+            const estaPausado = primeiraParcela.pausado === true;
+            const atrasadasDoGrupo = parcelasEmAtraso.filter(d => String(d.grupoParcelaId) === String(grupoId));
+            const detailId = 'detail-parcela-' + grupoId;
+
+            const condicao = `${totalParcelas}x de ${formatarMoeda(primeiraParcela.valor)}`;
+
+            htmlVariaveis += `
+                <tr class="acc-row${estaPausado ? ' grupo-pausado' : ''}">
+                    <td style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
+                        <span class="acc-chevron" id="chev-${detailId}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </td>
+                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
+                        ${primeiraParcela.descricao}
+                        ${estaPausado ? '<span class="badge pausado" style="margin-left:6px;">⏸</span>' : ''}
+                        ${atrasadasDoGrupo.length > 0 ? `<span style="margin-left:6px;background:rgba(231,76,60,0.15);color:#e74c3c;padding:2px 7px;border-radius:8px;font-size:0.72em;font-weight:600;">${atrasadasDoGrupo.length} em atraso</span>` : ''}
+                    </td>
+                    <td class="acc-condicao">${condicao}</td>
+                    <td>
+                        <div class="acc-progress-wrap">
+                            <div class="acc-bar"><div class="acc-bar-fill parcela" style="width:${percentPago}%"></div></div>
+                            <span style="font-size:0.75em;color:rgba(26,26,26,0.4);white-space:nowrap;">${parcelasPagasCount}/${totalParcelas}</span>
+                        </div>
+                    </td>
+                    <td class="acc-valor-total" style="text-align:right;">${formatarMoeda(valorTotal)}</td>
+                    <td>
+                        <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
+                            <button class="acc-delete-btn" onclick="editarDespesaParcelada && editarDespesaParcelada(${primeiraParcela.grupoParcelaId || primeiraParcela.id})" title="Editar" style="color:rgba(184,151,46,0.6);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="acc-delete-btn" onclick="deletarTodasParcelas(${primeiraParcela.id})" title="Excluir">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="acc-detail-row" id="${detailId}" style="display:none;">
+                    <td colspan="6">
+                        <div class="parcelas-detail-box">
+                            <div class="parcelas-detail-title">Detalhamento das Parcelas</div>
+                            <div class="parcelas-grid">
+                                ${todasParcelas.sort((a,b) => a.parcelaAtual - b.parcelaAtual).map(p => {
+                                    const isPago = p.pago;
+                                    const dataP = p.data ? new Date(p.data + 'T00:00:00') : null;
+                                    const hoje2 = new Date(); hoje2.setHours(0,0,0,0);
+                                    const isVencida = dataP && dataP < hoje2 && !isPago;
+                                    return `
+                                        <div class="parcela-item${isPago ? ' pago' : ''}${isVencida ? ' vencida' : ''}">
+                                            <div class="parcela-check${isPago ? ' checked' : ''}" onclick="event.stopPropagation();togglePagoVariavel(${p.id})" style="cursor:pointer;"></div>
+                                            <div class="parcela-info-box" onclick="event.stopPropagation();togglePagoVariavel(${p.id})" style="cursor:pointer;flex:1;">
+                                                <div class="parcela-nome">Parcela ${p.parcelaAtual}/${p.totalParcelas}</div>
+                                                <div class="parcela-data-txt">${p.data ? p.data.split('-').reverse().join('/') : '—'}</div>
+                                                ${p.notaParcela ? `<div class="parcela-nota-txt">📝 ${p.notaParcela}</div>` : ''}
+                                            </div>
+                                            <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                                                <div class="parcela-valor-txt">${formatarMoeda(p.valor)}</div>
+                                                <button class="parcela-edit-inline" onclick="event.stopPropagation();editarParcelaIndividual(${p.id})" title="Editar valor/data/nota desta parcela">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        variaveisTable.innerHTML = htmlVariaveis;
+
+        // === TABELA DESPESAS AVULSAS ===
+        const avulsasTable = document.getElementById('despesasAvulsasTable');
+        document.getElementById('emptyDespesasAvulsas').style.display = avulsasMes.length ? 'none' : 'block';
+
+        avulsasTable.innerHTML = avulsasMes.map(d => {
+            const hoje = new Date(); hoje.setHours(0,0,0,0);
+            const dv = d.data ? new Date(d.data + 'T00:00:00') : null;
+            const vencida = dv && dv < hoje && !d.pago;
+            const badgeSt = d.pago
+                ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Pago</span>'
+                : vencida
+                    ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Vencido</span>'
+                    : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>';
+            return `
+                <tr>
+                    <td>
+                        <span class="acc-chevron" style="cursor:pointer;background:${d.pago ? 'rgba(46,204,113,0.15)' : 'rgba(26, 26, 26, 0.07)'};"
+                              onclick="togglePagoAvulsa(${d.id})" title="Marcar pago">
+                            ${d.pago ? '<svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26, 26, 26, 0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
+                        </span>
+                    </td>
+                    <td class="acc-descricao">${d.descricao}</td>
+                    <td><span class="categoria">${d.categoria}</span></td>
+                    <td class="acc-condicao">${formatarData(d.data)}</td>
+                    <td>${badgeSt}</td>
+                    <td style="text-align:right;" class="${d.pago ? 'valor-positivo' : 'valor-negativo'}">${formatarMoeda(d.valor)}</td>
+                    <td>
+                        <div style="display:flex;gap:4px;">
+                            <button class="acc-delete-btn" onclick="editarDespesaAvulsa(${d.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="acc-delete-btn" onclick="deletarDespesaAvulsa(${d.id})" title="Excluir">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+        }).join('');
+
+        // === CARDS EMPRÉSTIMOS ===
+        const empContainer = document.getElementById('emprestimosContainer');
+        document.getElementById('emptyEmprestimos').style.display = emprestimosAtivos.length ? 'none' : 'block';
+        empContainer.innerHTML = emprestimosAtivos.map(e => {
+            const percentQuitado = e.principalOriginal > 0 ? Math.round(((e.principalOriginal - e.principal) / e.principalOriginal) * 100) : 0;
+            const temJurosPendentes = (e.jurosAcumulados || 0) > 0;
+            const detailId = 'detail-emp-' + e.id;
+            const historicoHtml = (e.historicoPagamentos && e.historicoPagamentos.length > 0)
+                ? e.historicoPagamentos.slice().reverse().slice(0,5).map(h => `
+                    <div class="emp-historico-item">
+                        <span class="emp-hist-data">${formatarData(h.data)}</span>
+                        <span class="emp-hist-tipo">${h.tipo === 'amortizacao' ? 'Amortização' : 'Juros'}</span>
+                        <span class="${h.tipo === 'amortizacao' ? 'emp-hist-valor-amort' : 'emp-hist-valor-juros'}">${formatarMoeda(h.valor)}</span>
+                    </div>
+                `).join('')
+                : '<div class="emp-historico-vazio">Nenhum histórico registrado.</div>';
+
+            return `
+                <tr class="acc-row">
+                    <td style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
+                        <span class="acc-chevron" id="chev-${detailId}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </td>
+                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">${e.descricao}</td>
+                    <td class="acc-taxa-val">${e.taxaJuros}% a.m.</td>
+                    <td class="acc-original-val">${formatarMoeda(e.principalOriginal)}</td>
+                    <td class="acc-saldo-val">${formatarMoeda(e.principal)}</td>
+                    <td class="acc-juros-val">${formatarMoeda(e.jurosAcumulados || 0)}</td>
+                    <td>
+                        <div class="acc-progress-wrap acc-quitacao-wrap">
+                            <div class="acc-bar"><div class="acc-bar-fill emprestimo" style="width:${percentQuitado}%"></div></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
+                            <button class="acc-delete-btn" onclick="editarEmprestimo(${e.id})" title="Editar" style="color:rgba(184,151,46,0.6);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="acc-delete-btn" onclick="deletarEmprestimo(${e.id})" title="Excluir">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="acc-detail-row" id="${detailId}" style="display:none;">
+                    <td colspan="8">
+                        <div class="emp-detail-box">
+                            <div class="emp-acoes-col">
+                                <button class="emp-btn-acao" onclick="gerarJurosMes(${e.id})">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                    Gerar Juros (Mensal)
+                                </button>
+                                <button class="emp-btn-acao" onclick="abrirModalPagarJuros(${e.id})">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                                    Pagar Juros
+                                </button>
+                                <button class="emp-btn-acao" onclick="abrirModalAmortizar(${e.id})">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                                    Amortizar Principal
+                                </button>
+                            </div>
+                            <div class="emp-historico-col">
+                                <div class="emp-historico-titulo">Histórico de Movimentações</div>
+                                ${historicoHtml}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        // === CARDS DE RESERVAS ===
+        const reservasContainer = document.getElementById('reservasContainer');
+        const todasReservas = financeiro.economias || [];
+        document.getElementById('emptyEconomias').style.display = todasReservas.length ? 'none' : 'block';
+        
+        reservasContainer.innerHTML = todasReservas.map(reserva => {
+            // Garantir compatibilidade com dados antigos
+            const saldo = reserva.saldo !== undefined ? reserva.saldo : (reserva.valor || 0);
+            const movs = reserva.movimentacoes || [];
+            
+            // Renderizar histórico de movimentações (últimas 10)
+            const ultimasMovs = [...movs].reverse().slice(0, 10);
+            const historicoHtml = ultimasMovs.length > 0 ? ultimasMovs.map(m => `
+                <div class="reserva-mov-item">
+                    <div class="mov-info">
+                        <span class="mov-data">${formatarData(m.data.split('T')[0])}</span>
+                        <span class="mov-obs">${m.observacao || (m.tipo === 'entrada' ? 'Depósito' : 'Retirada')}</span>
+                    </div>
+                    <span class="mov-valor ${m.tipo === 'entrada' ? 'entrada' : 'saida'}">
+                        ${m.tipo === 'entrada' ? '+' : '-'} ${formatarMoeda(m.valor)}
+                    </span>
+                </div>
+            `).join('') : '<div style="text-align: center; color: rgba(26, 26, 26, 0.4); padding: 10px; font-size: 0.85em;">Nenhuma movimentação</div>';
+            
+            return `
+                <div class="reserva-card" id="reserva-${reserva.id}">
+                    <div class="reserva-card-header">
+                        <div class="reserva-card-title">
+                            ${reserva.descricao}
+                            <small>${reserva.categoria || 'Reserva'}</small>
+                        </div>
+                        <div class="reserva-card-acoes">
+                            <button class="action-btn btn-edit" onclick="editarEconomia(${reserva.id})" title="Editar">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="action-btn btn-delete" onclick="deletarEconomia(${reserva.id})" title="Excluir">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="reserva-saldo">
+                        <label>Saldo Atual</label>
+                        <div class="valor">${formatarMoeda(saldo)}</div>
+                    </div>
+                    
+                    <div class="reserva-acoes-rapidas">
+                        <button class="btn-depositar" onclick="depositarReserva(${reserva.id})">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Depositar
+                        </button>
+                        <button class="btn-retirar" onclick="retirarReserva(${reserva.id})" ${saldo <= 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Retirar
+                        </button>
+                    </div>
+                    
+                    <div class="reserva-historico">
+                        <div class="reserva-historico-header" onclick="toggleHistoricoReserva(${reserva.id})">
+                            <h4>Histórico de Movimentações (${movs.length})</h4>
+                            <svg class="icon toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                        <div class="reserva-historico-lista">
+                            ${historicoHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Renderizar itens arquivados
+    function renderizarArquivados() {
+        // Limpar tabelas ativas
+        document.getElementById('receitasFixasTable').innerHTML = '';
+        document.getElementById('receitasVariaveisTable').innerHTML = '';
+        document.getElementById('despesasFixasTable').innerHTML = '';
+        document.getElementById('despesasVariaveisTable').innerHTML = '';
+        document.getElementById('despesasAvulsasTable').innerHTML = '';
+        document.getElementById('reservasContainer').innerHTML = '';
+        
+        // Mostrar empréstimos arquivados
+        const empArquivados = financeiro.emprestimos.filter(e => e.arquivado);
+        // No modo arquivado, usar div separada (o tbody da tabela é para ativos)
+        const empTableWrapper = document.querySelector('#sectionEmprestimos .table-container');
+        const empArqContainer = document.getElementById('emprestimosArquivadosContainer');
+        const empContainer = empArqContainer;
+        if (empTableWrapper) empTableWrapper.style.display = 'none';
+        if (empArqContainer) empArqContainer.style.display = 'block';
+        
+        if (empArquivados.length === 0) {
+            empContainer.innerHTML = '<div class="empty-state">Nenhum item arquivado</div>';
+            return;
+        }
+
+        empContainer.innerHTML = empArquivados.map(e => {
+            // Renderizar histórico com comprovantes
+            const historicoComComprovantes = (e.historico || [])
+                .filter(h => h.comprovante)
+                .map((h, idx) => {
+                    const tipoLabel = h.tipo === 'pagamento_juros' ? 'Juros' : 
+                                     h.tipo === 'amortizacao' ? 'Amortização' : h.tipo;
+                    return `<button class="comprovante" onclick="verComprovanteHistoricoArquivado(${e.id}, ${e.historico.indexOf(h)})" 
+                            title="${tipoLabel} - ${formatarMoeda(h.valor)}" style="margin:2px;">
+                            Anexo: ${tipoLabel}
+                    </button>`;
+                }).join('');
+
+            // Verificar se teve movimentações reais
+            const teveMovimentacao = (e.totalJurosPagos || 0) > 0 || (e.totalAmortizado || 0) > 0;
+
+            return `
+                <div class="emprestimo-card arquivado">
+                    <div class="emprestimo-card-header">
+                        <div class="emprestimo-card-title">
+                            ${e.descricao}
+                            <span class="badge arquivado">Quitado</span>
+                            <small>Arquivado em ${formatarData(e.arquivadoEm?.split('T')[0])}</small>
+                        </div>
+                        <div class="menu-acoes-container">
+                            <button class="btn-menu-acoes" onclick="toggleMenuAcoes(${e.id})" title="Ações">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                    <circle cx="12" cy="5" r="1"></circle>
+                                    <circle cx="12" cy="19" r="1"></circle>
+                                </svg>
+                            </button>
+                            <div class="menu-acoes-dropdown" id="menuAcoes-${e.id}">
+                                <button class="menu-acao-item" onclick="restaurarEmprestimo(${e.id}); fecharMenuAcoes();">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="1 4 1 10 7 10"></polyline>
+                                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                                    </svg>
+                                    Restaurar dívida
+                                </button>
+                                <div class="menu-acao-divisor"></div>
+                                <button class="menu-acao-item menu-acao-danger" onclick="iniciarExclusaoEmprestimo(${e.id}, ${teveMovimentacao}); fecharMenuAcoes();">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                    Excluir permanentemente
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="emprestimo-valores">
+                        <div class="emprestimo-valor-item">
+                            <label>Valor Original</label>
+                            <div class="valor">${formatarMoeda(e.principalOriginal)}</div>
+                        </div>
+                        <div class="emprestimo-valor-item">
+                            <label>Total Juros Pagos</label>
+                            <div class="valor">${formatarMoeda(e.totalJurosPagos || 0)}</div>
+                        </div>
+                        <div class="emprestimo-valor-item">
+                            <label>Total Amortizado</label>
+                            <div class="valor">${formatarMoeda(e.totalAmortizado || 0)}</div>
+                        </div>
+                    </div>
+                    ${historicoComComprovantes ? `
+                        <div style="margin-top:15px;padding-top:15px;border-top:1px solid rgba(26, 26, 26, 0.1);">
+                            <label style="font-size:0.8em;color:rgba(26, 26, 26, 0.5);display:block;margin-bottom:8px;">Anexo: Comprovantes Salvos:</label>
+                            ${historicoComComprovantes}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }).join('');
+
+        // Ocultar empty states
+        document.querySelectorAll('.empty-state').forEach(el => el.style.display = 'none');
+    }
+
+    // ==========================================
+    // PERSISTÊNCIA (localStorage + Supabase)
+    // ==========================================
+
+    // ==========================================
+    // PERSISTÊNCIA (localStorage + Supabase)
+    // ==========================================
+    
+    function salvarDados() {
+        localStorage.setItem('financeiro_v5', JSON.stringify(financeiro));
+        salvarSupabase();
+    }
+
+    async function salvarSupabase() {
+        if (!useSupabase) return;
+        try {
+            const { error } = await supabaseClient.from('financeiro').upsert({
+                id: USER_ID,
+                user_id: USER_ID,
+                dados: financeiro,
+                updated_at: new Date().toISOString()
+            });
+            if (error) {
+                console.error('Erro Supabase:', error);
+                mostrarStatus('Erro ao sincronizar', 'error');
+            } else {
+                mostrarStatus('Sincronizado', 'success');
+            }
+        } catch (e) {
+            console.error('Exceção Supabase:', e);
+        }
+    }
+
+    async function carregarSupabase() {
+        if (!useSupabase) return false;
+        try {
+            const { data, error } = await supabaseClient
+                .from('financeiro')
+                .select('*')
+                .eq('user_id', USER_ID)
+                .maybeSingle();
+
+            if (error) {
+                console.error('Erro ao carregar:', error);
+                return false;
+            }
+
+            if (data?.dados) {
+                // Mesclar dados preservando estrutura
+                financeiro = {
+                    ...dadosVazios,
+                    ...data.dados,
+                    arquivados: { ...dadosVazios.arquivados, ...data.dados.arquivados }
+                };
+                localStorage.setItem('financeiro_v5', JSON.stringify(financeiro));
+                mostrarStatus('Dados carregados', 'success');
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.error('Exceção:', e);
+            return false;
+        }
+    }
+
+    // ==========================================
+    // STATUS DE SINCRONIZAÇÃO
+    // ==========================================
+    
+    function mostrarStatus(msg, tipo) {
+        let status = document.getElementById('syncStatus');
+        if (!status) {
+            status = document.createElement('div');
+            status.id = 'syncStatus';
+            document.body.appendChild(status);
+        }
+        
+        status.textContent = msg;
+        status.style.background = tipo === 'success' ? 'rgba(39, 174, 96, 0.95)' : 'rgba(231, 76, 60, 0.95)';
+        status.style.opacity = '1';
+        
+        setTimeout(() => { status.style.opacity = '0'; }, 3000);
+    }
+
+    // ==========================================
+    // CONTROLES DE MÊS/ANO E VISUALIZAÇÃO
+    // ==========================================
+    
+    // Gerar opções de ano dinamicamente (10 anos atrás até 30 anos à frente)
+    function gerarOpcoesAno() {
+        const anoAtual = new Date().getFullYear();
+        const select = document.getElementById('anoSelect');
+        select.innerHTML = '';
+        
+        // Range ampliado para suportar planejamento de longo prazo
+        for (let ano = anoAtual - 10; ano <= anoAtual + 30; ano++) {
+            const option = document.createElement('option');
+            option.value = ano;
+            option.textContent = ano;
+            select.appendChild(option);
+        }
+        
+        // Se o ano selecionado não está na lista, adiciona dinamicamente
+        if (!select.querySelector(`option[value="${anoSelecionado}"]`)) {
+            const option = document.createElement('option');
+            option.value = anoSelecionado;
+            option.textContent = anoSelecionado;
+            select.appendChild(option);
+        }
+        
+        select.value = anoSelecionado;
+    }
+
+    document.getElementById('mesSelect').addEventListener('change', function() {
+        mesSelecionado = this.value;
+        gerarInstanciasDespesasFixas();
+        renderizar();
+    });
+
+    document.getElementById('anoSelect').addEventListener('change', function() {
+        anoSelecionado = parseInt(this.value);
+        gerarInstanciasDespesasFixas();
+        renderizar();
+    });
+
+    // Navegar entre meses (suporta qualquer ano)
+    function navegarPeriodo(direcao) {
+        let mes = parseInt(mesSelecionado);
+        let ano = anoSelecionado;
+        
+        mes += direcao;
+        
+        if (mes > 12) {
+            mes = 1;
+            ano++;
+        } else if (mes < 1) {
+            mes = 12;
+            ano--;
+        }
+        
+        mesSelecionado = String(mes).padStart(2, '0');
+        anoSelecionado = ano;
+        
+        // Atualizar seletor de ano se necessário (para anos fora do range inicial)
+        const selectAno = document.getElementById('anoSelect');
+        if (!selectAno.querySelector(`option[value="${ano}"]`)) {
+            const option = document.createElement('option');
+            option.value = ano;
+            option.textContent = ano;
+            selectAno.appendChild(option);
+        }
+        
+        document.getElementById('mesSelect').value = mesSelecionado;
+        document.getElementById('anoSelect').value = anoSelecionado;
+        
+        gerarInstanciasDespesasFixas();
+        renderizar();
+    }
+
+    // Ir para mês atual
+    function irParaHoje() {
+        const hoje = new Date();
+        mesSelecionado = String(hoje.getMonth() + 1).padStart(2, '0');
+        anoSelecionado = hoje.getFullYear();
+        
+        document.getElementById('mesSelect').value = mesSelecionado;
+        document.getElementById('anoSelect').value = anoSelecionado;
+        
+        gerarInstanciasDespesasFixas();
+        renderizar();
+    }
+
+    document.getElementById('btnAtivos').addEventListener('click', function() {
+        viewMode = 'ativos';
+        this.classList.add('active');
+        
+        renderizar();
+    });
+
+
+
+    // ==========================================
+    // INICIALIZAÇÃO
+    // ==========================================
+    
+    // Limpar dados antigos (2025) e despesas atrasadas antigas
+    function limparDadosAntigos() {
+        let modificado = false;
+        
+        // 1. Remover TODOS os meses de 2025 e anteriores do despesasFixasMes
+        Object.keys(financeiro.despesasFixasMes || {}).forEach(key => {
+            if (key < '2026-01') {
+                delete financeiro.despesasFixasMes[key];
+                modificado = true;
+            }
+        });
+        
+        // 2. Remover TODOS os meses de 2025 e anteriores do receitasMes
+        Object.keys(financeiro.receitasMes || {}).forEach(key => {
+            if (key < '2026-01') {
+                delete financeiro.receitasMes[key];
+                modificado = true;
+            }
+        });
+
+        // 3. Para cada mês de 2026+, limpar instâncias atrasadas inválidas
+        Object.keys(financeiro.despesasFixasMes || {}).forEach(key => {
+            if (key >= '2026-01') {
+                const antes = financeiro.despesasFixasMes[key].length;
+                financeiro.despesasFixasMes[key] = (financeiro.despesasFixasMes[key] || []).filter(d => {
+                    // Manter instâncias normais (não atrasadas)
+                    if (!d.atrasada) return true;
+                    
+                    // Atrasada: verificar se o original existe e NÃO foi pago
+                    if (d.idOriginal && d.mesOriginal) {
+                        // Se o mês original é anterior a 2026, remover
+                        if (d.mesOriginal < '2026-01') return false;
+                        
+                        const originais = financeiro.despesasFixasMes[d.mesOriginal] || [];
+                        const original = originais.find(o => String(o.id) === String(d.idOriginal));
+                        
+                        // Se o original não existe mais, remover
+                        if (!original) return false;
+                        
+                        // Se o original foi pago, remover (a menos que esta atrasada também já foi paga)
+                        if (original.pago && !d.pago) return false;
+                        
+                        // Verificar que o mesOriginal é exatamente o mês anterior ao key
+                        let [ano, mes] = key.split('-').map(Number);
+                        mes--;
+                        if (mes < 1) { mes = 12; ano--; }
+                        const mesAnteriorDoKey = `${ano}-${String(mes).padStart(2, '0')}`;
+                        
+                        // Só manter atrasada se veio do mês imediatamente anterior
+                        if (d.mesOriginal !== mesAnteriorDoKey) return false;
+                        
+                        return true;
+                    }
+                    
+                    // Atrasada sem referência clara — remover
+                    return false;
+                });
+                if (financeiro.despesasFixasMes[key].length !== antes) modificado = true;
+            }
+        });
+        
+        // 4. Remover instâncias duplicadas (mesmo modeloId e não-atrasada aparecendo mais de uma vez)
+        Object.keys(financeiro.despesasFixasMes || {}).forEach(key => {
+            const despesas = financeiro.despesasFixasMes[key] || [];
+            const vistos = new Set();
+            const antes = despesas.length;
+            financeiro.despesasFixasMes[key] = despesas.filter(d => {
+                if (!d.atrasada) {
+                    const chave = `normal_${d.modeloId}`;
+                    if (vistos.has(chave)) return false;
+                    vistos.add(chave);
+                }
+                if (d.atrasada) {
+                    const chave = `atrasada_${d.idOriginal}`;
+                    if (vistos.has(chave)) return false;
+                    vistos.add(chave);
+                }
+                return true;
+            });
+            if (financeiro.despesasFixasMes[key].length !== antes) modificado = true;
+        });
+        
+        if (modificado) {
+            localStorage.setItem('financeiro_v5', JSON.stringify(financeiro));
+            console.log('Dados limpos: removidas instâncias inválidas/duplicadas');
+        }
+    }
+    
+    async function init() {
+        // Definir mês e ano atual
+        const hoje = new Date();
+        mesSelecionado = String(hoje.getMonth() + 1).padStart(2, '0');
+        anoSelecionado = hoje.getFullYear();
+        
+        // Gerar opções de ano e selecionar atual
+        gerarOpcoesAno();
+        document.getElementById('mesSelect').value = mesSelecionado;
+        document.getElementById('anoSelect').value = anoSelecionado;
+        
+        // Carregar dados do Supabase (prioridade)
+        await carregarSupabase();
+        
+        // Limpar dados antigos de 2025 e atrasadas antigas
+        limparDadosAntigos();
+        
+        // Gerar instâncias de despesas fixas para o mês
+        gerarInstanciasDespesasFixas();
+        
+        // Renderizar interface
+        renderizar();
+    }
+
+    // Conectar Sabedoria ao renderizar
+    const originalRenderizar = renderizar;
+    renderizar = function() {
+        originalRenderizar();
+        atualizarSugestoesSabedoria();
+    };
+
+    // Iniciar aplicação
+    init();
+
+    // ==========================================
+    // ALERTAS DE VENCIMENTO
+    // ==========================================
+
+    // ==========================================
+    // SUGESTÕES DE SABEDORIA FINANCEIRA
+    // ==========================================
+
+    // Citações dos Livros
+    const CITACOES = [
+        // O Homem Mais Rico da Babilônia
+        { texto: "Parte de tudo que você ganha é sua para guardar. Pague-se primeiro.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "A riqueza cresce rapidamente quando você faz economias regulares.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "O ouro foge do homem que o investe em negócios que não conhece.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "A sorte favorece aqueles que se esforçam.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "Não confie na própria sabedoria para proteger seu tesouro.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "Guarde pelo menos 10% de tudo que ganhar.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "Faça seu ouro trabalhar para você.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        { texto: "A ação leva ao sucesso. A procrastinação leva ao fracasso.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        // Provérbios de Salomão
+        { texto: "Os planos bem elaborados levam à fartura; já o apressado sempre acaba na miséria.", fonte: "Provérbios 21:5", livro: "salomao" },
+        { texto: "Quem ama o prazer acabará na pobreza; quem ama o vinho e o luxo jamais será rico.", fonte: "Provérbios 21:17", livro: "salomao" },
+        { texto: "Na casa do sábio há provisões e azeite; mas o tolo devora tudo que possui.", fonte: "Provérbios 21:20", livro: "salomao" },
+        { texto: "O rico domina sobre os pobres; quem toma emprestado é servo de quem empresta.", fonte: "Provérbios 22:7", livro: "salomao" },
+        { texto: "Quem observa o vento não plantará, e quem olha para as nuvens não colherá.", fonte: "Eclesiastes 11:4", livro: "salomao" },
+        { texto: "Ensina a criança no caminho em que deve andar, e ainda quando for velho não se desviará dele.", fonte: "Provérbios 22:6", livro: "salomao" },
+        { texto: "O preguiçoso deseja e nada consegue, mas os desejos do diligente são plenamente satisfeitos.", fonte: "Provérbios 13:4", livro: "salomao" },
+        { texto: "Riquezas obtidas com língua mentirosa são vapor fugaz, armadilha mortal.", fonte: "Provérbios 21:6", livro: "salomao" }
+    ];
+
+    function atualizarSugestoesSabedoria() {
+        // Coletar dados financeiros
+        const receitasMesSab = getReceitasMes();
+        const receitasVarSab = getReceitasVariaveisMes();
+        const fixasMesSab = getDespesasFixasMes();
+        const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis || []).filter(d => !d.pausado);
+        const avulsasMesSab = filtrarPorMes(financeiro.despesasAvulsas || []);
+        
+        // Receitas do mês
+        const totalRecFixas = receitasMesSab.reduce((s, r) => s + r.valor, 0);
+        const totalRecVariaveis = receitasVarSab.reduce((s, r) => s + r.valor, 0);
+        const totalReceita = totalRecFixas + totalRecVariaveis;
+        const receitaRecebidaSab = receitasMesSab.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0) + receitasVarSab.filter(r => r.recebido).reduce((s, r) => s + r.valor, 0);
+        const receitaPendente = totalReceita - receitaRecebidaSab;
+        
+        // Despesas do mês (incluindo emprestimos pagos)
+        const mesAnoSab = getMesAnoKey();
+        let empPagoSab = 0;
+        (financeiro.emprestimos || []).forEach(e => {
+            (e.historicoPagamentos || []).forEach(p => {
+                if (p.data && p.data.substring(0, 7) === mesAnoSab) {
+                    empPagoSab += (p.valor || 0);
+                }
+            });
+        });
+        const totalDespesas = fixasMesSab.reduce((s, d) => s + d.valor, 0) + variaveisMes.reduce((s, d) => s + d.valor, 0) + avulsasMesSab.reduce((s, d) => s + d.valor, 0) + empPagoSab;
+        const despesasPagas = fixasMesSab.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) + 
+                             variaveisMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) +
+                             avulsasMesSab.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) +
+                             empPagoSab;
+        const despesasPendentes = totalDespesas - despesasPagas;
+        
+        // TODAS as economias
+        const totalEconomias = (financeiro.economias || []).reduce((s, e) => s + (e.saldo || e.valor || 0), 0);
+        
+        // TODAS as dívidas ativas
+        const emprestimosAtivos = (financeiro.emprestimos || []).filter(e => !e.arquivado);
+        const totalDividas = emprestimosAtivos.reduce((s, e) => s + (e.principal || 0), 0);
+        
+        // Indicadores
+        const percentComprometido = totalReceita > 0 ? (totalDespesas / totalReceita) * 100 : 0;
+        const saldoLivre = totalReceita - totalDespesas;
+        const mesesReserva = totalDespesas > 0 ? totalEconomias / totalDespesas : 0;
+
+        // Atualizar citação do dia
+        const indiceCitacao = new Date().getDate() % CITACOES.length;
+        const citacao = CITACOES[indiceCitacao];
+        document.getElementById('citacaoTexto').textContent = `"${citacao.texto}"`;
+        document.getElementById('citacaoFonte').textContent = `— ${citacao.fonte}`;
+
+        // Atualizar diagnóstico
+        const grid = document.getElementById('diagnosticoGrid');
+        if (grid) {
+            let statusComp = percentComprometido > 80 ? 'critico' : percentComprometido > 60 ? 'atencao' : percentComprometido > 40 ? 'bom' : 'otimo';
+            let statusDiv = totalDividas > totalReceita * 3 ? 'critico' : totalDividas > totalReceita ? 'atencao' : totalDividas > 0 ? 'bom' : 'otimo';
+            let statusRes = mesesReserva >= 6 ? 'otimo' : mesesReserva >= 3 ? 'bom' : mesesReserva >= 1 ? 'atencao' : 'critico';
+            let statusSaldo = saldoLivre < 0 ? 'critico' : saldoLivre < totalReceita * 0.1 ? 'atencao' : 'otimo';
+            let statusRecPend = receitaPendente > 0 ? 'atencao' : 'otimo';
+            let statusDesPend = despesasPendentes > 0 ? 'atencao' : 'otimo';
+
+            grid.innerHTML = `
+                <div class="diagnostico-item ${statusComp}">
+                    <div class="titulo">Comprometimento</div>
+                    <div class="valor">${percentComprometido.toFixed(0)}%</div>
+                    <div class="descricao">${percentComprometido <= 60 ? 'Saudável' : percentComprometido <= 80 ? 'Atenção' : 'Crítico'}</div>
+                </div>
+                <div class="diagnostico-item ${statusDiv}">
+                    <div class="titulo">Dívidas Totais</div>
+                    <div class="valor">${formatarMoeda(totalDividas)}</div>
+                    <div class="descricao">${emprestimosAtivos.length} empréstimo${emprestimosAtivos.length !== 1 ? 's' : ''} ativo${emprestimosAtivos.length !== 1 ? 's' : ''}</div>
+                </div>
+                <div class="diagnostico-item ${statusRes}">
+                    <div class="titulo">Reserva</div>
+                    <div class="valor">${mesesReserva.toFixed(1)} meses</div>
+                    <div class="descricao">${formatarMoeda(totalEconomias)}</div>
+                </div>
+                <div class="diagnostico-item ${statusSaldo}">
+                    <div class="titulo">Saldo Previsto</div>
+                    <div class="valor">${formatarMoeda(saldoLivre)}</div>
+                    <div class="descricao">${saldoLivre >= 0 ? 'Positivo' : 'Déficit!'}</div>
+                </div>
+                <div class="diagnostico-item ${statusRecPend}">
+                    <div class="titulo">Receita Pendente</div>
+                    <div class="valor">${formatarMoeda(receitaPendente)}</div>
+                    <div class="descricao">${receitaPendente > 0 ? 'A receber este mês' : 'Tudo recebido'}</div>
+                </div>
+                <div class="diagnostico-item ${statusDesPend}">
+                    <div class="titulo">Despesas Pendentes</div>
+                    <div class="valor">${formatarMoeda(despesasPendentes)}</div>
+                    <div class="descricao">${despesasPendentes > 0 ? 'A pagar este mês' : 'Tudo pago'}</div>
+                </div>
+            `;
+        }
+
+        // Gerar sugestões personalizadas
+        const lista = document.getElementById('sugestoesLista');
+        if (lista) {
+            let sugestoes = [];
+
+            // 1. Se tem dívidas - prioridade máxima
+            if (totalDividas > 0 && emprestimosAtivos.length > 0) {
+                const maiorDivida = emprestimosAtivos.sort((a, b) => (b.taxaJuros || 0) - (a.taxaJuros || 0))[0];
+                sugestoes.push({
+                    tipo: 'divida',
+                    icone: '⚔️',
+                    titulo: 'Quite Suas Dívidas - Método Avalanche',
+                    texto: `Você tem ${emprestimosAtivos.length} dívida${emprestimosAtivos.length > 1 ? 's' : ''} totalizando ${formatarMoeda(totalDividas)}. Foque em "${maiorDivida.descricao || 'a dívida principal'}" primeiro.`,
+                    fonte: '"O rico domina sobre os pobres; quem toma emprestado é servo de quem empresta." — Provérbios 22:7',
+                    acao: `Pague ${formatarMoeda((maiorDivida.principal || 0) * 0.1)} extra este mês`
+                });
+            }
+
+            // 2. Se não guarda 10%
+            const percentPoupado = totalReceita > 0 ? ((totalReceita - totalDespesas) / totalReceita) * 100 : 0;
+            if (percentPoupado < 10 && totalReceita > 0) {
+                sugestoes.push({
+                    tipo: 'economia',
+                    icone: '🏺',
+                    titulo: 'A Lei dos 10% - Pague-se Primeiro',
+                    texto: `Você está guardando apenas ${percentPoupado.toFixed(1)}% da renda. Separe ${formatarMoeda(totalReceita * 0.1)} ANTES de pagar qualquer conta.`,
+                    fonte: '"Guarde pelo menos 10% de tudo que ganhar." — O Homem Mais Rico da Babilônia',
+                    acao: `Crie uma reserva automática de ${formatarMoeda(totalReceita * 0.1)}`
+                });
+            }
+
+            // 3. Se comprometimento alto
+            if (percentComprometido > 60) {
+                const todasDespesas = [...fixasMesSab, ...variaveisMes];
+                const ruidos = todasDespesas.filter(d => ['Lazer', 'Assinaturas', 'Delivery', 'Streaming', 'Jogos', 'Outros'].includes(d.categoria));
+                const totalRuido = ruidos.reduce((s, d) => s + d.valor, 0);
+                
+                if (totalRuido > 0) {
+                    sugestoes.push({
+                        tipo: 'corte',
+                        icone: '✂️',
+                        titulo: 'Elimine os Ruídos Financeiros',
+                        texto: `Você gasta ${formatarMoeda(totalRuido)} em despesas não essenciais. Cortar 50% liberaria ${formatarMoeda(totalRuido * 0.5)}/mês.`,
+                        fonte: '"Quem ama o prazer acabará na pobreza." — Provérbios 21:17',
+                        acao: 'Cancele pelo menos 1 assinatura hoje'
+                    });
+                }
+            }
+
+            // 4. Se saldo negativo
+            if (saldoLivre < 0) {
+                sugestoes.push({
+                    tipo: 'divida',
+                    icone: '🚨',
+                    titulo: 'Emergência: Déficit Mensal',
+                    texto: `Seu saldo está negativo em ${formatarMoeda(Math.abs(saldoLivre))}. Você está se endividando todo mês!`,
+                    fonte: '"Os planos bem elaborados levam à fartura; já o apressado sempre acaba na miséria." — Provérbios 21:5',
+                    acao: 'Liste 3 despesas para cortar HOJE'
+                });
+            }
+
+            // 5. Se reserva insuficiente
+            if (mesesReserva < 6 && totalDividas === 0) {
+                sugestoes.push({
+                    tipo: 'economia',
+                    icone: '🛡️',
+                    titulo: 'Construa Sua Fortaleza Financeira',
+                    texto: `Sua reserva cobre ${mesesReserva.toFixed(1)} mês${mesesReserva >= 2 ? 'es' : ''}. O ideal são 6 meses (${formatarMoeda(totalDespesas * 6)}).`,
+                    fonte: '"Na casa do sábio há provisões e azeite; mas o tolo devora tudo que possui." — Provérbios 21:20',
+                    acao: `Aumente sua reserva em ${formatarMoeda(totalDespesas * 0.5)} este mês`
+                });
+            }
+
+            // 6. Se está bem
+            if (percentComprometido <= 50 && totalDividas === 0 && mesesReserva >= 3) {
+                sugestoes.push({
+                    tipo: 'investimento',
+                    icone: '📈',
+                    titulo: 'Faça Seu Dinheiro Trabalhar',
+                    texto: 'Parabéns! Você está no caminho certo. Agora faça seu dinheiro gerar mais dinheiro com investimentos.',
+                    fonte: '"Faça seu ouro trabalhar para você." — O Homem Mais Rico da Babilônia',
+                    acao: 'Pesquise sobre Tesouro Direto ou CDBs'
+                });
+            }
+
+            // Se não tem sugestões
+            if (sugestoes.length === 0) {
+                sugestoes.push({
+                    tipo: 'sabedoria',
+                    icone: '👑',
+                    titulo: 'Continue no Caminho da Sabedoria',
+                    texto: 'Suas finanças estão equilibradas. Mantenha a disciplina!',
+                    fonte: '"A ação leva ao sucesso. A procrastinação leva ao fracasso." — O Homem Mais Rico da Babilônia',
+                    acao: 'Revise suas metas financeiras mensalmente'
+                });
+            }
+
+            lista.innerHTML = sugestoes.slice(0, 4).map(s => `
+                <div class="sugestao-card ${s.tipo}">
+                    <div class="sugestao-icone">${s.icone}</div>
+                    <div class="sugestao-conteudo">
+                        <div class="sugestao-titulo">${s.titulo}</div>
+                        <div class="sugestao-texto">${s.texto}</div>
+                        <div class="sugestao-fonte">${s.fonte}</div>
+                        <div class="sugestao-acao">💡 ${s.acao}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Gerar plano de ação
+        const planoLista = document.getElementById('planoLista');
+        if (planoLista) {
+            let acoes = [];
+
+            if (saldoLivre < 0) {
+                acoes.push({ texto: 'URGENTE: Equilibre seu orçamento - você gasta mais do que ganha', prioridade: 'urgente' });
+            }
+
+            if (totalDividas > 0) {
+                acoes.push({ texto: `Quite suas ${emprestimosAtivos.length} dívida${emprestimosAtivos.length > 1 ? 's' : ''} (${formatarMoeda(totalDividas)}) - comece pela de maior juros`, prioridade: 'urgente' });
+            }
+
+            if (receitaPendente > 0) {
+                acoes.push({ texto: `Cobre as receitas pendentes: ${formatarMoeda(receitaPendente)} a receber`, prioridade: 'importante' });
+            }
+
+            if (despesasPendentes > 0) {
+                acoes.push({ texto: `Pague as despesas pendentes: ${formatarMoeda(despesasPendentes)} a pagar`, prioridade: 'importante' });
+            }
+
+            if (mesesReserva < 3) {
+                acoes.push({ texto: 'Construa uma reserva de emergência de 3-6 meses', prioridade: totalDividas > 0 ? 'importante' : 'urgente' });
+            }
+
+            if (saldoLivre >= 0 && saldoLivre < totalReceita * 0.1 && totalReceita > 0) {
+                acoes.push({ texto: 'Guarde pelo menos 10% da sua renda - pague-se primeiro', prioridade: 'importante' });
+            }
+
+            if (percentComprometido > 70) {
+                acoes.push({ texto: 'Reduza seu comprometimento de renda para menos de 70%', prioridade: 'importante' });
+            }
+
+            if (percentComprometido > 50) {
+                acoes.push({ texto: 'Elimine gastos supérfluos (assinaturas, delivery, impulsos)', prioridade: 'medio' });
+            }
+
+            if (totalDividas === 0 && mesesReserva >= 3) {
+                acoes.push({ texto: 'Comece a investir - faça seu dinheiro trabalhar para você', prioridade: 'medio' });
+            }
+
+            if (acoes.length === 0) {
+                acoes.push({ texto: 'Continue monitorando suas finanças e mantenha a disciplina', prioridade: 'medio' });
+            }
+
+            // Empresa-Persona: sempre incluir visão estratégica
+            if (totalReceita > 0) {
+                const taxaPoupanca = totalReceita > 0 ? ((totalReceita - totalDespesas) / totalReceita * 100) : 0;
+                if (taxaPoupanca < 10) {
+                    acoes.push({ texto: 'CEO paga a si mesmo primeiro — reserve 10% antes de qualquer gasto', prioridade: 'urgente' });
+                }
+                if (emprestimosAtivos.length > 0) {
+                    const maiorJuros = emprestimosAtivos.reduce((max, e) => (e.taxaJuros || 0) > (max.taxaJuros || 0) ? e : max, emprestimosAtivos[0]);
+                    if (maiorJuros) {
+                        acoes.push({ texto: `Elimine "${maiorJuros.descricao}" (${maiorJuros.taxaJuros}% a.m.) — dívida cara mata o fluxo de caixa`, prioridade: 'urgente' });
+                    }
+                }
+                if (percentComprometido <= 60 && totalDividas === 0) {
+                    acoes.push({ texto: 'Posição sólida — invista em ativos que gerem renda passiva', prioridade: 'medio' });
+                }
+                if (totalRecFixas > 0 && totalRecVariaveis === 0) {
+                    acoes.push({ texto: 'Diversifique receitas — uma única fonte de renda é risco concentrado', prioridade: 'importante' });
+                }
+            }
+
+            planoLista.innerHTML = acoes.slice(0, 5).map((a, i) => `
+                <div class="plano-item">
+                    <div class="plano-numero">${i + 1}</div>
+                    <div class="plano-texto">${a.texto}</div>
+                    <span class="plano-prioridade ${a.prioridade}">${a.prioridade === 'urgente' ? 'Urgente' : a.prioridade === 'importante' ? 'Importante' : 'Médio'}</span>
+                </div>
+            `).join('');
+        }
+    }
+
+
+
