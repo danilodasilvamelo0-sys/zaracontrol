@@ -3852,3 +3852,193 @@ tr.grupo-pausado td {
 .btn-edit-categorias svg {
     width: 11px; height: 11px; stroke: currentColor;
 }
+/* ===== PLANO DE QUITAÇÃO DE DÍVIDAS ===== */
+.pq-controles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 12px 0 16px 0;
+    padding: 14px;
+    background: var(--cor-fundo-suave, #f8f6f0);
+    border-radius: 10px;
+}
+.pq-campo {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.pq-campo > label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--font-sm, 13px);
+    font-weight: var(--fw-medium, 500);
+    color: var(--cor-texto-secundario, #6b6457);
+}
+.pq-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.pq-toggle label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-sm, 13px);
+    font-weight: var(--fw-regular, 400);
+    cursor: pointer;
+}
+.pq-toggle small {
+    color: var(--cor-texto-terciario, #999);
+    font-size: 11px;
+}
+.pq-input {
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--font-base, 14px);
+    padding: 8px 12px;
+    border: 1px solid var(--cor-borda, #e0ddd5);
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+}
+.pq-resumo-grid {
+    margin-bottom: 16px;
+}
+.pq-resultado {
+    background: linear-gradient(135deg, rgba(184,151,46,0.08), rgba(184,151,46,0.02));
+    border-left: 3px solid var(--cor-dourado, #b8972e);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+}
+.pq-resultado h4 {
+    margin: 0 0 6px 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--font-md, 15px);
+    font-weight: var(--fw-semibold, 600);
+    color: var(--cor-texto-principal, #2a2a2a);
+}
+.pq-resultado p {
+    margin: 0;
+    font-size: var(--font-sm, 13px);
+    line-height: 1.6;
+    color: var(--cor-texto-secundario, #6b6457);
+}
+.pq-ordem-lista {
+    margin-bottom: 16px;
+}
+.pq-ordem-lista .plano-item {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.pq-mes-quitacao {
+    font-size: 11px;
+    font-weight: var(--fw-medium, 500);
+    color: var(--cor-dourado, #b8972e);
+    white-space: nowrap;
+    margin-left: auto;
+    padding-left: 10px;
+}
+.pq-comparacao {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.pq-comp-card {
+    border: 1px solid var(--cor-borda, #e0ddd5);
+    border-radius: 10px;
+    padding: 12px 14px;
+    opacity: 0.7;
+}
+.pq-comp-card.pq-ativo {
+    border-color: var(--cor-dourado, #b8972e);
+    opacity: 1;
+    background: rgba(184,151,46,0.05);
+}
+.pq-comp-titulo {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: var(--fw-semibold, 600);
+    font-size: var(--font-sm, 13px);
+    margin-bottom: 6px;
+}
+.pq-comp-linha {
+    font-size: var(--font-sm, 13px);
+    color: var(--cor-texto-secundario, #6b6457);
+    margin-bottom: 3px;
+}
+.pq-comp-dica {
+    font-size: var(--font-sm, 13px);
+    color: var(--cor-texto-secundario, #6b6457);
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+}
+.pq-alerta {
+    background: rgba(231,76,60,0.08);
+    border-left: 3px solid #e74c3c;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: var(--font-sm, 13px);
+    line-height: 1.6;
+    color: var(--cor-texto-secundario, #6b6457);
+    margin-bottom: 16px;
+}
+.pq-vazio {
+    text-align: center;
+    padding: 20px;
+    font-size: var(--font-sm, 13px);
+    color: var(--cor-texto-secundario, #6b6457);
+}
+.pq-reserva {
+    border-top: 1px solid var(--cor-borda, #e0ddd5);
+    padding-top: 14px;
+}
+.pq-reserva-header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: var(--fw-medium, 500);
+    font-size: var(--font-sm, 13px);
+    margin-bottom: 8px;
+}
+.pq-reserva-header small {
+    color: var(--cor-texto-terciario, #999);
+    font-weight: var(--fw-regular, 400);
+}
+.pq-reserva-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(184,151,46,0.12);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.pq-reserva-fill {
+    height: 100%;
+    background: var(--cor-dourado, #b8972e);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+.pq-reserva-nota {
+    margin-top: 6px;
+    font-size: var(--font-sm, 13px);
+    color: var(--cor-texto-secundario, #6b6457);
+}
+.pq-reserva-nota.pq-ok {
+    color: #2ecc71;
+    font-weight: var(--fw-medium, 500);
+}
+@media (max-width: 768px) {
+    .pq-comparacao {
+        grid-template-columns: 1fr;
+    }
+    .pq-mes-quitacao {
+        margin-left: 0;
+        padding-left: 0;
+        display: block;
+        margin-top: 4px;
+    }
+}
+
