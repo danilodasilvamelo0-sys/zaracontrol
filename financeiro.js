@@ -4336,6 +4336,7 @@
     renderizar = function() {
         originalRenderizar();
         atualizarSugestoesSabedoria();
+        pa_renderizar();
     };
 
     // Iniciar aplicação
@@ -4346,20 +4347,373 @@
     // ==========================================
 
     // ==========================================
+    // PLANO DE QUITAÇÃO DE DÍVIDAS
+    // Funções puras de simulação financeira
+    // (métodos "Avalanche" e "Bola de Neve")
+    // ==========================================
+
+    // Lista as dívidas ativas em formato simplificado para os cálculos
+    function pa_listarDividas() {
+        return (financeiro.emprestimos || [])
+            .filter(e => !e.arquivado && (e.principal || 0) > 0)
+            .map(e => ({
+                id: e.id,
+                descricao: e.descricao || 'Dívida',
+                saldo: e.principal || 0,
+                taxaMensal: (e.taxaJuros || 0) / 100
+            }));
+    }
+
+    // Juros gerados em um mês para uma dívida, dado seu saldo atual
+    function pa_jurosMes(divida) {
+        return divida.saldo * divida.taxaMensal;
+    }
+
+    // Resumo geral das dívidas ativas
+    function pa_resumoDividas(dividas) {
+        const totalDevido = dividas.reduce((s, d) => s + d.saldo, 0);
+        const custoJurosMensal = dividas.reduce((s, d) => s + pa_jurosMes(d), 0);
+        const taxaMediaPonderada = totalDevido > 0
+            ? dividas.reduce((s, d) => s + d.saldo * d.taxaMensal, 0) / totalDevido
+            : 0;
+        return { quantidade: dividas.length, totalDevido, custoJurosMensal, taxaMediaPonderada };
+    }
+
+    // Ordenação "Avalanche": maior taxa de juros primeiro (minimiza juros totais pagos)
+    function pa_ordenarAvalanche(dividas) {
+        return [...dividas].sort((a, b) => b.taxaMensal - a.taxaMensal || b.saldo - a.saldo);
+    }
+
+    // Ordenação "Bola de Neve": menor saldo primeiro (quita dívidas mais rápido, gera motivação)
+    function pa_ordenarBolaDeNeve(dividas) {
+        return [...dividas].sort((a, b) => a.saldo - b.saldo || b.taxaMensal - a.taxaMensal);
+    }
+
+    /**
+     * Simula a quitação das dívidas mês a mês.
+     *
+     * O "pagamento mensal total" é fixo = soma dos pagamentos mínimos
+     * (mínimo de cada dívida = juros do saldo daquele mês, o suficiente para
+     * o saldo não crescer) + o valor extra informado pelo usuário.
+     * A cada mês, primeiro os juros incidem sobre os saldos; depois o
+     * pagamento total é distribuído na ORDEM de prioridade: cada dívida
+     * recebe o quanto for preciso para zerar (até o limite do que sobrou),
+     * e o restante "rola" para a próxima da fila. Quando uma dívida é
+     * quitada, o valor que ela consumia passa a engrossar o pagamento das
+     * próximas (efeito bola de neve / avalanche).
+     *
+     * @param {Array}  dividas    [{id, descricao, saldo, taxaMensal}]
+     * @param {Array}  ordemIds   ids das dívidas na ordem de prioridade
+     * @param {number} extraMensal valor extra além dos mínimos (R$)
+     * @param {number} [limiteMeses=600] trava de segurança (50 anos)
+     */
+    function pa_simularQuitacao(dividas, ordemIds, extraMensal, limiteMeses) {
+        limiteMeses = limiteMeses || 600;
+        extraMensal = Math.max(0, extraMensal || 0);
+
+        const ordem = ordemIds
+            .map(id => dividas.find(d => String(d.id) === String(id)))
+            .filter(Boolean)
+            .map(d => ({ id: d.id, descricao: d.descricao, saldo: d.saldo, taxaMensal: d.taxaMensal, quitadaNoMes: null }));
+
+        const minimosIniciais = ordem.reduce((s, d) => s + d.saldo * d.taxaMensal, 0);
+        const pagamentoMensalTotal = minimosIniciais + extraMensal;
+
+        if (extraMensal <= 0) {
+            return {
+                convergiu: false, pagamentoMensalTotal, minimosIniciais, extraMensal,
+                meses: null, totalJuros: null, totalPago: null, cronograma: [],
+                ordemFinal: ordem.map(d => ({ id: d.id, descricao: d.descricao, mesQuitacao: null }))
+            };
+        }
+
+        let totalJuros = 0, totalPago = 0, mes = 0;
+        const cronograma = [];
+
+        while (ordem.some(d => d.saldo > 0.005) && mes < limiteMeses) {
+            mes++;
+            ordem.forEach(d => {
+                if (d.saldo > 0.005) {
+                    const juros = d.saldo * d.taxaMensal;
+                    d.saldo += juros;
+                    totalJuros += juros;
+                }
+            });
+
+            let disponivel = pagamentoMensalTotal;
+            const quitadasNoMes = [];
+            for (const d of ordem) {
+                if (disponivel <= 0) break;
+                if (d.saldo <= 0.005) continue;
+                const pagar = Math.min(d.saldo, disponivel);
+                d.saldo -= pagar;
+                disponivel -= pagar;
+                totalPago += pagar;
+                if (d.saldo <= 0.005 && d.quitadaNoMes === null) {
+                    d.quitadaNoMes = mes;
+                    quitadasNoMes.push({ id: d.id, descricao: d.descricao });
+                }
+            }
+            if (quitadasNoMes.length > 0) cronograma.push({ mes, quitadas: quitadasNoMes });
+        }
+
+        return {
+            convergiu: mes < limiteMeses, pagamentoMensalTotal, minimosIniciais, extraMensal,
+            meses: mes, totalJuros, totalPago, cronograma,
+            ordemFinal: ordem.map(d => ({ id: d.id, descricao: d.descricao, mesQuitacao: d.quitadaNoMes }))
+        };
+    }
+
+    // Quanto sobra no mês corrente após despesas e após cobrir os juros
+    // mínimos das dívidas atuais — vira a sugestão de "valor extra"
+    function pa_capacidadeExtra() {
+        const receitasFixasMes = getReceitasMes().reduce((s, r) => s + (r.valor || 0), 0);
+        const receitasVarMes = getReceitasVariaveisMes().reduce((s, r) => s + (r.valor || 0), 0);
+        const despesasFixasMes = getDespesasFixasMes().reduce((s, d) => s + (d.valor || 0), 0);
+        const despesasVarMes = filtrarPorMes(financeiro.despesasVariaveis || []).filter(d => !d.pausado).reduce((s, d) => s + (d.valor || 0), 0);
+        const despesasAvulsasMes = filtrarPorMes(financeiro.despesasAvulsas || []).reduce((s, d) => s + (d.valor || 0), 0);
+
+        const dividas = pa_listarDividas();
+        const minimosAtuais = dividas.reduce((s, d) => s + pa_jurosMes(d), 0);
+
+        const receitaTotal = receitasFixasMes + receitasVarMes;
+        const despesaTotal = despesasFixasMes + despesasVarMes + despesasAvulsasMes;
+        const sobra = receitaTotal - despesaTotal - minimosAtuais;
+
+        return { receitaTotal, despesaTotal, minimosAtuais, sobra, sugestaoExtra: Math.max(0, Math.round(sobra * 100) / 100) };
+    }
+
+    // Reserva de emergência: quanto falta para cobrir N meses de despesas fixas
+    function pa_reservaEmergencia(mesesAlvo) {
+        mesesAlvo = mesesAlvo || 6;
+        const despesasFixasMensais = (financeiro.despesasFixas || []).filter(d => d.ativa).reduce((s, d) => s + (d.valor || 0), 0);
+        const totalEconomias = (financeiro.economias || []).reduce((s, e) => s + (e.saldo || 0), 0);
+        const alvo = despesasFixasMensais * mesesAlvo;
+        return {
+            despesasFixasMensais, totalEconomias, alvo,
+            falta: Math.max(0, alvo - totalEconomias),
+            mesesCobertos: despesasFixasMensais > 0 ? totalEconomias / despesasFixasMensais : (totalEconomias > 0 ? Infinity : 0),
+            mesesAlvo
+        };
+    }
+
+    // Monta o plano completo: resumo, comparação Avalanche x Bola de Neve,
+    // ordem recomendada conforme a estratégia escolhida.
+    function pa_gerarPlano(extraManual, estrategia) {
+        const dividas = pa_listarDividas();
+        const resumo = pa_resumoDividas(dividas);
+        const capacidade = pa_capacidadeExtra();
+        const reserva = pa_reservaEmergencia(6);
+
+        const extra = (extraManual !== null && extraManual !== undefined && extraManual !== '')
+            ? Math.max(0, parseFloat(extraManual) || 0)
+            : capacidade.sugestaoExtra;
+
+        const ordemAvalanche = pa_ordenarAvalanche(dividas);
+        const ordemBolaDeNeve = pa_ordenarBolaDeNeve(dividas);
+
+        const simAvalanche = pa_simularQuitacao(dividas, ordemAvalanche.map(d => d.id), extra);
+        const simBolaDeNeve = pa_simularQuitacao(dividas, ordemBolaDeNeve.map(d => d.id), extra);
+
+        estrategia = estrategia === 'bolaDeNeve' ? 'bolaDeNeve' : 'avalanche';
+        const escolhida = estrategia === 'bolaDeNeve' ? simBolaDeNeve : simAvalanche;
+        const ordemEscolhida = estrategia === 'bolaDeNeve' ? ordemBolaDeNeve : ordemAvalanche;
+
+        return {
+            dividas, resumo, capacidade, reserva, extra, estrategia,
+            avalanche: simAvalanche, bolaDeNeve: simBolaDeNeve,
+            ordem: ordemEscolhida.map(d => ({ id: d.id, descricao: d.descricao, saldo: d.saldo, taxaMensal: d.taxaMensal })),
+            plano: escolhida
+        };
+    }
+
+    // "Mês/Ano" a partir do mês selecionado + um deslocamento em meses
+    function pa_nomeMes(offsetMeses) {
+        const nomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        const d = new Date(parseInt(anoSelecionado), parseInt(mesSelecionado) - 1 + offsetMeses, 1);
+        return `${nomes[d.getMonth()]}/${d.getFullYear()}`;
+    }
+
+    // ==========================================
+    // PLANO DE QUITAÇÃO DE DÍVIDAS — RENDERIZAÇÃO
+    // ==========================================
+    function pa_renderizar() {
+        const container = document.getElementById('planoQuitacaoContainer');
+        if (!container) return;
+
+        const dividas = pa_listarDividas();
+        const reserva = pa_reservaEmergencia(6);
+
+        // Lê preferências da UI (estratégia e valor extra)
+        const estrategiaInput = document.querySelector('input[name="pqEstrategia"]:checked');
+        const estrategia = estrategiaInput ? estrategiaInput.value : 'avalanche';
+        const extraInput = document.getElementById('pqExtraMensal');
+
+        const capacidade = pa_capacidadeExtra();
+        if (extraInput && extraInput.value === '') {
+            extraInput.value = capacidade.sugestaoExtra > 0 ? capacidade.sugestaoExtra.toFixed(2) : '0.00';
+        }
+        const extraManual = extraInput ? extraInput.value : null;
+
+        // ---- Bloco da Reserva de Emergência (sempre exibido) ----
+        const pctReserva = reserva.alvo > 0 ? Math.min(100, (reserva.totalEconomias / reserva.alvo) * 100) : 100;
+        const reservaHtml = `
+            <div class="pq-reserva">
+                <div class="pq-reserva-header">
+                    <span>🛡️ Reserva de Emergência</span>
+                    <span>${formatarMoeda(reserva.totalEconomias)} de ${formatarMoeda(reserva.alvo)} <small>(meta: ${reserva.mesesAlvo} meses de despesas fixas)</small></span>
+                </div>
+                <div class="pq-reserva-bar"><div class="pq-reserva-fill" style="width:${pctReserva.toFixed(0)}%"></div></div>
+                ${reserva.falta > 0
+                    ? `<div class="pq-reserva-nota">Faltam <strong>${formatarMoeda(reserva.falta)}</strong> para sua reserva ideal de ${reserva.mesesAlvo} meses.</div>`
+                    : `<div class="pq-reserva-nota pq-ok">Reserva completa! 🎉</div>`}
+            </div>`;
+
+        if (dividas.length === 0) {
+            container.innerHTML = `
+                <div class="pq-vazio">✅ Você não tem dívidas ativas registradas. Continue assim!</div>
+                ${reservaHtml}
+            `;
+            return;
+        }
+
+        const plano = pa_gerarPlano(extraManual, estrategia);
+        const r = plano.resumo;
+
+        // ---- Resumo ----
+        const resumoHtml = `
+            <div class="diagnostico-grid pq-resumo-grid">
+                <div class="diagnostico-item atencao">
+                    <div class="titulo">Total em Dívidas</div>
+                    <div class="valor">${formatarMoeda(r.totalDevido)}</div>
+                    <div class="descricao">${r.quantidade} empréstimo${r.quantidade !== 1 ? 's' : ''} ativo${r.quantidade !== 1 ? 's' : ''}</div>
+                </div>
+                <div class="diagnostico-item critico">
+                    <div class="titulo">Custo de Juros / mês</div>
+                    <div class="valor">${formatarMoeda(r.custoJurosMensal)}</div>
+                    <div class="descricao">se nada além do mínimo for pago</div>
+                </div>
+                <div class="diagnostico-item">
+                    <div class="titulo">Taxa Média Ponderada</div>
+                    <div class="valor">${(r.taxaMediaPonderada * 100).toFixed(1)}% a.m.</div>
+                </div>
+                <div class="diagnostico-item ${plano.extra > 0 ? 'bom' : 'critico'}">
+                    <div class="titulo">Pagamento Mensal do Plano</div>
+                    <div class="valor">${formatarMoeda(plano.plano.pagamentoMensalTotal)}</div>
+                    <div class="descricao">mínimos (${formatarMoeda(plano.plano.minimosIniciais)}) + extra (${formatarMoeda(plano.extra)})</div>
+                </div>
+            </div>`;
+
+        // ---- Alerta caso o extra seja zero ----
+        if (plano.extra <= 0) {
+            container.innerHTML = `
+                ${resumoHtml}
+                <div class="pq-alerta">
+                    ⚠️ Pagando apenas o mínimo (os juros), suas dívidas <strong>nunca são quitadas</strong> —
+                    elas custam ${formatarMoeda(r.custoJurosMensal)}/mês para sempre.
+                    Informe acima quanto você consegue destinar a mais por mês para ver seu plano de quitação.
+                </div>
+                ${reservaHtml}
+            `;
+            return;
+        }
+
+        // ---- Resultado principal (estratégia escolhida) ----
+        const sim = plano.plano;
+        const tempoTexto = sim.convergiu
+            ? `<strong>${sim.meses} ${sim.meses === 1 ? 'mês' : 'meses'}</strong> (até ${pa_nomeMes(sim.meses)})`
+            : `mais de ${limiteAnos(sim)} anos — considere aumentar o valor extra`;
+
+        const nomeEstrategia = plano.estrategia === 'bolaDeNeve' ? '❄️ Bola de Neve' : '⚔️ Avalanche';
+
+        const resultadoHtml = `
+            <div class="pq-resultado">
+                <h4>📅 Seu Plano: ${nomeEstrategia}</h4>
+                <p>Destinando <strong>${formatarMoeda(sim.pagamentoMensalTotal)}/mês</strong> a essas dívidas, nessa ordem,
+                você fica livre delas em ${tempoTexto}, pagando ao todo
+                <strong>${formatarMoeda(sim.totalJuros)}</strong> em juros.</p>
+            </div>`;
+
+        // ---- Ordem de prioridade ----
+        const ordemHtml = `
+            <div class="plano-lista pq-ordem-lista">
+                ${plano.ordem.map((d, i) => {
+                    const final = sim.ordemFinal.find(o => String(o.id) === String(d.id));
+                    const statusQuitacao = final && final.mesQuitacao
+                        ? `Quitada em ${pa_nomeMes(final.mesQuitacao)} (mês ${final.mesQuitacao})`
+                        : '—';
+                    return `
+                    <div class="plano-item">
+                        <div class="plano-numero">${i + 1}</div>
+                        <div class="plano-texto">
+                            <strong>${d.descricao}</strong> — ${formatarMoeda(d.saldo)} a ${(d.taxaMensal * 100).toFixed(1)}% a.m.
+                        </div>
+                        <span class="pq-mes-quitacao">${statusQuitacao}</span>
+                    </div>`;
+                }).join('')}
+            </div>`;
+
+        // ---- Comparação Avalanche x Bola de Neve (só faz sentido com 2+ dívidas) ----
+        let comparacaoHtml = '';
+        if (dividas.length > 1 && plano.avalanche.convergiu && plano.bolaDeNeve.convergiu) {
+            const av = plano.avalanche, bn = plano.bolaDeNeve;
+            const economiaJuros = bn.totalJuros - av.totalJuros;
+            const primeiraAv = av.ordemFinal[0], primeiraBn = bn.ordemFinal[0];
+
+            comparacaoHtml = `
+                <div class="pq-comparacao">
+                    <div class="pq-comp-card ${plano.estrategia === 'avalanche' ? 'pq-ativo' : ''}">
+                        <div class="pq-comp-titulo">⚔️ Avalanche</div>
+                        <div class="pq-comp-linha">Quita tudo em <strong>${av.meses} meses</strong></div>
+                        <div class="pq-comp-linha">Total de juros: <strong>${formatarMoeda(av.totalJuros)}</strong></div>
+                        <div class="pq-comp-linha">1ª dívida quitada no mês ${primeiraAv.mesQuitacao} (${primeiraAv.descricao})</div>
+                    </div>
+                    <div class="pq-comp-card ${plano.estrategia === 'bolaDeNeve' ? 'pq-ativo' : ''}">
+                        <div class="pq-comp-titulo">❄️ Bola de Neve</div>
+                        <div class="pq-comp-linha">Quita tudo em <strong>${bn.meses} meses</strong></div>
+                        <div class="pq-comp-linha">Total de juros: <strong>${formatarMoeda(bn.totalJuros)}</strong></div>
+                        <div class="pq-comp-linha">1ª dívida quitada no mês ${primeiraBn.mesQuitacao} (${primeiraBn.descricao})</div>
+                    </div>
+                </div>
+                <div class="pq-comp-dica">
+                    💡 ${economiaJuros > 0.5
+                        ? `A Avalanche economiza <strong>${formatarMoeda(economiaJuros)}</strong> em juros frente à Bola de Neve.`
+                        : (economiaJuros < -0.5 ? `A Bola de Neve economiza <strong>${formatarMoeda(-economiaJuros)}</strong> em juros frente à Avalanche.` : 'As duas estratégias resultam em juros muito parecidos aqui.')}
+                    ${primeiraBn.mesQuitacao < primeiraAv.mesQuitacao
+                        ? ` Já a Bola de Neve quita sua primeira dívida ${primeiraAv.mesQuitacao - primeiraBn.mesQuitacao} ${ (primeiraAv.mesQuitacao - primeiraBn.mesQuitacao) === 1 ? 'mês' : 'meses'} antes — bom para manter a motivação.`
+                        : ''}
+                </div>`;
+        }
+
+        container.innerHTML = `
+            ${resumoHtml}
+            ${resultadoHtml}
+            ${ordemHtml}
+            ${comparacaoHtml}
+            ${reservaHtml}
+        `;
+    }
+
+    // Estimativa grosseira de "anos" quando a simulação não converge dentro do limite de meses
+    function limiteAnos(sim) {
+        return Math.floor((sim.meses || 600) / 12);
+    }
+
+    // ==========================================
     // SUGESTÕES DE SABEDORIA FINANCEIRA
     // ==========================================
 
     // Citações dos Livros
     const CITACOES = [
-        // O Homem Mais Rico da Babilônia
-        { texto: "Parte de tudo que você ganha é sua para guardar. Pague-se primeiro.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
-        { texto: "A riqueza cresce rapidamente quando você faz economias regulares.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
-        { texto: "O ouro foge do homem que o investe em negócios que não conhece.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
-        { texto: "A sorte favorece aqueles que se esforçam.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
-        { texto: "Não confie na própria sabedoria para proteger seu tesouro.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
-        { texto: "Guarde pelo menos 10% de tudo que ganhar.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
-        { texto: "Faça seu ouro trabalhar para você.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
-        { texto: "A ação leva ao sucesso. A procrastinação leva ao fracasso.", fonte: "O Homem Mais Rico da Babilônia", livro: "babilonia" },
+        // Princípios de Organização Financeira (Como Organizar Sua Vida Financeira - Gustavo Cerbasi)
+        { texto: "Anote tudo o que entra e tudo o que sai: o controle financeiro começa no papel, não na memória.", fonte: "Como Organizar Sua Vida Financeira", livro: "organizacao" },
+        { texto: "Toda dívida com juros altos é prioridade: quitar uma dívida de 10% ao mês equivale a um investimento de 10% ao mês garantido.", fonte: "Como Organizar Sua Vida Financeira", livro: "organizacao" },
+        { texto: "Antes de pensar em investir, elimine as dívidas que cobram mais juros do que qualquer investimento poderia te pagar.", fonte: "Como Organizar Sua Vida Financeira", livro: "organizacao" },
+        { texto: "Construa uma reserva de emergência de alguns meses de despesas fixas antes de assumir novos compromissos.", fonte: "Como Organizar Sua Vida Financeira", livro: "organizacao" },
+        { texto: "Separe seu orçamento em partes: o necessário para viver, o necessário para quitar dívidas e o necessário para guardar.", fonte: "Como Organizar Sua Vida Financeira", livro: "organizacao" },
+        { texto: "Pequenos gastos recorrentes, somados ao longo do mês, costumam pesar mais do que parecem.", fonte: "Como Organizar Sua Vida Financeira", livro: "organizacao" },
+        { texto: "Renegociar uma dívida cara por outra mais barata é um dos jeitos mais rápidos de aliviar o orçamento.", fonte: "Como Organizar Sua Vida Financeira", livro: "organizacao" },
+        { texto: "Organizar a vida financeira não é sobre ganhar mais, é sobre saber para onde o dinheiro está indo.", fonte: "Como Organizar Sua Vida Financeira", livro: "organizacao" },
         // Provérbios de Salomão
         { texto: "Os planos bem elaborados levam à fartura; já o apressado sempre acaba na miséria.", fonte: "Provérbios 21:5", livro: "salomao" },
         { texto: "Quem ama o prazer acabará na pobreza; quem ama o vinho e o luxo jamais será rico.", fonte: "Provérbios 21:17", livro: "salomao" },
@@ -4491,7 +4845,7 @@
                     icone: '🏺',
                     titulo: 'A Lei dos 10% - Pague-se Primeiro',
                     texto: `Você está guardando apenas ${percentPoupado.toFixed(1)}% da renda. Separe ${formatarMoeda(totalReceita * 0.1)} ANTES de pagar qualquer conta.`,
-                    fonte: '"Guarde pelo menos 10% de tudo que ganhar." — O Homem Mais Rico da Babilônia',
+                    fonte: 'Antes de pagar qualquer conta, separe uma parte da sua renda para você mesmo — a base de toda reorganização financeira (Como Organizar Sua Vida Financeira).',
                     acao: `Crie uma reserva automática de ${formatarMoeda(totalReceita * 0.1)}`
                 });
             }
@@ -4545,7 +4899,7 @@
                     icone: '📈',
                     titulo: 'Faça Seu Dinheiro Trabalhar',
                     texto: 'Parabéns! Você está no caminho certo. Agora faça seu dinheiro gerar mais dinheiro com investimentos.',
-                    fonte: '"Faça seu ouro trabalhar para você." — O Homem Mais Rico da Babilônia',
+                    fonte: 'Dinheiro parado perde valor: toda sobra deve ter um destino — quitar dívidas caras ou render em uma reserva (Como Organizar Sua Vida Financeira).',
                     acao: 'Pesquise sobre Tesouro Direto ou CDBs'
                 });
             }
@@ -4557,7 +4911,7 @@
                     icone: '👑',
                     titulo: 'Continue no Caminho da Sabedoria',
                     texto: 'Suas finanças estão equilibradas. Mantenha a disciplina!',
-                    fonte: '"A ação leva ao sucesso. A procrastinação leva ao fracasso." — O Homem Mais Rico da Babilônia',
+                    fonte: 'O primeiro passo para sair das dívidas: liste tudo, ordene pela taxa de juros e ataque a mais cara primeiro (Como Organizar Sua Vida Financeira).',
                     acao: 'Revise suas metas financeiras mensalmente'
                 });
             }
