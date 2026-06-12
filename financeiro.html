@@ -419,7 +419,7 @@
 <div class="sugestoes-sabedoria">
     <div class="sugestoes-header">
         <h3>📜 Sabedoria Financeira</h3>
-        <p class="sugestoes-subtitulo">Baseado em "O Homem Mais Rico da Babilônia" e Provérbios de Salomão</p>
+        <p class="sugestoes-subtitulo">Baseado em "Como Organizar Sua Vida Financeira" (Gustavo Cerbasi) e Provérbios de Salomão</p>
     </div>
     
     <!-- Citação do Dia -->
@@ -427,7 +427,7 @@
         <div class="citacao-icone">💡</div>
         <div class="citacao-conteudo">
             <p class="citacao-texto" id="citacaoTexto">"Parte de tudo que você ganha é sua para guardar."</p>
-            <span class="citacao-fonte" id="citacaoFonte">— O Homem Mais Rico da Babilônia</span>
+            <span class="citacao-fonte" id="citacaoFonte">— Como Organizar Sua Vida Financeira</span>
         </div>
     </div>
 
@@ -450,6 +450,32 @@
         <div class="plano-lista" id="planoLista">
             <!-- Preenchido via JS -->
         </div>
+    </div>
+</div>
+
+<!-- PLANO DE QUITAÇÃO DE DÍVIDAS -->
+<div class="sugestoes-sabedoria plano-quitacao">
+    <div class="sugestoes-header">
+        <h3>🎯 Plano de Quitação de Dívidas</h3>
+        <p class="sugestoes-subtitulo">Simulação com os métodos Avalanche e Bola de Neve, com base nas suas dívidas cadastradas</p>
+    </div>
+
+    <div class="pq-controles">
+        <div class="pq-campo">
+            <label>Estratégia</label>
+            <div class="pq-toggle">
+                <label><input type="radio" name="pqEstrategia" value="avalanche" checked onchange="pa_renderizar()"> ⚔️ Avalanche <small>(menos juros no total)</small></label>
+                <label><input type="radio" name="pqEstrategia" value="bolaDeNeve" onchange="pa_renderizar()"> ❄️ Bola de Neve <small>(quita a 1ª dívida mais rápido)</small></label>
+            </div>
+        </div>
+        <div class="pq-campo">
+            <label for="pqExtraMensal">Quanto a mais por mês você pode destinar às dívidas? (R$)</label>
+            <input type="number" id="pqExtraMensal" class="pq-input" step="0.01" min="0" placeholder="0,00" oninput="pa_renderizar()">
+        </div>
+    </div>
+
+    <div id="planoQuitacaoContainer">
+        <!-- Preenchido via JS -->
     </div>
 </div>
 
