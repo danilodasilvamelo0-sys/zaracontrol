@@ -4423,7 +4423,8 @@
             return {
                 convergiu: false, pagamentoMensalTotal, minimosIniciais, extraMensal,
                 meses: null, totalJuros: null, totalPago: null, cronograma: [],
-                ordemFinal: ordem.map(d => ({ id: d.id, descricao: d.descricao, mesQuitacao: null }))
+                ordemFinal: ordem.map(d => ({ id: d.id, descricao: d.descricao, mesQuitacao: null })),
+                economiaVsMinimo: null
             };
         }
 
@@ -4460,7 +4461,8 @@
         return {
             convergiu: mes < limiteMeses, pagamentoMensalTotal, minimosIniciais, extraMensal,
             meses: mes, totalJuros, totalPago, cronograma,
-            ordemFinal: ordem.map(d => ({ id: d.id, descricao: d.descricao, mesQuitacao: d.quitadaNoMes }))
+            ordemFinal: ordem.map(d => ({ id: d.id, descricao: d.descricao, mesQuitacao: d.quitadaNoMes })),
+            economiaVsMinimo: minimosIniciais * mes - totalJuros
         };
     }
 
@@ -4697,6 +4699,305 @@
     // Estimativa grosseira de "anos" quando a simulação não converge dentro do limite de meses
     function limiteAnos(sim) {
         return Math.floor((sim.meses || 600) / 12);
+    }
+
+    // ==========================================
+    // RELATÓRIO COMPLETO — funções auxiliares
+    // ==========================================
+
+    // Diagnóstico financeiro do mês (receita, despesas, sobra, % comprometido)
+    function pa_diagnosticoFinanceiro() {
+        const receitasFixasMes = getReceitasMes().reduce((s, r) => s + (r.valor || 0), 0);
+        const receitasVarMes = getReceitasVariaveisMes().reduce((s, r) => s + (r.valor || 0), 0);
+        const despesasEssenciais = getDespesasFixasMes().reduce((s, d) => s + (d.valor || 0), 0);
+        const despesasVarMes = filtrarPorMes(financeiro.despesasVariaveis || []).filter(d => !d.pausado).reduce((s, d) => s + (d.valor || 0), 0);
+        const despesasAvulsasMes = filtrarPorMes(financeiro.despesasAvulsas || []).reduce((s, d) => s + (d.valor || 0), 0);
+        const despesasVariaveis = despesasVarMes + despesasAvulsasMes;
+
+        const dividas = pa_listarDividas();
+        const minimos = dividas.reduce((s, d) => s + pa_jurosMes(d), 0);
+
+        const receitaTotal = receitasFixasMes + receitasVarMes;
+        const sobra = receitaTotal - despesasEssenciais - despesasVariaveis - minimos;
+        const percComprometido = receitaTotal > 0 ? (minimos / receitaTotal) * 100 : 0;
+
+        return { receitaTotal, despesasEssenciais, despesasVariaveis, minimos, sobra, percComprometido };
+    }
+
+    // Barra de progresso em caracteres (ex.: "████████░░░░░░░░░░░░")
+    function pa_barraAscii(pct, tamanho) {
+        tamanho = tamanho || 20;
+        const p = Math.max(0, Math.min(100, pct || 0));
+        const preenchido = Math.round((p / 100) * tamanho);
+        return '█'.repeat(preenchido) + '░'.repeat(tamanho - preenchido);
+    }
+
+    // Texto de análise crítica do diagnóstico (seção 1)
+    function pa_analiseDiagnostico(diag) {
+        if (diag.percComprometido >= 50) {
+            return `Mais da metade da sua renda líquida está comprometida com o pagamento mínimo das dívidas (${diag.percComprometido.toFixed(1)}%). Esse nível de comprometimento reduz drasticamente sua capacidade de poupar e investir, e qualquer imprevisto tende a gerar novas dívidas. Romper esse ciclo é a prioridade número um antes de qualquer outro objetivo financeiro.`;
+        }
+        if (diag.percComprometido >= 30) {
+            return `Seu comprometimento com dívidas está em um nível de atenção (${diag.percComprometido.toFixed(1)}%). Ainda há espaço no orçamento, mas cada real destinado a juros é um real que deixa de compor seu patrimônio — vale acelerar a quitação.`;
+        }
+        if (diag.percComprometido > 0) {
+            return `Seu comprometimento com dívidas está em um nível administrável (${diag.percComprometido.toFixed(1)}%). Este é um bom momento para acelerar a quitação com aportes extras, aproveitando que o orçamento ainda tem fôlego.`;
+        }
+        if (diag.sobra <= 0) {
+            return 'Você não possui dívidas ativas, mas sua sobra mensal está zerada ou negativa. Antes de novos objetivos, vale revisar as despesas para recompor sua margem.';
+        }
+        return 'Você não possui dívidas ativas — ótimo ponto de partida. A partir daqui, o foco pode ir integralmente para a reserva de emergência e a construção de patrimônio.';
+    }
+
+    // Texto de análise da reserva de emergência (seção 6)
+    function pa_analiseReserva(plano) {
+        const r = plano.reserva;
+        if (r.mesesCobertos >= r.mesesAlvo) {
+            return `Sua reserva de emergência já cobre a meta de ${r.mesesAlvo} meses. A partir daqui, qualquer valor extra após a quitação das dívidas pode ser direcionado para investimentos de médio ou longo prazo.`;
+        }
+        if (r.mesesCobertos < 1) {
+            return 'Sua reserva está praticamente zerada. Mesmo durante a quitação das dívidas, vale destinar uma pequena parte do valor extra (cerca de 10%) para começar a formar essa proteção — sem ela, qualquer imprevisto tende a se transformar em uma nova dívida.';
+        }
+        return `Você já tem o equivalente a ${r.mesesCobertos.toFixed(1)} ${r.mesesCobertos === 1 ? 'mês' : 'meses'} de despesas guardado. A prioridade segue sendo eliminar as dívidas com juros mais altos (acima de ~5% a.m.); à medida que forem quitadas, redirecione parte dos recursos liberados para completar a reserva antes de novos investimentos.`;
+    }
+
+    // Recomendação Avalanche x Bola de Neve (seção 5)
+    function pa_recomendacaoEstrategia(plano) {
+        const av = plano.avalanche, bn = plano.bolaDeNeve;
+        if (!av.convergiu || !bn.convergiu) {
+            return 'Defina, no campo acima, quanto você pode destinar a mais por mês para receber uma recomendação personalizada entre as duas estratégias.';
+        }
+        if (plano.dividas.length <= 1) {
+            return 'Com apenas uma dívida ativa, as duas estratégias produzem o mesmo resultado — o que importa é manter o pagamento definido até a quitação total.';
+        }
+        const diffJuros = bn.totalJuros - av.totalJuros;
+        const diffMesesPrimeira = av.ordemFinal[0].mesQuitacao - bn.ordemFinal[0].mesQuitacao;
+        const diffPercentual = plano.resumo.totalDevido > 0 ? diffJuros / plano.resumo.totalDevido : 0;
+
+        if (diffPercentual < 0.03) {
+            return `A diferença de juros entre as estratégias é pequena (${formatarMoeda(Math.max(0, diffJuros))}). Neste caso, a Bola de Neve tende a ser mais indicada: ela elimina sua primeira dívida ${Math.max(0, diffMesesPrimeira)} ${Math.abs(diffMesesPrimeira) === 1 ? 'mês' : 'meses'} antes, o que ajuda a manter a motivação sem custo relevante.`;
+        }
+        return `A Avalanche economiza ${formatarMoeda(diffJuros)} em juros em relação à Bola de Neve — uma diferença relevante. Recomenda-se priorizar essa estratégia, especialmente se você se sente confiante em manter o plano sem depender de "vitórias rápidas" para se motivar.`;
+    }
+
+    // Plano de ação para os próximos 90 dias (seção 7)
+    function pa_plano90Dias(plano, diag) {
+        const d1 = [], d2 = [], d3 = [];
+        const nomeEstrategia = plano.estrategia === 'bolaDeNeve' ? 'Bola de Neve' : 'Avalanche';
+
+        // Dias 1-30
+        if (plano.dividas.length > 0) {
+            d1.push(`Liste e confirme saldo e taxa de juros de cada dívida ativa — você tem ${plano.resumo.quantidade} cadastrada(s), totalizando ${formatarMoeda(plano.resumo.totalDevido)}.`);
+        }
+        if (diag.percComprometido >= 50) {
+            d1.push(`Seu comprometimento com dívidas está em ${diag.percComprometido.toFixed(0)}% da renda. Revise todas as despesas variáveis dos últimos 30 dias e corte o que não for essencial — o objetivo agora é liberar caixa, não "economizar um pouco".`);
+        } else if (diag.percComprometido > 0) {
+            d1.push('Revise suas despesas variáveis do último mês e identifique pelo menos uma categoria para reduzir — mesmo um corte pequeno acelera o cronograma.');
+        } else {
+            d1.push('Use este período para mapear seus gastos variáveis e identificar oportunidades de redirecionar valor para a reserva de emergência.');
+        }
+        if (plano.dividas.length > 0) {
+            if (plano.extra > 0) {
+                d1.push(`Separe ${formatarMoeda(plano.extra)}/mês — valor sugerido com base na sua sobra atual — exclusivamente para o plano (${nomeEstrategia}), e comece atacando: ${plano.ordem[0] ? plano.ordem[0].descricao : '—'}.`);
+            } else {
+                d1.push(`Sua sobra atual está em ${formatarMoeda(diag.sobra)}. Antes que o cronograma de quitação seja viável, o foco dos próximos 30 dias é trazer esse número para positivo através dos cortes acima.`);
+            }
+        }
+
+        // Dias 31-60
+        const dividaCara = plano.dividas.find(d => d.taxaMensal >= 0.08);
+        if (dividaCara) {
+            d2.push(`A dívida "${dividaCara.descricao}" está a ${(dividaCara.taxaMensal * 100).toFixed(1)}% ao mês — uma taxa muito alta. Pesquise renegociação, portabilidade ou linhas mais baratas (ex.: crédito consignado) para substituí-la.`);
+        } else if (plano.dividas.length > 0) {
+            d2.push('Suas taxas estão em níveis administráveis. Ainda assim, vale contatar os credores e perguntar sobre descontos para pagamento à vista ou antecipado.');
+        }
+        if (diag.sobra <= 0 && diag.minimos > 0) {
+            d2.push('Com a margem ainda apertada, avalie formas de aumentar a renda no curto prazo (venda de itens, freelances, serviços extras) — qualquer valor adicional acelera o plano.');
+        } else if (plano.dividas.length > 0) {
+            d2.push('Direcione qualquer renda extra (13º, bônus, freelances) diretamente para a dívida prioritária — isso pode antecipar a quitação em meses.');
+        }
+        if (plano.dividas.length > 0) {
+            d2.push(`Confirme a estratégia escolhida (${nomeEstrategia}) e configure um lembrete mensal para o pagamento extra — consistência é o que faz o plano funcionar.`);
+        } else {
+            d2.push('Sem dívidas ativas, use este período para definir metas de médio prazo para sua reserva e próximos objetivos financeiros.');
+        }
+
+        // Dias 61-90
+        if (plano.reserva.mesesCobertos < 1) {
+            const sugestao = plano.extra > 0 ? ` (aproximadamente ${formatarMoeda(plano.extra * 0.1)}/mês)` : '';
+            d3.push(`Mesmo durante a quitação, comece a reservar uma pequena parte (10%) do valor extra${sugestao} em uma conta separada: o início da sua reserva de emergência.`);
+        } else if (plano.reserva.falta > 0) {
+            d3.push(`Avalie redirecionar parte do valor extra para a reserva de emergência, atualmente em ${formatarMoeda(plano.reserva.totalEconomias)} de ${formatarMoeda(plano.reserva.alvo)} (faltam ${formatarMoeda(plano.reserva.falta)}).`);
+        } else {
+            d3.push('Sua reserva de emergência está completa. A partir daqui, qualquer novo aporte após a quitação das dívidas pode considerar investimentos de médio/longo prazo.');
+        }
+        d3.push('Reavalie o plano: confira se o saldo das dívidas está caindo conforme o cronograma e recalcule caso sua sobra mensal tenha mudado.');
+        if (plano.dividas.length > 0) {
+            d3.push('Evite contratar novas dívidas ou aumentar limites de cartão durante esse período — o objetivo é reduzir o número de credores, não mantê-lo.');
+        }
+
+        return { d1, d2, d3 };
+    }
+
+    // ==========================================
+    // RELATÓRIO COMPLETO — renderização (8 seções)
+    // ==========================================
+    function pa_renderRelatorio() {
+        const body = document.getElementById('relatorioBody');
+        if (!body) return;
+
+        const dividas = pa_listarDividas();
+        const estrategiaInput = document.querySelector('input[name="pqEstrategia"]:checked');
+        const estrategia = estrategiaInput ? estrategiaInput.value : 'avalanche';
+        const extraInput = document.getElementById('pqExtraMensal');
+        const extraManual = extraInput ? extraInput.value : null;
+
+        const plano = pa_gerarPlano(extraManual, estrategia);
+        const diag = pa_diagnosticoFinanceiro();
+
+        // ---- helper local: renderiza as seções 3/4 (Avalanche / Bola de Neve) ----
+        function renderEstrategia(numero, nome, icone, sim, ordem, comentario) {
+            if (dividas.length === 0) {
+                return `<div class="relatorio-secao"><h2>${numero}. Estratégia ${nome}</h2><p class="relatorio-vazio">✅ Nenhuma dívida ativa — seção não aplicável.</p></div>`;
+            }
+            if (!sim.convergiu) {
+                return `<div class="relatorio-secao"><h2>${numero}. Estratégia ${nome}</h2><p class="relatorio-vazio">Defina, no campo acima, um valor extra mensal maior que zero para gerar o cronograma desta estratégia. Atualmente, pagando apenas os juros mínimos (${formatarMoeda(plano.resumo.custoJurosMensal)}/mês), o saldo das dívidas permanece constante indefinidamente.</p></div>`;
+            }
+            const cronograma = sim.ordemFinal.map(o => `<li>Mês ${o.mesQuitacao} (${pa_nomeMes(o.mesQuitacao)}): <strong>${o.descricao}</strong> quitada ✅</li>`).join('');
+            return `
+            <div class="relatorio-secao">
+                <h2>${icone} ${numero}. Estratégia ${nome}</h2>
+                <p class="relatorio-intro">${comentario(sim, ordem)}</p>
+                <h4>Ordem de Quitação</h4>
+                <ol class="relatorio-ordem">
+                    ${ordem.map(d => `<li>${d.descricao} — ${formatarMoeda(d.saldo)} a ${(d.taxaMensal * 100).toFixed(1)}% a.m.</li>`).join('')}
+                </ol>
+                <h4>Cronograma de Quitação</h4>
+                <ul class="relatorio-cronograma">
+                    ${cronograma}
+                    <li class="relatorio-final">🎉 Mês ${sim.meses} (${pa_nomeMes(sim.meses)}): todas as dívidas quitadas</li>
+                </ul>
+                <table class="relatorio-tabela relatorio-tabela-totais">
+                    <tr><td>Pagamento mensal do plano</td><td>${formatarMoeda(sim.pagamentoMensalTotal)}</td></tr>
+                    <tr><td>Tempo total até quitar tudo</td><td>${sim.meses} ${sim.meses === 1 ? 'mês' : 'meses'}</td></tr>
+                    <tr><td>Total de juros pagos</td><td>${formatarMoeda(sim.totalJuros)}</td></tr>
+                    <tr><td>Economia vs. pagar só o mínimo no período</td><td>${formatarMoeda(sim.economiaVsMinimo)}</td></tr>
+                </table>
+            </div>`;
+        }
+
+        const comentarioAvalanche = (sim, ordem) => {
+            const p = ordem[0];
+            return `A Avalanche ataca primeiro a dívida com a maior taxa de juros — "${p.descricao}", a ${(p.taxaMensal * 100).toFixed(1)}% a.m. Matematicamente, este é o caminho mais curto: cada real extra direcionado a ela deixa de gerar ${(p.taxaMensal * 100).toFixed(1)}% de juros por mês, taxa que dificilmente qualquer investimento conservador supera. À medida que cada dívida é eliminada, o valor que ela consumia passa a reforçar o ataque à próxima — o "efeito avalanche".`;
+        };
+        const comentarioBolaDeNeve = (sim, ordem) => {
+            const p = ordem[0];
+            return `A Bola de Neve ataca primeiro a menor dívida — "${p.descricao}", de ${formatarMoeda(p.saldo)}. A lógica aqui é comportamental, não apenas matemática: eliminar uma dívida por completo gera uma sensação concreta de progresso, o que aumenta a chance de manter a disciplina nos meses seguintes. Vitórias rápidas e visíveis tendem a sustentar mudanças de hábito melhor do que apenas a lógica do menor custo.`;
+        };
+
+        let html = '';
+
+        // ===== 1. Diagnóstico Financeiro Atual =====
+        html += `
+        <div class="relatorio-secao">
+            <h2>1. Diagnóstico Financeiro Atual</h2>
+            <table class="relatorio-tabela relatorio-tabela-totais">
+                <tr><td>Receita líquida mensal</td><td>${formatarMoeda(diag.receitaTotal)}</td></tr>
+                <tr><td>Despesas essenciais</td><td>${formatarMoeda(diag.despesasEssenciais)}</td></tr>
+                <tr><td>Despesas variáveis</td><td>${formatarMoeda(diag.despesasVariaveis)}</td></tr>
+                <tr><td>Pagamentos mínimos das dívidas</td><td>${formatarMoeda(diag.minimos)}</td></tr>
+                <tr><td>Sobra mensal disponível</td><td class="${diag.sobra >= 0 ? 'relatorio-positivo' : 'relatorio-negativo'}">${formatarMoeda(diag.sobra)}</td></tr>
+                <tr><td>% da renda comprometida com dívidas</td><td>${diag.percComprometido.toFixed(1)}%</td></tr>
+            </table>
+            <p class="relatorio-analise">${pa_analiseDiagnostico(diag)}</p>
+        </div>`;
+
+        // ===== 2. Resumo das Dívidas =====
+        if (dividas.length > 0) {
+            html += `
+            <div class="relatorio-secao">
+                <h2>2. Resumo das Dívidas</h2>
+                <table class="relatorio-tabela relatorio-tabela-dividas">
+                    <thead><tr><th>Dívida</th><th>Saldo Atual</th><th>Taxa de Juros</th><th>Custo Mensal de Juros*</th></tr></thead>
+                    <tbody>
+                        ${dividas.map(d => `<tr><td>${d.descricao}</td><td>${formatarMoeda(d.saldo)}</td><td>${(d.taxaMensal * 100).toFixed(1)}% a.m.</td><td>${formatarMoeda(pa_jurosMes(d))}</td></tr>`).join('')}
+                    </tbody>
+                </table>
+                <p class="relatorio-nota">* Pagamento mínimo considerado: o suficiente para os juros do mês, sem o qual o saldo cresceria.</p>
+                <table class="relatorio-tabela relatorio-tabela-totais">
+                    <tr><td>Valor total devido</td><td>${formatarMoeda(plano.resumo.totalDevido)}</td></tr>
+                    <tr><td>Taxa média ponderada</td><td>${(plano.resumo.taxaMediaPonderada * 100).toFixed(1)}% a.m.</td></tr>
+                    <tr><td>Custo mensal só de juros (sem pagamento extra)</td><td>${formatarMoeda(plano.resumo.custoJurosMensal)}</td></tr>
+                </table>
+            </div>`;
+        } else {
+            html += `<div class="relatorio-secao"><h2>2. Resumo das Dívidas</h2><p class="relatorio-vazio">✅ Nenhuma dívida ativa registrada.</p></div>`;
+        }
+
+        // ===== 3. Avalanche / 4. Bola de Neve =====
+        html += renderEstrategia(3, 'Avalanche (Menor Custo Financeiro)', '⚔️', plano.avalanche, pa_ordenarAvalanche(dividas), comentarioAvalanche);
+        html += renderEstrategia(4, 'Bola de Neve (Maior Reforço Comportamental)', '❄️', plano.bolaDeNeve, pa_ordenarBolaDeNeve(dividas), comentarioBolaDeNeve);
+
+        // ===== 5. Comparativo =====
+        if (dividas.length > 1 && plano.avalanche.convergiu && plano.bolaDeNeve.convergiu) {
+            const av = plano.avalanche, bn = plano.bolaDeNeve;
+            html += `
+            <div class="relatorio-secao">
+                <h2>5. Comparativo das Estratégias</h2>
+                <table class="relatorio-tabela">
+                    <thead><tr><th>Indicador</th><th>Avalanche</th><th>Bola de Neve</th></tr></thead>
+                    <tbody>
+                        <tr><td>Tempo total para quitar</td><td>${av.meses} meses</td><td>${bn.meses} meses</td></tr>
+                        <tr><td>Data final estimada</td><td>${pa_nomeMes(av.meses)}</td><td>${pa_nomeMes(bn.meses)}</td></tr>
+                        <tr><td>Total de juros pagos</td><td>${formatarMoeda(av.totalJuros)}</td><td>${formatarMoeda(bn.totalJuros)}</td></tr>
+                        <tr><td>Economia gerada (vs. só mínimo)</td><td>${formatarMoeda(av.economiaVsMinimo)}</td><td>${formatarMoeda(bn.economiaVsMinimo)}</td></tr>
+                        <tr><td>Primeira dívida eliminada</td><td>mês ${av.ordemFinal[0].mesQuitacao} (${av.ordemFinal[0].descricao})</td><td>mês ${bn.ordemFinal[0].mesQuitacao} (${bn.ordemFinal[0].descricao})</td></tr>
+                    </tbody>
+                </table>
+                <p class="relatorio-recomendacao">💡 ${pa_recomendacaoEstrategia(plano)}</p>
+            </div>`;
+        } else if (dividas.length > 0) {
+            html += `<div class="relatorio-secao"><h2>5. Comparativo das Estratégias</h2><p class="relatorio-vazio">${pa_recomendacaoEstrategia(plano)}</p></div>`;
+        }
+
+        // ===== 6. Reserva de Emergência =====
+        const pctReserva = plano.reserva.alvo > 0 ? Math.min(100, (plano.reserva.totalEconomias / plano.reserva.alvo) * 100) : 100;
+        html += `
+        <div class="relatorio-secao">
+            <h2>6. Reserva de Emergência</h2>
+            <table class="relatorio-tabela relatorio-tabela-totais">
+                <tr><td>Meta (${plano.reserva.mesesAlvo} meses de despesas essenciais)</td><td>${formatarMoeda(plano.reserva.alvo)}</td></tr>
+                <tr><td>Valor atual</td><td>${formatarMoeda(plano.reserva.totalEconomias)}</td></tr>
+                <tr><td>Falta para a meta</td><td>${formatarMoeda(plano.reserva.falta)}</td></tr>
+            </table>
+            <pre class="relatorio-ascii-bar">Reserva de Emergência:
+[${pa_barraAscii(pctReserva)}] ${pctReserva.toFixed(0)}%</pre>
+            <p class="relatorio-analise">${pa_analiseReserva(plano)}</p>
+        </div>`;
+
+        // ===== 7. Plano de Ação (90 dias) =====
+        const p90 = pa_plano90Dias(plano, diag);
+        html += `
+        <div class="relatorio-secao">
+            <h2>7. Plano de Ação (Próximos 90 Dias)</h2>
+            <h4>Dias 1–30 · Organização e Ajustes Imediatos</h4>
+            <ul>${p90.d1.map(t => `<li>${t}</li>`).join('')}</ul>
+            <h4>Dias 31–60 · Renegociação e Aumento de Receita</h4>
+            <ul>${p90.d2.map(t => `<li>${t}</li>`).join('')}</ul>
+            <h4>Dias 61–90 · Consolidação e Reserva</h4>
+            <ul>${p90.d3.map(t => `<li>${t}</li>`).join('')}</ul>
+        </div>`;
+
+        // ===== 8. Sugestões de Sabedoria Financeira =====
+        const sabedoria = CITACOES.filter(c => c.livro === 'organizacao').map(c => c.texto);
+        html += `
+        <div class="relatorio-secao">
+            <h2>8. Sugestões de Sabedoria Financeira</h2>
+            <ul class="relatorio-sabedoria">${sabedoria.map(t => `<li>${t}</li>`).join('')}</ul>
+        </div>`;
+
+        body.innerHTML = html;
+        if (typeof abrirModal === 'function') abrirModal('modalRelatorio');
     }
 
     // ==========================================
