@@ -477,12 +477,28 @@
     <div id="planoQuitacaoContainer">
         <!-- Preenchido via JS -->
     </div>
+
+    <div class="pq-acoes">
+        <button class="btn-salvar pq-btn-relatorio" onclick="pa_renderRelatorio()">📄 Ver Relatório Completo</button>
+    </div>
 </div>
 
 
 </div>
 
 <!-- MODAIS -->
+
+<div class="modal" id="modalRelatorio">
+    <div class="modal-content modal-content-relatorio">
+        <div class="modal-header">
+            <h3>🎯 Plano de Quitação de Dívidas — Relatório Completo</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body" id="relatorioBody">
+            <!-- Preenchido via JS -->
+        </div>
+    </div>
+</div>
 
 <div class="modal" id="modalEditar">
     <div class="modal-content">
