@@ -99,6 +99,35 @@
         return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
     }
 
+    // Calcula a data da próxima parcela com base no "dia de vencimento" (1-31).
+    // Se o dia já passou neste mês, usa o próximo mês. Ajusta meses curtos (ex: 31 -> 28/29/30).
+    function calcularProximaParcelaData(dia) {
+        const hoje = new Date();
+        let ano = hoje.getFullYear();
+        let mes = hoje.getMonth(); // 0-indexed
+        if (hoje.getDate() > dia) {
+            mes += 1;
+            if (mes > 11) { mes = 0; ano += 1; }
+        }
+        const ultimoDiaDoMes = new Date(ano, mes + 1, 0).getDate();
+        const diaAjustado = Math.min(dia, ultimoDiaDoMes);
+        return `${ano}-${String(mes + 1).padStart(2, '0')}-${String(diaAjustado).padStart(2, '0')}`;
+    }
+
+    // Avança uma data (YYYY-MM-DD) em 1 mês, usando o "dia original" de vencimento
+    // como referência — evita que a data fique "presa" no dia 28 para sempre
+    // depois de passar por um fevereiro mais curto.
+    function avancarUmMes(dataStr, diaOriginal) {
+        const [ano, mes, diaAtual] = dataStr.split('-').map(Number);
+        const dia = diaOriginal || diaAtual;
+        let novoMes = mes + 1;
+        let novoAno = ano;
+        if (novoMes > 12) { novoMes = 1; novoAno += 1; }
+        const ultimoDiaDoMes = new Date(novoAno, novoMes, 0).getDate();
+        const diaAjustado = Math.min(dia, ultimoDiaDoMes);
+        return `${novoAno}-${String(novoMes).padStart(2, '0')}-${String(diaAjustado).padStart(2, '0')}`;
+    }
+
     function getDataVencimento(dia) {
         const d = String(dia).padStart(2, '0');
         return `${anoSelecionado}-${mesSelecionado}-${d}`;
@@ -494,9 +523,14 @@
             emprestimo: {
                 campos: [
                     { id: 'emprestimoDescricao', label: 'Credor / Descrição', type: 'text', placeholder: 'Ex: Banco X' },
-                    { id: 'emprestimoPrincipal', label: 'Valor Principal', type: 'number', step: '0.01' },
-                    { id: 'emprestimoJuros', label: 'Taxa Juros (%)', type: 'number', step: '0.1', placeholder: '10' },
-                    { id: 'emprestimoCategoria', label: 'Categoria', type: 'select', categoriaKey: 'emprestimo' }
+                    { id: 'emprestimoPrincipal', label: 'Valor Principal (Saldo Devedor)', type: 'number', step: '0.01' },
+                    { id: 'emprestimoJuros', label: 'Taxa Juros (% a.m.)', type: 'number', step: '0.1', placeholder: '10' },
+                    { id: 'emprestimoCategoria', label: 'Categoria', type: 'select', categoriaKey: 'emprestimo' },
+                    { id: 'emprestimoParcelado', label: 'Pagamento em Parcelas Fixas?', type: 'checkbox', toggleFn: 'toggleEmprestimoParcelasField' },
+                    { id: 'emprestimoTotalParcelas', label: 'Total de Parcelas', type: 'number', min: '1', max: '600', placeholder: 'Ex: 48', togglesWith: 'emprestimoParcelado' },
+                    { id: 'emprestimoParcelasPagas', label: 'Parcelas já Pagas', type: 'number', min: '0', placeholder: '0', togglesWith: 'emprestimoParcelado' },
+                    { id: 'emprestimoValorParcela', label: 'Valor da Parcela', type: 'number', step: '0.01', placeholder: 'Ex: 500.00', togglesWith: 'emprestimoParcelado' },
+                    { id: 'emprestimoDiaVencimento', label: 'Dia de Vencimento', type: 'number', min: '1', max: '31', placeholder: 'Ex: 10', togglesWith: 'emprestimoParcelado' }
                 ]
             },
             despesaAvulsa: {
@@ -522,16 +556,18 @@
         let html = '<div class="form-row">';
         config.campos.forEach(campo => {
             if (campo.type === 'checkbox') {
+                const toggleAttr = campo.toggleFn ? `${campo.toggleFn}('${campo.id}')` : 'toggleParcelasField()';
                 html += `<div class="form-group form-group-checkbox">
                     <label class="checkbox-label">
-                        <input type="checkbox" id="${campo.id}" onchange="toggleParcelasField()">
+                        <input type="checkbox" id="${campo.id}" onchange="${toggleAttr}">
                         <span>${campo.label}</span>
                     </label>
                 </div>`;
             } else {
                 const isParcelasField = campo.id.includes('TotalParcelas');
                 const isValorTotal = campo.id.includes('ValorTotal');
-                html += `<div class="form-group${isParcelasField ? ' parcelas-field hidden' : ''}"><label style="display:flex;align-items:center;gap:4px;">${campo.label}`;
+                const togglesWithClass = campo.togglesWith ? ` toggle-${campo.togglesWith} hidden` : '';
+                html += `<div class="form-group${isParcelasField ? ' parcelas-field hidden' : ''}${togglesWithClass}"><label style="display:flex;align-items:center;gap:4px;">${campo.label}`;
                 if (campo.categoriaKey) {
                     html += `<button type="button" class="btn-edit-categorias" onclick="abrirEditarCategorias('${campo.categoriaKey}')" title="Editar categorias"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> editar</button>`;
                 }
@@ -650,6 +686,18 @@
                 if (previewContainer) previewContainer.style.display = 'none';
             }
         }
+    }
+
+    // Toggle genérico: mostra/esconde todos os elementos com a classe
+    // "toggle-<checkboxId>" de acordo com o estado do checkbox.
+    // Usado pelo "Pagamento em Parcelas Fixas?" do formulário de Empréstimo
+    // (e pelo mesmo bloco no modal de edição de empréstimo).
+    function toggleEmprestimoParcelasField(checkboxId) {
+        const checkbox = document.getElementById(checkboxId);
+        const mostrar = !!(checkbox && checkbox.checked);
+        document.querySelectorAll('.toggle-' + checkboxId).forEach(el => {
+            el.classList.toggle('hidden', !mostrar);
+        });
     }
 
     // Atualizar preview das parcelas em tempo real
@@ -2557,7 +2605,34 @@
         const cat = document.getElementById('emprestimoCategoria').value || 'Outros';
         
         if (!desc || !principal) return alert('Preencha os campos obrigatórios!');
-        
+
+        // Parcelamento (opcional)
+        const parcelado = document.getElementById('emprestimoParcelado')?.checked || false;
+        let dadosParcelamento = { parcelado: false };
+
+        if (parcelado) {
+            const totalParcelas = parseInt(document.getElementById('emprestimoTotalParcelas')?.value) || 0;
+            const parcelasPagas = parseInt(document.getElementById('emprestimoParcelasPagas')?.value) || 0;
+            const valorParcela = parseFloat(document.getElementById('emprestimoValorParcela')?.value) || 0;
+            const diaVencimento = parseInt(document.getElementById('emprestimoDiaVencimento')?.value) || 0;
+
+            if (totalParcelas < 1 || valorParcela <= 0 || diaVencimento < 1 || diaVencimento > 31) {
+                return alert('Para empréstimo parcelado, informe total de parcelas, valor da parcela e dia de vencimento (1-31).');
+            }
+            if (parcelasPagas > totalParcelas) {
+                return alert('"Parcelas já pagas" não pode ser maior que o total de parcelas.');
+            }
+
+            dadosParcelamento = {
+                parcelado: true,
+                totalParcelas,
+                parcelasPagas,
+                valorParcela,
+                diaVencimento,
+                proximaParcelaData: calcularProximaParcelaData(diaVencimento)
+            };
+        }
+
         financeiro.emprestimos.push({
             id: gerarId(),
             descricao: desc,
@@ -2570,11 +2645,20 @@
             totalAmortizado: 0,
             historico: [],
             arquivado: false,
-            dataCriacao: new Date().toISOString()
+            dataCriacao: new Date().toISOString(),
+            ...dadosParcelamento
         });
         
         salvarDados();
         esconderForm('emprestimo');
+
+        // Resetar checkbox/campos de parcelamento para a próxima vez que o formulário for aberto
+        const chkParcelado = document.getElementById('emprestimoParcelado');
+        if (chkParcelado) {
+            chkParcelado.checked = false;
+            toggleEmprestimoParcelasField('emprestimoParcelado');
+        }
+
         renderizar();
     }
 
@@ -2714,6 +2798,7 @@
                 <button class="btn-salvar" onclick="confirmarAmortizar()">Confirmar</button>
             </div>
         `;
+        document.querySelector('#modalAmortizar .modal-header h3').textContent = 'Amortizar Dívida';
         abrirModal('modalAmortizar');
     }
 
@@ -2770,6 +2855,122 @@
         renderizar();
     }
 
+    // ==========================================
+    // EMPRÉSTIMOS PARCELADOS — pagar parcela
+    // ==========================================
+
+    // Abre o modal de Amortizar pré-configurado para "Pagar Parcela":
+    // valor sugerido = valor da parcela, data sugerida = próximo vencimento.
+    function abrirModalPagarParcela(id) {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
+        if (!emp || !emp.parcelado || emp.arquivado) return;
+
+        emprestimoSelecionado = id;
+        const numeroParcela = (emp.parcelasPagas || 0) + 1;
+        const valorSugerido = Math.min(emp.valorParcela || 0, emp.principal || 0);
+
+        const body = document.getElementById('modalAmortizarBody');
+        body.innerHTML = `
+            <div class="info-box info">
+                Registra o pagamento da parcela <strong>${numeroParcela}/${emp.totalParcelas}</strong>.
+                O valor é abatido do saldo devedor e a próxima parcela é avançada automaticamente.
+            </div>
+            <div class="info-box" style="background:rgba(52,152,219,0.1);border-color:rgba(52,152,219,0.3)">
+                <strong>Saldo Devedor:</strong> ${formatarMoeda(emp.principal)}
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Valor da Parcela</label>
+                    <input type="number" id="amortizarValor" step="0.01" value="${valorSugerido.toFixed(2)}">
+                </div>
+                <div class="form-group">
+                    <label>Data do Pagamento</label>
+                    <input type="date" id="amortizarData" value="${emp.proximaParcelaData || new Date().toISOString().split('T')[0]}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Comprovante (opcional)</label>
+                    <input type="file" id="amortizarComprovante" accept="image/*,.pdf">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalAmortizar')">Cancelar</button>
+                <button class="btn-salvar" onclick="confirmarPagarParcela()">Confirmar Pagamento</button>
+            </div>
+        `;
+        document.querySelector('#modalAmortizar .modal-header h3').textContent = '💳 Pagar Parcela';
+        abrirModal('modalAmortizar');
+    }
+
+    async function confirmarPagarParcela() {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoSelecionado));
+        if (!emp || !emp.parcelado) return;
+
+        const valorInformado = parseFloat(document.getElementById('amortizarValor').value) || 0;
+        const data = document.getElementById('amortizarData').value;
+
+        if (!valorInformado || valorInformado <= 0) return alert('Informe o valor!');
+
+        // Não deixa o saldo ficar negativo: a última parcela "real" pode ser
+        // menor que o valor cadastrado caso o saldo já esteja mais baixo
+        // (por amortizações extras feitas separadamente).
+        const valorAplicado = Math.min(valorInformado, emp.principal || 0);
+
+        const numeroParcela = (emp.parcelasPagas || 0) + 1;
+
+        // Criar comprovante com metadados completos
+        const fileInput = document.getElementById('amortizarComprovante');
+        const comprovante = await criarComprovante(
+            fileInput,
+            'amortizacao',
+            valorAplicado,
+            `${emp.descricao} - Parcela ${numeroParcela}/${emp.totalParcelas}`
+        );
+
+        emp.principal = Math.max(0, (emp.principal || 0) - valorAplicado);
+        emp.totalAmortizado = (emp.totalAmortizado || 0) + valorAplicado;
+        emp.parcelasPagas = numeroParcela;
+        if (emp.diaVencimento) {
+            emp.proximaParcelaData = avancarUmMes(emp.proximaParcelaData || calcularProximaParcelaData(emp.diaVencimento), emp.diaVencimento);
+        }
+
+        emp.historico.push({
+            tipo: 'parcela_paga',
+            valor: valorAplicado,
+            data: data,
+            comprovante: comprovante,
+            saldoRestante: emp.principal,
+            parcela: numeroParcela,
+            totalParcelas: emp.totalParcelas
+        });
+
+        // Adicionar ao histórico de pagamentos para exibição
+        if (!emp.historicoPagamentos) emp.historicoPagamentos = [];
+        emp.historicoPagamentos.push({
+            tipo: 'amortizacao',
+            valor: valorAplicado,
+            data: data
+        });
+
+        let msg = `Parcela ${numeroParcela}/${emp.totalParcelas} paga: ${formatarMoeda(valorAplicado)}`;
+
+        // Arquivar automaticamente se quitado (saldo zerado, juros zerados, ou todas as parcelas pagas)
+        const quitado = (emp.principal <= 0 && (emp.jurosAcumulados || 0) <= 0) || emp.parcelasPagas >= emp.totalParcelas;
+        if (quitado) {
+            emp.principal = 0;
+            emp.arquivado = true;
+            emp.arquivadoEm = new Date().toISOString();
+            financeiro.arquivados.emprestimos.push(emp);
+            msg = '🎉 Última parcela paga! Dívida quitada e arquivada.';
+        }
+
+        salvarDados();
+        fecharModal('modalAmortizar');
+        renderizar();
+        mostrarStatus(msg, 'success');
+    }
+
     function toggleAccordion(detailId, rowEl) {
         const detail = document.getElementById(detailId);
         const chev = document.getElementById('chev-' + detailId);
@@ -2817,6 +3018,34 @@
                     <input type="text" id="editEmpCategoria" value="${emp.categoria}">
                 </div>
             </div>
+            <div class="form-row">
+                <div class="form-group form-group-checkbox">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="editEmpParcelado" ${emp.parcelado ? 'checked' : ''} onchange="toggleEmprestimoParcelasField('editEmpParcelado')">
+                        <span>Pagamento em Parcelas Fixas?</span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row toggle-editEmpParcelado${emp.parcelado ? '' : ' hidden'}">
+                <div class="form-group">
+                    <label>Total de Parcelas</label>
+                    <input type="number" id="editEmpTotalParcelas" min="1" max="600" value="${emp.totalParcelas || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Parcelas já Pagas</label>
+                    <input type="number" id="editEmpParcelasPagas" min="0" value="${emp.parcelasPagas || 0}">
+                </div>
+            </div>
+            <div class="form-row toggle-editEmpParcelado${emp.parcelado ? '' : ' hidden'}">
+                <div class="form-group">
+                    <label>Valor da Parcela</label>
+                    <input type="number" id="editEmpValorParcela" step="0.01" value="${emp.valorParcela || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Dia de Vencimento</label>
+                    <input type="number" id="editEmpDiaVencimento" min="1" max="31" value="${emp.diaVencimento || ''}">
+                </div>
+            </div>
             <div class="form-buttons">
                 <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
                 <button class="btn-salvar" onclick="salvarEdicaoEmprestimo()">Salvar</button>
@@ -2830,10 +3059,50 @@
         const emp = financeiro.emprestimos.find(e => String(e.id) === String(emprestimoSelecionado));
         if (!emp) return;
 
-        emp.descricao = document.getElementById('editEmpDescricao').value.trim();
-        emp.principal = parseFloat(document.getElementById('editEmpPrincipal').value) || emp.principal;
-        emp.taxaJuros = parseFloat(document.getElementById('editEmpJuros').value) || emp.taxaJuros;
-        emp.categoria = document.getElementById('editEmpCategoria').value;
+        // 1) Ler todos os valores do formulário primeiro (sem mutar `emp` ainda)
+        const novaDescricao = document.getElementById('editEmpDescricao').value.trim();
+        const novoPrincipal = parseFloat(document.getElementById('editEmpPrincipal').value) || emp.principal;
+        const novaTaxa = parseFloat(document.getElementById('editEmpJuros').value) || emp.taxaJuros;
+        const novaCategoria = document.getElementById('editEmpCategoria').value;
+
+        const parcelado = document.getElementById('editEmpParcelado')?.checked || false;
+        let totalParcelas, parcelasPagas, valorParcela, novoDia;
+
+        // 2) Validar ANTES de tocar em `emp` — se algo for inválido, nada é alterado
+        if (parcelado) {
+            totalParcelas = parseInt(document.getElementById('editEmpTotalParcelas')?.value) || 0;
+            parcelasPagas = parseInt(document.getElementById('editEmpParcelasPagas')?.value) || 0;
+            valorParcela = parseFloat(document.getElementById('editEmpValorParcela')?.value) || 0;
+            novoDia = parseInt(document.getElementById('editEmpDiaVencimento')?.value) || 0;
+
+            if (totalParcelas < 1 || valorParcela <= 0 || novoDia < 1 || novoDia > 31) {
+                return alert('Para empréstimo parcelado, informe total de parcelas, valor da parcela e dia de vencimento (1-31).');
+            }
+            if (parcelasPagas > totalParcelas) {
+                return alert('"Parcelas já pagas" não pode ser maior que o total de parcelas.');
+            }
+        }
+
+        // 3) Validação passou (ou não é parcelado) — agora sim aplica as mudanças
+        emp.descricao = novaDescricao;
+        emp.principal = novoPrincipal;
+        emp.taxaJuros = novaTaxa;
+        emp.categoria = novaCategoria;
+        emp.parcelado = parcelado;
+
+        if (parcelado) {
+            emp.totalParcelas = totalParcelas;
+            emp.parcelasPagas = parcelasPagas;
+            emp.valorParcela = valorParcela;
+
+            // Se o dia de vencimento mudou (ou nunca foi definido), recalcula a próxima data
+            if (novoDia !== emp.diaVencimento || !emp.proximaParcelaData) {
+                emp.proximaParcelaData = calcularProximaParcelaData(novoDia);
+            }
+            emp.diaVencimento = novoDia;
+        }
+        // Se desativou o parcelamento, mantém os números antigos guardados (não exclui),
+        // apenas deixa de exibir badge/progresso/ação "Pagar Parcela".
 
         emp.historico.push({
             tipo: 'edicao',
@@ -3780,6 +4049,12 @@
             const percentQuitado = e.principalOriginal > 0 ? Math.round(((e.principalOriginal - e.principal) / e.principalOriginal) * 100) : 0;
             const temJurosPendentes = (e.jurosAcumulados || 0) > 0;
             const detailId = 'detail-emp-' + e.id;
+
+            // Parcelamento (opcional)
+            const parcelasPagas = e.parcelasPagas || 0;
+            const percentParcelas = (e.parcelado && e.totalParcelas > 0) ? Math.min(100, Math.round((parcelasPagas / e.totalParcelas) * 100)) : 0;
+            const parcelasRestantes = e.parcelado ? Math.max(0, e.totalParcelas - parcelasPagas) : 0;
+
             const historicoHtml = (e.historicoPagamentos && e.historicoPagamentos.length > 0)
                 ? e.historicoPagamentos.slice().reverse().slice(0,5).map(h => `
                     <div class="emp-historico-item">
@@ -3799,7 +4074,7 @@
                             </svg>
                         </span>
                     </td>
-                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">${e.descricao}</td>
+                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">${e.descricao}${e.parcelado ? `<span class="badge parcela">${parcelasPagas}/${e.totalParcelas}</span>` : ''}</td>
                     <td class="acc-taxa-val">${e.taxaJuros}% a.m.</td>
                     <td class="acc-original-val">${formatarMoeda(e.principalOriginal)}</td>
                     <td class="acc-saldo-val">${formatarMoeda(e.principal)}</td>
@@ -3824,6 +4099,26 @@
                     <td colspan="8">
                         <div class="emp-detail-box">
                             <div class="emp-acoes-col">
+                                ${e.parcelado ? `
+                                <div class="emp-parcela-info">
+                                    <div class="emp-parcela-header">
+                                        <span>Parcela ${parcelasPagas}/${e.totalParcelas}</span>
+                                        <span>${formatarMoeda(e.valorParcela)}/mês</span>
+                                    </div>
+                                    <div class="acc-bar"><div class="acc-bar-fill parcela" style="width:${percentParcelas}%"></div></div>
+                                    <div class="emp-parcela-detalhes">
+                                        ${parcelasRestantes > 0
+                                            ? `Próxima: ${formatarData(e.proximaParcelaData)} · Faltam ${parcelasRestantes} ${parcelasRestantes === 1 ? 'parcela' : 'parcelas'} (${formatarMoeda(parcelasRestantes * (e.valorParcela || 0))})`
+                                            : 'Todas as parcelas registradas'}
+                                    </div>
+                                </div>
+                                ` : ''}
+                                ${(e.parcelado && parcelasPagas < e.totalParcelas) ? `
+                                <button class="emp-btn-acao emp-btn-parcela" onclick="abrirModalPagarParcela(${e.id})">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 17"></polyline></svg>
+                                    Pagar Parcela (${parcelasPagas + 1}/${e.totalParcelas})
+                                </button>
+                                ` : ''}
                                 <button class="emp-btn-acao" onclick="gerarJurosMes(${e.id})">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                                     Gerar Juros (Mensal)
