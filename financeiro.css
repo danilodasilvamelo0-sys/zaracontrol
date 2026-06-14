@@ -4184,4 +4184,37 @@ tr.grupo-pausado td {
         padding: 6px 6px;
     }
 }
+/* ===== EMPRÉSTIMOS PARCELADOS ===== */
+.hidden { display: none !important; }
+
+.emp-parcela-info {
+    background: #fafafa;
+    border: 1px solid rgba(26,26,26,0.08);
+    border-radius: 10px;
+    padding: 10px 13px;
+    margin-bottom: 10px;
+}
+.emp-parcela-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.82em;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+}
+.emp-parcela-detalhes {
+    font-size: 0.72em;
+    color: rgba(26,26,26,0.55);
+    margin-top: 6px;
+}
+.emp-btn-parcela {
+    background: rgba(46,204,113,0.08) !important;
+    border-color: rgba(46,204,113,0.3) !important;
+    color: #1e8449 !important;
+}
+.emp-btn-parcela:hover {
+    background: rgba(46,204,113,0.15) !important;
+    border-color: rgba(46,204,113,0.5) !important;
+}
 
