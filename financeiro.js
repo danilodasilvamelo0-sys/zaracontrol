@@ -128,6 +128,42 @@
         return `${novoAno}-${String(novoMes).padStart(2, '0')}-${String(diaAjustado).padStart(2, '0')}`;
     }
 
+    // Soma o valor das parcelas de empréstimos/financiamentos parcelados cuja
+    // próxima parcela é referente ao mês selecionado (ainda não paga).
+    //
+    // - Mês selecionado = mês real atual: também inclui parcelas ATRASADAS
+    //   (proximaParcelaData de um mês anterior que ainda não foi paga), para
+    //   que uma dívida em atraso não "desapareça" das Despesas Totais.
+    // - Outros meses (navegação para passado/futuro): correspondência exata,
+    //   evitando contar a mesma parcela em duas telas de meses diferentes.
+    //
+    // Por que normalmente "===" e não "<=": quando o usuário clica em
+    // "Pagar Parcela", proximaParcelaData avança para o mês seguinte e o
+    // valor pago passa a entrar pelo histórico de pagamentos
+    // (totalEmpPagoMes) — então deixa de bater aqui, evitando contar a
+    // mesma parcela duas vezes no mesmo mês.
+    function getParcelasPendentesMes() {
+        const mesAnoRef = getMesAnoKey();
+        const hoje = new Date();
+        const mesAnoHoje = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+        const isMesAtual = mesAnoRef === mesAnoHoje;
+
+        let total = 0;
+        const detalhes = [];
+        (financeiro.emprestimos || []).forEach(e => {
+            if (e.arquivado || !e.parcelado) return;
+            if ((e.parcelasPagas || 0) >= (e.totalParcelas || 0)) return;
+            if (!e.proximaParcelaData) return;
+            const parcelaMes = e.proximaParcelaData.substring(0, 7);
+            const conta = isMesAtual ? (parcelaMes <= mesAnoRef) : (parcelaMes === mesAnoRef);
+            if (conta) {
+                total += (e.valorParcela || 0);
+                detalhes.push({ id: e.id, descricao: e.descricao, valor: e.valorParcela || 0, atrasada: parcelaMes < mesAnoRef });
+            }
+        });
+        return { total, detalhes };
+    }
+
     function getDataVencimento(dia) {
         const d = String(dia).padStart(2, '0');
         return `${anoSelecionado}-${mesSelecionado}-${d}`;
@@ -3570,8 +3606,13 @@
         // Juros acumulados (gerados mas não pagos) — conta como despesa pendente
         const jurosAcumuladosTotal = emprestimosAtivos.reduce((s, e) => s + (e.jurosAcumulados || 0), 0);
 
-        // Despesas Totais = fixas + parceladas + avulsas + empréstimos (pagos + juros pendentes)
-        const totalEmprestimosMes = totalEmpPagoMes + jurosAcumuladosTotal;
+        // Parcelas de financiamentos com vencimento neste mês, ainda não pagas
+        const parcelasPendentesInfo = getParcelasPendentesMes();
+        const totalParcelasPendentesMes = parcelasPendentesInfo.total;
+        const temParcelaAtrasada = parcelasPendentesInfo.detalhes.some(d => d.atrasada);
+
+        // Despesas Totais = fixas + parceladas + avulsas + empréstimos (pagos + juros pendentes + parcelas a vencer)
+        const totalEmprestimosMes = totalEmpPagoMes + jurosAcumuladosTotal + totalParcelasPendentesMes;
         const despesasTotaisMes = totalFixasMes + totalParceladasMes + totalAvulsasMes + totalEmprestimosMes;
         
         // Para detalhamento: pagas vs pendentes
@@ -3615,6 +3656,7 @@
             <span>Parceladas: ${formatarMoeda(totalParceladasMes)}</span>
             ${totalAvulsasMes > 0 ? `<span>Variáveis: ${formatarMoeda(totalAvulsasMes)}</span>` : ''}
             ${totalEmpPagoMes > 0 ? `<span>Emp. Pago: ${formatarMoeda(totalEmpPagoMes)}</span>` : ''}
+            ${totalParcelasPendentesMes > 0 ? `<span${temParcelaAtrasada ? ' style="color:#e74c3c;"' : ''}>Parcelas (Financ.)${temParcelaAtrasada ? ' atrasada(s)' : ''}: ${formatarMoeda(totalParcelasPendentesMes)}</span>` : ''}
             ${jurosAcumuladosTotal > 0 ? `<span style="color:#e74c3c;">Juros Pendentes: ${formatarMoeda(jurosAcumuladosTotal)}</span>` : ''}
         `;
         
@@ -4772,12 +4814,13 @@
 
         const dividas = pa_listarDividas();
         const minimosAtuais = dividas.reduce((s, d) => s + pa_jurosMes(d), 0);
+        const parcelasPendentes = getParcelasPendentesMes().total;
 
         const receitaTotal = receitasFixasMes + receitasVarMes;
         const despesaTotal = despesasFixasMes + despesasVarMes + despesasAvulsasMes;
-        const sobra = receitaTotal - despesaTotal - minimosAtuais;
+        const sobra = receitaTotal - despesaTotal - minimosAtuais - parcelasPendentes;
 
-        return { receitaTotal, despesaTotal, minimosAtuais, sobra, sugestaoExtra: Math.max(0, Math.round(sobra * 100) / 100) };
+        return { receitaTotal, despesaTotal, minimosAtuais, parcelasPendentes, sobra, sugestaoExtra: Math.max(0, Math.round(sobra * 100) / 100) };
     }
 
     // Reserva de emergência: quanto falta para cobrir N meses de despesas fixas
@@ -5011,12 +5054,14 @@
 
         const dividas = pa_listarDividas();
         const minimos = dividas.reduce((s, d) => s + pa_jurosMes(d), 0);
+        const parcelasPendentes = getParcelasPendentesMes().total;
+        const totalMinimos = minimos + parcelasPendentes;
 
         const receitaTotal = receitasFixasMes + receitasVarMes;
-        const sobra = receitaTotal - despesasEssenciais - despesasVariaveis - minimos;
-        const percComprometido = receitaTotal > 0 ? (minimos / receitaTotal) * 100 : 0;
+        const sobra = receitaTotal - despesasEssenciais - despesasVariaveis - totalMinimos;
+        const percComprometido = receitaTotal > 0 ? (totalMinimos / receitaTotal) * 100 : 0;
 
-        return { receitaTotal, despesasEssenciais, despesasVariaveis, minimos, sobra, percComprometido };
+        return { receitaTotal, despesasEssenciais, despesasVariaveis, minimos, parcelasPendentes, totalMinimos, sobra, percComprometido };
     }
 
     // Barra de progresso em caracteres (ex.: "████████░░░░░░░░░░░░")
@@ -5106,7 +5151,7 @@
         } else if (plano.dividas.length > 0) {
             d2.push('Suas taxas estão em níveis administráveis. Ainda assim, vale contatar os credores e perguntar sobre descontos para pagamento à vista ou antecipado.');
         }
-        if (diag.sobra <= 0 && diag.minimos > 0) {
+        if (diag.sobra <= 0 && diag.totalMinimos > 0) {
             d2.push('Com a margem ainda apertada, avalie formas de aumentar a renda no curto prazo (venda de itens, freelances, serviços extras) — qualquer valor adicional acelera o plano.');
         } else if (plano.dividas.length > 0) {
             d2.push('Direcione qualquer renda extra (13º, bônus, freelances) diretamente para a dívida prioritária — isso pode antecipar a quitação em meses.');
@@ -5200,7 +5245,7 @@
                 <tr><td>Receita líquida mensal</td><td>${formatarMoeda(diag.receitaTotal)}</td></tr>
                 <tr><td>Despesas essenciais</td><td>${formatarMoeda(diag.despesasEssenciais)}</td></tr>
                 <tr><td>Despesas variáveis</td><td>${formatarMoeda(diag.despesasVariaveis)}</td></tr>
-                <tr><td>Pagamentos mínimos das dívidas</td><td>${formatarMoeda(diag.minimos)}</td></tr>
+                <tr><td>Pagamentos mínimos das dívidas${diag.parcelasPendentes > 0 ? ' (inclui parcelas de financiamento)' : ''}</td><td>${formatarMoeda(diag.totalMinimos)}</td></tr>
                 <tr><td>Sobra mensal disponível</td><td class="${diag.sobra >= 0 ? 'relatorio-positivo' : 'relatorio-negativo'}">${formatarMoeda(diag.sobra)}</td></tr>
                 <tr><td>% da renda comprometida com dívidas</td><td>${diag.percComprometido.toFixed(1)}%</td></tr>
             </table>
@@ -5346,7 +5391,8 @@
                 }
             });
         });
-        const totalDespesas = fixasMesSab.reduce((s, d) => s + d.valor, 0) + variaveisMes.reduce((s, d) => s + d.valor, 0) + avulsasMesSab.reduce((s, d) => s + d.valor, 0) + empPagoSab;
+        const totalParcelasPendentesSab = getParcelasPendentesMes().total;
+        const totalDespesas = fixasMesSab.reduce((s, d) => s + d.valor, 0) + variaveisMes.reduce((s, d) => s + d.valor, 0) + avulsasMesSab.reduce((s, d) => s + d.valor, 0) + empPagoSab + totalParcelasPendentesSab;
         const despesasPagas = fixasMesSab.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) + 
                              variaveisMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) +
                              avulsasMesSab.filter(d => d.pago).reduce((s, d) => s + d.valor, 0) +
