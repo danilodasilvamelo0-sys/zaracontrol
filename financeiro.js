@@ -1225,7 +1225,7 @@
                 <button class="btn-salvar" onclick="salvarEdicaoReceita()">Salvar</button>
             </div>
         `;
-        document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Receita';
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Receita';
         abrirModal('modalEditar');
     }
 
@@ -1406,7 +1406,7 @@
                 <button class="btn-salvar" onclick="salvarValorInstancia(${id})">Salvar</button>
             </div>
         `;
-        document.querySelector('#modalEditar .modal-header h3').textContent = '💧 Editar Valor (só este mês)';
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Valor (só este mês)';
         abrirModal('modalEditar');
     }
 
@@ -1656,7 +1656,7 @@
                 <button class="btn-salvar" onclick="salvarEdicaoModelo()">Salvar</button>
             </div>
         `;
-        document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Despesa Fixa';
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Despesa Fixa';
         abrirModal('modalEditar');
     }
 
@@ -1831,7 +1831,7 @@
             </div>
         `;
 
-        document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Parcela';
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Parcela';
         abrirModal('modalEditar');
     }
 
@@ -1949,7 +1949,7 @@
                 <button class="btn-salvar" onclick="salvarEdicaoDespesaParcelada('${grupoParcelaId}')">Salvar</button>
             </div>
         `;
-        document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Compra Parcelada';
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Compra Parcelada';
         abrirModal('modalEditar');
     }
 
@@ -2271,7 +2271,7 @@
                     <button class="btn-salvar" onclick="salvarEdicaoDespesaVariavel()">Salvar</button>
                 </div>
             `;
-            document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Despesa';
+            document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Despesa';
         }
         abrirModal('modalEditar');
     }
@@ -3134,7 +3134,7 @@
                 <button class="btn-salvar" onclick="salvarEdicaoEmprestimo()">Salvar</button>
             </div>
         `;
-        document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Empréstimo';
+        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Empréstimo';
         abrirModal('modalEditar');
     }
 
@@ -3821,9 +3821,9 @@
                     </span>
                 </td>
                 <td class="acc-descricao">${r.descricao}</td>
-                <td class="col-cat"><span class="categoria">${r.categoria}</span></td>
-                <td class="col-cat acc-condicao">${formatarData(r.data)}</td>
-                <td style="text-align:right;" class="${r.recebido ? 'valor-positivo' : 'valor-negativo'}">${formatarMoeda(r.valor)}</td>
+                <td class="col-cat acc-mobile-meta"><span class="categoria">${r.categoria}</span></td>
+                <td class="col-cat acc-condicao acc-mobile-meta">${formatarData(r.data)}</td>
+                <td style="text-align:right;" class="${r.recebido ? 'valor-positivo' : 'valor-negativo'} acc-mobile-valor">${formatarMoeda(r.valor)}</td>
                 <td>
                     <div style="display:flex;gap:4px;">
                         <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
@@ -3851,9 +3851,9 @@
                     </span>
                 </td>
                 <td class="acc-descricao">${r.descricao}</td>
-                <td class="col-cat"><span class="categoria">${r.categoria}</span></td>
-                <td class="col-cat acc-condicao">${formatarData(r.data)}</td>
-                <td style="text-align:right;" class="${r.recebido ? 'valor-positivo' : 'valor-negativo'}">${formatarMoeda(r.valor)}</td>
+                <td class="col-cat acc-mobile-meta"><span class="categoria">${r.categoria}</span></td>
+                <td class="col-cat acc-condicao acc-mobile-meta">${formatarData(r.data)}</td>
+                <td style="text-align:right;" class="${r.recebido ? 'valor-positivo' : 'valor-negativo'} acc-mobile-valor">${formatarMoeda(r.valor)}</td>
                 <td>
                     <div style="display:flex;gap:4px;">
                         <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
@@ -3902,16 +3902,16 @@
                         </span>
                     </td>
                     <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">${despesaRef.descricao}</td>
-                    <td><span class="categoria">${despesaRef.categoria}</span></td>
-                    <td class="acc-condicao">${formatarData(despesaRef.dia ? (getMesAnoKey() + '-' + String(despesaRef.dia).padStart(2,'0')) : despesaRef.data)}</td>
-                    <td>
+                    <td class="acc-mobile-meta"><span class="categoria">${despesaRef.categoria}</span></td>
+                    <td class="acc-condicao acc-mobile-meta">${formatarData(despesaRef.dia ? (getMesAnoKey() + '-' + String(despesaRef.dia).padStart(2,'0')) : despesaRef.data)}</td>
+                    <td class="acc-mobile-meta">
                         ${todasPagas
                             ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Pago</span>'
                             : estaVencido
                                 ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Vencido</span>'
                                 : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>'}
                     </td>
-                    <td class="${todasPagas ? 'valor-positivo' : 'valor-negativo'}" style="text-align:right;">
+                    <td class="${todasPagas ? 'valor-positivo' : 'valor-negativo'} acc-mobile-valor" style="text-align:right;">
                         ${formatarMoeda(todasPagas ? (despesaRef.valor || 0) : totalPendente)}
                     </td>
                     <td>
@@ -3998,9 +3998,9 @@
                 <tr class="acc-row">
                     <td></td>
                     <td class="acc-descricao">${d.descricao}</td>
-                    <td class="acc-condicao">${formatarData(d.data)}</td>
-                    <td>—</td>
-                    <td class="${valorClass}" style="text-align:right;">${formatarMoeda(d.valor)}</td>
+                    <td class="acc-condicao acc-mobile-meta">${formatarData(d.data)}</td>
+                    <td class="acc-mobile-meta">—</td>
+                    <td class="${valorClass} acc-mobile-valor" style="text-align:right;">${formatarMoeda(d.valor)}</td>
                     <td>
                         <button class="acc-delete-btn" onclick="deletarDespesaVariavel(${d.id})" title="Excluir">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
@@ -4045,14 +4045,14 @@
                         ${estaPausado ? '<span class="badge pausado" style="margin-left:6px;">⏸</span>' : ''}
                         ${atrasadasDoGrupo.length > 0 ? `<span style="margin-left:6px;background:rgba(231,76,60,0.15);color:#e74c3c;padding:2px 7px;border-radius:8px;font-size:0.72em;font-weight:600;">${atrasadasDoGrupo.length} em atraso</span>` : ''}
                     </td>
-                    <td class="acc-condicao">${condicao}</td>
-                    <td>
+                    <td class="acc-condicao acc-mobile-meta">${condicao}</td>
+                    <td class="acc-mobile-meta">
                         <div class="acc-progress-wrap">
                             <div class="acc-bar"><div class="acc-bar-fill parcela" style="width:${percentPago}%"></div></div>
                             <span style="font-size:0.75em;color:rgba(26,26,26,0.4);white-space:nowrap;">${parcelasPagasCount}/${totalParcelas}</span>
                         </div>
                     </td>
-                    <td class="acc-valor-total" style="text-align:right;">${formatarMoeda(valorTotal)}</td>
+                    <td class="acc-valor-total acc-mobile-valor" style="text-align:right;">${formatarMoeda(valorTotal)}</td>
                     <td>
                         <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
                             <button class="acc-delete-btn" onclick="editarDespesaParcelada(${primeiraParcela.grupoParcelaId || primeiraParcela.id})" title="Editar descrição/categoria (todas as parcelas)" style="color:rgba(184,151,46,0.6);">
@@ -4123,10 +4123,10 @@
                         </span>
                     </td>
                     <td class="acc-descricao">${d.descricao}</td>
-                    <td><span class="categoria">${d.categoria}</span></td>
-                    <td class="acc-condicao">${formatarData(d.data)}</td>
-                    <td>${badgeSt}</td>
-                    <td style="text-align:right;" class="${d.pago ? 'valor-positivo' : 'valor-negativo'}">${formatarMoeda(d.valor)}</td>
+                    <td class="acc-mobile-meta"><span class="categoria">${d.categoria}</span></td>
+                    <td class="acc-condicao acc-mobile-meta">${formatarData(d.data)}</td>
+                    <td class="acc-mobile-meta">${badgeSt}</td>
+                    <td style="text-align:right;" class="${d.pago ? 'valor-positivo' : 'valor-negativo'} acc-mobile-valor">${formatarMoeda(d.valor)}</td>
                     <td>
                         <div style="display:flex;gap:4px;">
                             <button class="acc-delete-btn" onclick="editarDespesaAvulsa(${d.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
@@ -4173,11 +4173,11 @@
                         </span>
                     </td>
                     <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">${e.descricao}${e.parcelado ? `<span class="badge parcela">${parcelasPagas}/${e.totalParcelas}</span>` : ''}</td>
-                    <td class="acc-taxa-val">${e.taxaJuros}% a.m.</td>
-                    <td class="acc-original-val">${formatarMoeda(e.principalOriginal)}</td>
-                    <td class="acc-saldo-val">${formatarMoeda(e.principal)}</td>
-                    <td class="acc-juros-val">${formatarMoeda(e.jurosAcumulados || 0)}</td>
-                    <td>
+                    <td class="acc-taxa-val acc-mobile-meta">${e.taxaJuros}% a.m.</td>
+                    <td class="acc-original-val acc-mobile-meta">${formatarMoeda(e.principalOriginal)}</td>
+                    <td class="acc-saldo-val acc-mobile-valor">${formatarMoeda(e.principal)}</td>
+                    <td class="acc-juros-val acc-mobile-meta">${formatarMoeda(e.jurosAcumulados || 0)}</td>
+                    <td class="acc-mobile-meta">
                         <div class="acc-progress-wrap acc-quitacao-wrap">
                             <div class="acc-bar"><div class="acc-bar-fill emprestimo" style="width:${percentQuitado}%"></div></div>
                         </div>
