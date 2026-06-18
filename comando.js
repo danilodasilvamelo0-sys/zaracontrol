@@ -173,7 +173,7 @@ function saveAlvo(mode){
   const btn=document.getElementById(`alvo-${mode}-btn`);
   if(!inp||!inp.value.trim())return;
   S[mode].alvo=inp.value.trim();
-  btn.classList.add('done');btn.textContent='✓ REGISTRADO';
+  btn.classList.add('done');btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> REGISTRADO';
   saveState();showToast('Alvo registrado.',false);
 }
 
@@ -182,7 +182,7 @@ function renderCofre(){
   const c=document.getElementById('cofreList');if(!c)return;
   const items=S.thomas.cofre||[];
   if(items.length===0){c.innerHTML='<div style="padding:16px 20px;font-family:Cormorant Garamond,serif;font-style:italic;color:var(--tf);font-size:.85em">O cofre está vazio. Adicione seu primeiro princípio.</div>';return;}
-  c.innerHTML=items.map((txt,i)=>`<div class="cofre-item"><div class="cofre-dot"></div><div class="cofre-text">"${txt}"</div><button class="cofre-del" onclick="delCofre(${i})">✕</button></div>`).join('');
+  c.innerHTML=items.map((txt,i)=>`<div class="cofre-item"><div class="cofre-dot"></div><div class="cofre-text">"${txt}"</div><button class="cofre-del" onclick="delCofre(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`).join('');
 }
 function addCofre(){
   const inp=document.getElementById('cofreInp');if(!inp||!inp.value.trim())return;
@@ -250,8 +250,8 @@ function updateUI(){
 
   // Alvo
   setVal('alvo-toji',S.toji.alvo||'');setVal('alvo-thomas',S.thomas.alvo||'');
-  if(S.toji.alvo){const b=document.getElementById('alvo-toji-btn');if(b){b.classList.add('done');b.textContent='✓ REGISTRADO';}}
-  if(S.thomas.alvo){const b=document.getElementById('alvo-thomas-btn');if(b){b.classList.add('done');b.textContent='✓ REGISTRADO';}}
+  if(S.toji.alvo){const b=document.getElementById('alvo-toji-btn');if(b){b.classList.add('done');b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> REGISTRADO';}}
+  if(S.thomas.alvo){const b=document.getElementById('alvo-thomas-btn');if(b){b.classList.add('done');b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> REGISTRADO';}}
 
   // Fase
   updateFase('t',ts,7);updateFase('th',thms,6);
