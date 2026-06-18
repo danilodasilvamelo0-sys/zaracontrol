@@ -1904,6 +1904,77 @@
         mostrarStatus(`Parcela ${parcela.parcelaAtual} atualizada${Math.abs(diferenca) >= 0.01 ? ' · Total da dívida recalculado' : ''}`, 'success');
     }
 
+    // ==========================================
+    // EDITAR DESPESA PARCELADA (descrição/categoria do GRUPO)
+    // Atualiza todas as parcelas do mesmo grupoParcelaId de uma vez,
+    // para que a Parcela 3/12 não fique com nome diferente da 4/12.
+    // Para mudar valor/data/nota de UMA parcela específica, use o
+    // lápis dentro do detalhamento de cada parcela (editarParcelaIndividual).
+    // ==========================================
+    function editarDespesaParcelada(grupoParcelaId) {
+        const parcelas = financeiro.despesasVariaveis.filter(d =>
+            String(d.grupoParcelaId) === String(grupoParcelaId)
+        );
+        if (parcelas.length === 0) { console.warn('editarDespesaParcelada: grupo não encontrado', grupoParcelaId); return; }
+
+        const ref = parcelas[0];
+        itemEditando = { tipo: 'despesaParcelada', grupoParcelaId };
+
+        const categoriasDisponiveis = getCategorias('despesaVariavel');
+        const valorTotalAtual = parcelas.reduce((s, p) => s + (p.valor || 0), 0);
+
+        const body = document.getElementById('modalEditarBody');
+        body.innerHTML = `
+            <div class="info-box" style="background:rgba(184,151,46,0.08);border-color:rgba(184,151,46,0.3)">
+                Isto edita <strong>todas as ${parcelas.length} parcelas</strong> deste grupo (descrição e categoria).
+                Para mudar o valor, a data ou adicionar uma nota em uma parcela específica, use o lápis dentro do detalhamento de cada parcela.
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" id="editParcDescricao" value="${ref.descricao}">
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="editParcCategoria">
+                        ${categoriasDisponiveis.map(c => `<option value="${c}" ${c === ref.categoria ? 'selected' : ''}>${c}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+            <div class="info-box">
+                <small>Total do grupo: <strong>${formatarMoeda(valorTotalAtual)}</strong> em ${parcelas.length}x</small>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoDespesaParcelada('${grupoParcelaId}')">Salvar</button>
+            </div>
+        `;
+        document.querySelector('#modalEditar .modal-header h3').textContent = '✏️ Editar Compra Parcelada';
+        abrirModal('modalEditar');
+    }
+
+    function salvarEdicaoDespesaParcelada(grupoParcelaId) {
+        const novaDescricao = document.getElementById('editParcDescricao').value.trim();
+        const novaCategoria = document.getElementById('editParcCategoria').value;
+
+        if (!novaDescricao) return alert('A descrição não pode ficar em branco!');
+
+        const parcelas = financeiro.despesasVariaveis.filter(d =>
+            String(d.grupoParcelaId) === String(grupoParcelaId)
+        );
+        if (parcelas.length === 0) return;
+
+        parcelas.forEach(p => {
+            p.descricao = novaDescricao;
+            p.categoria = novaCategoria;
+        });
+
+        salvarDados();
+        fecharModal('modalEditar');
+        renderizar();
+        mostrarStatus('Compra parcelada atualizada', 'success');
+    }
+
     function togglePagoVariavel(id) {
         id = isNaN(id) ? id : Number(id);
         const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
@@ -3984,7 +4055,7 @@
                     <td class="acc-valor-total" style="text-align:right;">${formatarMoeda(valorTotal)}</td>
                     <td>
                         <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
-                            <button class="acc-delete-btn" onclick="editarDespesaParcelada && editarDespesaParcelada(${primeiraParcela.grupoParcelaId || primeiraParcela.id})" title="Editar" style="color:rgba(184,151,46,0.6);">
+                            <button class="acc-delete-btn" onclick="editarDespesaParcelada(${primeiraParcela.grupoParcelaId || primeiraParcela.id})" title="Editar descrição/categoria (todas as parcelas)" style="color:rgba(184,151,46,0.6);">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             </button>
                             <button class="acc-delete-btn" onclick="deletarTodasParcelas(${primeiraParcela.id})" title="Excluir">
