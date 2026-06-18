@@ -2587,65 +2587,7 @@ tr.grupo-pausado td {
     font-style: normal;
 }
 
-/* Citação do Dia */
-.citacao-dia {
-    background: linear-gradient(135deg, rgba(212, 175, 125, 0.15) 0%, rgba(212, 175, 125, 0.05) 100%);
-    border: 1px solid rgba(212, 175, 125, 0.3);
-    border-radius: 15px;
-    padding: 20px 25px;
-    margin-bottom: 25px;
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-}
-
-.citacao-icone {
-    font-size: 1.6em;
-    flex-shrink: 0;
-    line-height: 1;
-}
-
-.citacao-conteudo {
-    flex: 1;
-}
-
-.citacao-texto {
-    font-family: 'Montserrat', sans-serif;
-    font-size: var(--font-base);
-    font-weight: var(--fw-medium);
-    color: #1a1a1a;
-    font-style: normal;
-    line-height: 1.7;
-    margin-bottom: 8px;
-    -webkit-font-smoothing: antialiased;
-}
-
-.citacao-fonte {
-    font-family: 'Montserrat', sans-serif;
-    font-size: var(--font-sm);
-    font-weight: var(--fw-semi);
-    color: #7a5c10;
-}
-
-/* Diagnóstico Financeiro */
-.diagnostico-container {
-    background: #f8f6f0 !important;
-    border: 1px solid rgba(26,26,26,0.06);
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 25px;
-}
-
-.diagnostico-container h4 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: var(--font-xs);
-    color: rgba(26,26,26,0.55);
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    margin-bottom: 15px;
-    font-weight: var(--fw-bold);
-}
-
+/* Diagnóstico Financeiro (classes reaproveitadas pelo Plano de Quitação de Dívidas) */
 .diagnostico-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -2691,96 +2633,7 @@ tr.grupo-pausado td {
     margin-top: 3px;
 }
 
-/* Sugestões Lista */
-.sugestoes-lista {
-    margin-bottom: 25px;
-}
-
-.sugestao-card {
-    background: #ffffff !important;
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 12px;
-    border-left: 4px solid;
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
-}
-
-.sugestao-card:last-child {
-    margin-bottom: 0;
-}
-
-.sugestao-card.divida { border-left-color: #e74c3c; background: rgba(231, 76, 60, 0.04) !important; }
-.sugestao-card.economia { border-left-color: #2ecc71; background: rgba(46, 204, 113, 0.04) !important; }
-.sugestao-card.corte { border-left-color: #f39c12; background: rgba(243, 156, 18, 0.04) !important; }
-.sugestao-card.investimento { border-left-color: #9b59b6; background: rgba(155, 89, 182, 0.04) !important; }
-.sugestao-card.sabedoria { border-left-color: #b8972e; background: rgba(184, 151, 46, 0.04) !important; }
-
-.sugestao-icone {
-    font-size: 1.5em;
-    flex-shrink: 0;
-    width: 40px;
-    text-align: center;
-}
-
-.sugestao-conteudo {
-    flex: 1;
-}
-
-.sugestao-titulo {
-    font-size: 1em;
-    font-weight: 600;
-    color: #1a1a1a;
-    margin-bottom: 6px;
-}
-
-.sugestao-texto {
-    font-size: 0.88em;
-    color: rgba(26, 26, 26, 0.8);
-    line-height: 1.6;
-    margin-bottom: 8px;
-}
-
-.sugestao-fonte {
-    font-size: var(--font-xs);
-    color: #7a5c10;
-    font-style: italic;
-    font-weight: var(--fw-medium);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-.sugestao-acao {
-    font-size: 0.82em;
-    color: #5a4a0e;
-    font-weight: 600;
-    margin-top: 8px;
-    padding: 6px 12px;
-    background: rgba(184, 151, 46, 0.1);
-    border: 1px solid rgba(184, 151, 46, 0.2);
-    border-radius: 8px;
-    display: inline-block;
-}
-
-/* Plano de Ação */
-.plano-acao {
-    background: #f8f6f0 !important;
-    border: 1px solid rgba(26,26,26,0.06);
-    border-radius: 15px;
-    padding: 20px;
-}
-
-.plano-acao h4 {
-    font-size: 0.85em;
-    color: rgba(26,26,26,0.5);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 15px;
-    font-weight: 500;
-}
-
+/* Plano de Ação (classes reaproveitadas pelo Plano de Quitação de Dívidas) */
 .plano-lista {
     display: flex;
     flex-direction: column;
@@ -2818,45 +2671,9 @@ tr.grupo-pausado td {
     flex: 1;
 }
 
-.plano-prioridade {
-    font-size: 0.7em;
-    padding: 4px 10px;
-    border-radius: 10px;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.plano-prioridade.urgente {
-    background: rgba(231, 76, 60, 0.2);
-    color: #e74c3c;
-}
-
-.plano-prioridade.importante {
-    background: rgba(243, 156, 18, 0.2);
-    color: #f39c12;
-}
-
-.plano-prioridade.medio {
-    background: rgba(52, 152, 219, 0.2);
-    color: #3498db;
-}
-
 @media (max-width: 768px) {
-    .citacao-dia {
-        flex-direction: column;
-        text-align: center;
-    }
-
     .diagnostico-grid {
         grid-template-columns: 1fr 1fr;
-    }
-
-    .sugestao-card {
-        flex-direction: column;
-    }
-
-    .sugestao-icone {
-        width: auto;
     }
 }
 
