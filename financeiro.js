@@ -794,7 +794,7 @@
                         Diferença: ${formatarMoeda(diferenca)} 
                         <button type="button" class="btn-ajustar" onclick="ajustarUltimaParcelaNovo()">Ajustar última</button>
                     </div>
-                ` : '<div class="soma-ok">✓ Valores corretos</div>'}
+                ` : '<div class="soma-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Valores corretos</div>'}
             </div>
         `;
         
@@ -816,7 +816,7 @@
         if (totalTopEl) totalTopEl.textContent = formatarMoeda(total);
         if (statusEl) {
             if (Math.abs(diferenca) < 0.01) {
-                statusEl.innerHTML = '<span class="soma-ok" style="font-size:12px;color:#2ecc71;">✓ Valores corretos</span>';
+                statusEl.innerHTML = '<span class="soma-ok" style="font-size:12px;color:#2ecc71;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Valores corretos</span>';
                 if (somaTopEl) { somaTopEl.style.color = '#2ecc71'; }
             } else {
                 statusEl.innerHTML = `<span style="color:#e74c3c;font-size:12px;">Diferença: ${formatarMoeda(diferenca)}</span>`;
@@ -2347,7 +2347,7 @@
                         Diferença: ${formatarMoeda(diferenca)} 
                         <button class="btn-ajustar" onclick="ajustarUltimaParcela()">Ajustar última</button>
                     </div>
-                ` : '<div class="soma-ok">✓ Valores corretos</div>'}
+                ` : '<div class="soma-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Valores corretos</div>'}
             </div>
         `;
         
@@ -3693,7 +3693,7 @@
         if (receitaPendente > 0) {
             receitaDetalhe.innerHTML = `<span>Fixas: ${formatarMoeda(totalRecFixas)}</span><span>Variáveis: ${formatarMoeda(totalRecVariaveis)}</span>`;
         } else {
-            receitaDetalhe.innerHTML = `<span>✓ Tudo recebido</span>`;
+            receitaDetalhe.innerHTML = `<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Tudo recebido</span>`;
         }
         
         // KPI 2: Despesas Totais
@@ -3809,7 +3809,7 @@
         document.getElementById('emptyReceitasFixas').style.display = receitasMes.length ? 'none' : 'block';
         recFixasTable.innerHTML = receitasMes.map(r => {
             const badgeSt = r.recebido
-                ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Recebido</span>'
+                ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Recebido</span>'
                 : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>';
             return `
             <tr>
@@ -3906,9 +3906,9 @@
                     <td class="acc-condicao acc-mobile-meta">${formatarData(despesaRef.dia ? (getMesAnoKey() + '-' + String(despesaRef.dia).padStart(2,'0')) : despesaRef.data)}</td>
                     <td class="acc-mobile-meta">
                         ${todasPagas
-                            ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Pago</span>'
+                            ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Pago</span>'
                             : estaVencido
-                                ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Vencido</span>'
+                                ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Vencido</span>'
                                 : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>'}
                     </td>
                     <td class="${todasPagas ? 'valor-positivo' : 'valor-negativo'} acc-mobile-valor" style="text-align:right;">
@@ -4109,9 +4109,9 @@
             const dv = d.data ? new Date(d.data + 'T00:00:00') : null;
             const vencida = dv && dv < hoje && !d.pago;
             const badgeSt = d.pago
-                ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Pago</span>'
+                ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Pago</span>'
                 : vencida
-                    ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Vencido</span>'
+                    ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Vencido</span>'
                     : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>';
             return `
                 <tr>
