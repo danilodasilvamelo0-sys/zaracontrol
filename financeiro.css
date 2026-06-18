@@ -1376,6 +1376,76 @@ tr.grupo-pausado td {
     border-bottom: 1px solid rgba(212, 175, 125, 0.12);
 }
 
+/* ===== MOBILE: tabela vira lista de cards (sem precisar rolar de lado) ===== */
+@media (max-width: 640px) {
+    .accordion-table thead { display: none; }
+    .accordion-table, .accordion-table tbody { display: block; width: 100%; }
+
+    .accordion-table tbody tr.acc-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        padding: 14px 14px 14px 4px;
+        border-bottom: 1px solid rgba(26,26,26,0.07);
+        position: relative;
+    }
+    .accordion-table tbody tr.acc-row td {
+        padding: 0;
+        border-bottom: none;
+        display: block;
+    }
+    /* 1ª td (chevron) — fica fixa à esquerda */
+    .accordion-table tbody tr.acc-row td:first-child {
+        width: 28px;
+        flex-shrink: 0;
+    }
+    /* descrição — ocupa o espaço entre o chevron e os botões de ação */
+    .accordion-table tbody tr.acc-row td.acc-descricao {
+        flex: 1;
+        min-width: 0;
+        font-weight: 600;
+        padding-right: 8px;
+        order: 1;
+    }
+    /* última td (ações) — fica no canto superior direito, ao lado da descrição */
+    .accordion-table tbody tr.acc-row td:last-child {
+        flex-shrink: 0;
+        order: 2;
+    }
+    .accordion-table tbody tr.acc-row td:last-child > div { justify-content: flex-end; }
+
+    /* colunas "meta" (categoria/data/status/condição/taxa/etc) — todas juntas,
+       numa linha abaixo da descrição, ocupando a largura toda do card */
+    .accordion-table tbody tr.acc-row td.acc-mobile-meta {
+        order: 3;
+        width: calc(100% - 28px);
+        margin-left: 28px;
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+        font-size: 0.82em;
+        color: rgba(26,26,26,0.6);
+    }
+    .accordion-table tbody tr.acc-row td.acc-mobile-meta:first-of-type { margin-top: 4px; }
+    .accordion-table tbody tr.acc-row td.acc-mobile-meta > * { margin: 0 !important; }
+
+    /* valor — linha própria, em destaque, abaixo das metas */
+    .accordion-table tbody tr.acc-row td.acc-mobile-valor {
+        order: 4;
+        width: calc(100% - 28px);
+        margin-left: 28px;
+        text-align: left !important;
+        font-weight: 600;
+        font-size: 1.05em;
+        margin-top: 6px;
+    }
+
+    /* Linha de detalhe (accordion expandido) ocupa a largura toda */
+    .accordion-table tbody tr.acc-detail-row { display: block; }
+    .accordion-table tbody tr.acc-detail-row td { display: block; padding: 0; }
+}
+
 /* Chevron */
 .acc-chevron {
     display: inline-flex;
