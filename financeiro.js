@@ -1330,42 +1330,15 @@
             return true;
         });
 
-        // Verificar despesas NÃO PAGAS APENAS do MÊS ANTERIOR (não de vários meses)
-        const mesAnteriorKey = getMesAnteriorKey();
-        
-        // Só arrastar se o mês anterior também é de 2026
-        if (mesAnteriorKey >= '2026-01') {
-            const despesasMesAnterior = financeiro.despesasFixasMes[mesAnteriorKey] || [];
-
-            despesasMesAnterior.forEach(despesaAnterior => {
-                // Só arrastar se NÃO foi paga
-                if (!despesaAnterior.pago) {
-                    // Verificar se já não existe uma despesa atrasada para este item específico
-                    const jaExisteAtrasada = financeiro.despesasFixasMes[key].some(
-                        d => d.atrasada && d.idOriginal === despesaAnterior.id
-                    );
-
-                    if (!jaExisteAtrasada) {
-                        // Criar instância atrasada no mês atual
-                        financeiro.despesasFixasMes[key].push({
-                            id: gerarId(),
-                            idOriginal: despesaAnterior.id,
-                            modeloId: despesaAnterior.modeloId,
-                            descricao: despesaAnterior.descricao,
-                            valor: despesaAnterior.valor,
-                            categoria: despesaAnterior.categoria,
-                            data: despesaAnterior.data,
-                            dataOriginal: despesaAnterior.data,
-                            mesOriginal: mesAnteriorKey,
-                            pago: false,
-                            dataPagamento: null,
-                            comprovante: null,
-                            atrasada: true
-                        });
-                    }
-                }
-            });
-        }
+        // OBS: despesas fixas não pagas NÃO são mais clonadas para o mês
+        // seguinte como "instância atrasada". Uma conta de Maio não paga
+        // continua existindo em despesasFixasMes['2026-05'] e, ao navegar
+        // até lá, aparece com o badge "Vencido" (calculado por
+        // getStatusVencimento a partir da própria data de vencimento).
+        // Isso evita duplicar a mesma conta em dois meses ao mesmo tempo.
+        // O código de leitura de instâncias "atrasada"/"mesOriginal" abaixo
+        // é mantido apenas para compatibilidade com dados já salvos
+        // anteriormente a esta mudança.
 
         salvarDados();
     }
@@ -1411,9 +1384,12 @@
 
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
+            <div class="info-box" style="background:rgba(46,204,113,0.08);border-color:rgba(46,204,113,0.3)">
+                Este valor vale <strong>só para este mês</strong>. Os outros meses (passados e futuros) não são alterados.
+            </div>
             <div class="info-box">
                 <strong>${item.descricao}</strong><br>
-                <small>Valor original: ${formatarMoeda(valorOriginal)}</small>
+                <small>Valor padrão: ${formatarMoeda(valorOriginal)}</small>
                 ${diferenca !== 0 ? `<br><small style="color: ${diferenca > 0 ? '#e74c3c' : '#2ecc71'};">Diferença atual: ${diferenca > 0 ? '+' : ''}${formatarMoeda(diferenca)}</small>` : ''}
             </div>
             <div class="form-group">
@@ -1422,15 +1398,15 @@
             </div>
             <div class="form-group">
                 <label>Motivo (opcional)</label>
-                <input type="text" id="motivoAlteracao" placeholder="Ex: Juros de atraso, multa, etc." value="${item.motivoAlteracao || ''}">
+                <input type="text" id="motivoAlteracao" placeholder="Ex: Conta de água/luz veio mais cara este mês" value="${item.motivoAlteracao || ''}">
             </div>
             <div class="form-buttons">
                 <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
-                <button class="btn-secondary" onclick="resetarValorInstancia(${id})">Resetar Original</button>
+                <button class="btn-secondary" onclick="resetarValorInstancia(${id})">Resetar para o Padrão</button>
                 <button class="btn-salvar" onclick="salvarValorInstancia(${id})">Salvar</button>
             </div>
         `;
-        document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Valor (apenas este mês)';
+        document.querySelector('#modalEditar .modal-header h3').textContent = '💧 Editar Valor (só este mês)';
         abrirModal('modalEditar');
     }
 
@@ -1653,7 +1629,7 @@
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
             <div class="info-box warning">
-                Alterações afetam apenas os <strong>próximos meses</strong>. O histórico é preservado.
+                Isto edita o <strong>valor padrão</strong> e afeta os <strong>próximos meses</strong>. Para mudar só o valor deste mês (ex: conta de água/luz que veio diferente), use o ícone verde 💧 na linha da despesa.
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -3842,6 +3818,10 @@
             const totalPendente = (atual && !atual.pago ? atual.valor : 0) + atrasadas.filter(a => !a.pago).reduce((s,a) => s+a.valor, 0);
             const detailId = 'detail-fixa-' + modeloId;
             const hasAtrasadas = atrasadas.length > 0;
+            // Caso novo (sem clonagem): o próprio item do mês pode estar vencido
+            // (data de vencimento já passou e ainda não foi pago).
+            const statusAtual = atual ? getStatusVencimento(atual.data, atual.pago) : { classe: '', badge: '' };
+            const estaVencido = hasAtrasadas || statusAtual.classe === 'vencido';
 
             htmlFixas += `
                 <tr class="acc-row">
@@ -3856,8 +3836,8 @@
                     <td>
                         ${todasPagas
                             ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;">✓ Pago</span>'
-                            : hasAtrasadas
-                                ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Atrasado</span>'
+                            : estaVencido
+                                ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Vencido</span>'
                                 : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>'}
                     </td>
                     <td class="${todasPagas ? 'valor-positivo' : 'valor-negativo'}" style="text-align:right;">
@@ -3865,10 +3845,15 @@
                     </td>
                     <td>
                         <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
-                            <button class="acc-delete-btn" onclick="editarDespesaFixaModelo(${despesaRef.modeloId})" title="Editar" style="color:rgba(212,175,125,0.5);">
+                            ${atual ? `
+                            <button class="acc-delete-btn" onclick="editarValorInstancia(${atual.id}, 'fixa')" title="Editar valor deste mês (ex: conta de água/luz que mudou)" style="color:rgba(46,204,113,0.6);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            </button>
+                            ` : ''}
+                            <button class="acc-delete-btn" onclick="editarDespesaFixaModelo(${despesaRef.modeloId})" title="Editar valor padrão (afeta os próximos meses)" style="color:rgba(212,175,125,0.5);">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             </button>
-                            <button class="acc-delete-btn" onclick="encerrarDespesaFixa(${despesaRef.modeloId})" title="Encerrar">
+                            <button class="acc-delete-btn" onclick="encerrarDespesaFixa(${despesaRef.modeloId})" title="Encerrar (não aparece mais nos próximos meses)">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                             </button>
                         </div>
