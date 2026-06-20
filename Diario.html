@@ -165,10 +165,10 @@ body{padding-left:70px}
 .writing-inp[contenteditable]:focus{outline:none}
 
 /* ── NOIR WRITING AREA ── */
-.noir-writing .page-title-inp{color:#d0d0d0;font-family:'Montserrat',sans-serif;font-size:1.1em;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom-color:rgba(180,180,180,.08)}
-.noir-writing .page-title-inp::placeholder{color:rgba(180,180,180,.1)}
-.noir-writing .writing-inp{color:rgba(220,220,220,.8);font-family:'Montserrat',sans-serif;font-size:.95em;line-height:1.85;letter-spacing:.3px;text-align:left}
-.noir-writing .writing-inp[contenteditable]:empty::before{color:rgba(180,180,180,.15);font-style:normal}
+.noir-writing .page-title-inp{color:#ffffff;font-family:'Montserrat',sans-serif;font-size:1.1em;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom-color:rgba(180,180,180,.08)}
+.noir-writing .page-title-inp::placeholder{color:rgba(255,255,255,.12)}
+.noir-writing .writing-inp{color:#ffffff;font-family:'Montserrat',sans-serif;font-size:.95em;line-height:1.85;letter-spacing:.3px;text-align:left}
+.noir-writing .writing-inp[contenteditable]:empty::before{color:rgba(255,255,255,.18);font-style:normal}
 
 /* ── EDITOR EMPTY ── */
 .editor-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;opacity:.3}
@@ -207,6 +207,20 @@ body{padding-left:70px}
 .ftb{background:transparent;border:none;color:rgba(255,255,255,.55);font-family:'Montserrat',sans-serif;font-size:.82em;font-weight:700;cursor:pointer;padding:4px 7px;border-radius:2px;transition:all .2s;line-height:1}
 .ftb:hover{background:rgba(212,168,67,.1);color:#fff}
 .ftb-sep{width:1px;height:14px;background:rgba(255,255,255,.1)}
+
+/* ── NOIR LOCK OVERLAY ── */
+#noirLock{position:absolute;inset:0;background:rgba(8,8,8,.97);z-index:50;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;backdrop-filter:blur(4px)}
+#noirLock.gone{display:none}
+.noir-lock-box{display:flex;flex-direction:column;align-items:center;gap:22px;padding:40px 36px;border:1px solid rgba(180,180,180,.12);background:#0a0a0a;max-width:320px;width:88%;position:relative}
+.noir-lock-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(180,180,180,.35),transparent)}
+.noir-lock-icon{width:44px;height:44px;border:1px solid rgba(180,180,180,.2);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.noir-lock-icon svg{width:20px;height:20px;stroke:#aaa;fill:none;stroke-width:1.5}
+.noir-lock-title{font-size:.65em;font-weight:700;letter-spacing:4px;color:rgba(180,180,180,.5);text-transform:uppercase;text-align:center}
+.noir-lock-inp{width:100%;background:transparent;border:none;border-bottom:1px solid rgba(180,180,180,.15);color:#fff;font-family:'Montserrat',sans-serif;font-size:1.1em;letter-spacing:4px;padding:10px 0;outline:none;text-align:center;transition:border-color .3s}
+.noir-lock-inp:focus{border-bottom-color:rgba(180,180,180,.4)}
+.noir-lock-btn{width:100%;padding:11px;background:rgba(180,180,180,.06);border:1px solid rgba(180,180,180,.18);color:#aaa;font-family:'Montserrat',sans-serif;font-size:.68em;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .25s;text-transform:uppercase}
+.noir-lock-btn:hover{background:rgba(180,180,180,.1);border-color:#888;color:#ccc}
+.noir-lock-err{font-size:.65em;color:#ff6b6b;letter-spacing:.5px;min-height:14px;text-align:center}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:20px;padding:10px 18px;background:var(--s3);border:1px solid var(--bm);font-family:'Montserrat',sans-serif;font-size:.75em;color:var(--text);z-index:9999;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none}
@@ -282,7 +296,21 @@ body{padding-left:70px}
     </div>
 
     <!-- Noir list -->
-    <div class="tab-panel" id="panel-list-noir" style="flex-direction:column">
+    <div class="tab-panel" id="panel-list-noir" style="flex-direction:column;position:relative">
+
+      <!-- Noir lock overlay -->
+      <div id="noirLock">
+        <div class="noir-lock-box">
+          <div class="noir-lock-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="noir-lock-title">Livro Negro</div>
+          <input class="noir-lock-inp" id="noirLockInp" type="password" placeholder="••••••••" maxlength="20"
+            onkeydown="if(event.key==='Enter')verificarSenhaNoir()" autocomplete="off" />
+          <div class="noir-lock-err" id="noirLockErr">&nbsp;</div>
+          <button class="noir-lock-btn" onclick="verificarSenhaNoir()">ACESSAR</button>
+        </div>
+      </div>
       <div class="list-header">
         <span class="list-title" style="color:rgba(180,180,180,.35)">Registros</span>
         <button class="btn-nova noir-btn" onclick="novaEntrada('noir')">
@@ -351,7 +379,12 @@ body{padding-left:70px}
     </div>
 
     <!-- Noir editor -->
-    <div class="tab-panel" id="panel-editor-noir" style="flex-direction:column">
+    <div class="tab-panel" id="panel-editor-noir" style="flex-direction:column;position:relative">
+
+      <!-- Noir lock overlay (espelho — cobre o editor também) -->
+      <div id="noirLockEditor" style="position:absolute;inset:0;background:rgba(8,8,8,.97);z-index:50;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+        <p style="font-size:.68em;letter-spacing:2px;color:rgba(180,180,180,.3);text-transform:uppercase">Livro Negro bloqueado</p>
+      </div>
       <div style="padding:12px 32px;border-bottom:1px solid rgba(180,180,180,.06);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
         <span style="font-size:.6em;font-weight:700;letter-spacing:3px;color:rgba(180,180,180,.3);text-transform:uppercase" id="totalNoir">0 registros</span>
         <button class="tl-btn" onclick="exportarPDF('noir')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button>
@@ -433,6 +466,9 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const UID = 'default';
 // Hash SHA-256 — não é a senha, é uma impressão digital de mão única
 const PH = 'c26302fce3d3af8faf9056b40a6f4a8c6db1832e7eba08ed1fabfac617d23f08';
+// Hash da senha do Livro Negro (padrão: noir123)
+// Para trocar: calcule SHA-256 da nova senha em https://emn178.github.io/online-tools/sha256.html
+const PH_NOIR = '3fe942837c82e381c6d5bbfdad9fe7234f673f19c4c88aa1f9bb689ccfbc7f7c';
 
 let sb = null;
 let dados = { diario: [], noir: [] };
@@ -606,6 +642,40 @@ function switchTab(tab) {
     document.getElementById('panel-list-' + m).classList.toggle('on', m === tab);
     document.getElementById('panel-editor-' + m).classList.toggle('on', m === tab);
   });
+  // Se tentou abrir o Livro Negro sem estar autenticado, mostrar/esconder overlay
+  if (tab === 'noir' && !noirAutenticado()) {
+    document.getElementById('noirLock').classList.remove('gone');
+    document.getElementById('noirLockEditor').classList.remove('gone');
+    document.getElementById('noirLockInp').focus();
+  } else if (tab === 'noir') {
+    document.getElementById('noirLock').classList.add('gone');
+    document.getElementById('noirLockEditor').classList.add('gone');
+  }
+}
+
+function noirAutenticado() {
+  return sessionStorage.getItem('zara_noir_auth') === '1';
+}
+
+async function verificarSenhaNoir() {
+  const inp = document.getElementById('noirLockInp');
+  const err = document.getElementById('noirLockErr');
+  const val = inp.value;
+  if (!val) { err.textContent = 'Digite a senha.'; return; }
+  err.textContent = '...';
+  const h = await hashStr(val);
+  if (h === PH_NOIR) {
+    sessionStorage.setItem('zara_noir_auth', '1');
+    document.getElementById('noirLock').classList.add('gone');
+    document.getElementById('noirLockEditor').classList.add('gone');
+    inp.value = '';
+    err.textContent = '\u00a0';
+  } else {
+    err.textContent = 'Senha incorreta.';
+    inp.value = '';
+    inp.focus();
+    setTimeout(() => { err.textContent = '\u00a0'; }, 2500);
+  }
 }
 
 // Mobile: volta da tela de editor para a tela de lista (sem perder dados,
