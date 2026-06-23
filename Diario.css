@@ -205,7 +205,9 @@ body{padding-left:70px}
 
 /* ── NOIR LOCK OVERLAY ── */
 #noirLock{position:absolute;inset:0;background:rgba(8,8,8,.97);z-index:50;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;backdrop-filter:blur(4px)}
-#noirLock.gone{display:none}
+#noirLock.gone{display:none!important}
+#noirLockEditor{display:flex;align-items:center;justify-content:center}
+#noirLockEditor.gone{display:none!important}
 .noir-lock-box{display:flex;flex-direction:column;align-items:center;gap:22px;padding:40px 36px;border:1px solid rgba(180,180,180,.12);background:#0a0a0a;max-width:320px;width:88%;position:relative}
 .noir-lock-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(180,180,180,.35),transparent)}
 .noir-lock-icon{width:44px;height:44px;border:1px solid rgba(180,180,180,.2);border-radius:50%;display:flex;align-items:center;justify-content:center}
