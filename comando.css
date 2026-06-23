@@ -18,7 +18,6 @@ body.war-mode{background:#0d0000}
 
 /* SPLASH */
 
-to{opacity:1;transform:translateY(0)}}
 /* WAR LAYERS */
 #warLayer{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:0;transition:opacity 2s;background:radial-gradient(ellipse at center,rgba(100,0,0,.2) 0%,rgba(40,0,0,.1) 60%,transparent 100%)}
 #warRing{position:fixed;inset:0;pointer-events:none;z-index:8999;opacity:0;transition:opacity 2s;box-shadow:inset 0 0 150px rgba(100,0,0,.0)}
