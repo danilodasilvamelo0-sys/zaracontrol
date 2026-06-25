@@ -342,6 +342,28 @@ async function deletar(modo) {
   showToast('Excluído.');
 }
 
+async function deletarDaLista(modo, id) {
+  if (!confirm('Excluir esta entrada?')) return;
+  dados[modo] = dados[modo].filter(e => String(e.id) !== String(id));
+  await deletarSB(modo, id);
+  salvarLocal(modo);
+  // Se era a entrada aberta no editor, fechar o editor
+  if (atual[modo] && String(atual[modo].id) === String(id)) {
+    atual[modo] = null; tags[modo] = [];
+    if (modo === 'diario') {
+      document.getElementById('editorEmpty').style.display = 'flex';
+      document.getElementById('editorActive').style.display = 'none';
+    } else {
+      document.getElementById('noirEmpty').style.display = 'flex';
+      document.getElementById('noirActive').style.display = 'none';
+    }
+    document.getElementById('appLayout').classList.remove('mobile-view-editor');
+  }
+  renderLista(modo);
+  if (modo === 'diario') renderTimeline();
+  showToast('Excluído.');
+}
+
 function onInput(modo) {
   clearTimeout(aTimer);
   aTimer = setTimeout(() => { if (atual[modo]) salvar(modo); }, 3500);
@@ -384,6 +406,9 @@ function renderLista(modo) {
     const prev = (e.texto || '').replace(/<[^>]+>/g, '').slice(0, 55);
     const catLabel = modo === 'noir' && e.categoria ? `<span class="tag-chip noir-tag">${e.categoria}</span>` : '';
     return `<div class="entry-item${isA ? (modo === 'noir' ? ' noir-active' : ' active') : ''}" data-id="${e.id}" onclick="abrirEntrada('${modo}','${e.id}')">
+      <button class="entry-del-btn" onclick="event.stopPropagation();deletarDaLista('${modo}','${e.id}')" title="Excluir entrada">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </button>
       <div class="entry-item-date">${fmtData(e.data)}</div>
       <div class="entry-item-title">${e.titulo || e.estado || 'Sem título'}</div>
       ${prev ? `<div class="entry-item-preview">${prev}</div>` : ''}
