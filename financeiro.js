@@ -3753,7 +3753,7 @@
         const previsaoDetalhe = document.getElementById('kpiPrevisaoDetalhe');
         previsaoCard.classList.remove('negativo');
         
-        const despesasPendentes = fixasPendentes + parceladasPendentes + avulsasPendentes + jurosAcumuladosTotal;
+        const despesasPendentes = fixasPendentes + parceladasPendentes + avulsasPendentes + jurosAcumuladosTotal + totalParcelasPendentesMes;
         if (previsaoFechamento >= 0) {
             if (despesasPendentes > 0) {
                 previsaoDetalhe.innerHTML = `<span>Falta pagar: ${formatarMoeda(despesasPendentes)}</span>`;
