@@ -151,8 +151,12 @@
         let total = 0;
         const detalhes = [];
         (financeiro.emprestimos || []).forEach(e => {
-            if (e.arquivado || !e.parcelado) return;
-            if ((e.parcelasPagas || 0) >= (e.totalParcelas || 0)) return;
+            if (e.arquivado) return;
+            // Inclui se: marcado como parcelado OU tem valorParcela + proximaParcelaData
+            // (cobre empréstimos cadastrados antes da feature parcelado:true existir)
+            const temParcela = e.parcelado || (e.valorParcela > 0 && e.proximaParcelaData);
+            if (!temParcela) return;
+            if (e.totalParcelas > 0 && (e.parcelasPagas || 0) >= e.totalParcelas) return;
             if (!e.proximaParcelaData) return;
             const parcelaMes = e.proximaParcelaData.substring(0, 7);
             const conta = isMesAtual ? (parcelaMes <= mesAnoRef) : (parcelaMes === mesAnoRef);
@@ -163,6 +167,30 @@
         });
         return { total, detalhes };
     }
+
+    // Diagnóstico: rode no console (F12) digitando diagnosticarParcelas()
+    window.diagnosticarParcelas = function() {
+        console.log('=== DIAGNÓSTICO DE PARCELAS DE EMPRÉSTIMOS ===');
+        console.log('Mês/Ano selecionado:', getMesAnoKey(), '| Hoje (real):', new Date().toISOString().split('T')[0]);
+        console.log('');
+        (financeiro.emprestimos || []).forEach(e => {
+            const temParcela = e.parcelado || (e.valorParcela > 0 && e.proximaParcelaData);
+            const quitado = e.totalParcelas > 0 && (e.parcelasPagas || 0) >= e.totalParcelas;
+            console.log(`📋 ${e.descricao}`);
+            console.log(`   arquivado: ${e.arquivado} | parcelado: ${e.parcelado} | valorParcela: ${e.valorParcela} | proximaParcelaData: ${e.proximaParcelaData}`);
+            console.log(`   parcelasPagas: ${e.parcelasPagas} / totalParcelas: ${e.totalParcelas} | quitado: ${quitado}`);
+            let motivo = 'CONTANDO ✅';
+            if (e.arquivado) motivo = 'NÃO CONTA: está arquivado';
+            else if (!temParcela) motivo = 'NÃO CONTA: parcelado=false E não tem valorParcela+proximaParcelaData';
+            else if (quitado) motivo = 'NÃO CONTA: todas as parcelas já foram marcadas como pagas';
+            else if (!e.proximaParcelaData) motivo = 'NÃO CONTA: proximaParcelaData está vazio';
+            console.log(`   >>> ${motivo}`);
+            console.log('');
+        });
+        const r = getParcelasPendentesMes();
+        console.log('TOTAL que está entrando em Despesas Totais agora:', formatarMoeda(r.total));
+        console.log('Detalhes:', r.detalhes);
+    };
 
     function getDataVencimento(dia) {
         const d = String(dia).padStart(2, '0');
