@@ -144,9 +144,6 @@
     // mesma parcela duas vezes no mesmo mês.
     function getParcelasPendentesMes() {
         const mesAnoRef = getMesAnoKey();
-        const hoje = new Date();
-        const mesAnoHoje = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-        const isMesAtual = mesAnoRef === mesAnoHoje;
 
         let total = 0;
         const detalhes = [];
@@ -159,7 +156,10 @@
             if (e.totalParcelas > 0 && (e.parcelasPagas || 0) >= e.totalParcelas) return;
             if (!e.proximaParcelaData) return;
             const parcelaMes = e.proximaParcelaData.substring(0, 7);
-            const conta = isMesAtual ? (parcelaMes <= mesAnoRef) : (parcelaMes === mesAnoRef);
+            // A parcela conta no mês visualizado se a data dela for igual ou anterior
+            // a esse mês (cobre parcelas em atraso, sem depender do relógio real do
+            // dispositivo — só do mês que a pessoa está navegando na tela).
+            const conta = parcelaMes <= mesAnoRef;
             if (conta) {
                 total += (e.valorParcela || 0);
                 detalhes.push({ id: e.id, descricao: e.descricao, valor: e.valorParcela || 0, atrasada: parcelaMes < mesAnoRef });
