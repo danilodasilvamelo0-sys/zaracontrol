@@ -6,7 +6,7 @@
 :root{
   --bg:#080808;--s1:#0f0f0f;--s2:#141414;--s3:#1a1a1a;
   --gold:#d4a843;--gold-b:#f0c040;--gold-dim:rgba(212,168,67,.08);--gold-mid:rgba(212,168,67,.28);
-  --text:#f1f1f5;--td:rgba(241,241,245,.75);--tf:rgba(241,241,245,.35);
+  --text:#f1f1f5;--td:#ffffff;--tf:rgba(241,241,245,.65);
   --border:rgba(255,255,255,.07);--bm:rgba(212,168,67,.25);
 }
 html,body{background:var(--bg);color:var(--text);font-family:'Montserrat',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
