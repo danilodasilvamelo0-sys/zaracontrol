@@ -348,12 +348,22 @@
 
 .kpi-detalhe {
     font-size: var(--font-xs);
-    color: rgba(26, 26, 26, 0.5);
-    line-height: 1.5;
+    color: rgba(26, 26, 26, 0.55);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 4px;
 }
 
 .kpi-detalhe span {
-    display: block;
+    display: flex;
+}
+
+.kpi-detalhe span small {
+    opacity: 0.65;
+    font-size: 0.9em;
+    margin-left: 3px;
 }
 
 .kpi-badge {
