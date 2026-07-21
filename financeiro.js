@@ -3715,48 +3715,105 @@
         
         // === ATUALIZAR DASHBOARD KPIs ===
         
-        // KPI 1: Receita Total
+        // KPI 1: Receita Total — detalhes por fonte
         document.getElementById('kpiReceita').textContent = formatarMoeda(receitaTotalMes);
         const receitaDetalhe = document.getElementById('kpiReceitaDetalhe');
-        if (receitaPendente > 0) {
-            receitaDetalhe.innerHTML = `<span>Fixas: ${formatarMoeda(totalRecFixas)}</span><span>Variáveis: ${formatarMoeda(totalRecVariaveis)}</span>`;
-        } else {
-            receitaDetalhe.innerHTML = `<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Tudo recebido</span>`;
-        }
-        
-        // KPI 2: Despesas Totais
+        const recFixasList = receitasMes.map(r =>
+            `<span style="display:flex;justify-content:space-between;gap:8px;">
+                <span style="color:${r.recebido?'#2ecc71':'inherit'}">${r.descricao || 'Receita'}</span>
+                <span style="font-weight:600;">${formatarMoeda(r.valor)}</span>
+            </span>`
+        ).join('');
+        const recVarList = receitasVariaveisMesArr.map(r =>
+            `<span style="display:flex;justify-content:space-between;gap:8px;">
+                <span style="color:${r.recebido?'#2ecc71':'inherit'}">${r.descricao || 'Variável'}</span>
+                <span style="font-weight:600;">${formatarMoeda(r.valor)}</span>
+            </span>`
+        ).join('');
+        receitaDetalhe.innerHTML =
+            (recFixasList || recVarList
+                ? (recFixasList + recVarList)
+                : '<span>Sem receitas no mês</span>') +
+            (receitaPendente > 0
+                ? `<span style="color:#e67e22;margin-top:4px;display:block;">A receber: ${formatarMoeda(receitaPendente)}</span>`
+                : `<span style="color:#2ecc71;margin-top:4px;display:block;">✓ Tudo recebido</span>`);
+
+        // KPI 2: Despesas Totais — breakdown por tipo com pago/pendente
         document.getElementById('kpiDespesas').textContent = formatarMoeda(despesasTotaisMes);
+        const pctFixas     = receitaTotalMes > 0 ? Math.round(totalFixasMes/receitaTotalMes*100) : 0;
+        const pctParc      = receitaTotalMes > 0 ? Math.round(totalParceladasMes/receitaTotalMes*100) : 0;
+        const pctAvulsas   = receitaTotalMes > 0 ? Math.round(totalAvulsasMes/receitaTotalMes*100) : 0;
+        const pctEmp       = receitaTotalMes > 0 ? Math.round((totalEmpPagoMes+totalParcelasPendentesMes)/receitaTotalMes*100) : 0;
         document.getElementById('kpiDespesasDetalhe').innerHTML = `
-            <span>Fixas: ${formatarMoeda(totalFixasMes)}</span>
-            <span>Parceladas: ${formatarMoeda(totalParceladasMes)}</span>
-            ${totalAvulsasMes > 0 ? `<span>Variáveis: ${formatarMoeda(totalAvulsasMes)}</span>` : ''}
-            ${totalEmpPagoMes > 0 ? `<span>Emp. Pago: ${formatarMoeda(totalEmpPagoMes)}</span>` : ''}
-            ${totalParcelasPendentesMes > 0 ? `<span${temParcelaAtrasada ? ' style="color:#e74c3c;"' : ''}>Parcelas (Financ.)${temParcelaAtrasada ? ' atrasada(s)' : ''}: ${formatarMoeda(totalParcelasPendentesMes)}</span>` : ''}
-            ${jurosAcumuladosTotal > 0 ? `<span style="color:#e74c3c;">Juros Pendentes: ${formatarMoeda(jurosAcumuladosTotal)}</span>` : ''}
+            <span style="display:flex;justify-content:space-between;gap:8px;">
+                <span>Fixas ${pctFixas>0?`<small>(${pctFixas}% renda)</small>`:''}</span>
+                <span style="font-weight:600;">${formatarMoeda(totalFixasMes)}</span>
+            </span>
+            ${totalParceladasMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                <span>Parceladas ${pctParc>0?`<small>(${pctParc}%)</small>`:''}</span>
+                <span style="font-weight:600;">${formatarMoeda(totalParceladasMes)}</span>
+            </span>` : ''}
+            ${totalAvulsasMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                <span>Variáveis ${pctAvulsas>0?`<small>(${pctAvulsas}%)</small>`:''}</span>
+                <span style="font-weight:600;">${formatarMoeda(totalAvulsasMes)}</span>
+            </span>` : ''}
+            ${(totalEmpPagoMes+totalParcelasPendentesMes) > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                <span>Empréstimos ${pctEmp>0?`<small>(${pctEmp}%)</small>`:''}</span>
+                <span style="font-weight:600;">${formatarMoeda(totalEmpPagoMes+totalParcelasPendentesMes)}</span>
+            </span>` : ''}
+            ${jurosAcumuladosTotal > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;color:#e74c3c;">
+                <span>Juros pendentes</span>
+                <span style="font-weight:600;">${formatarMoeda(jurosAcumuladosTotal)}</span>
+            </span>` : ''}
+            <span style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;padding-top:4px;border-top:1px solid rgba(0,0,0,.08);">
+                <span style="color:#2ecc71;">Pago</span>
+                <span style="color:#2ecc71;font-weight:600;">${formatarMoeda(fixasPagas+parceladasPagas+avulsasPagas+totalEmpPagoMes)}</span>
+            </span>
+            ${(fixasPendentes+parceladasPendentes+avulsasPendentes+totalParcelasPendentesMes) > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                <span style="color:#e67e22;">Pendente</span>
+                <span style="color:#e67e22;font-weight:600;">${formatarMoeda(fixasPendentes+parceladasPendentes+avulsasPendentes+totalParcelasPendentesMes)}</span>
+            </span>` : ''}
         `;
         
         // KPI 3: Saldo Disponível
         const saldoCard = document.getElementById('kpiSaldoCard');
         document.getElementById('kpiSaldo').textContent = formatarMoeda(saldoDisponivel);
         const saldoDetalhe = document.getElementById('kpiSaldoDetalhe');
+        saldoCard.classList.toggle('negativo', saldoDisponivel < 0);
         if (saldoDisponivel >= 0) {
-            saldoCard.classList.remove('negativo');
-            if (totalEmpPagoMes > 0) {
-                saldoDetalhe.innerHTML = `<span>Emp: -${formatarMoeda(totalEmpPagoMes)} (juros: ${formatarMoeda(empJurosPagosMes)} + amort: ${formatarMoeda(empAmortizadoMes)})</span>`;
-            } else {
-                saldoDetalhe.innerHTML = `<span>Livre para uso</span>`;
-            }
+            saldoDetalhe.innerHTML = `
+                <span style="display:flex;justify-content:space-between;gap:8px;">
+                    <span>Receita recebida</span>
+                    <span style="font-weight:600;color:#2ecc71;">${formatarMoeda(receitaRecebida)}</span>
+                </span>
+                <span style="display:flex;justify-content:space-between;gap:8px;">
+                    <span>Total pago</span>
+                    <span style="font-weight:600;color:#e74c3c;">-${formatarMoeda(totalPago)}</span>
+                </span>
+                ${receitaPendente > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;padding-top:4px;border-top:1px solid rgba(0,0,0,.08);">
+                    <span style="color:#e67e22;">A receber</span>
+                    <span style="color:#e67e22;font-weight:600;">+${formatarMoeda(receitaPendente)}</span>
+                </span>` : ''}
+            `;
         } else {
-            saldoCard.classList.add('negativo');
-            saldoDetalhe.innerHTML = `<span class="kpi-badge negativo">No vermelho</span>`;
+            saldoDetalhe.innerHTML = `
+                <span class="kpi-badge negativo">No vermelho</span>
+                <span style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;">
+                    <span>Receita recebida</span>
+                    <span style="font-weight:600;">${formatarMoeda(receitaRecebida)}</span>
+                </span>
+                <span style="display:flex;justify-content:space-between;gap:8px;">
+                    <span>Total pago</span>
+                    <span style="font-weight:600;">-${formatarMoeda(totalPago)}</span>
+                </span>
+            `;
         }
         
-        // KPI 4: % Comprometido
+        // KPI 4: % Comprometido — breakdown do que compromete a renda
         const comprometidoCard = document.getElementById('kpiComprometidoCard');
         document.getElementById('kpiComprometido').textContent = `${percentComprometido}%`;
         const badgeComprometido = document.getElementById('kpiBadgeComprometido');
         comprometidoCard.classList.remove('atencao', 'critico');
-        
         if (percentComprometido <= 60) {
             badgeComprometido.textContent = 'Saudável';
             badgeComprometido.className = 'kpi-badge saudavel';
@@ -3769,28 +3826,88 @@
             badgeComprometido.className = 'kpi-badge critico';
             comprometidoCard.classList.add('critico');
         }
+        // Adicionar breakdown por tipo abaixo do badge
+        const comprDetEl = document.getElementById('kpiComprometidoDetalhe');
+        if (comprDetEl) {
+            comprDetEl.innerHTML = `
+                <span id="kpiBadgeComprometido" class="${badgeComprometido.className}">${badgeComprometido.textContent}</span>
+                ${totalFixasMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;">
+                    <span>Fixas</span><span>${pctFixas}% renda</span>
+                </span>` : ''}
+                ${totalParceladasMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                    <span>Parceladas</span><span>${pctParc}% renda</span>
+                </span>` : ''}
+                ${(totalEmpPagoMes+totalParcelasPendentesMes) > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                    <span>Empréstimos</span><span>${pctEmp}% renda</span>
+                </span>` : ''}
+            `;
+        }
         
-        // KPI 5: Economizado
+        // KPI 5: Economizado — cada reserva por nome e valor
         document.getElementById('kpiEconomia').textContent = formatarMoeda(totalEconomizado);
-        const numReservas = (financeiro.economias || []).length;
-        document.getElementById('kpiEconomiaDetalhe').innerHTML = `<span>${numReservas} reserva${numReservas !== 1 ? 's' : ''} ativa${numReservas !== 1 ? 's' : ''}</span>`;
+        const reservasList = (financeiro.economias || []).map(e =>
+            `<span style="display:flex;justify-content:space-between;gap:8px;">
+                <span>${e.descricao || 'Reserva'}</span>
+                <span style="font-weight:600;">${formatarMoeda(e.saldo !== undefined ? e.saldo : (e.valor||0))}</span>
+            </span>`
+        ).join('');
+        document.getElementById('kpiEconomiaDetalhe').innerHTML = reservasList ||
+            '<span style="color:rgba(26,26,26,.45);">Nenhuma reserva ativa</span>';
         
-        // KPI 6: Previsão Fechamento
+        // KPI 6: Previsão Fechamento — lista o que falta pagar por categoria
         const previsaoCard = document.getElementById('kpiPrevisaoCard');
         document.getElementById('kpiPrevisao').textContent = formatarMoeda(previsaoFechamento);
         const previsaoDetalhe = document.getElementById('kpiPrevisaoDetalhe');
         previsaoCard.classList.remove('negativo');
-        
         const despesasPendentes = fixasPendentes + parceladasPendentes + avulsasPendentes + jurosAcumuladosTotal + totalParcelasPendentesMes;
         if (previsaoFechamento >= 0) {
             if (despesasPendentes > 0) {
-                previsaoDetalhe.innerHTML = `<span>Falta pagar: ${formatarMoeda(despesasPendentes)}</span>`;
+                previsaoDetalhe.innerHTML = `
+                    ${fixasPendentes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                        <span style="color:#e67e22;">Fixas pendentes</span>
+                        <span style="font-weight:600;">${formatarMoeda(fixasPendentes)}</span>
+                    </span>` : ''}
+                    ${parceladasPendentes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                        <span style="color:#e67e22;">Parceladas pendentes</span>
+                        <span style="font-weight:600;">${formatarMoeda(parceladasPendentes)}</span>
+                    </span>` : ''}
+                    ${totalParcelasPendentesMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                        <span style="color:${temParcelaAtrasada?'#e74c3c':'#e67e22'};">Parcelas empréstimo${temParcelaAtrasada?' (atrasadas)':''}</span>
+                        <span style="font-weight:600;">${formatarMoeda(totalParcelasPendentesMes)}</span>
+                    </span>` : ''}
+                    ${avulsasPendentes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                        <span style="color:#e67e22;">Variáveis pendentes</span>
+                        <span style="font-weight:600;">${formatarMoeda(avulsasPendentes)}</span>
+                    </span>` : ''}
+                    ${jurosAcumuladosTotal > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                        <span style="color:#e74c3c;">Juros pendentes</span>
+                        <span style="font-weight:600;">${formatarMoeda(jurosAcumuladosTotal)}</span>
+                    </span>` : ''}
+                    <span style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;padding-top:4px;border-top:1px solid rgba(0,0,0,.08);font-weight:600;">
+                        <span>Total pendente</span>
+                        <span style="color:#e67e22;">${formatarMoeda(despesasPendentes)}</span>
+                    </span>
+                `;
             } else {
-                previsaoDetalhe.innerHTML = `<span class="kpi-badge positivo">Mês fechado</span>`;
+                previsaoDetalhe.innerHTML = `<span class="kpi-badge positivo">Mês fechado ✓</span>`;
             }
         } else {
             previsaoCard.classList.add('negativo');
-            previsaoDetalhe.innerHTML = `<span class="kpi-badge negativo">Déficit previsto</span>`;
+            previsaoDetalhe.innerHTML = `
+                <span class="kpi-badge negativo">Déficit previsto</span>
+                <span style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;">
+                    <span>Receita total</span>
+                    <span style="font-weight:600;">${formatarMoeda(receitaTotalMes)}</span>
+                </span>
+                <span style="display:flex;justify-content:space-between;gap:8px;">
+                    <span>Despesas totais</span>
+                    <span style="font-weight:600;color:#e74c3c;">${formatarMoeda(despesasTotaisMes)}</span>
+                </span>
+                <span style="display:flex;justify-content:space-between;gap:8px;">
+                    <span>Déficit</span>
+                    <span style="font-weight:600;color:#e74c3c;">${formatarMoeda(previsaoFechamento)}</span>
+                </span>
+            `;
         }
 
         // Subtotais — formato: Pago | Total | Pendente
