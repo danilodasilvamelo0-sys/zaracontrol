@@ -231,7 +231,7 @@
 /* ========== DASHBOARD KPIs ========== */
 .dashboard-kpis {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 15px;
     margin-top: 25px;
     margin-bottom: 30px;
@@ -387,12 +387,6 @@
 .kpi-badge.negativo { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
 
 /* Responsivo Dashboard KPIs */
-@media (max-width: 1200px) {
-    .dashboard-kpis {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
 @media (max-width: 768px) {
     .dashboard-kpis {
         grid-template-columns: repeat(2, 1fr);
