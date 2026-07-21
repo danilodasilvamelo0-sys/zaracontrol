@@ -4105,3 +4105,13 @@ tr.grupo-pausado td {
     border-color: rgba(46,204,113,0.5) !important;
 }
 
+/* ===== IMPRESSÃO / PDF ===== */
+@media print {
+    .sidebar, .mobile-nav, .periodo-nav, .form-section,
+    .btn-salvar, .btn-cancelar, .accordion-actions,
+    .pq-acoes, .pq-controles, .modal-close, .acc-delete-btn,
+    #dashboardKpis > .kpi-card.comprometido { display: none !important; }
+    body { background: #fff !important; color: #000 !important; font-size: 11pt; }
+    .container { margin-left: 0 !important; padding: 0 !important; }
+    .modal { display: none !important; }
+}
