@@ -5423,6 +5423,60 @@
         if (typeof abrirModal === 'function') abrirModal('modalRelatorio');
     }
 
+    function imprimirRelatorio() {
+        const corpo = document.getElementById('relatorioBody');
+        if (!corpo || !corpo.innerHTML.trim()) {
+            mostrarStatus('Gere o relatório primeiro.', 'warning');
+            return;
+        }
+        const titulo = 'Relatório Financeiro ZARA — ' + new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        const conteudo = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>${titulo}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Arial', sans-serif; font-size: 12px; color: #1a1a1a; background: #fff; padding: 32px; }
+  h1 { font-size: 18px; font-weight: 700; color: #7a5c10; margin-bottom: 4px; }
+  .sub { font-size: 11px; color: #888; margin-bottom: 28px; }
+  .relatorio-secao { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid #e5e5e5; }
+  .relatorio-secao:last-child { border-bottom: none; }
+  .relatorio-secao h2 { font-size: 13px; font-weight: 700; color: #7a5c10; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .relatorio-secao h4 { font-size: 11px; font-weight: 600; color: #333; margin: 12px 0 6px; }
+  .relatorio-secao p, .relatorio-secao li { font-size: 11px; line-height: 1.6; color: #444; margin-bottom: 4px; }
+  .relatorio-tabela { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 10px; }
+  .relatorio-tabela th { background: #f5f0e8; color: #7a5c10; font-weight: 700; padding: 6px 8px; text-align: left; border-bottom: 2px solid #d4a84340; }
+  .relatorio-tabela td { padding: 5px 8px; border-bottom: 1px solid #f0f0f0; }
+  .relatorio-tabela td:last-child, .relatorio-tabela th:last-child { text-align: right; }
+  .relatorio-intro, .relatorio-analise, .relatorio-recomendacao { background: #fdf8ef; border-left: 3px solid #b8972e; padding: 8px 10px; font-size: 11px; color: #555; margin: 6px 0; }
+  .relatorio-ascii-bar { font-family: monospace; font-size: 12px; background: #fdf8ef; padding: 8px 10px; color: #b8972e; white-space: pre; }
+  .relatorio-positivo { color: #27ae60 !important; }
+  .relatorio-negativo { color: #e74c3c !important; }
+  .relatorio-vazio { color: #999; font-style: italic; font-size: 11px; }
+  .relatorio-sabedoria li { margin-bottom: 6px; color: #444; font-size: 11px; }
+  .relatorio-cronograma li { margin-bottom: 3px; }
+  .relatorio-final { color: #27ae60; font-weight: 700; }
+  ul, ol { padding-left: 18px; }
+  @media print {
+    body { padding: 20px; }
+    @page { margin: 15mm; }
+  }
+</style>
+</head>
+<body>
+<h1>🎯 ${titulo}</h1>
+<p class="sub">Gerado em ${new Date().toLocaleString('pt-BR')} · ZARA — Sistema Operacional Pessoal</p>
+${corpo.innerHTML}
+</body>
+</html>`;
+
+        const win = window.open('', '_blank');
+        win.document.write(conteudo);
+        win.document.close();
+        win.onload = () => { win.focus(); win.print(); };
+    }
+
     // ==========================================
     // SUGESTÕES DE SABEDORIA FINANCEIRA
     // ==========================================
