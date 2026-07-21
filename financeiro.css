@@ -241,8 +241,8 @@
     background: #fff;
     border: 1px solid rgba(184, 151, 46, 0.12);
     border-radius: 15px;
-    padding: 20px 18px;
-    text-align: center;
+    padding: 18px 16px;
+    text-align: left;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -308,9 +308,9 @@
 .kpi-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .kpi-icon {
@@ -320,6 +320,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .kpi-icon svg {
@@ -331,7 +332,7 @@
 }
 
 .kpi-label {
-    color: rgba(26, 26, 26, 0.55);
+    color: rgba(26, 26, 26, 0.5);
     font-size: var(--font-xs);
     font-weight: var(--fw-medium);
     text-transform: uppercase;
@@ -342,7 +343,7 @@
     font-size: var(--font-2xl);
     font-weight: var(--fw-bold);
     color: #111111;
-    margin-bottom: 8px;
+    margin: 4px 0 10px;
     line-height: 1.15;
 }
 
@@ -352,12 +353,14 @@
     line-height: 1.6;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    margin-top: 4px;
+    gap: 3px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(26,26,26,0.06);
 }
 
 .kpi-detalhe span {
     display: flex;
+    width: 100%;
 }
 
 .kpi-detalhe span small {
