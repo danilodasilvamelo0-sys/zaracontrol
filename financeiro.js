@@ -4288,16 +4288,104 @@
         // === CARDS EMPRÉSTIMOS ===
         const empContainer = document.getElementById('emprestimosContainer');
         document.getElementById('emptyEmprestimos').style.display = emprestimosAtivos.length ? 'none' : 'block';
-        empContainer.innerHTML = emprestimosAtivos.map(e => {
+
+        // ── 1. RESUMO GERAL no topo da seção ──
+        const totalDevido = emprestimosAtivos.reduce((s, e) => s + (e.principal || 0), 0);
+        const custoJurosMensal = emprestimosAtivos.reduce((s, e) => s + (e.principal || 0) * ((e.taxaJuros || 0) / 100), 0);
+        const maiorTaxa = emprestimosAtivos.reduce((m, e) => Math.max(m, e.taxaJuros || 0), 0);
+        const totalJurosAcum = emprestimosAtivos.reduce((s, e) => s + (e.jurosAcumulados || 0), 0);
+        const totalParcelasMes = emprestimosAtivos.filter(e => e.parcelado && e.valorParcela > 0).reduce((s, e) => s + (e.valorParcela || 0), 0);
+        const resumoEl = document.getElementById('empResumoGeral');
+        if (resumoEl) {
+            if (emprestimosAtivos.length === 0) {
+                resumoEl.style.display = 'none';
+            } else {
+                resumoEl.style.display = 'grid';
+                resumoEl.innerHTML = `
+                    <div class="emp-resumo-item">
+                        <span class="emp-resumo-label">Total Devido</span>
+                        <span class="emp-resumo-valor negativo">${formatarMoeda(totalDevido)}</span>
+                    </div>
+                    <div class="emp-resumo-item">
+                        <span class="emp-resumo-label">Custo de Juros/Mês</span>
+                        <span class="emp-resumo-valor ${custoJurosMensal > 0 ? 'negativo' : ''}">${formatarMoeda(custoJurosMensal)}</span>
+                    </div>
+                    <div class="emp-resumo-item">
+                        <span class="emp-resumo-label">Maior Taxa</span>
+                        <span class="emp-resumo-valor ${maiorTaxa >= 5 ? 'negativo' : maiorTaxa > 0 ? 'atencao' : ''}">${maiorTaxa}% a.m.</span>
+                    </div>
+                    <div class="emp-resumo-item">
+                        <span class="emp-resumo-label">Juros Acumulados</span>
+                        <span class="emp-resumo-valor ${totalJurosAcum > 0 ? 'negativo' : ''}">${formatarMoeda(totalJurosAcum)}</span>
+                    </div>
+                    ${totalParcelasMes > 0 ? `<div class="emp-resumo-item">
+                        <span class="emp-resumo-label">Parcelas/Mês</span>
+                        <span class="emp-resumo-valor atencao">${formatarMoeda(totalParcelasMes)}</span>
+                    </div>` : ''}
+                    <div class="emp-resumo-item">
+                        <span class="emp-resumo-label">Contratos Ativos</span>
+                        <span class="emp-resumo-valor">${emprestimosAtivos.length}</span>
+                    </div>
+                `;
+            }
+        }
+
+        // ── 2. ORDENAÇÃO POR PRIORIDADE ──
+        // 1º) parcela atrasada, 2º) juros acumulados, 3º) maior taxa, 4º) maior saldo
+        const hoje = new Date().toISOString().split('T')[0];
+        const mesHoje = hoje.substring(0, 7);
+        const ordenados = [...emprestimosAtivos].sort((a, b) => {
+            const aAtrasada = a.proximaParcelaData && a.proximaParcelaData.substring(0,7) < mesHoje ? 1 : 0;
+            const bAtrasada = b.proximaParcelaData && b.proximaParcelaData.substring(0,7) < mesHoje ? 1 : 0;
+            if (bAtrasada !== aAtrasada) return bAtrasada - aAtrasada;
+            const aJuros = (a.jurosAcumulados || 0) > 0 ? 1 : 0;
+            const bJuros = (b.jurosAcumulados || 0) > 0 ? 1 : 0;
+            if (bJuros !== aJuros) return bJuros - aJuros;
+            if (b.taxaJuros !== a.taxaJuros) return (b.taxaJuros || 0) - (a.taxaJuros || 0);
+            return (b.principal || 0) - (a.principal || 0);
+        });
+
+        empContainer.innerHTML = ordenados.map(e => {
             const percentQuitado = e.principalOriginal > 0 ? Math.round(((e.principalOriginal - e.principal) / e.principalOriginal) * 100) : 0;
             const temJurosPendentes = (e.jurosAcumulados || 0) > 0;
             const detailId = 'detail-emp-' + e.id;
 
-            // Parcelamento (opcional)
+            // Parcelamento
             const parcelasPagas = e.parcelasPagas || 0;
             const percentParcelas = (e.parcelado && e.totalParcelas > 0) ? Math.min(100, Math.round((parcelasPagas / e.totalParcelas) * 100)) : 0;
             const parcelasRestantes = e.parcelado ? Math.max(0, e.totalParcelas - parcelasPagas) : 0;
 
+            // ── 3. ALERTAS VISUAIS ──
+            const parcAtrasada = e.proximaParcelaData && e.proximaParcelaData.substring(0,7) < mesHoje;
+            const parcProxima = e.proximaParcelaData && e.proximaParcelaData >= hoje && e.proximaParcelaData <= (() => { const d = new Date(); d.setDate(d.getDate()+7); return d.toISOString().split('T')[0]; })();
+            const alertas = [];
+            if (parcAtrasada) alertas.push(`<span class="emp-alert vencida">⚠ Parcela atrasada</span>`);
+            if (parcProxima && !parcAtrasada) alertas.push(`<span class="emp-alert proxima">📅 Vence em breve</span>`);
+            if (temJurosPendentes) alertas.push(`<span class="emp-alert juros">$ Juros pendentes</span>`);
+            if ((e.taxaJuros || 0) >= 10) alertas.push(`<span class="emp-alert taxa-alta">🔴 Taxa alta</span>`);
+
+            // ── 4. GRÁFICO SPARKLINE do histórico de saldo ──
+            let sparklineHtml = '';
+            const pagamentos = (e.historicoPagamentos || []).filter(h => h.tipo === 'amortizacao');
+            if (pagamentos.length >= 2) {
+                const saldos = [];
+                let saldoSim = e.principalOriginal || e.principal;
+                saldos.push(saldoSim);
+                pagamentos.forEach(p => { saldoSim = Math.max(0, saldoSim - (p.valor || 0)); saldos.push(saldoSim); });
+                const maxS = Math.max(...saldos), minS = Math.min(...saldos, 0);
+                const range = maxS - minS || 1;
+                const pts = saldos.map((s, i) => {
+                    const x = Math.round(i / (saldos.length - 1) * 100);
+                    const y = Math.round(40 - ((s - minS) / range) * 36);
+                    return `${x},${y}`;
+                }).join(' ');
+                sparklineHtml = `<svg viewBox="0 0 100 44" class="emp-sparkline" preserveAspectRatio="none">
+                    <polyline points="${pts}" fill="none" stroke="rgba(231,76,60,.6)" stroke-width="1.5" stroke-linejoin="round"/>
+                    <polyline points="${pts} 100,44 0,44" fill="rgba(231,76,60,.08)" stroke="none"/>
+                </svg>`;
+            }
+
+            // ── 5. HISTÓRICO (últimos 5) ──
             const historicoHtml = (e.historicoPagamentos && e.historicoPagamentos.length > 0)
                 ? e.historicoPagamentos.slice().reverse().slice(0,5).map(h => `
                     <div class="emp-historico-item">
@@ -4309,7 +4397,7 @@
                 : '<div class="emp-historico-vazio">Nenhum histórico registrado.</div>';
 
             return `
-                <tr class="acc-row">
+                <tr class="acc-row ${parcAtrasada ? 'emp-row-atrasada' : ''}">
                     <td style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
                         <span class="acc-chevron" id="chev-${detailId}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -4317,14 +4405,21 @@
                             </svg>
                         </span>
                     </td>
-                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">${e.descricao}${e.parcelado ? `<span class="badge parcela">${parcelasPagas}/${e.totalParcelas}</span>` : ''}</td>
+                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
+                        <span style="display:block;font-weight:600;">${e.descricao}${e.parcelado ? `<span class="badge parcela">${parcelasPagas}/${e.totalParcelas}</span>` : ''}</span>
+                        ${alertas.length ? `<span class="emp-alertas-row">${alertas.join('')}</span>` : ''}
+                    </td>
                     <td class="acc-taxa-val acc-mobile-meta">${e.taxaJuros}% a.m.</td>
                     <td class="acc-original-val acc-mobile-meta">${formatarMoeda(e.principalOriginal)}</td>
-                    <td class="acc-saldo-val acc-mobile-valor">${formatarMoeda(e.principal)}</td>
+                    <td class="acc-saldo-val acc-mobile-valor">
+                        ${formatarMoeda(e.principal)}
+                        ${sparklineHtml}
+                    </td>
                     <td class="acc-juros-val acc-mobile-meta">${formatarMoeda(e.jurosAcumulados || 0)}</td>
                     <td class="acc-mobile-meta">
-                        <div class="acc-progress-wrap acc-quitacao-wrap">
+                        <div class="acc-progress-wrap acc-quitacao-wrap" title="${percentQuitado}% quitado">
                             <div class="acc-bar"><div class="acc-bar-fill emprestimo" style="width:${percentQuitado}%"></div></div>
+                            <span style="font-size:0.7em;color:rgba(26,26,26,0.45);margin-top:2px;">${percentQuitado}%</span>
                         </div>
                     </td>
                     <td>
@@ -4351,7 +4446,7 @@
                                     <div class="acc-bar"><div class="acc-bar-fill parcela" style="width:${percentParcelas}%"></div></div>
                                     <div class="emp-parcela-detalhes">
                                         ${parcelasRestantes > 0
-                                            ? `Próxima: ${formatarData(e.proximaParcelaData)} · Faltam ${parcelasRestantes} ${parcelasRestantes === 1 ? 'parcela' : 'parcelas'} (${formatarMoeda(parcelasRestantes * (e.valorParcela || 0))})`
+                                            ? `Próxima: <strong>${formatarData(e.proximaParcelaData)}</strong> · Faltam ${parcelasRestantes} ${parcelasRestantes === 1 ? 'parcela' : 'parcelas'} (${formatarMoeda(parcelasRestantes * (e.valorParcela || 0))})`
                                             : 'Todas as parcelas registradas'}
                                     </div>
                                 </div>
