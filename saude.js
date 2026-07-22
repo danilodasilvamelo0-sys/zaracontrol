@@ -1037,8 +1037,8 @@
                 
                 return `
                 <div class="treino-card" id="treino-${treino.id}">
-                      <div class="treino-card-header ${primeiroGrupo}" onclick="toggleTreino('${treino.id}')">
-                        <div>
+                    <div class="treino-card-header ${primeiroGrupo}" onclick="toggleTreino('${treino.id}')">
+                        <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
                             <svg class="treino-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                             <div>
                                 <div class="treino-card-titulo">TREINO ${idx + 1} | ${treino.nome.toUpperCase()}</div>
