@@ -681,9 +681,9 @@
 
                     // Hint para campos de data — pode ser qualquer mês
                     if (isParcelaData) {
-                        html += `<span style="font-size:11px;color:rgba(26,26,26,0.45);margin-top:4px;display:block;">📅 Pode ser em qualquer mês — as parcelas serão distribuídas a partir desta data</span>`;
+                        html += `<span style="font-size:11px;color:rgba(26,26,26,0.45);margin-top:4px;display:flex;align-items:center;gap:3px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Pode ser em qualquer mês — as parcelas serão distribuídas a partir desta data</span>`;
                     } else if (isAvulsaData) {
-                        html += `<span style="font-size:11px;color:rgba(26,26,26,0.45);margin-top:4px;display:block;">📅 Pode ser em qualquer mês — aparecerá no mês correspondente</span>`;
+                        html += `<span style="font-size:11px;color:rgba(26,26,26,0.45);margin-top:4px;display:flex;align-items:center;gap:3px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Pode ser em qualquer mês — aparecerá no mês correspondente</span>`;
                     }
                 }
                 html += '</div>';
@@ -1657,7 +1657,7 @@
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
             <div class="info-box warning">
-                Isto edita o <strong>valor padrão</strong> e afeta os <strong>próximos meses</strong>. Para mudar só o valor deste mês (ex: conta de água/luz que veio diferente), use o ícone verde 💧 na linha da despesa.
+                Isto edita o <strong>valor padrão</strong> e afeta os <strong>próximos meses</strong>. Para mudar só o valor deste mês (ex: conta de água/luz que veio diferente), use o ícone verde <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg> na linha da despesa.
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -1885,9 +1885,9 @@
         const sinal = diferenca > 0 ? '+' : '';
         const cor = diferenca > 0 ? '#dc2626' : '#16a34a';
         texto.innerHTML = `
-            Valor desta parcela: <strong>${formatarMoeda(parcela.valor)}</strong> → <strong style="color:${cor};">${formatarMoeda(novoValor)}</strong><br>
+            Valor desta parcela: <strong>${formatarMoeda(parcela.valor)}</strong> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin:0 2px"><polyline points="9 18 15 12 9 6"/></svg> <strong style="color:${cor};">${formatarMoeda(novoValor)}</strong><br>
             Ajuste: <strong style="color:${cor};">${sinal}${formatarMoeda(diferenca)}</strong><br>
-            Novo total da dívida: <strong>${formatarMoeda(somaOriginal)}</strong> → <strong>${formatarMoeda(novoTotal)}</strong>
+            Novo total da dívida: <strong>${formatarMoeda(somaOriginal)}</strong> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin:0 2px"><polyline points="9 18 15 12 9 6"/></svg> <strong>${formatarMoeda(novoTotal)}</strong>
         `;
     }
 
@@ -2956,7 +2956,7 @@
             emp.arquivado = true;
             emp.arquivadoEm = new Date().toISOString();
             financeiro.arquivados.emprestimos.push(emp);
-            mostrarStatus('🎉 Dívida quitada e arquivada!', 'success');
+            mostrarStatus('Dívida quitada e arquivada!', 'success');
         } else {
             mostrarStatus('Amortização: ' + formatarMoeda(valor), 'success');
         }
@@ -3010,7 +3010,7 @@
                 <button class="btn-salvar" onclick="confirmarPagarParcela()">Confirmar Pagamento</button>
             </div>
         `;
-        document.querySelector('#modalAmortizar .modal-header h3').textContent = '💳 Pagar Parcela';
+        document.querySelector('#modalAmortizar .modal-header h3').textContent = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Pagar Parcela';
         abrirModal('modalAmortizar');
     }
 
@@ -3736,7 +3736,7 @@
                 : '<span>Sem receitas no mês</span>') +
             (receitaPendente > 0
                 ? `<span style="color:#e67e22;margin-top:4px;display:block;">A receber: ${formatarMoeda(receitaPendente)}</span>`
-                : `<span style="color:#2ecc71;margin-top:4px;display:block;">✓ Tudo recebido</span>`);
+                : `<span style="color:#2ecc71;margin-top:4px;display:block;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg> Tudo recebido</span>`);
 
         // KPI 2: Despesas Totais — breakdown por tipo com pago/pendente
         document.getElementById('kpiDespesas').textContent = formatarMoeda(despesasTotaisMes);
@@ -3889,7 +3889,7 @@
                     </span>
                 `;
             } else {
-                previsaoDetalhe.innerHTML = `<span class="kpi-badge positivo">Mês fechado ✓</span>`;
+                previsaoDetalhe.innerHTML = `<span class="kpi-badge positivo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 17 4 12"/></svg> Mês fechado</span>`;
             }
         } else {
             previsaoCard.classList.add('negativo');
@@ -4225,7 +4225,7 @@
                                             <div class="parcela-info-box" onclick="event.stopPropagation();togglePagoVariavel(${p.id})" style="cursor:pointer;flex:1;">
                                                 <div class="parcela-nome">Parcela ${p.parcelaAtual}/${p.totalParcelas}</div>
                                                 <div class="parcela-data-txt">${p.data ? p.data.split('-').reverse().join('/') : '—'}</div>
-                                                ${p.notaParcela ? `<div class="parcela-nota-txt">📝 ${p.notaParcela}</div>` : ''}
+                                                ${p.notaParcela ? `<div class="parcela-nota-txt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ${p.notaParcela}</div>` : ''}
                                             </div>
                                             <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
                                                 <div class="parcela-valor-txt">${formatarMoeda(p.valor)}</div>
@@ -4359,10 +4359,10 @@
             const parcAtrasada = e.proximaParcelaData && e.proximaParcelaData.substring(0,7) < mesHoje;
             const parcProxima = e.proximaParcelaData && e.proximaParcelaData >= hoje && e.proximaParcelaData <= (() => { const d = new Date(); d.setDate(d.getDate()+7); return d.toISOString().split('T')[0]; })();
             const alertas = [];
-            if (parcAtrasada) alertas.push(`<span class="emp-alert vencida">⚠ Parcela atrasada</span>`);
-            if (parcProxima && !parcAtrasada) alertas.push(`<span class="emp-alert proxima">📅 Vence em breve</span>`);
+            if (parcAtrasada) alertas.push(`<span class="emp-alert vencida"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Parcela atrasada</span>`);
+            if (parcProxima && !parcAtrasada) alertas.push(`<span class="emp-alert proxima"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Vence em breve</span>`);
             if (temJurosPendentes) alertas.push(`<span class="emp-alert juros">$ Juros pendentes</span>`);
-            if ((e.taxaJuros || 0) >= 10) alertas.push(`<span class="emp-alert taxa-alta">🔴 Taxa alta</span>`);
+            if ((e.taxaJuros || 0) >= 10) alertas.push(`<span class="emp-alert taxa-alta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:10px;height:10px;vertical-align:-1px"><circle cx="12" cy="12" r="10" fill="rgba(231,76,60,0.8)" stroke="none"/></svg> Taxa alta</span>`);
 
             // ── 4. GRÁFICO SPARKLINE do histórico de saldo ──
             let sparklineHtml = '';
@@ -5195,18 +5195,18 @@
         const reservaHtml = `
             <div class="pq-reserva">
                 <div class="pq-reserva-header">
-                    <span>🛡️ Reserva de Emergência</span>
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Reserva de Emergência</span>
                     <span>${formatarMoeda(reserva.totalEconomias)} de ${formatarMoeda(reserva.alvo)} <small>(meta: ${reserva.mesesAlvo} meses de despesas fixas)</small></span>
                 </div>
                 <div class="pq-reserva-bar"><div class="pq-reserva-fill" style="width:${pctReserva.toFixed(0)}%"></div></div>
                 ${reserva.falta > 0
                     ? `<div class="pq-reserva-nota">Faltam <strong>${formatarMoeda(reserva.falta)}</strong> para sua reserva ideal de ${reserva.mesesAlvo} meses.</div>`
-                    : `<div class="pq-reserva-nota pq-ok">Reserva completa! 🎉</div>`}
+                    : `<div class="pq-reserva-nota pq-ok">Reserva completa! <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-2"/><rect x="6" y="18" width="12" height="4"/></svg></div>`}
             </div>`;
 
         if (dividas.length === 0) {
             container.innerHTML = `
-                <div class="pq-vazio">✅ Você não tem dívidas ativas registradas. Continue assim!</div>
+                <div class="pq-vazio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 17 4 12"/></svg> Você não tem dívidas ativas registradas. Continue assim!</div>
                 ${reservaHtml}
             `;
             return;
@@ -5244,7 +5244,7 @@
             container.innerHTML = `
                 ${resumoHtml}
                 <div class="pq-alerta">
-                    ⚠️ Pagando apenas o mínimo (os juros), suas dívidas <strong>nunca são quitadas</strong> —
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Pagando apenas o mínimo (os juros), suas dívidas <strong>nunca são quitadas</strong> —
                     elas custam ${formatarMoeda(r.custoJurosMensal)}/mês para sempre.
                     Informe acima quanto você consegue destinar a mais por mês para ver seu plano de quitação.
                 </div>
@@ -5259,11 +5259,11 @@
             ? `<strong>${sim.meses} ${sim.meses === 1 ? 'mês' : 'meses'}</strong> (até ${pa_nomeMes(sim.meses)})`
             : `mais de ${limiteAnos(sim)} anos — considere aumentar o valor extra`;
 
-        const nomeEstrategia = plano.estrategia === 'bolaDeNeve' ? '❄️ Bola de Neve' : '⚔️ Avalanche';
+        const nomeEstrategia = plano.estrategia === 'bolaDeNeve' ? 'Bola de Neve' : 'Avalanche';
 
         const resultadoHtml = `
             <div class="pq-resultado">
-                <h4>📅 Seu Plano: ${nomeEstrategia}</h4>
+                <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Seu Plano: ${nomeEstrategia}</h4>
                 <p>Destinando <strong>${formatarMoeda(sim.pagamentoMensalTotal)}/mês</strong> a essas dívidas, nessa ordem,
                 você fica livre delas em ${tempoTexto}, pagando ao todo
                 <strong>${formatarMoeda(sim.totalJuros)}</strong> em juros.</p>
@@ -5298,20 +5298,20 @@
             comparacaoHtml = `
                 <div class="pq-comparacao">
                     <div class="pq-comp-card ${plano.estrategia === 'avalanche' ? 'pq-ativo' : ''}">
-                        <div class="pq-comp-titulo">⚔️ Avalanche</div>
+                        <div class="pq-comp-titulo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg> Avalanche</div>
                         <div class="pq-comp-linha">Quita tudo em <strong>${av.meses} meses</strong></div>
                         <div class="pq-comp-linha">Total de juros: <strong>${formatarMoeda(av.totalJuros)}</strong></div>
                         <div class="pq-comp-linha">1ª dívida quitada no mês ${primeiraAv.mesQuitacao} (${primeiraAv.descricao})</div>
                     </div>
                     <div class="pq-comp-card ${plano.estrategia === 'bolaDeNeve' ? 'pq-ativo' : ''}">
-                        <div class="pq-comp-titulo">❄️ Bola de Neve</div>
+                        <div class="pq-comp-titulo">Bola de Neve</div>
                         <div class="pq-comp-linha">Quita tudo em <strong>${bn.meses} meses</strong></div>
                         <div class="pq-comp-linha">Total de juros: <strong>${formatarMoeda(bn.totalJuros)}</strong></div>
                         <div class="pq-comp-linha">1ª dívida quitada no mês ${primeiraBn.mesQuitacao} (${primeiraBn.descricao})</div>
                     </div>
                 </div>
                 <div class="pq-comp-dica">
-                    💡 ${economiaJuros > 0.5
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> ${economiaJuros > 0.5
                         ? `A Avalanche economiza <strong>${formatarMoeda(economiaJuros)}</strong> em juros frente à Bola de Neve.`
                         : (economiaJuros < -0.5 ? `A Bola de Neve economiza <strong>${formatarMoeda(-economiaJuros)}</strong> em juros frente à Avalanche.` : 'As duas estratégias resultam em juros muito parecidos aqui.')}
                     ${primeiraBn.mesQuitacao < primeiraAv.mesQuitacao
@@ -5493,10 +5493,10 @@
         // ---- helper local: renderiza as seções 3/4 (Avalanche / Bola de Neve) ----
         function renderEstrategia(numero, nome, icone, sim, ordem, comentario) {
             if (dividas.length === 0) {
-                return `<div class="relatorio-secao"><h2>${numero}. Estratégia ${nome}</h2><p class="relatorio-vazio">✅ Nenhuma dívida ativa — seção não aplicável.</p></div>`;
+                return `<div class="relatorio-secao"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> ${numero}. Estratégia ${nome}</h2><p class="relatorio-vazio">✅ Nenhuma dívida ativa — seção não aplicável.</p></div>`;
             }
             if (!sim.convergiu) {
-                return `<div class="relatorio-secao"><h2>${numero}. Estratégia ${nome}</h2><p class="relatorio-vazio">Defina, no campo acima, um valor extra mensal maior que zero para gerar o cronograma desta estratégia. Atualmente, pagando apenas os juros mínimos (${formatarMoeda(plano.resumo.custoJurosMensal)}/mês), o saldo das dívidas permanece constante indefinidamente.</p></div>`;
+                return `<div class="relatorio-secao"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> ${numero}. Estratégia ${nome}</h2><p class="relatorio-vazio">Defina, no campo acima, um valor extra mensal maior que zero para gerar o cronograma desta estratégia. Atualmente, pagando apenas os juros mínimos (${formatarMoeda(plano.resumo.custoJurosMensal)}/mês), o saldo das dívidas permanece constante indefinidamente.</p></div>`;
             }
             const cronograma = sim.ordemFinal.map(o => `<li>Mês ${o.mesQuitacao} (${pa_nomeMes(o.mesQuitacao)}): <strong>${o.descricao}</strong> quitada ✅</li>`).join('');
             return `
@@ -5510,7 +5510,7 @@
                 <h4>Cronograma de Quitação</h4>
                 <ul class="relatorio-cronograma">
                     ${cronograma}
-                    <li class="relatorio-final">🎉 Mês ${sim.meses} (${pa_nomeMes(sim.meses)}): todas as dívidas quitadas</li>
+                    <li class="relatorio-final"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-2"/><rect x="6" y="18" width="12" height="4"/></svg> Mês ${sim.meses} (${pa_nomeMes(sim.meses)}): todas as dívidas quitadas</li>
                 </ul>
                 <table class="relatorio-tabela relatorio-tabela-totais">
                     <tr><td>Pagamento mensal do plano</td><td>${formatarMoeda(sim.pagamentoMensalTotal)}</td></tr>
@@ -5570,8 +5570,8 @@
         }
 
         // ===== 3. Avalanche / 4. Bola de Neve =====
-        html += renderEstrategia(3, 'Avalanche (Menor Custo Financeiro)', '⚔️', plano.avalanche, pa_ordenarAvalanche(dividas), comentarioAvalanche);
-        html += renderEstrategia(4, 'Bola de Neve (Maior Reforço Comportamental)', '❄️', plano.bolaDeNeve, pa_ordenarBolaDeNeve(dividas), comentarioBolaDeNeve);
+        html += renderEstrategia(3, 'Avalanche (Menor Custo Financeiro)', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>', plano.avalanche, pa_ordenarAvalanche(dividas), comentarioAvalanche);
+        html += renderEstrategia(4, 'Bola de Neve (Maior Reforço Comportamental)', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 7l-5-5-5 5"/><path d="M7 17l5 5 5-5"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M7 7l-5 5 5 5"/><path d="M17 7l5 5-5 5"/></svg>', plano.bolaDeNeve, pa_ordenarBolaDeNeve(dividas), comentarioBolaDeNeve);
 
         // ===== 5. Comparativo =====
         if (dividas.length > 1 && plano.avalanche.convergiu && plano.bolaDeNeve.convergiu) {
@@ -5589,7 +5589,7 @@
                         <tr><td>Primeira dívida eliminada</td><td>mês ${av.ordemFinal[0].mesQuitacao} (${av.ordemFinal[0].descricao})</td><td>mês ${bn.ordemFinal[0].mesQuitacao} (${bn.ordemFinal[0].descricao})</td></tr>
                     </tbody>
                 </table>
-                <p class="relatorio-recomendacao">💡 ${pa_recomendacaoEstrategia(plano)}</p>
+                <p class="relatorio-recomendacao"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> ${pa_recomendacaoEstrategia(plano)}</p>
             </div>`;
         } else if (dividas.length > 0) {
             html += `<div class="relatorio-secao"><h2>5. Comparativo das Estratégias</h2><p class="relatorio-vazio">${pa_recomendacaoEstrategia(plano)}</p></div>`;
@@ -5677,7 +5677,7 @@
 </style>
 </head>
 <body>
-<h1>🎯 ${titulo}</h1>
+<h1><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:4px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> ${titulo}</h1>
 <p class="sub">Gerado em ${new Date().toLocaleString('pt-BR')} · ZARA — Sistema Operacional Pessoal</p>
 ${corpo.innerHTML}
 </body>
