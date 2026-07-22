@@ -1780,6 +1780,34 @@
         <div class="treinos-container" id="listaTreinos"></div>
     </div>
     
+
+    <!-- MODO FOCO TREINO -->
+    <div id="modoFocoOverlay">
+        <div class="foco-header">
+            <div>
+                <div class="foco-treino-nome" id="focoNomeTreino">Treino</div>
+                <div class="foco-prog" id="focoProg">Exercício 1 de 1</div>
+            </div>
+            <button class="foco-btn-fechar" onclick="fecharModoFoco()">✕ Sair do foco</button>
+        </div>
+        <div class="foco-body">
+            <div class="foco-ex-nome" id="focoExNome">-</div>
+            <div class="foco-ex-detalhes" id="focoExDetalhes"></div>
+            <div class="foco-ex-obs" id="focoExObs"></div>
+            <button class="foco-check-btn" id="focoCheckBtn" onclick="focoMarcarFeito()">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+            <div class="foco-nav" id="focoNav"></div>
+        </div>
+    </div>
+    <!-- TIMER DE DESCANSO -->
+    <div id="timerDescanso">
+        <div class="timer-label">Descansando</div>
+        <div class="timer-numero" id="timerNumero">00:00</div>
+        <div class="timer-ex-nome" id="timerExNome"></div>
+        <button class="timer-btn-pular" onclick="pularTimer()">Pular descanso</button>
+    </div>
+
     <!-- Página Fotos / Evolução -->
     <div class="container page-section" id="page-fotos">
         <div class="header">
@@ -2950,6 +2978,190 @@
         let gruposSelecionados = [];
         let ultimoExercicio = null;
 
+
+        // ==========================================
+        // TIMER DE DESCANSO
+        // ==========================================
+        let timerInterval = null;
+        let timerSegundos = 0;
+
+        function iniciarTimer(segundos, nomeExercicio) {
+            pularTimer();
+            timerSegundos = segundos;
+            document.getElementById('timerExNome').textContent = nomeExercicio || '';
+            document.getElementById('timerDescanso').classList.add('ativo');
+            atualizarTimerDisplay();
+            timerInterval = setInterval(() => {
+                timerSegundos--;
+                atualizarTimerDisplay();
+                if (timerSegundos <= 0) pularTimer();
+            }, 1000);
+        }
+
+        function atualizarTimerDisplay() {
+            const min = Math.floor(Math.abs(timerSegundos) / 60);
+            const seg = Math.abs(timerSegundos) % 60;
+            const txt = String(min).padStart(2,'0') + ':' + String(seg).padStart(2,'0');
+            const el = document.getElementById('timerNumero');
+            el.textContent = txt;
+            el.classList.toggle('urgente', timerSegundos <= 10 && timerSegundos > 0);
+        }
+
+        function pularTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            document.getElementById('timerDescanso').classList.remove('ativo');
+        }
+
+        // ==========================================
+        // HISTÓRICO DE TREINOS
+        // ==========================================
+        function registrarConclusaoTreino(treinoId) {
+            const treino = saude.treinos.find(t => t.id === treinoId);
+            if (!treino) return;
+            if (!treino.historico) treino.historico = [];
+            treino.historico.push({ data: new Date().toISOString(), exercicios: (treino.exercicios||[]).length });
+            if (treino.historico.length > 30) treino.historico = treino.historico.slice(-30);
+            salvarDados();
+        }
+
+        function getUltimoTreino(treino) {
+            if (!treino.historico || !treino.historico.length) return null;
+            const ult = treino.historico[treino.historico.length - 1];
+            return Math.floor((Date.now() - new Date(ult.data)) / 86400000);
+        }
+
+        function textoUltimoTreino(dias) {
+            if (dias === null) return 'Nunca realizado';
+            if (dias === 0) return 'Realizado hoje';
+            if (dias === 1) return 'Ontem';
+            return `Há ${dias} dias`;
+        }
+
+        // ==========================================
+        // MODO FOCO
+        // ==========================================
+        let focoTreino = null;
+        let focoIdx = 0;
+        let focoExercicios = [];
+
+        function iniciarModoFoco(treinoId) {
+            focoTreino = saude.treinos.find(t => t.id === treinoId);
+            if (!focoTreino) return;
+            focoExercicios = (focoTreino.exercicios || []).filter(e => !e.conjugado);
+            focoIdx = 0;
+            const primNaoFeito = focoExercicios.findIndex(e => !e.feito);
+            if (primNaoFeito >= 0) focoIdx = primNaoFeito;
+            document.getElementById('focoNomeTreino').textContent = focoTreino.nome.toUpperCase();
+            document.getElementById('modoFocoOverlay').classList.add('ativo');
+            renderFoco();
+        }
+
+        function fecharModoFoco() {
+            document.getElementById('modoFocoOverlay').classList.remove('ativo');
+            focoTreino = null;
+        }
+
+        function renderFoco() {
+            if (!focoExercicios.length) {
+                fecharModoFoco();
+                return;
+            }
+            const ex = focoExercicios[focoIdx];
+            document.getElementById('focoProg').textContent = `Exercício ${focoIdx+1} de ${focoExercicios.length}`;
+            document.getElementById('focoExNome').textContent = ex.nome;
+            document.getElementById('focoExObs').textContent = ex.obs || '';
+            document.getElementById('focoExDetalhes').innerHTML = `
+                <div class="foco-ex-det-item"><span class="foco-ex-det-label">Séries</span><span class="foco-ex-det-val">${ex.series}</span></div>
+                <div class="foco-ex-det-item"><span class="foco-ex-det-label">Reps</span><span class="foco-ex-det-val">${ex.reps}</span></div>
+                ${ex.metodo ? `<div class="foco-ex-det-item"><span class="foco-ex-det-label">Método</span><span class="foco-ex-det-val">${ex.metodo}</span></div>` : ''}
+                <div class="foco-ex-det-item"><span class="foco-ex-det-label">Descanso</span><span class="foco-ex-det-val">${ex.descanso}</span></div>
+            `;
+            const checkBtn = document.getElementById('focoCheckBtn');
+            checkBtn.classList.toggle('feito', !!ex.feito);
+            const nav = document.getElementById('focoNav');
+            const isUltimo = focoIdx >= focoExercicios.length - 1;
+            nav.innerHTML =
+                (focoIdx > 0 ? `<button class="foco-nav-btn" onclick="focoNavegar(-1)">← Anterior</button>` : '') +
+                (!isUltimo ? `<button class="foco-nav-btn proximo" onclick="focoNavegar(1)">Próximo →</button>`
+                           : `<button class="foco-concluir-btn" onclick="focoConcluir()">✓ Concluir Treino</button>`);
+        }
+
+        function focoMarcarFeito() {
+            if (!focoExercicios.length) return;
+            const ex = focoExercicios[focoIdx];
+            ex.feito = !ex.feito;
+            const exReal = focoTreino.exercicios.find(e => e.id === ex.id);
+            if (exReal) exReal.feito = ex.feito;
+            salvarDados();
+            renderFoco();
+            renderTreinos();
+            if (ex.feito && ex.descanso) {
+                const match = ex.descanso.match(/(\d+)/);
+                if (match) {
+                    const seg = parseInt(match[1]) * (ex.descanso.toLowerCase().includes('min') ? 60 : 1);
+                    if (seg > 0) iniciarTimer(seg, ex.nome);
+                }
+            }
+        }
+
+        function focoNavegar(dir) {
+            focoIdx = Math.max(0, Math.min(focoExercicios.length-1, focoIdx+dir));
+            renderFoco();
+        }
+
+        function focoConcluir() {
+            registrarConclusaoTreino(focoTreino.id);
+            fecharModoFoco();
+            renderTreinos();
+            const t = document.createElement('div');
+            t.textContent = '✓ Treino concluído e registrado!';
+            t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;z-index:9999;font-size:.85em';
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        // ==========================================
+        // DRAG AND DROP
+        // ==========================================
+        let dragSrcEl = null;
+
+        function initDragDrop(treinoId) {
+            const tbody = document.querySelector(`#treino-${treinoId} .exercicio-table tbody`);
+            if (!tbody) return;
+            tbody.querySelectorAll('tr[draggable]').forEach(row => {
+                row.addEventListener('dragstart', e => {
+                    dragSrcEl = row;
+                    e.dataTransfer.effectAllowed = 'move';
+                    setTimeout(() => { row.style.opacity = '.4'; }, 0);
+                });
+                row.addEventListener('dragend', () => { row.style.opacity = '1'; });
+                row.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    tbody.querySelectorAll('tr').forEach(r => r.classList.remove('drag-over'));
+                    row.classList.add('drag-over');
+                });
+                row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+                row.addEventListener('drop', e => {
+                    e.preventDefault();
+                    row.classList.remove('drag-over');
+                    if (dragSrcEl === row) return;
+                    const treino = saude.treinos.find(t => t.id === treinoId);
+                    if (!treino) return;
+                    const srcId = dragSrcEl.dataset.exId;
+                    const dstId = row.dataset.exId;
+                    const arr = treino.exercicios;
+                    const si = arr.findIndex(e => e.id === srcId);
+                    const di = arr.findIndex(e => e.id === dstId);
+                    if (si < 0 || di < 0) return;
+                    const [item] = arr.splice(si, 1);
+                    arr.splice(di, 0, item);
+                    salvarDados();
+                    renderTreinos();
+                });
+            });
+        }
+
         function renderTreinos() {
             const container = document.getElementById('listaTreinos');
             if (!saude.treinos || !saude.treinos.length) {
@@ -2989,15 +3201,19 @@
                 
                 return `
                 <div class="treino-card" id="treino-${treino.id}">
-                    <div class="treino-card-header ${primeiroGrupo}" onclick="toggleTreino('${treino.id}')">
+                      <div class="treino-card-header ${primeiroGrupo}" onclick="toggleTreino('${treino.id}')">
                         <div>
                             <svg class="treino-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                             <div>
                                 <div class="treino-card-titulo">TREINO ${idx + 1} | ${treino.nome.toUpperCase()}</div>
                                 <div class="treino-card-subtitulo">${gruposTexto} • ${exercicios.length} exercício${exercicios.length !== 1 ? 's' : ''}</div>
+                                ${(() => { const dias = getUltimoTreino(treino); const cls = dias === null ? '' : dias <= 2 ? 'recente' : dias > 7 ? 'antigo' : ''; return `<div class="treino-ultimo ${cls}">${textoUltimoTreino(dias)}</div>`; })()}
                             </div>
                         </div>
                         <div class="treino-card-actions" onclick="event.stopPropagation()">
+                            <button class="btn-iniciar-treino" onclick="iniciarModoFoco('${treino.id}')" title="Iniciar treino em modo foco">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Iniciar
+                            </button>
                             <button class="treino-card-btn" onclick="editarTreino('${treino.id}')" title="Editar">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                             </button>
@@ -3006,6 +3222,23 @@
                             </button>
                         </div>
                     </div>
+                    </div>
+                    ${(() => {
+                        const total = exercicios.length;
+                        const feitos = exercicios.filter(e => e.feito).length;
+                        const pct = total > 0 ? Math.round(feitos/total*100) : 0;
+                        const volTotal = exercicios.reduce((s,e) => s + (parseInt(e.series)||0)*(parseInt(e.reps)||0), 0);
+                        const serTotal = exercicios.reduce((s,e) => s + (parseInt(e.series)||0), 0);
+                        return `
+                        <div class="treino-prog-wrap">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                                <span class="treino-prog-txt">${feitos}/${total} exercícios</span>
+                                <span class="treino-prog-txt">${pct}%</span>
+                            </div>
+                            <div class="treino-prog-bar-wrap"><div class="treino-prog-bar" style="width:${pct}%"></div></div>
+                        </div>
+                        `;
+                    })()}
                     <div class="treino-card-body">
                         ${exercicios.length ? `
                         <table class="exercicio-table">
@@ -3033,8 +3266,10 @@
                                     
                                     return `
                                 <tr class="${todosFeitos ? 'exercicio-feito' : ''}">
-                                    <td style="text-align:center">
+                                    <td style="display:flex;align-items:center;gap:4px;padding-left:12px">
+                                        <span class="exercicio-drag-handle" title="Arrastar para reordenar"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="17" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="1.5" fill="currentColor" stroke="none"/></svg></span>
                                         <input type="checkbox" class="exercicio-check" ${todosFeitos ? 'checked' : ''} onchange="marcarExercicio('${treino.id}','${ex.id}',this.checked,${temConjugados ? `'${ex.conjugadosCom.map(c=>c.id).join(',')}'` : 'null'})">
+                                    </td>
                                     </td>
                                     <td>
                                         <div class="exercicio-nome">
@@ -3065,6 +3300,14 @@
                         </table>
                         ` : '<div style="padding:30px;text-align:center;color:rgba(255,255,255,0.3)">Nenhum exercício adicionado</div>'}
                     </div>
+                    ${(() => {
+                        const volTotal = exercicios.reduce((s,e) => s + (parseInt(e.series)||0)*(parseInt(e.reps)||0), 0);
+                        const serTotal = exercicios.reduce((s,e) => s + (parseInt(e.series)||0), 0);
+                        return exercicios.length ? `<div class="treino-volume">
+                            <span class="treino-vol-item">Séries totais:<strong>${serTotal}</strong></span>
+                            <span class="treino-vol-item">Volume total:<strong>${volTotal} reps</strong></span>
+                        </div>` : '';
+                    })()}
                     <div class="treino-card-footer">
                         <button class="add-exercicio-btn" onclick="abrirModalExercicio('${treino.id}')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -3077,6 +3320,8 @@
             
             // Restaurar estados colapsados
             restaurarEstadoColapsado();
+            // Inicializar drag and drop em cada treino
+            (saude.treinos || []).forEach(t => { try { initDragDrop(t.id); } catch(e) {} });
         }
         
         function marcarExercicio(treinoId, exId, feito, conjugadosIds) {
@@ -3096,6 +3341,18 @@
             
             salvarDados();
             renderTreinos();
+            // Timer de descanso automático ao marcar como feito
+            if (feito) {
+                const treino = saude.treinos.find(t => t.id === treinoId);
+                const ex = treino && treino.exercicios.find(e => e.id === exId);
+                if (ex && ex.descanso) {
+                    const match = ex.descanso.match(/(\d+)/);
+                    if (match) {
+                        const seg = parseInt(match[1]) * (ex.descanso.toLowerCase().includes('min') ? 60 : 1);
+                        if (seg > 0) iniciarTimer(seg, ex.nome);
+                    }
+                }
+            }
         }
 
         // ==========================================
