@@ -4238,3 +4238,203 @@ tr.grupo-pausado td {
     .container { margin-left: 0 !important; padding: 0 !important; }
     .modal { display: none !important; }
 }
+
+/* ═══════════════════════════════════════════
+   CALENDÁRIO FINANCEIRO
+   ═══════════════════════════════════════════ */
+.fin-cal-header { margin-bottom: 0; }
+
+.fin-cal-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid rgba(184,151,46,.15);
+    border-radius: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .78em;
+    font-weight: 600;
+    letter-spacing: .8px;
+    color: rgba(26,26,26,.65);
+    text-transform: uppercase;
+    transition: all .2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.fin-cal-toggle:hover { border-color: rgba(184,151,46,.3); color: #7a5c10; }
+.fin-cal-toggle.open { border-radius: 12px 12px 0 0; border-bottom-color: transparent; }
+.fin-cal-toggle.open .fin-cal-chevron { transform: rotate(180deg); }
+
+#finCalBody {
+    background: #fff;
+    border: 1px solid rgba(184,151,46,.15);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.06);
+}
+
+.fin-cal-legenda {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(26,26,26,.05);
+}
+.fin-cal-leg {
+    font-size: .62em;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    color: rgba(26,26,26,.5);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.fin-cal-leg::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+.fin-cal-leg.receita::before  { background: #2ecc71; }
+.fin-cal-leg.despesa::before  { background: #e74c3c; }
+.fin-cal-leg.ambos::before    { background: #b8972e; }
+.fin-cal-leg.vencido::before  { background: rgba(231,76,60,.35); border: 1px solid #e74c3c; }
+
+.fin-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+}
+
+.fin-cal-dia-label {
+    font-size: .52em;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-align: center;
+    color: rgba(26,26,26,.35);
+    text-transform: uppercase;
+    padding: 4px 0 6px;
+}
+
+.fin-cal-dia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 2px 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .15s;
+    position: relative;
+    min-height: 52px;
+    background: transparent;
+}
+.fin-cal-dia:hover { background: rgba(184,151,46,.06); }
+.fin-cal-dia.hoje {
+    background: rgba(184,151,46,.08);
+    box-shadow: inset 0 0 0 1.5px rgba(184,151,46,.4);
+}
+.fin-cal-dia.outro-mes { opacity: .25; pointer-events: none; }
+
+.fin-cal-num {
+    font-size: .72em;
+    font-weight: 600;
+    color: rgba(26,26,26,.7);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.fin-cal-dia.hoje .fin-cal-num { color: #7a5c10; font-weight: 700; }
+
+/* Pontos de eventos */
+.fin-cal-dots {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    min-height: 6px;
+}
+.fin-cal-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.fin-cal-dot.receita  { background: #2ecc71; }
+.fin-cal-dot.despesa  { background: #e74c3c; }
+.fin-cal-dot.vencido  { background: rgba(231,76,60,.45); }
+.fin-cal-dot.ambos    { background: #b8972e; }
+
+/* Mini barra de saldo */
+.fin-cal-barra-wrap {
+    width: 100%;
+    margin-top: 4px;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(26,26,26,.06);
+    overflow: hidden;
+}
+.fin-cal-barra {
+    height: 100%;
+    border-radius: 2px;
+    transition: width .3s;
+}
+.fin-cal-barra.positivo { background: rgba(46,204,113,.5); }
+.fin-cal-barra.negativo { background: rgba(231,76,60,.4); }
+
+/* Tooltip de saldo no hover */
+.fin-cal-dia:hover .fin-cal-tooltip { display: block; }
+.fin-cal-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #fff;
+    font-size: .6em;
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: 6px;
+    z-index: 100;
+    pointer-events: none;
+    font-weight: 600;
+}
+.fin-cal-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: #1a1a1a;
+}
+
+/* Linha de saldo final */
+.fin-cal-saldo-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(26,26,26,.05);
+    font-size: .72em;
+    color: rgba(26,26,26,.45);
+}
+#finCalSaldoFinal {
+    font-weight: 700;
+    font-size: 1.1em;
+}
+#finCalSaldoFinal.positivo { color: #27ae60; }
+#finCalSaldoFinal.negativo { color: #e74c3c; }
+
+@media (max-width: 640px) {
+    .fin-cal-dia { min-height: 44px; padding: 5px 1px 4px; }
+    .fin-cal-num { font-size: .65em; }
+    .fin-cal-dot { width: 4px; height: 4px; }
+}
+
