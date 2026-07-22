@@ -1454,3 +1454,73 @@
 .sidebar { width: 70px !important; }
 .sidebar:hover { width: 240px !important; }
 @media (min-width: 769px) { body { padding-left: 95px !important; } }
+
+/* ============================================================
+   MELHORIAS DE TREINO — Timer, Progresso, Modo Foco, Drag, Volume
+   ============================================================ */
+
+/* ── PROGRESSO DO TREINO ── */
+.treino-prog-wrap{padding:10px 20px 8px;background:#111;border-bottom:1px solid rgba(212,175,125,.06)}
+.treino-prog-bar-wrap{flex:1;height:4px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
+.treino-prog-bar{height:100%;background:linear-gradient(90deg,#d4af7d,#e8c98a);border-radius:2px;transition:width .4s}
+.treino-prog-txt{font-size:.68em;color:rgba(212,175,125,.7);font-weight:600}
+
+/* ── VOLUME TOTAL ── */
+.treino-volume{padding:8px 20px;background:#111;border-top:1px solid rgba(212,175,125,.06);display:flex;gap:16px;flex-wrap:wrap}
+.treino-vol-item{font-size:.68em;color:rgba(255,255,255,.4)}
+.treino-vol-item strong{color:#d4af7d;margin-left:4px}
+
+/* ── ÚLTIMO TREINO ── */
+.treino-ultimo{font-size:.62em;color:rgba(255,255,255,.45);margin-top:2px}
+.treino-ultimo.recente{color:rgba(46,204,113,.7)}
+.treino-ultimo.antigo{color:rgba(231,76,60,.6)}
+
+/* ── BOTÃO INICIAR TREINO ── */
+.btn-iniciar-treino{background:rgba(212,175,125,.12);border:1px solid rgba(212,175,125,.3);color:#d4af7d;padding:8px 14px;font-size:.75em;font-weight:700;letter-spacing:.8px;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:6px;border-radius:8px}
+.btn-iniciar-treino:hover{background:rgba(212,175,125,.2);border-color:#d4af7d}
+.btn-iniciar-treino svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ── MODO FOCO ── */
+#modoFocoOverlay{display:none;position:fixed;inset:0;background:#0a0a0a;z-index:9990;flex-direction:column;align-items:center;justify-content:center;gap:0}
+#modoFocoOverlay.ativo{display:flex}
+.foco-header{width:100%;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(212,175,125,.1)}
+.foco-treino-nome{font-size:.7em;font-weight:700;letter-spacing:2px;color:#d4af7d;text-transform:uppercase}
+.foco-prog{font-size:.65em;color:rgba(255,255,255,.4)}
+.foco-btn-fechar{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:6px 12px;cursor:pointer;font-size:.65em;letter-spacing:1px;font-weight:600;text-transform:uppercase;transition:all .2s}
+.foco-btn-fechar:hover{border-color:rgba(231,76,60,.4);color:#e74c3c}
+.foco-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;width:100%;max-width:480px}
+.foco-ex-nome{font-size:1.6em;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.2}
+.foco-ex-detalhes{font-size:.85em;color:rgba(212,175,125,.7);margin-bottom:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.foco-ex-det-item{display:flex;flex-direction:column;align-items:center;gap:4px}
+.foco-ex-det-label{font-size:.6em;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.foco-ex-det-val{font-size:1.1em;font-weight:700;color:#d4af7d}
+.foco-ex-obs{font-size:.75em;color:rgba(255,255,255,.35);margin-top:-20px;margin-bottom:24px;font-style:italic}
+.foco-check-btn{width:80px;height:80px;border-radius:50%;border:2px solid rgba(212,175,125,.3);background:transparent;color:#d4af7d;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;margin-bottom:28px}
+.foco-check-btn:hover{border-color:#d4af7d;background:rgba(212,175,125,.1)}
+.foco-check-btn.feito{border-color:#2ecc71;background:rgba(46,204,113,.1);color:#2ecc71}
+.foco-check-btn svg{width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:1.5}
+.foco-nav{display:flex;gap:12px}
+.foco-nav-btn{padding:12px 24px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.5);cursor:pointer;font-size:.75em;font-weight:600;letter-spacing:.5px;transition:all .2s}
+.foco-nav-btn:hover{border-color:rgba(212,175,125,.3);color:#d4af7d}
+.foco-nav-btn.proximo{background:rgba(212,175,125,.1);border-color:rgba(212,175,125,.3);color:#d4af7d}
+.foco-concluir-btn{padding:14px 32px;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);color:#2ecc71;cursor:pointer;font-size:.8em;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s}
+.foco-concluir-btn:hover{background:rgba(46,204,113,.2)}
+
+/* ── TIMER DE DESCANSO ── */
+#timerDescanso{display:none;position:fixed;bottom:20px;right:20px;z-index:9991;background:#1a1a1a;border:1px solid rgba(212,175,125,.3);padding:14px 20px;border-radius:12px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5);min-width:140px}
+#timerDescanso.ativo{display:block}
+.timer-label{font-size:.6em;letter-spacing:1.5px;text-transform:uppercase;color:rgba(212,175,125,.6);margin-bottom:4px;font-weight:600}
+.timer-numero{font-size:2.2em;font-weight:700;color:#d4af7d;line-height:1;font-variant-numeric:tabular-nums}
+.timer-numero.urgente{color:#e74c3c;animation:piscar .5s infinite}
+.timer-ex-nome{font-size:.62em;color:rgba(255,255,255,.4);margin-top:4px}
+.timer-btn-pular{margin-top:8px;background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.35);padding:4px 10px;font-size:.6em;cursor:pointer;letter-spacing:.5px;transition:all .2s;width:100%}
+.timer-btn-pular:hover{border-color:rgba(212,175,125,.3);color:#d4af7d}
+@keyframes piscar{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── DRAG AND DROP ── */
+.exercicio-drag-handle{color:rgba(255,255,255,.2);cursor:grab;padding:0 6px;display:flex;align-items:center;transition:color .2s}
+.exercicio-drag-handle:hover{color:#d4af7d}
+.exercicio-drag-handle svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.exercicio-table tr.drag-over td{background:rgba(212,175,125,.08)!important}
+tr[draggable]{cursor:grab}
+tr[draggable]:active{cursor:grabbing}
