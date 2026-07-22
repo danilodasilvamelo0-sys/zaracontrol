@@ -201,7 +201,7 @@
                 document.getElementById('kpiProximo').textContent = proximoMed.hora || '--:--';
                 document.getElementById('kpiProximoNome').textContent = proximoMed.nome;
             } else {
-                document.getElementById('kpiProximo').textContent = '✓';
+                document.getElementById('kpiProximo').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg>';
                 document.getElementById('kpiProximoNome').textContent = 'Concluído';
             }
             
@@ -349,7 +349,7 @@
                         <span class="med-col-label">ESTOQUE</span>
                         <span class="med-col-valor ${getEstoqueClass(med.estoque)}">${med.estoque} ${getTipoAbrev(med.tipo)}</span>
                         ${(() => { const dr = calcularDiasRestantes(med); if (dr < 999) { const {txt,cls} = textoDiasRestantes(dr); return `<span class="med-dias-restantes ${cls}">${txt}</span>`; } return ''; })()}
-                        ${(saude.statusHoje?.notas?.[med.id]) ? `<span class="med-nota-chip">📝 ${saude.statusHoje.notas[med.id]}</span>` : ''}
+                        ${(saude.statusHoje?.notas?.[med.id]) ? `<span class="med-nota-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ${saude.statusHoje.notas[med.id]}</span>` : ''}
                     </div>
                     <div class="med-col med-col-actions">
                         <button class="btn-notify ${med.notificar ? 'active' : ''}" onclick="toggleNotificar('${med.id}')" title="Notificação Telegram">
@@ -465,7 +465,7 @@
                             </div>
                             <div class="historico-item-info">
                                 <div class="historico-item-nome">${med.nome}</div>
-                                <div class="historico-item-hora">${med.hora || '--:--'} ${med.horaTomada ? `→ Tomado ${med.horaTomada}` : ''}</div>
+                                <div class="historico-item-hora">${med.hora || '--:--'} ${med.horaTomada ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin:0 2px"><polyline points="9 18 15 12 9 6"/></svg> tomado ${med.horaTomada}` : ''}</div>
                             </div>
                         </div>
                     `).join('')}
@@ -674,8 +674,8 @@
                             ${med.categoria ? `<span class="med-timeline-categoria">${catNome[med.categoria] || ''}</span>` : ''}
                             <span class="plano-item-estoque ${estoqueClass}">${med.estoque} ${getTipoAbrev(med.tipo)}</span>
                         </div>
-                        <div class="plano-item-detalhes">⏰ ${med.hora || '--:--'} | 📅 ${diasTexto}${med.tolerancia && med.tolerancia !== 30 ? ` | ⏱️ ±${med.tolerancia}min` : ''}</div>
-                        ${med.obs ? `<div class="plano-item-obs">📝 ${med.obs}</div>` : ''}
+                        <div class="plano-item-detalhes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${med.hora || '--:--'} | <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${diasTexto}${med.tolerancia && med.tolerancia !== 30 ? ` | ⏱️ ±${med.tolerancia}min` : ''}</div>
+                        ${med.obs ? `<div class="plano-item-obs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ${med.obs}</div>` : ''}
                     </div>
                     <div class="plano-item-actions">
                         <button class="btn-notify ${notifyActive}" onclick="toggleNotificacao('${med.id}')" title="${med.notificar ? 'Desativar notificação' : 'Ativar notificação'}">
@@ -1105,9 +1105,9 @@
             const nav = document.getElementById('focoNav');
             const isUltimo = focoIdx >= focoExercicios.length - 1;
             nav.innerHTML =
-                (focoIdx > 0 ? `<button class="foco-nav-btn" onclick="focoNavegar(-1)">← Anterior</button>` : '') +
-                (!isUltimo ? `<button class="foco-nav-btn proximo" onclick="focoNavegar(1)">Próximo →</button>`
-                           : `<button class="foco-concluir-btn" onclick="focoConcluir()">✓ Concluir Treino</button>`);
+                (focoIdx > 0 ? `<button class="foco-nav-btn" onclick="focoNavegar(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin:0 2px"><polyline points="15 18 9 12 15 6"/></svg> Anterior</button>` : '') +
+                (!isUltimo ? `<button class="foco-nav-btn proximo" onclick="focoNavegar(1)">Próximo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin:0 2px"><polyline points="9 18 15 12 9 6"/></svg></button>`
+                           : `<button class="foco-concluir-btn" onclick="focoConcluir()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 17 4 12"/></svg> Concluir Treino</button>`);
         }
 
         function focoMarcarFeito() {
@@ -1138,7 +1138,7 @@
             fecharModoFoco();
             renderTreinos();
             const t = document.createElement('div');
-            t.textContent = '✓ Treino concluído e registrado!';
+            t.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 17 4 12"/></svg> Treino concluído e registrado!';
             t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;z-index:9999;font-size:.85em';
             document.body.appendChild(t);
             setTimeout(() => t.remove(), 3000);
@@ -1188,7 +1188,7 @@
         function renderTreinos() {
             const container = document.getElementById('listaTreinos');
             if (!saude.treinos || !saude.treinos.length) {
-                container.innerHTML = '<div class="treino-empty"><div class="treino-empty-icon">🏋️</div><p>Nenhum treino cadastrado</p><button class="btn-primary" onclick="abrirModalTreino()">Criar Primeiro Treino</button></div>';
+                container.innerHTML = '<div class="treino-empty"><div class="treino-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;opacity:0.3"><line x1="3" y1="12" x2="21" y2="12"/><rect x="1" y="8" width="4" height="8" rx="1"/><rect x="19" y="8" width="4" height="8" rx="1"/><rect x="7" y="5" width="4" height="14" rx="1"/><rect x="13" y="5" width="4" height="14" rx="1"/></svg></div><p>Nenhum treino cadastrado</p><button class="btn-primary" onclick="abrirModalTreino()">Criar Primeiro Treino</button></div>';
                 return;
             }
 
@@ -2375,7 +2375,7 @@
             if (!saude.refeicoes || saude.refeicoes.length === 0) {
                 container.innerHTML = `
                     <div class="refeicoes-empty">
-                        <div class="refeicoes-empty-icon">🍽️</div>
+                        <div class="refeicoes-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;opacity:0.3"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></div>
                         <p>Nenhuma refeição cadastrada</p>
                         <p style="font-size:0.85em;margin-top:5px">Clique em "+ Adicionar Refeição" para começar</p>
                     </div>
