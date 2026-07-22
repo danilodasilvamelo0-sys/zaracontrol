@@ -5322,44 +5322,47 @@
 
         const dividas = pa_listarDividas();
         const reserva = pa_reservaEmergencia(6);
-
-        // Lê preferências da UI (estratégia e valor extra)
         const estrategiaInput = document.querySelector('input[name="pqEstrategia"]:checked');
         const estrategia = estrategiaInput ? estrategiaInput.value : 'avalanche';
         const extraInput = document.getElementById('pqExtraMensal');
-
+        const sliderInput = document.getElementById('pqSlider');
         const capacidade = pa_capacidadeExtra();
+
         if (extraInput && extraInput.value === '') {
             extraInput.value = capacidade.sugestaoExtra > 0 ? capacidade.sugestaoExtra.toFixed(2) : '0.00';
         }
+        if (sliderInput && !sliderInput.dataset.init) {
+            const maxSlider = Math.max(capacidade.sugestaoExtra * 3, 5000);
+            sliderInput.max = maxSlider.toFixed(0);
+            sliderInput.value = extraInput ? extraInput.value : '0';
+            sliderInput.dataset.init = '1';
+        }
+
         const extraManual = extraInput ? extraInput.value : null;
 
-        // ---- Bloco da Reserva de Emergência (sempre exibido) ----
+        // Reserva de Emergência
         const pctReserva = reserva.alvo > 0 ? Math.min(100, (reserva.totalEconomias / reserva.alvo) * 100) : 100;
         const reservaHtml = `
             <div class="pq-reserva">
                 <div class="pq-reserva-header">
-                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Reserva de Emergência</span>
-                    <span>${formatarMoeda(reserva.totalEconomias)} de ${formatarMoeda(reserva.alvo)} <small>(meta: ${reserva.mesesAlvo} meses de despesas fixas)</small></span>
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Reserva de Emergência</span>
+                    <span>${formatarMoeda(reserva.totalEconomias)} de ${formatarMoeda(reserva.alvo)} <small>(${reserva.mesesAlvo} meses)</small></span>
                 </div>
                 <div class="pq-reserva-bar"><div class="pq-reserva-fill" style="width:${pctReserva.toFixed(0)}%"></div></div>
                 ${reserva.falta > 0
-                    ? `<div class="pq-reserva-nota">Faltam <strong>${formatarMoeda(reserva.falta)}</strong> para sua reserva ideal de ${reserva.mesesAlvo} meses.</div>`
-                    : `<div class="pq-reserva-nota pq-ok">Reserva completa! <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-2"/><rect x="6" y="18" width="12" height="4"/></svg></div>`}
+                    ? `<div class="pq-reserva-nota">Faltam <strong>${formatarMoeda(reserva.falta)}</strong> para sua reserva ideal.</div>`
+                    : `<div class="pq-reserva-nota pq-ok">Reserva completa! <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:12px;height:12px;vertical-align:-1px"><polyline points="20 6 9 17 4 12"/></svg></div>`}
             </div>`;
 
         if (dividas.length === 0) {
-            container.innerHTML = `
-                <div class="pq-vazio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 17 4 12"/></svg> Você não tem dívidas ativas registradas. Continue assim!</div>
-                ${reservaHtml}
-            `;
+            container.innerHTML = `<div class="pq-vazio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 17 4 12"/></svg> Você não tem dívidas ativas. Continue assim!</div>${reservaHtml}`;
             return;
         }
 
         const plano = pa_gerarPlano(extraManual, estrategia);
         const r = plano.resumo;
 
-        // ---- Resumo ----
+        // Resumo
         const resumoHtml = `
             <div class="diagnostico-grid pq-resumo-grid">
                 <div class="diagnostico-item atencao">
@@ -5373,103 +5376,201 @@
                     <div class="descricao">se nada além do mínimo for pago</div>
                 </div>
                 <div class="diagnostico-item">
-                    <div class="titulo">Taxa Média Ponderada</div>
+                    <div class="titulo">Taxa Média</div>
                     <div class="valor">${(r.taxaMediaPonderada * 100).toFixed(1)}% a.m.</div>
                 </div>
                 <div class="diagnostico-item ${plano.extra > 0 ? 'bom' : 'critico'}">
-                    <div class="titulo">Pagamento Mensal do Plano</div>
+                    <div class="titulo">Pagamento Mensal</div>
                     <div class="valor">${formatarMoeda(plano.plano.pagamentoMensalTotal)}</div>
-                    <div class="descricao">mínimos (${formatarMoeda(plano.plano.minimosIniciais)}) + extra (${formatarMoeda(plano.extra)})</div>
+                    <div class="descricao">mínimos + extra (${formatarMoeda(plano.extra)})</div>
                 </div>
             </div>`;
 
-        // ---- Alerta caso o extra seja zero ----
         if (plano.extra <= 0) {
-            container.innerHTML = `
-                ${resumoHtml}
+            container.innerHTML = `${resumoHtml}
                 <div class="pq-alerta">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Pagando apenas o mínimo (os juros), suas dívidas <strong>nunca são quitadas</strong> —
-                    elas custam ${formatarMoeda(r.custoJurosMensal)}/mês para sempre.
-                    Informe acima quanto você consegue destinar a mais por mês para ver seu plano de quitação.
-                </div>
-                ${reservaHtml}
-            `;
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    Pagando apenas o mínimo suas dívidas <strong>nunca são quitadas</strong> — custam ${formatarMoeda(r.custoJurosMensal)}/mês para sempre.
+                    Use o campo acima para simular quanto você pode destinar a mais.
+                </div>${reservaHtml}`;
             return;
         }
 
-        // ---- Resultado principal (estratégia escolhida) ----
         const sim = plano.plano;
-        const tempoTexto = sim.convergiu
-            ? `<strong>${sim.meses} ${sim.meses === 1 ? 'mês' : 'meses'}</strong> (até ${pa_nomeMes(sim.meses)})`
-            : `mais de ${limiteAnos(sim)} anos — considere aumentar o valor extra`;
-
         const nomeEstrategia = plano.estrategia === 'bolaDeNeve' ? 'Bola de Neve' : 'Avalanche';
+        const tempoTexto = sim.convergiu
+            ? `<strong>${sim.meses} meses</strong> (até ${pa_nomeMes(sim.meses)})`
+            : `mais de ${Math.floor((sim.meses || 600) / 12)} anos`;
 
+        // 1. CARD DE IMPACTO
+        const extra100 = pa_simularQuitacao(pa_listarDividas(), plano.ordem.map(d => d.id), plano.extra + 100);
+        const economiaImpacto = sim.convergiu && extra100.convergiu ? sim.totalJuros - extra100.totalJuros : 0;
+        const mesesImpacto    = sim.convergiu && extra100.convergiu ? sim.meses - extra100.meses : 0;
+        const impactoHtml = sim.convergiu && economiaImpacto > 0 ? `
+            <div class="pq-impacto">
+                <div class="pq-impacto-titulo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:14px;height:14px;vertical-align:-2px;margin-right:5px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Impacto de R$100 a mais por mês
+                </div>
+                <div class="pq-impacto-grid">
+                    <div class="pq-impacto-item">
+                        <span class="pq-impacto-val positivo">${formatarMoeda(economiaImpacto)}</span>
+                        <span class="pq-impacto-label">economizados em juros</span>
+                    </div>
+                    <div class="pq-impacto-item">
+                        <span class="pq-impacto-val positivo">${mesesImpacto} ${mesesImpacto === 1 ? 'mês' : 'meses'}</span>
+                        <span class="pq-impacto-label">mais cedo livre das dívidas</span>
+                    </div>
+                </div>
+            </div>` : '';
+
+        // 2. RESULTADO PRINCIPAL
         const resultadoHtml = `
             <div class="pq-resultado">
-                <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Seu Plano: ${nomeEstrategia}</h4>
-                <p>Destinando <strong>${formatarMoeda(sim.pagamentoMensalTotal)}/mês</strong> a essas dívidas, nessa ordem,
-                você fica livre delas em ${tempoTexto}, pagando ao todo
-                <strong>${formatarMoeda(sim.totalJuros)}</strong> em juros.</p>
+                <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Plano: ${nomeEstrategia}</h4>
+                <p>Destinando <strong>${formatarMoeda(sim.pagamentoMensalTotal)}/mês</strong>, você quita tudo em ${tempoTexto}, pagando <strong>${formatarMoeda(sim.totalJuros)}</strong> em juros.</p>
             </div>`;
 
-        // ---- Ordem de prioridade ----
+        // 3. TIMELINE VISUAL
+        const cores = ['#c9a84c','#e8c96a','#a07828','#d4a843','#f0c040','#8b6914','#e0b84a'];
+        const totalMeses = sim.meses || 1;
+        const timelineHtml = sim.convergiu ? `
+            <div class="pq-timeline">
+                <div class="pq-timeline-titulo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:12px;height:12px;vertical-align:-1px;margin-right:4px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    Timeline de Quitação
+                </div>
+                <div class="pq-timeline-bar">
+                    ${plano.ordem.map((d, i) => {
+                        const final = sim.ordemFinal.find(o => String(o.id) === String(d.id));
+                        const mesQ  = final ? final.mesQuitacao : totalMeses;
+                        const prevQ = i > 0 ? (sim.ordemFinal.find(o => String(o.id) === String(plano.ordem[i-1].id))?.mesQuitacao || 0) : 0;
+                        const larg  = Math.max(2, ((mesQ - prevQ) / totalMeses) * 100);
+                        const cor   = cores[i % cores.length];
+                        return `<div class="pq-tl-bloco" style="width:${larg}%;background:${cor};opacity:${1 - i * 0.1}" title="${d.descricao} — ${pa_nomeMes(mesQ)}">
+                            <span class="pq-tl-label">${d.descricao.split(' ')[0]}</span>
+                        </div>`;
+                    }).join('')}
+                </div>
+                <div class="pq-timeline-legenda">
+                    ${plano.ordem.map((d, i) => {
+                        const final = sim.ordemFinal.find(o => String(o.id) === String(d.id));
+                        return `<span class="pq-tl-leg-item"><span style="width:8px;height:8px;border-radius:2px;background:${cores[i % cores.length]};display:inline-block;margin-right:4px"></span>${d.descricao}: <strong>${final?.mesQuitacao ? pa_nomeMes(final.mesQuitacao) : '—'}</strong></span>`;
+                    }).join('')}
+                </div>
+            </div>` : '';
+
+        // 4. GRÁFICO SVG
+        let graficoHtml = '';
+        if (sim.convergiu && sim.meses <= 300) {
+            const saldos = [];
+            const divL = pa_listarDividas().map(d => ({ ...d }));
+            const ordIds = plano.ordem.map(d => d.id);
+            saldos.push(divL.reduce((s, d) => s + d.saldo, 0));
+            for (let m = 0; m < sim.meses && m < 120; m++) {
+                divL.forEach(d => { if (d.saldo > 0.005) d.saldo += d.saldo * d.taxaMensal; });
+                let disp = sim.pagamentoMensalTotal;
+                for (const id of ordIds) {
+                    const d = divL.find(x => String(x.id) === String(id));
+                    if (!d || d.saldo <= 0.005) continue;
+                    const pg = Math.min(d.saldo, disp); d.saldo -= pg; disp -= pg;
+                    if (disp <= 0) break;
+                }
+                saldos.push(Math.max(0, divL.reduce((s, d) => s + Math.max(0, d.saldo), 0)));
+            }
+            const maxS = saldos[0] || 1;
+            const W = 300, H = 80;
+            const pts  = saldos.map((s, i) => `${((i/(saldos.length-1))*W).toFixed(1)},${(H-(s/maxS)*(H-8)).toFixed(1)}`).join(' ');
+            const area = `0,${H} ${pts} ${W},${H}`;
+            graficoHtml = `
+                <div class="pq-grafico">
+                    <div class="pq-grafico-titulo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:12px;height:12px;vertical-align:-1px;margin-right:4px"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                        Evolução do Saldo Total
+                    </div>
+                    <div class="pq-grafico-wrap">
+                        <svg viewBox="0 0 ${W} ${H}" class="pq-svg" preserveAspectRatio="none">
+                            <defs><linearGradient id="grdDiv" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#c9a84c" stop-opacity="0.3"/>
+                                <stop offset="100%" stop-color="#c9a84c" stop-opacity="0.02"/>
+                            </linearGradient></defs>
+                            <polygon points="${area}" fill="url(#grdDiv)"/>
+                            <polyline points="${pts}" fill="none" stroke="#c9a84c" stroke-width="1.8" stroke-linejoin="round"/>
+                        </svg>
+                        <div class="pq-grafico-labels">
+                            <span>${formatarMoeda(maxS)}</span><span>Hoje</span>
+                            <span>${pa_nomeMes(saldos.length-1)}</span><span>R$ 0</span>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        // 5. ORDEM DE PRIORIDADE
         const ordemHtml = `
             <div class="plano-lista pq-ordem-lista">
                 ${plano.ordem.map((d, i) => {
                     const final = sim.ordemFinal.find(o => String(o.id) === String(d.id));
-                    const statusQuitacao = final && final.mesQuitacao
-                        ? `Quitada em ${pa_nomeMes(final.mesQuitacao)} (mês ${final.mesQuitacao})`
-                        : '—';
-                    return `
-                    <div class="plano-item">
+                    return `<div class="plano-item">
                         <div class="plano-numero">${i + 1}</div>
-                        <div class="plano-texto">
-                            <strong>${d.descricao}</strong> — ${formatarMoeda(d.saldo)} a ${(d.taxaMensal * 100).toFixed(1)}% a.m.
-                        </div>
-                        <span class="pq-mes-quitacao">${statusQuitacao}</span>
+                        <div class="plano-texto"><strong>${d.descricao}</strong> — ${formatarMoeda(d.saldo)} a ${(d.taxaMensal * 100).toFixed(1)}% a.m.</div>
+                        <span class="pq-mes-quitacao">${final?.mesQuitacao ? pa_nomeMes(final.mesQuitacao) : '—'}</span>
                     </div>`;
                 }).join('')}
             </div>`;
 
-        // ---- Comparação Avalanche x Bola de Neve (só faz sentido com 2+ dívidas) ----
+        // 6. CRONOGRAMA MENSAL
+        let cronogramaHtml = '';
+        if (sim.cronograma && sim.cronograma.length > 0) {
+            const linhas = sim.cronograma.map(e =>
+                `<div class="pq-crono-linha">
+                    <span class="pq-crono-mes">${pa_nomeMes(e.mes)}</span>
+                    <span class="pq-crono-ev">${e.quitadas.map(q => `<strong>${q.descricao}</strong> quitada`).join(' · ')}</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2" style="width:12px;height:12px;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>`
+            ).join('');
+            cronogramaHtml = `
+                <div class="pq-crono">
+                    <button class="pq-crono-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.classList.contains('open')?'block':'none'">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:12px;height:12px;vertical-align:-1px;margin-right:4px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
+                        Cronograma de Quitações
+                        <svg class="pq-crono-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transition:transform .25s"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="pq-crono-body" style="display:none">${linhas}</div>
+                </div>`;
+        }
+
+        // COMPARAÇÃO
         let comparacaoHtml = '';
         if (dividas.length > 1 && plano.avalanche.convergiu && plano.bolaDeNeve.convergiu) {
             const av = plano.avalanche, bn = plano.bolaDeNeve;
-            const economiaJuros = bn.totalJuros - av.totalJuros;
-            const primeiraAv = av.ordemFinal[0], primeiraBn = bn.ordemFinal[0];
-
+            const ej = bn.totalJuros - av.totalJuros;
+            const pAv = av.ordemFinal[0], pBn = bn.ordemFinal[0];
             comparacaoHtml = `
                 <div class="pq-comparacao">
                     <div class="pq-comp-card ${plano.estrategia === 'avalanche' ? 'pq-ativo' : ''}">
-                        <div class="pq-comp-titulo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg> Avalanche</div>
-                        <div class="pq-comp-linha">Quita tudo em <strong>${av.meses} meses</strong></div>
-                        <div class="pq-comp-linha">Total de juros: <strong>${formatarMoeda(av.totalJuros)}</strong></div>
-                        <div class="pq-comp-linha">1ª dívida quitada no mês ${primeiraAv.mesQuitacao} (${primeiraAv.descricao})</div>
+                        <div class="pq-comp-titulo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg> Avalanche</div>
+                        <div class="pq-comp-linha">Quita em <strong>${av.meses} meses</strong></div>
+                        <div class="pq-comp-linha">Juros: <strong>${formatarMoeda(av.totalJuros)}</strong></div>
+                        <div class="pq-comp-linha">1ª: ${pAv.descricao} — mês ${pAv.mesQuitacao}</div>
                     </div>
                     <div class="pq-comp-card ${plano.estrategia === 'bolaDeNeve' ? 'pq-ativo' : ''}">
-                        <div class="pq-comp-titulo">Bola de Neve</div>
-                        <div class="pq-comp-linha">Quita tudo em <strong>${bn.meses} meses</strong></div>
-                        <div class="pq-comp-linha">Total de juros: <strong>${formatarMoeda(bn.totalJuros)}</strong></div>
-                        <div class="pq-comp-linha">1ª dívida quitada no mês ${primeiraBn.mesQuitacao} (${primeiraBn.descricao})</div>
+                        <div class="pq-comp-titulo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 7l-5-5-5 5"/><path d="M7 17l5 5 5-5"/><line x1="2" y1="12" x2="22" y2="12"/></svg> Bola de Neve</div>
+                        <div class="pq-comp-linha">Quita em <strong>${bn.meses} meses</strong></div>
+                        <div class="pq-comp-linha">Juros: <strong>${formatarMoeda(bn.totalJuros)}</strong></div>
+                        <div class="pq-comp-linha">1ª: ${pBn.descricao} — mês ${pBn.mesQuitacao}</div>
                     </div>
                 </div>
                 <div class="pq-comp-dica">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> ${economiaJuros > 0.5
-                        ? `A Avalanche economiza <strong>${formatarMoeda(economiaJuros)}</strong> em juros frente à Bola de Neve.`
-                        : (economiaJuros < -0.5 ? `A Bola de Neve economiza <strong>${formatarMoeda(-economiaJuros)}</strong> em juros frente à Avalanche.` : 'As duas estratégias resultam em juros muito parecidos aqui.')}
-                    ${primeiraBn.mesQuitacao < primeiraAv.mesQuitacao
-                        ? ` Já a Bola de Neve quita sua primeira dívida ${primeiraAv.mesQuitacao - primeiraBn.mesQuitacao} ${ (primeiraAv.mesQuitacao - primeiraBn.mesQuitacao) === 1 ? 'mês' : 'meses'} antes — bom para manter a motivação.`
-                        : ''}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:12px;height:12px;vertical-align:-1px;margin-right:4px"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+                    ${ej > 0.5 ? `Avalanche economiza <strong>${formatarMoeda(ej)}</strong> em juros.` :
+                      ej < -0.5 ? `Bola de Neve economiza <strong>${formatarMoeda(-ej)}</strong> em juros.` :
+                      'As estratégias resultam em juros parecidos.'}
+                    ${pBn.mesQuitacao < pAv.mesQuitacao ? ` Bola de Neve quita a 1ª dívida ${pAv.mesQuitacao - pBn.mesQuitacao} meses antes.` : ''}
                 </div>`;
         }
 
         container.innerHTML = `
-            ${resumoHtml}
-            ${resultadoHtml}
-            ${ordemHtml}
-            ${comparacaoHtml}
-            ${reservaHtml}
+            ${resumoHtml}${impactoHtml}${resultadoHtml}${timelineHtml}${graficoHtml}${ordemHtml}${cronogramaHtml}${comparacaoHtml}${reservaHtml}
         `;
     }
 
