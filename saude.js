@@ -144,6 +144,7 @@
         }
 
         function mudarSubAba(aba, btn) {
+            if (aba === 'calendario') { setTimeout(renderCalMed, 50); }
             document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.sub-content').forEach(c => c.classList.remove('active'));
@@ -347,12 +348,14 @@
                     <div class="med-col med-col-estoque">
                         <span class="med-col-label">ESTOQUE</span>
                         <span class="med-col-valor ${getEstoqueClass(med.estoque)}">${med.estoque} ${getTipoAbrev(med.tipo)}</span>
+                        ${(() => { const dr = calcularDiasRestantes(med); if (dr < 999) { const {txt,cls} = textoDiasRestantes(dr); return `<span class="med-dias-restantes ${cls}">${txt}</span>`; } return ''; })()}
+                        ${(saude.statusHoje?.notas?.[med.id]) ? `<span class="med-nota-chip">📝 ${saude.statusHoje.notas[med.id]}</span>` : ''}
                     </div>
                     <div class="med-col med-col-actions">
                         <button class="btn-notify ${med.notificar ? 'active' : ''}" onclick="toggleNotificar('${med.id}')" title="Notificação Telegram">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                         </button>
-                        <button class="med-check-btn ${tomado ? 'checked' : ''}" onclick="toggleTomado('${med.id}', ${!tomado})">
+                        <button class="med-check-btn ${tomado ? 'checked' : ''}" onclick="${tomado ? 'toggleTomadoComNota' : 'abrirModalNota'}('${med.id}', ${!tomado})">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                         </button>
                     </div>
@@ -528,6 +531,10 @@
             const estoque = parseInt(document.getElementById('novoMedEstoque').value) || 0;
             const tipo = document.getElementById('novoMedTipo').value;
             const categoria = document.getElementById('novoMedCategoria').value;
+            const horasExtraStr = document.getElementById('novoMedHorasExtra')?.value || '';
+            const horasExtra = horasExtraStr.split(',').map(h => h.trim()).filter(h => /^\d{2}:\d{2}$/.test(h));
+            const ciclo = parseInt(document.getElementById('novoMedCiclo')?.value) || 0;
+            const pausa = parseInt(document.getElementById('novoMedPausa')?.value) || 0;
             const obs = document.getElementById('novoMedObs').value.trim();
             const frequencia = document.getElementById('novoMedFrequencia').value;
             
@@ -806,6 +813,186 @@
             renderizarPlanoLista();
             renderizarSemana();
             renderizarHoje();
+        }
+
+
+        // ==========================================
+        // 1. CALENDÁRIO DE ADERÊNCIA
+        // ==========================================
+        let calMedAno = new Date().getFullYear();
+        let calMedMes = new Date().getMonth();
+
+        function calMedNav(dir) {
+            calMedMes += dir;
+            if (calMedMes > 11) { calMedMes = 0; calMedAno++; }
+            if (calMedMes < 0)  { calMedMes = 11; calMedAno--; }
+            renderCalMed();
+        }
+
+        function renderCalMed() {
+            const hoje = new Date().toISOString().split('T')[0];
+            const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                           'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+            document.getElementById('calMedTitulo').textContent = meses[calMedMes] + ' ' + calMedAno;
+
+            const grid = document.getElementById('medCalGrid');
+            if (!grid) return;
+
+            const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+            let html = dias.map(d => `<div class="med-cal-dia-label">${d}</div>`).join('');
+
+            const primeiro = new Date(calMedAno, calMedMes, 1);
+            const ultimo   = new Date(calMedAno, calMedMes + 1, 0);
+            const offset   = primeiro.getDay();
+
+            // Dias do mês anterior
+            for (let i = 0; i < offset; i++) {
+                const d = new Date(calMedAno, calMedMes, -(offset - i - 1));
+                html += `<div class="med-cal-dia outro-mes">${d.getDate()}</div>`;
+            }
+
+            // Dias do mês atual
+            for (let d = 1; d <= ultimo.getDate(); d++) {
+                const iso = calMedAno + '-' + String(calMedMes+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+                const hist = saude.historicoMeds && saude.historicoMeds[iso];
+                let cls = 'sem-dados';
+                let pct = 0;
+                if (hist && hist.total > 0) {
+                    pct = Math.round((hist.tomados / hist.total) * 100);
+                    cls = pct >= 80 ? 'tomado' : pct >= 40 ? 'parcial' : 'perdido';
+                }
+                const isHoje = iso === hoje ? ' hoje' : '';
+                const title = hist ? `${hist.tomados}/${hist.total} (${pct}%)` : 'Sem dados';
+                html += `<div class="med-cal-dia ${cls}${isHoje}" title="${title}">${d}</div>`;
+            }
+
+            // Completar última semana
+            const rem = (offset + ultimo.getDate()) % 7;
+            if (rem > 0) {
+                for (let i = 1; i <= 7 - rem; i++) {
+                    html += `<div class="med-cal-dia outro-mes">${i}</div>`;
+                }
+            }
+            grid.innerHTML = html;
+        }
+
+        // ==========================================
+        // 2. DIAS RESTANTES DE ESTOQUE
+        // ==========================================
+        function calcularDiasRestantes(med) {
+            if (!med.estoque || med.estoque <= 0) return 0;
+            // Contar quantas vezes por semana toma
+            let vezesSemanais = 0;
+            Object.keys(saude.planoSemanal).forEach(dia => {
+                saude.planoSemanal[dia].forEach(m => {
+                    if (m.id === med.id) {
+                        const extras = (m.horasExtra || []).length;
+                        vezesSemanais += 1 + extras;
+                    }
+                });
+            });
+            if (vezesSemanais === 0) return 999;
+            const tomasPorDia = vezesSemanais / 7;
+            return Math.floor(med.estoque / tomasPorDia);
+        }
+
+        function textoDiasRestantes(dias) {
+            if (dias === 0) return { txt: 'Acabou!', cls: 'critico' };
+            if (dias <= 7)  return { txt: `Acaba em ${dias} dias`, cls: 'critico' };
+            if (dias <= 15) return { txt: `Acaba em ${dias} dias`, cls: 'atencao' };
+            return { txt: `${dias} dias restantes`, cls: 'ok' };
+        }
+
+        // ==========================================
+        // 3. NOTA POR TOMADA
+        // ==========================================
+        let _notaMedId = null;
+        let _notaMedTomado = null;
+
+        function abrirModalNota(medId, tomado) {
+            _notaMedId = medId;
+            _notaMedTomado = tomado;
+            const med = Object.values(saude.planoSemanal).flat().find(m => m.id === medId);
+            const modal = document.getElementById('modalNota');
+            if (modal) {
+                document.getElementById('modalNotaNome').textContent = (med ? med.nome : 'Medicamento') + ' — registrar tomada';
+                document.getElementById('modalNotaTexto').value = '';
+                modal.style.display = 'flex';
+                setTimeout(() => document.getElementById('modalNotaTexto').focus(), 100);
+            } else {
+                // Fallback: sem modal, executa direto
+                toggleTomadoComNota(medId, tomado, '');
+            }
+        }
+
+        function cancelarNota() {
+            document.getElementById('modalNota').style.display = 'none';
+            _notaMedId = null;
+        }
+
+        function confirmarNota() {
+            const nota = document.getElementById('modalNotaTexto').value.trim();
+            toggleTomadoComNota(_notaMedId, _notaMedTomado, nota);
+            document.getElementById('modalNota').style.display = 'none';
+        }
+
+        function toggleTomadoComNota(medId, tomado, nota) {
+            const dataHoje = getDataHoje();
+            if (!saude.statusHoje || saude.statusHoje.data !== dataHoje) {
+                saude.statusHoje = { data: dataHoje, tomados: {}, horasTomadas: {}, notas: {} };
+            }
+            if (!saude.statusHoje.notas) saude.statusHoje.notas = {};
+            saude.statusHoje.tomados[medId] = tomado;
+
+            if (tomado) {
+                const agora = new Date();
+                saude.statusHoje.horasTomadas[medId] = agora.getHours().toString().padStart(2,'0') + ':' + agora.getMinutes().toString().padStart(2,'0');
+                if (nota) saude.statusHoje.notas[medId] = nota;
+                Object.keys(saude.planoSemanal).forEach(dia => {
+                    saude.planoSemanal[dia].forEach(med => {
+                        if (med.id === medId && med.estoque > 0) med.estoque--;
+                    });
+                });
+            } else {
+                delete saude.statusHoje.horasTomadas[medId];
+                delete saude.statusHoje.notas[medId];
+                Object.keys(saude.planoSemanal).forEach(dia => {
+                    saude.planoSemanal[dia].forEach(med => {
+                        if (med.id === medId) med.estoque++;
+                    });
+                });
+            }
+
+            salvarDados();
+            renderizarHoje();
+            atualizarDashboard();
+        }
+
+        // ==========================================
+        // 4. MÚLTIPLOS HORÁRIOS — expandir plano
+        // ==========================================
+        function expandirHorariosExtras(med, diasAlvo) {
+            // Para cada horário extra, criar uma entrada virtual com id composto
+            const extras = med.horasExtra || [];
+            const resultado = [med];
+            extras.forEach((hora, i) => {
+                resultado.push({ ...med, hora, id: med.id + '_extra_' + i });
+            });
+            return resultado;
+        }
+
+        // ==========================================
+        // 5. CICLO/PAUSA — verificar se hoje é dia de tomar
+        // ==========================================
+        function isMedAtivoCiclo(med) {
+            if (!med.ciclo || med.ciclo <= 0) return true; // sem ciclo
+            if (!med.inicioCiclo) return true;
+            const inicio = new Date(med.inicioCiclo);
+            const hoje = new Date();
+            const diasPassados = Math.floor((hoje - inicio) / 86400000);
+            const cicloPausa = med.ciclo + (med.pausa || 0);
+            const posNoCiclo = diasPassados % cicloPausa;
+            return posNoCiclo < med.ciclo;
         }
 
         // ==========================================
