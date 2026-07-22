@@ -3,1452 +3,1452 @@
    ============================================================ */
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html { scroll-behavior: smooth; background: #0a0a0a !important; }
-        body { font-family: 'Inter', sans-serif; background: #0a0a0a !important; color: #fff; min-height: 100vh; padding: 20px; padding-bottom: 80px; }
-        body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #d4af7d, transparent); z-index: 9999; }
-        body::after { content: ''; position: fixed; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #d4af7d, transparent); z-index: 9999; }
-        
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 60px;
-            height: 100vh;
-            background: linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 100%);
-            border-right: 1px solid rgba(212, 175, 125, 0.15);
-            z-index: 1000;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px 0;
-            transition: width 0.3s;
-            overflow: hidden;
-        }
-        .sidebar:hover { width: 200px; }
-        .sidebar-logo {
-            width: 40px;
-            height: 40px;
-            background: transparent;
-            border: 1px solid rgba(212, 175, 125, 0.3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2em;
-            color: #d4af7d;
-            margin-bottom: 20px;
-            flex-shrink: 0;
-            text-decoration: none;
-        }
-        .sidebar-logo:hover { background: rgba(212, 175, 125, 0.1); }
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            width: 100%;
-            flex: 1;
-        }
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 10px;
-            color: rgba(255,255,255,0.6);
-            text-decoration: none;
-            font-size: 0.85em;
-            transition: all 0.3s;
-            border-left: 2px solid transparent;
-            white-space: nowrap;
-        }
-        .sidebar-menu a:hover {
-            background: rgba(212, 175, 125, 0.1);
-            border-left-color: #d4af7d;
-            color: #fff;
-        }
-        .sidebar-menu a.active {
-            background: rgba(212, 175, 125, 0.15);
-            border-left-color: #d4af7d;
-            color: #d4af7d;
-        }
-        .sidebar-menu a svg {
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
-            margin-left: 10px;
-        }
-        .sidebar-menu a span {
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .sidebar:hover .sidebar-menu a span { opacity: 1; }
-        .sidebar-divider {
-            height: 1px;
-            background: rgba(212, 175, 125, 0.2);
-            margin: 8px 10px;
-            width: calc(100% - 20px);
-        }
-        .sidebar-footer {
-            padding: 15px 10px;
-            text-align: center;
-            border-top: 1px solid rgba(212, 175, 125, 0.2);
-            width: 100%;
-            background: rgba(0,0,0,0.3);
-        }
-        .sidebar-footer p {
-            color: rgba(255,255,255,0.6);
-            font-size: 0.7em;
-            font-weight: 400;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            line-height: 1.6;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .sidebar-footer .instituto {
-            font-size: 0.85em;
-            color: #d4af7d;
-            display: block;
-            margin-bottom: 3px;
-        }
-        .sidebar:hover .sidebar-footer p { opacity: 1; }
-        
-        /* Mobile Nav */
-        .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%); border-top: 1px solid rgba(212, 175, 125, 0.15); padding: 10px 0; z-index: 1000; }
-        .mobile-nav-items { display: flex; justify-content: space-around; align-items: center; }
-        .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.65em; padding: 5px 10px; transition: all 0.3s; }
-        .mobile-nav-item svg { width: 22px; height: 22px; }
-        .mobile-nav-item.active { color: #d4af7d; }
-        
-        @media (max-width: 768px) { body { padding-left: 10px; padding-bottom: 80px; } .sidebar { display: none; } .mobile-nav { display: block; } .container { margin-left: 0 !important; } #globalTabs { margin-left: 0 !important; } }
-        @media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } #globalTabs { margin-left: 0; } }
-        
-        /* Container e Layout */
-        .container { max-width: 1200px; margin: 0 auto; background: #141414; border: 1px solid rgba(212, 175, 125, 0.15); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; }
-        .page-section { display: none; }
-        .page-section.active { display: block; }
-        
-        /* Header */
-        .header { background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%); border-bottom: 1px solid rgba(212, 175, 125, 0.2); color: white; padding: 30px; text-align: center; position: relative; }
-        .header h1 { font-family: 'Playfair Display', serif; font-size: 2em; margin-bottom: 10px; font-weight: 400; letter-spacing: 3px; color: #fff; }
-        .header p { font-size: 0.9em; color: rgba(212, 175, 125, 0.8); letter-spacing: 1px; }
-        
-        /* Sync Status */
-        #syncStatus { position: fixed; bottom: 100px; right: 20px; padding: 12px 22px; border-radius: 10px; font-size: 0.9em; font-weight: 500; z-index: 10001; opacity: 0; transition: opacity 0.3s; color: #fff; }
-        @media (max-width: 768px) { #syncStatus { bottom: 90px; right: 10px; left: 10px; text-align: center; } }
-        
-        /* Tabs */
-        .tabs-container { background: #141414; padding: 10px 15px; border-bottom: 1px solid rgba(212, 175, 125, 0.15); position: sticky; top: 0; z-index: 100; }
-        .tabs-header { display: flex; gap: 8px; justify-content: space-around; }
-        .tab-btn { display: flex; align-items: center; gap: 6px; padding: 10px 15px; background: transparent; border: none; color: rgba(255,255,255,0.5); font-size: 0.8em; cursor: pointer; border-radius: 8px; transition: all 0.3s; white-space: nowrap; }
-        .tab-btn:hover { color: #d4af7d; background: rgba(212, 175, 125, 0.1); }
-        .tab-btn.active { background: rgba(212, 175, 125, 0.2); color: #d4af7d; }
-        .tab-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-        
-        /* Sub Tabs */
-        .sub-tabs { display: flex; gap: 5px; padding: 15px 20px; background: #1a1a1a; border-bottom: 1px solid rgba(212, 175, 125, 0.1); }
-        .sub-tab-btn { padding: 10px 20px; background: transparent; border: 1px solid rgba(212, 175, 125, 0.2); color: rgba(255,255,255,0.5); font-size: 0.85em; cursor: pointer; border-radius: 6px; transition: all 0.3s; }
-        .sub-tab-btn:hover { border-color: rgba(212, 175, 125, 0.4); color: #d4af7d; }
-        .sub-tab-btn.active { background: rgba(212, 175, 125, 0.15); border-color: #d4af7d; color: #d4af7d; }
-        .sub-content { display: none; padding: 20px; }
-        .sub-content.active { display: block; }
-        
-        /* Tabela */
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0; background: #1a1a1a; border-radius: 15px; overflow: hidden; border: 1px solid rgba(212, 175, 125, 0.1); }
-        th { background: linear-gradient(135deg, #1f1f1f 0%, #151515 100%); color: #d4af7d; padding: 15px; text-align: center; font-weight: 500; font-size: 0.85em; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(212, 175, 125, 0.2); }
-        th:first-child { border-top-left-radius: 15px; text-align: left; }
-        th:last-child { border-top-right-radius: 15px; }
-        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; vertical-align: middle; color: rgba(255,255,255,0.8); }
-        td:first-child { text-align: left; }
-        tr:hover { background: rgba(212, 175, 125, 0.05); }
-        
-        /* Checkbox */
-        .checkbox-status { appearance: none; -webkit-appearance: none; width: 24px; height: 24px; border: 2px solid #2ecc71; border-radius: 50%; cursor: pointer; position: relative; background: transparent; transition: all 0.3s; }
-        .checkbox-status:checked { background: #2ecc71; border-color: #2ecc71; }
-        .checkbox-status:checked::after { content: ''; position: absolute; width: 6px; height: 10px; border: solid #0a0a0a; border-width: 0 2px 2px 0; top: 50%; left: 50%; transform: translate(-50%, -60%) rotate(45deg); }
-        
-        /* Mensagens e Status */
-        .empty-message { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.4); font-size: 0.95em; }
-        .estoque-ok { color: #2ecc71; }
-        .estoque-baixo { color: #f1c40f; }
-        .estoque-critico { color: #e74c3c; }
-        
-        /* Dias da Semana */
-        .dia-header { padding: 15px 20px; background: rgba(212, 175, 125, 0.08); border-bottom: 1px solid rgba(212, 175, 125, 0.15); margin-top: 20px; }
-        .dia-header:first-child { margin-top: 0; }
-        .dia-header h3 { font-family: 'Playfair Display', serif; font-size: 1.1em; font-weight: 400; color: #d4af7d; letter-spacing: 1px; }
-        .dia-lista { padding: 10px 20px; }
-        .dia-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .dia-item:last-child { border-bottom: none; }
-        .dia-item-info { display: flex; gap: 20px; align-items: center; }
-        .dia-item-hora { color: #d4af7d; font-size: 0.9em; min-width: 50px; }
-        .dia-item-nome { color: #fff; }
-        .dia-item-dose { color: rgba(255,255,255,0.5); font-size: 0.85em; }
-        
-        /* Formulários */
-        .form-section { background: #1a1a1a; border: 1px solid rgba(212, 175, 125, 0.1); border-radius: 12px; padding: 25px; margin-bottom: 20px; }
-        .form-section h3 { font-family: 'Playfair Display', serif; font-size: 1.1em; font-weight: 400; color: #d4af7d; margin-bottom: 20px; letter-spacing: 1px; }
-        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 15px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-size: 0.75em; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group input, .form-group select { padding: 12px; background: #141414; border: 1px solid rgba(212, 175, 125, 0.2); border-radius: 8px; color: #fff; font-size: 0.9em; outline: none; transition: border-color 0.3s; }
-        .form-group input:focus, .form-group select:focus { border-color: #d4af7d; }
-        .form-group input::placeholder { color: rgba(255,255,255,0.3); }
-        .form-group select option { background: #141414; color: #fff; }
-        
-        /* Dias Selector */
-        .dias-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
-        .dia-check { display: flex; align-items: center; gap: 5px; }
-        .dia-check input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 1px solid rgba(212, 175, 125, 0.3); border-radius: 4px; cursor: pointer; position: relative; background: transparent; }
-        .dia-check input[type="checkbox"]:checked { background: rgba(212, 175, 125, 0.3); border-color: #d4af7d; }
-        .dia-check input[type="checkbox"]:checked::after { content: ''; position: absolute; width: 4px; height: 8px; border: solid #d4af7d; border-width: 0 2px 2px 0; top: 50%; left: 50%; transform: translate(-50%, -60%) rotate(45deg); }
-        .dia-check label { font-size: 0.8em; color: rgba(255,255,255,0.6); cursor: pointer; }
-        
-        /* Botões */
-        .btn-primary { padding: 12px 25px; background: linear-gradient(135deg, #d4af7d, #c9a066); border: none; border-radius: 8px; color: #0a0a0a; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212, 175, 125, 0.3); }
-        .btn-secondary { padding: 12px 25px; background: transparent; border: 1px solid rgba(212, 175, 125, 0.3); border-radius: 8px; color: #d4af7d; font-size: 0.9em; cursor: pointer; transition: all 0.3s; }
-        .btn-secondary:hover { background: rgba(212, 175, 125, 0.1); }
-        .btn-delete-small { background: transparent; border: none; color: rgba(220, 53, 69, 0.6); cursor: pointer; padding: 5px; transition: color 0.3s; }
-        .btn-delete-small:hover { color: #dc3545; }
-        .btn-edit-small { background: transparent; border: none; color: rgba(212, 175, 125, 0.6); cursor: pointer; padding: 5px; transition: color 0.3s; }
-        .btn-edit-small:hover { color: #d4af7d; }
-        .form-buttons { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .plano-item-actions { display: flex; gap: 5px; }
-        
-        /* Dashboard KPIs Medicamentos */
-        .med-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; padding: 20px; background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%); border-bottom: 1px solid rgba(212, 175, 125, 0.15); }
-        .med-kpi { display: flex; align-items: center; gap: 12px; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(212, 175, 125, 0.1); border-radius: 10px; }
-        .med-kpi-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .med-kpi-icon svg { width: 22px; height: 22px; }
-        .med-kpi-icon.tomados { background: rgba(46, 204, 113, 0.15); color: #2ecc71; }
-        .med-kpi-icon.proximo { background: rgba(52, 152, 219, 0.15); color: #3498db; }
-        .med-kpi-icon.estoque { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
-        .med-kpi-icon.aderencia { background: rgba(212, 175, 125, 0.15); color: #d4af7d; }
-        .med-kpi-info { display: flex; flex-direction: column; min-width: 0; }
-        .med-kpi-valor { font-family: 'Playfair Display', serif; font-size: 1.3em; color: #fff; white-space: nowrap; }
-        .med-kpi-label { font-size: 0.7em; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* Alertas Estoque */
-        .med-alertas { background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.3); margin: 15px 20px; border-radius: 10px; padding: 15px; }
-        .med-alerta-header { display: flex; align-items: center; gap: 10px; color: #e74c3c; font-weight: 500; margin-bottom: 10px; }
-        .med-alerta-header svg { width: 20px; height: 20px; }
-        .med-alerta-lista { display: flex; flex-direction: column; gap: 8px; }
-        .med-alerta-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(0,0,0,0.2); border-radius: 6px; }
-        .med-alerta-nome { color: #fff; font-size: 0.9em; }
-        .med-alerta-qtd { color: #e74c3c; font-size: 0.85em; font-weight: 500; }
-        
-        /* Timeline Medicamentos - Formato Tabular */
-        .med-timeline { padding: 15px; }
-        .med-timeline-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(212, 175, 125, 0.1);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-        .med-timeline-item:hover { border-color: rgba(212, 175, 125, 0.25); }
-        .med-timeline-item.tomado { opacity: 0.5; }
-        .med-col { display: flex; flex-direction: column; gap: 4px; }
-        .med-col-label { font-size: 0.65em; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; }
-        .med-col-valor { font-size: 0.95em; color: #fff; }
-        .med-col-hora { min-width: 70px; }
-        .med-col-hora .med-col-valor { font-family: 'Playfair Display', serif; font-size: 1.1em; color: #d4af7d; }
-        .med-col-status { font-size: 0.7em; text-transform: uppercase; }
-        .med-col-status.pendente { color: rgba(255,255,255,0.4); }
-        .med-col-status.tomado { color: #2ecc71; }
-        .med-col-status.atrasado { color: #f1c40f; }
-        .med-col-status.perdido { color: #e74c3c; }
-        .med-col-nome { flex: 1; min-width: 120px; }
-        .med-col-dose { min-width: 80px; }
-        .med-col-estoque { min-width: 80px; }
-        .med-col-actions { display: flex; gap: 8px; align-items: center; }
-        .med-check-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(46, 204, 113, 0.4); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
-        .med-check-btn:hover { border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
-        .med-check-btn.checked { background: #2ecc71; border-color: #2ecc71; }
-        .med-check-btn svg { width: 16px; height: 16px; color: #fff; opacity: 0; }
-        .med-check-btn.checked svg { opacity: 1; }
-        .med-timeline-categoria { font-size: 0.65em; padding: 2px 8px; border-radius: 10px; background: rgba(212, 175, 125, 0.2); color: #d4af7d; margin-top: 4px; display: inline-block; }
-        .med-timeline-categoria.sos { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
-        .med-timeline-categoria.antibiotico { background: rgba(155, 89, 182, 0.2); color: #9b59b6; }
-        
-        @media (max-width: 768px) {
-            .med-timeline-item { flex-wrap: wrap; gap: 10px; }
-            .med-col-hora { min-width: 60px; }
-            .med-col-nome { flex: 1 1 100%; order: -1; }
-            .med-col-dose, .med-col-estoque { flex: 1; min-width: 70px; }
-            .med-col-actions { width: 100%; justify-content: flex-end; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
-        }
-        
-        /* Histórico */
-        .historico-filtros { display: flex; gap: 10px; padding: 15px 20px; border-bottom: 1px solid rgba(212, 175, 125, 0.1); }
-        .filtro-btn { padding: 8px 16px; background: transparent; border: 1px solid rgba(212, 175, 125, 0.2); border-radius: 20px; color: rgba(255,255,255,0.5); font-size: 0.8em; cursor: pointer; transition: all 0.3s; }
-        .filtro-btn:hover { border-color: rgba(212, 175, 125, 0.4); }
-        .filtro-btn.active { background: rgba(212, 175, 125, 0.15); border-color: #d4af7d; color: #d4af7d; }
-        .historico-lista { padding: 20px; }
-        .historico-dia { margin-bottom: 25px; }
-        .historico-dia-header { font-family: 'Playfair Display', serif; font-size: 1em; color: #d4af7d; padding-bottom: 10px; border-bottom: 1px solid rgba(212, 175, 125, 0.15); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .historico-dia-aderencia { font-size: 0.8em; padding: 4px 10px; border-radius: 12px; }
-        .historico-dia-aderencia.bom { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
-        .historico-dia-aderencia.medio { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
-        .historico-dia-aderencia.ruim { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
-        .historico-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .historico-item:last-child { border-bottom: none; }
-        .historico-item-status { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .historico-item-status.tomado { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
-        .historico-item-status.atrasado { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
-        .historico-item-status.perdido { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
-        .historico-item-status svg { width: 14px; height: 14px; }
-        .historico-item-info { flex: 1; }
-        .historico-item-nome { color: #fff; font-size: 0.9em; }
-        .historico-item-hora { color: rgba(255,255,255,0.5); font-size: 0.8em; }
-        
-        /* Notificação Telegram - Sino */
-        .btn-notify { background: transparent; border: none; color: rgba(255,255,255,0.3); cursor: pointer; padding: 5px; transition: all 0.3s; }
-        .btn-notify:hover { color: #d4af7d; }
-        .btn-notify.active { color: #2ecc71; }
-        .btn-notify.active:hover { color: #27ae60; }
-        .btn-notify svg { width: 18px; height: 18px; }
-        
-        /* Botão Duplicar */
-        .btn-duplicate { background: transparent; border: none; color: rgba(52, 152, 219, 0.6); cursor: pointer; padding: 5px; transition: color 0.3s; }
-        .btn-duplicate:hover { color: #3498db; }
-        .btn-duplicate svg { width: 18px; height: 18px; }
-        
-        /* Config Telegram */
-        .telegram-config { background: rgba(212, 175, 125, 0.08); border: 1px solid rgba(212, 175, 125, 0.15); border-radius: 10px; padding: 15px; margin-bottom: 20px; }
-        .telegram-config-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; cursor: pointer; }
-        .telegram-config-header h4 { font-family: 'Playfair Display', serif; font-size: 0.95em; color: #d4af7d; display: flex; align-items: center; gap: 8px; }
-        .telegram-config-header svg { width: 18px; height: 18px; }
-        .telegram-config-body { display: none; }
-        .telegram-config-body.active { display: block; }
-        .telegram-status { display: flex; align-items: center; gap: 6px; font-size: 0.75em; }
-        .telegram-status.connected { color: #2ecc71; }
-        .telegram-status.disconnected { color: #e74c3c; }
-        .telegram-status-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .telegram-status.connected .telegram-status-dot { background: #2ecc71; }
-        .telegram-status.disconnected .telegram-status-dot { background: #e74c3c; }
-        
-        /* Plano Lista */
-        .plano-lista { margin-top: 20px; }
-        .plano-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #141414; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 10px; }
-        .plano-item-info { flex: 1; min-width: 0; }
-        .plano-item-nome { color: #fff; font-size: 0.95em; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .plano-item-detalhes { color: rgba(255,255,255,0.5); font-size: 0.8em; word-wrap: break-word; }
-        .plano-item-obs { color: rgba(212, 175, 125, 0.6); font-size: 0.75em; font-style: italic; margin-top: 4px; }
-        .plano-item-estoque { font-size: 0.75em; padding: 3px 8px; border-radius: 10px; margin-left: 5px; }
-        .plano-item-estoque.ok { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
-        .plano-item-estoque.baixo { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
-        .plano-item-estoque.critico { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
-        
-        /* Mobile Medicamentos */
-        @media (max-width: 768px) {
-            .med-dashboard { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 15px; }
-            .med-kpi { padding: 12px; flex-direction: column; text-align: center; gap: 8px; }
-            .med-kpi-icon { width: 40px; height: 40px; }
-            .med-kpi-valor { font-size: 1.1em; }
-            .med-timeline-item { flex-wrap: wrap; }
-            .med-timeline-actions { width: 100%; justify-content: flex-end; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
-            .historico-filtros { overflow-x: auto; }
-        }
-        
-        /* Modal */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-overlay.active { display: flex; }
-        .modal-content { background: #1a1a1a; border: 1px solid rgba(212, 175, 125, 0.2); border-radius: 15px; padding: 30px; width: 90%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
-        .modal-content h3 { font-family: 'Playfair Display', serif; font-size: 1.2em; color: #d4af7d; margin-bottom: 20px; text-align: center; }
-        .modal-content .form-group { margin-bottom: 15px; }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end; }
-        
-        /* ==================== TREINO CARDS ==================== */
-        .treino-header{display:flex;justify-content:space-between;align-items:center;padding:20px;flex-wrap:wrap;gap:15px}
-        .treino-header h2{font-family:'Playfair Display',serif;font-size:1.3em;color:#d4af7d}
-        .treinos-container{padding:0 20px 20px;display:flex;flex-direction:column;gap:20px}
-        
-        .treino-card{background:#1a1a1a;border:1px solid rgba(212,175,125,0.15);border-radius:16px;overflow:hidden;transition:all 0.3s}
-        .treino-card:hover{border-color:rgba(212,175,125,0.3)}
-        
-        .treino-card-header{background:linear-gradient(135deg,#c0392b,#e74c3c);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;transition:filter 0.2s}
-        .treino-card-header:hover{filter:brightness(1.1)}
-        .treino-card-header.peito{background:linear-gradient(135deg,#27ae60,#2ecc71)}
-        .treino-card-header.costas{background:linear-gradient(135deg,#2980b9,#3498db)}
-        .treino-card-header.pernas{background:linear-gradient(135deg,#8e44ad,#9b59b6)}
-        .treino-card-header.ombros{background:linear-gradient(135deg,#d35400,#e67e22)}
-        .treino-card-header.bracos{background:linear-gradient(135deg,#16a085,#1abc9c)}
-        .treino-card-header.abdomen{background:linear-gradient(135deg,#c0392b,#e74c3c)}
-        .treino-card-header.cardio{background:linear-gradient(135deg,#f39c12,#f1c40f)}
-        .treino-card-header.full{background:linear-gradient(135deg,#2c3e50,#34495e)}
-        
-        .treino-card-titulo{font-family:'Playfair Display',serif;font-size:1.1em;color:#fff;font-weight:600;text-transform:uppercase;letter-spacing:1px}
-        .treino-card-subtitulo{font-size:0.8em;color:rgba(255,255,255,0.8);margin-top:3px}
-        .treino-card-actions{display:flex;gap:8px}
-        .treino-card-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
-        .treino-card-btn:hover{background:rgba(255,255,255,0.3);transform:scale(1.1)}
-        .treino-card-btn.delete:hover{background:rgba(231,76,60,0.8)}
-        
-        .treino-card-body{padding:0}
-        .exercicio-table{width:100%;border-collapse:collapse}
-        .exercicio-table th{background:#141414;color:#d4af7d;padding:12px 15px;text-align:left;font-size:0.75em;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(212,175,125,0.1)}
-        .exercicio-table th:first-child{padding-left:20px}
-        .exercicio-table td{padding:12px 15px;border-bottom:1px solid rgba(255,255,255,0.03);color:rgba(255,255,255,0.85);font-size:0.9em}
-        .exercicio-table td:first-child{padding-left:20px;color:#fff;font-weight:500}
-        .exercicio-table tr:last-child td{border-bottom:none}
-        .exercicio-table tr:hover{background:rgba(212,175,125,0.05)}
-        
-        .exercicio-nome{display:flex;align-items:center;gap:10px}
-        .exercicio-nome span{flex:1}
-        .exercicio-acoes{display:flex;gap:5px;opacity:0;transition:opacity 0.2s}
-        .exercicio-table tr:hover .exercicio-acoes{opacity:1}
-        .exercicio-btn{background:transparent;border:none;color:rgba(255,255,255,0.4);cursor:pointer;padding:4px;border-radius:4px;transition:all 0.2s}
-        .exercicio-btn:hover{color:#d4af7d;background:rgba(212,175,125,0.1)}
-        .exercicio-btn.delete:hover{color:#e74c3c;background:rgba(231,76,60,0.1)}
-        .exercicio-btn.duplicate:hover{color:#2ecc71;background:rgba(46,204,113,0.1)}
-        
-        .treino-card-footer{padding:15px 20px;background:#141414;border-top:1px solid rgba(212,175,125,0.1)}
-        .add-exercicio-btn{width:100%;padding:12px;background:rgba(212,175,125,0.1);border:1px dashed rgba(212,175,125,0.3);border-radius:8px;color:#d4af7d;font-size:0.85em;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
-        .add-exercicio-btn:hover{background:rgba(212,175,125,0.15);border-color:#d4af7d}
-        
-        .treino-empty{text-align:center;padding:60px 20px;color:rgba(255,255,255,0.4)}
-        .treino-empty-icon{font-size:3em;margin-bottom:15px;opacity:0.3}
-        
-        /* Modal Treino */
-        .modal-treino{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:2000;justify-content:center;align-items:center;padding:20px}
-        .modal-treino.active{display:flex}
-        .modal-treino-content{background:#1a1a1a;border:1px solid rgba(212,175,125,0.2);border-radius:15px;padding:25px;width:100%;max-width:500px;max-height:85vh;overflow-y:auto}
-        .modal-treino-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-        .modal-treino-title{font-family:'Playfair Display',serif;font-size:1.2em;color:#d4af7d}
-        .modal-treino-close{background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5em;cursor:pointer}
-        .modal-treino-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:15px;border-top:1px solid rgba(255,255,255,0.05)}
-        
-        .grupo-muscular-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
-        .grupo-muscular-opt{padding:12px 8px;background:#141414;border:1px solid rgba(212,175,125,0.2);border-radius:8px;color:rgba(255,255,255,0.6);font-size:0.8em;cursor:pointer;text-align:center;transition:all 0.2s}
-        .grupo-muscular-opt:hover{border-color:#d4af7d;color:#d4af7d}
-        .grupo-muscular-opt.selected{background:rgba(212,175,125,0.15);border-color:#d4af7d;color:#d4af7d}
-        
-        .duplicar-container{background:#141414;border:1px solid rgba(212,175,125,0.15);border-radius:8px;padding:15px;margin-top:15px}
-        .duplicar-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-        .duplicar-header input[type="checkbox"]{width:18px;height:18px;accent-color:#d4af7d}
-        .duplicar-header label{font-size:0.85em;color:rgba(255,255,255,0.7)}
-        .duplicar-info{font-size:0.8em;color:rgba(255,255,255,0.4);font-style:italic}
-        
-        /* Exercício Feito */
-        .exercicio-check{appearance:none;width:20px;height:20px;border:2px solid rgba(212,175,125,0.4);border-radius:50%;cursor:pointer;background:transparent;position:relative;transition:all 0.2s;flex-shrink:0}
-        .exercicio-check:hover{border-color:#d4af7d}
-        .exercicio-check:checked{background:#2ecc71;border-color:#2ecc71}
-        .exercicio-check:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:11px;font-weight:bold}
-        .exercicio-feito td{opacity:0.5}
-        .exercicio-feito .exercicio-nome-texto{text-decoration:line-through}
-        
-        /* Treino Colapsável */
-        .treino-card.collapsed .treino-card-body,.treino-card.collapsed .treino-card-footer,.treino-card.collapsed .treino-prog-wrap,.treino-card.collapsed .treino-volume{display:none}
-        .treino-card-header .treino-toggle{width:20px;height:20px;transition:transform 0.3s;margin-right:10px;flex-shrink:0;color:#fff}
-        .treino-card.collapsed .treino-toggle{transform:rotate(-90deg)}
-        .treino-card-header > div:first-child{display:flex;align-items:center}
-        
-        /* Botão Limpar */
-        .btn-clear{padding:8px 16px;background:transparent;border:1px solid rgba(231,76,60,0.4);color:#e74c3c;font-size:0.8em;cursor:pointer;border-radius:6px;transition:all 0.2s;display:flex;align-items:center;gap:6px}
-        .btn-clear:hover{background:rgba(231,76,60,0.1);border-color:#e74c3c}
-        .btn-clear svg{width:16px;height:16px}
-        
-        /* Exercícios - Layout ajustado */
-        .exercicio-table th,.exercicio-table td{text-align:center;padding:10px 8px}
-        .exercicio-table th:nth-child(1),.exercicio-table td:nth-child(1){width:35px;padding:10px 5px}
-        .exercicio-table th:nth-child(2),.exercicio-table td:nth-child(2){text-align:left;padding-left:5px}
-        .exercicio-nome-texto .conjugado-plus{color:#d4af7d;font-weight:600;margin:0 4px}
-        .exercicio-obs{font-size:0.75em;color:rgba(255,255,255,0.5);margin-top:3px;font-style:italic}
-        
-        /* Alertas/Notas de Treino */
-        .treino-alertas{background:#1a1a1a;border:1px solid rgba(212,175,125,0.15);border-radius:12px;margin:20px 20px 20px;padding:15px 20px}
-        .treino-alertas-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-        .treino-alertas-title{font-family:'Inter',sans-serif;font-size:0.85em;color:#d4af7d;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:1px}
-        .treino-alertas-title svg{width:16px;height:16px}
-        .treino-alertas-btn{background:transparent;border:1px solid rgba(212,175,125,0.3);color:#d4af7d;padding:5px 12px;border-radius:6px;font-size:0.75em;cursor:pointer;transition:all 0.2s}
-        .treino-alertas-btn:hover{background:rgba(212,175,125,0.1)}
-        .treino-alertas-lista{display:flex;flex-direction:column;gap:8px}
-        .treino-alerta-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:#141414;border-radius:8px;border-left:3px solid #e74c3c}
-        .treino-alerta-item.meta{border-left-color:#f39c12}
-        .treino-alerta-item.lembrete{border-left-color:#3498db}
-        .treino-alerta-item.sucesso{border-left-color:#2ecc71}
-        .treino-alerta-icon{flex-shrink:0;width:18px;height:18px;color:rgba(255,255,255,0.6)}
-        .treino-alerta-item.alerta .treino-alerta-icon{color:#e74c3c}
-        .treino-alerta-item.meta .treino-alerta-icon{color:#f39c12}
-        .treino-alerta-item.lembrete .treino-alerta-icon{color:#3498db}
-        .treino-alerta-item.sucesso .treino-alerta-icon{color:#2ecc71}
-        .treino-alerta-content{flex:1}
-        .treino-alerta-texto{font-family:'Inter',sans-serif;font-size:0.85em;color:rgba(255,255,255,0.85);line-height:1.4}
-        .treino-alerta-acoes{display:flex;gap:5px;opacity:0;transition:opacity 0.2s}
-        .treino-alerta-item:hover .treino-alerta-acoes{opacity:1}
-        .treino-alerta-btn-sm{background:transparent;border:none;color:rgba(255,255,255,0.4);cursor:pointer;padding:4px;border-radius:4px}
-        .treino-alerta-btn-sm:hover{color:#e74c3c}
-        .treino-alertas-empty{text-align:center;padding:15px;color:rgba(255,255,255,0.3);font-size:0.85em}
-        
-        /* Modal Alerta */
-        .alerta-tipo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:15px}
-        .alerta-tipo-opt{padding:12px 8px;background:#141414;border:1px solid rgba(212,175,125,0.2);border-radius:8px;color:rgba(255,255,255,0.6);font-size:0.75em;cursor:pointer;text-align:center;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:6px}
-        .alerta-tipo-opt:hover{border-color:#d4af7d;color:#d4af7d}
-        .alerta-tipo-opt.selected{background:rgba(212,175,125,0.15);border-color:#d4af7d;color:#d4af7d}
-        .alerta-tipo-opt svg{width:20px;height:20px}
-        .alerta-tipo-opt.selected svg{stroke:#d4af7d}
-        
-        /* Mobile - Tabela de exercícios responsiva */
-        @media(max-width:768px){
-            /* Body e Container */
-            body { padding: 10px; padding-bottom: 85px; }
-            .container { border-radius: 12px; }
-            
-            /* Header */
-            .header { padding: 20px 15px; }
-            .header h1 { font-size: 1.4em; letter-spacing: 1px; }
-            .header p { font-size: 0.8em; }
-            
-            /* Tabs Global */
-            #globalTabs { margin: 0 0 15px; border-radius: 10px; padding: 8px 10px; }
-            .tabs-header { gap: 2px; }
-            .tab-btn { padding: 10px 8px; font-size: 0.65em; gap: 3px; flex-direction: column; flex: 1; text-align: center; border-radius: 6px; }
-            .tab-btn svg { width: 18px; height: 18px; }
-            
-            /* Sub Tabs */
-            .sub-tabs { padding: 10px 15px; gap: 8px; overflow-x: auto; flex-wrap: nowrap; }
-            .sub-tab-btn { flex-shrink: 0; padding: 8px 14px; font-size: 0.75em; }
-            
-            /* Sub Content */
-            .sub-content { padding: 15px; }
-            
-            /* Tabelas gerais */
-            .table-container { margin: 0 -5px; }
-            table { font-size: 0.85em; border-radius: 10px; }
-            th, td { padding: 10px 8px; }
-            th { font-size: 0.7em; letter-spacing: 0.5px; }
-            
-            /* Formulários */
-            .form-section { padding: 15px; margin-bottom: 15px; border-radius: 10px; }
-            .form-section h3 { font-size: 1em; margin-bottom: 15px; }
-            .form-row { gap: 12px; margin-bottom: 12px; }
-            .form-group input, .form-group select { padding: 10px; font-size: 0.85em; }
-            .form-group label { font-size: 0.7em; }
-            .form-buttons { flex-direction: column; }
-            .form-buttons .btn-primary { width: 100%; }
-            
-            /* Botões */
-            .btn-primary, .btn-secondary { padding: 12px 20px; font-size: 0.85em; width: 100%; }
-            
-            /* Modais */
-            .modal-content, .modal-treino-content { padding: 20px; width: 95%; max-height: 80vh; border-radius: 12px; }
-            .modal-treino { padding: 10px; }
-            .modal-treino-footer { flex-direction: column; }
-            .modal-treino-footer button { width: 100%; }
-            .modal-buttons { flex-direction: column; }
-            .modal-buttons button { width: 100%; }
-            
-            /* Treino Header */
-            .treino-header { padding: 15px; gap: 12px; }
-            .treino-header h2 { font-size: 1.1em; width: 100%; }
-            .treino-header > div { width: 100%; display: flex; gap: 10px; }
-            .treino-header .btn-clear { flex: 1; justify-content: center; }
-            .treino-header .btn-primary { flex: 1; }
-            
-            /* Treino Cards */
-            .treinos-container { padding: 0 15px 15px; gap: 15px; }
-            .treino-card { border-radius: 12px; }
-            .treino-card-header { padding: 12px 15px; flex-wrap: wrap; gap: 10px; }
-            .treino-card-header .treino-toggle { width: 16px; height: 16px; margin-right: 8px; }
-            .treino-card-titulo { font-size: 0.9em; letter-spacing: 0.5px; }
-            .treino-card-subtitulo { font-size: 0.7em; }
-            .treino-card-actions { gap: 6px; }
-            .treino-card-btn { width: 28px; height: 28px; }
-            .treino-card-btn svg { width: 14px; height: 14px; }
-            
-            /* Tabela de Exercícios Mobile */
-            .exercicio-table { display: block; }
-            .exercicio-table thead { display: none; }
-            .exercicio-table tbody { display: block; }
-            .exercicio-table tr { display: flex; flex-wrap: wrap; padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: flex-start; gap: 8px; }
-            .exercicio-table td { display: block; padding: 0; border: none; text-align: left; }
-            .exercicio-table td:nth-child(1) { width: auto; order: 1; }
-            .exercicio-table td:nth-child(2) { width: calc(100% - 35px); order: 2; padding-left: 0; }
-            .exercicio-table td:nth-child(3), .exercicio-table td:nth-child(4), .exercicio-table td:nth-child(5), .exercicio-table td:nth-child(6) {
-                order: 3; font-size: 0.7em; color: rgba(255,255,255,0.7); background: rgba(212,175,125,0.08); padding: 5px 10px; border-radius: 4px; margin-top: 4px;
-            }
-            .exercicio-table td:nth-child(3)::before { content: 'Séries: '; color: #d4af7d; font-weight: 500; }
-            .exercicio-table td:nth-child(4)::before { content: 'Reps: '; color: #d4af7d; font-weight: 500; }
-            .exercicio-table td:nth-child(5)::before { content: 'Método: '; color: #d4af7d; font-weight: 500; }
-            .exercicio-table td:nth-child(6)::before { content: 'Desc: '; color: #d4af7d; font-weight: 500; }
-            .exercicio-nome-texto { font-size: 0.9em; }
-            .exercicio-acoes { opacity: 1; }
-            .exercicio-obs { font-size: 0.7em; }
-            
-            /* Treino Footer */
-            .treino-card-footer { padding: 12px 15px; }
-            .add-exercicio-btn { padding: 10px; font-size: 0.8em; }
-            
-            /* Alertas */
-            .treino-alertas { margin: 15px; padding: 12px 15px; border-radius: 10px; }
-            .treino-alertas-header { flex-wrap: wrap; gap: 10px; }
-            .treino-alertas-title { font-size: 0.75em; }
-            .treino-alertas-btn { padding: 6px 10px; font-size: 0.7em; }
-            .treino-alerta-item { padding: 10px; gap: 8px; }
-            .treino-alerta-texto { font-size: 0.8em; }
-            .treino-alerta-acoes { opacity: 1; }
-            .alerta-tipo-grid { grid-template-columns: repeat(2, 1fr); }
-            
-            /* Grupo Muscular Grid */
-            .grupo-muscular-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .grupo-muscular-opt { padding: 10px 6px; font-size: 0.75em; }
-            
-            /* Dias da Semana */
-            .dia-header { padding: 12px 15px; }
-            .dia-header h3 { font-size: 1em; }
-            .dia-lista { padding: 8px 15px; }
-            .dia-item { padding: 10px 0; flex-wrap: wrap; gap: 8px; }
-            .dia-item-info { gap: 12px; width: 100%; }
-            .dia-item-hora { font-size: 0.85em; min-width: 45px; }
-            .dia-item-nome { font-size: 0.9em; }
-            .dia-item-dose { font-size: 0.8em; }
-            
-            /* Plano Lista */
-            .plano-item { padding: 12px; flex-wrap: wrap; gap: 10px; }
-            .plano-item-info { width: 100%; }
-            .plano-item-nome { font-size: 0.9em; }
-            .plano-item-detalhes { font-size: 0.75em; }
-            .plano-item-actions { width: 100%; justify-content: flex-end; }
-            
-            /* Checkbox */
-            .checkbox-status { width: 22px; height: 22px; }
-            .exercicio-check { width: 22px; height: 22px; }
-            
-            /* Dias Selector */
-            .dias-selector { gap: 6px; }
-            .dia-check label { font-size: 0.75em; }
-            .dia-check input[type="checkbox"] { width: 16px; height: 16px; }
-            
-            /* Duplicar Container */
-            .duplicar-container { padding: 12px; }
-            .duplicar-header label { font-size: 0.8em; }
-            .duplicar-info { font-size: 0.75em; }
-            
-            /* Empty States */
-            .treino-empty { padding: 40px 15px; }
-            .treino-empty-icon { font-size: 2.5em; }
-            .empty-message { padding: 30px 15px; font-size: 0.85em; }
-        }
-        
-        /* Extra Small Mobile */
-        @media(max-width:380px){
-            body { padding: 8px; }
-            .tab-btn { padding: 8px 5px; font-size: 0.6em; }
-            .tab-btn svg { width: 16px; height: 16px; }
-            .treino-card-titulo { font-size: 0.8em; }
-            .treino-card-header { padding: 10px 12px; }
-            .header h1 { font-size: 1.2em; }
-            .treino-header h2 { font-size: 1em; }
-            .sub-tab-btn { padding: 7px 10px; font-size: 0.7em; }
-            .grupo-muscular-opt { padding: 8px 4px; font-size: 0.7em; }
-            .modal-content, .modal-treino-content { padding: 15px; }
-            .treino-alertas { margin: 10px; padding: 10px; }
-        }
-        
-        /* ==================== DIETA - NOVO SISTEMA ==================== */
-        /* Resumo Nutricional */
-        .nutri-resumo {
-            margin: 15px 20px;
-            background: #1a1a1a;
-            border: 1px solid rgba(212, 175, 125, 0.15);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .nutri-resumo-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid rgba(212, 175, 125, 0.1);
-        }
-        .nutri-resumo-titulo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9em;
-            color: #d4af7d;
-        }
-        .nutri-resumo-titulo svg { width: 20px; height: 20px; }
-        .btn-edit-nutri {
-            width: 32px;
-            height: 32px;
-            border: 1px solid rgba(212, 175, 125, 0.3);
-            border-radius: 8px;
-            background: transparent;
-            color: #d4af7d;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .btn-edit-nutri:hover { background: rgba(212, 175, 125, 0.1); }
-        .btn-edit-nutri svg { width: 16px; height: 16px; }
-        .nutri-resumo-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            padding: 15px;
-            gap: 10px;
-        }
-        .nutri-item {
-            text-align: center;
-            padding: 12px 8px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-        }
-        .nutri-item-label { font-size: 0.65em; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-        .nutri-item-valor { font-family: 'Playfair Display', serif; font-size: 1.1em; color: #fff; }
-        .nutri-item-vazio { color: rgba(255,255,255,0.3); font-style: italic; font-size: 0.8em; }
-        
-        /* Água Tracker */
-        .agua-tracker {
-            margin: 0 20px 15px;
-            background: #1a1a1a;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            border-radius: 12px;
-            padding: 15px;
-        }
-        .agua-tracker-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .agua-tracker-titulo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9em;
-            color: #3498db;
-        }
-        .agua-tracker-titulo svg { width: 20px; height: 20px; }
-        .agua-tracker-meta {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2em;
-            color: #3498db;
-        }
-        .agua-tracker-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .agua-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            background: transparent;
-            color: #3498db;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .agua-btn:hover { background: rgba(52, 152, 219, 0.15); border-color: #3498db; }
-        .agua-btn svg { width: 18px; height: 18px; }
-        .agua-btn.config { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); }
-        .agua-btn.config:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
-        .agua-progress {
-            flex: 1;
-            height: 12px;
-            background: rgba(52, 152, 219, 0.1);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        .agua-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #3498db, #2980b9);
-            border-radius: 6px;
-            transition: width 0.3s;
-            width: 0%;
-        }
-        
-        /* Informações Adicionais */
-        .info-section {
-            margin: 0 20px 15px;
-        }
-        .info-section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .info-section-header h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1em;
-            color: #d4af7d;
-        }
-        .btn-add-info {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 1px solid rgba(212, 175, 125, 0.3);
-            background: transparent;
-            color: #d4af7d;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .btn-add-info:hover { background: rgba(212, 175, 125, 0.15); }
-        .btn-add-info svg { width: 16px; height: 16px; }
-        .info-lista {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .info-item-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 15px;
-            background: #1a1a1a;
-            border: 1px solid rgba(212, 175, 125, 0.1);
-            border-radius: 10px;
-        }
-        .info-item-card:hover { border-color: rgba(212, 175, 125, 0.25); }
-        .info-item-texto {
-            flex: 1;
-            color: #fff;
-            font-size: 0.9em;
-        }
-        .info-item-acoes {
-            display: flex;
-            gap: 5px;
-        }
-        .info-item-acoes button {
-            width: 28px;
-            height: 28px;
-            border: none;
-            background: transparent;
-            color: rgba(255,255,255,0.4);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        .info-item-acoes button:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .info-item-acoes button.delete:hover { color: #e74c3c; }
-        .info-item-acoes svg { width: 16px; height: 16px; }
-        .info-vazia {
-            text-align: center;
-            padding: 30px;
-            color: rgba(255,255,255,0.4);
-            font-size: 0.85em;
-        }
-        
-        /* Mobile Dieta */
-        @media (max-width: 768px) {
-            .nutri-resumo { margin: 10px 15px; }
-            .nutri-resumo-grid { grid-template-columns: repeat(2, 1fr); padding: 12px; }
-            .nutri-item { padding: 10px 6px; }
-            .nutri-item-valor { font-size: 1em; }
-            .agua-tracker { margin: 0 15px 10px; padding: 12px; }
-            .agua-btn { width: 32px; height: 32px; }
-            .agua-btn svg { width: 16px; height: 16px; }
-            .info-section { margin: 0 15px 10px; }
-        }
-        
-        /* ==================== EVOLUÇÃO / PESO ==================== */
-        .evolucao-filtros {
-            display: flex;
-            gap: 8px;
-            padding: 15px 20px;
-            overflow-x: auto;
-        }
-        .filtro-periodo {
-            padding: 10px 18px;
-            background: rgba(255,255,255,0.05);
-            border: none;
-            border-radius: 20px;
-            color: rgba(255,255,255,0.6);
-            font-size: 0.85em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .filtro-periodo:hover { background: rgba(255,255,255,0.1); }
-        .filtro-periodo.active {
-            background: #3498db;
-            color: #fff;
-        }
-        
-        .peso-card {
-            margin: 0 20px 20px;
-            background: linear-gradient(135deg, #1a2634 0%, #1a1a2e 100%);
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        .peso-card-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 20px;
-        }
-        .peso-card-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(241, 196, 15, 0.15);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .peso-card-icon svg {
-            width: 28px;
-            height: 28px;
-            color: #f1c40f;
-        }
-        .peso-card-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .peso-card-titulo {
-            font-size: 1.1em;
-            color: #fff;
-            font-weight: 500;
-        }
-        .peso-card-tendencia {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.85em;
-        }
-        .peso-card-tendencia svg { width: 16px; height: 16px; }
-        .peso-card-tendencia.subindo { color: #2ecc71; }
-        .peso-card-tendencia.descendo { color: #e74c3c; }
-        .peso-card-tendencia.estavel { color: #f1c40f; }
-        .peso-card-atual {
-            text-align: right;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .peso-valor {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2em;
-            color: #3498db;
-            line-height: 1;
-        }
-        .peso-variacao {
-            font-size: 0.85em;
-            color: #3498db;
-        }
-        .peso-variacao.positivo { color: #2ecc71; }
-        .peso-variacao.negativo { color: #e74c3c; }
-        
-        .peso-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            background: rgba(0,0,0,0.2);
-            border-top: 1px solid rgba(52, 152, 219, 0.1);
-            border-bottom: 1px solid rgba(52, 152, 219, 0.1);
-        }
-        .peso-stat {
-            padding: 15px;
-            text-align: center;
-            border-right: 1px solid rgba(52, 152, 219, 0.1);
-        }
-        .peso-stat:last-child { border-right: none; }
-        .peso-stat-label {
-            display: block;
-            font-size: 0.7em;
-            color: rgba(255,255,255,0.5);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-        }
-        .peso-stat-valor {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2em;
-            color: #fff;
-        }
-        .peso-stat-valor.positivo { color: #2ecc71; }
-        .peso-stat-valor.negativo { color: #e74c3c; }
-        
-        .peso-desde {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 20px;
-            font-size: 0.8em;
-            color: rgba(255,255,255,0.5);
-        }
-        .peso-desde svg { width: 16px; height: 16px; }
-        
-        .peso-grafico-container {
-            padding: 15px;
-            height: 220px;
-        }
-        #pesoGrafico {
-            width: 100% !important;
-            height: 100% !important;
-        }
-        
-        .btn-add-peso {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: calc(100% - 40px);
-            margin: 0 20px 20px;
-            padding: 15px;
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            border: none;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 1em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-add-peso:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(52, 152, 219, 0.3); }
-        .btn-add-peso svg { width: 20px; height: 20px; }
-        
-        .peso-historico {
-            padding: 0 20px 20px;
-        }
-        .peso-historico h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1em;
-            color: #d4af7d;
-            margin-bottom: 15px;
-        }
-        .peso-historico-lista {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .peso-historico-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 15px;
-            background: #1a1a1a;
-            border: 1px solid rgba(212, 175, 125, 0.1);
-            border-radius: 10px;
-        }
-        .peso-historico-item:hover { border-color: rgba(212, 175, 125, 0.25); }
-        .peso-historico-info {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        .peso-historico-valor {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1em;
-            color: #fff;
-        }
-        .peso-historico-data {
-            font-size: 0.8em;
-            color: rgba(255,255,255,0.5);
-        }
-        .peso-historico-obs {
-            font-size: 0.75em;
-            color: rgba(212, 175, 125, 0.7);
-            font-style: italic;
-        }
-        .peso-historico-acoes {
-            display: flex;
-            gap: 5px;
-        }
-        .peso-historico-acoes button {
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: transparent;
-            color: rgba(255,255,255,0.4);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-        .peso-historico-acoes button:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .peso-historico-acoes button.delete:hover { color: #e74c3c; }
-        .peso-historico-acoes svg { width: 16px; height: 16px; }
-        .peso-historico-vazio {
-            text-align: center;
-            padding: 40px;
-            color: rgba(255,255,255,0.4);
-        }
-        
-        /* Mobile Evolução */
-        @media (max-width: 768px) {
-            .evolucao-filtros { padding: 10px 15px; gap: 6px; }
-            .filtro-periodo { padding: 8px 14px; font-size: 0.8em; }
-            .peso-card { margin: 0 15px 15px; }
-            .peso-card-header { padding: 15px; gap: 12px; }
-            .peso-card-icon { width: 42px; height: 42px; }
-            .peso-card-icon svg { width: 22px; height: 22px; }
-            .peso-valor { font-size: 1.8em; }
-            .peso-stats { grid-template-columns: repeat(3, 1fr); }
-            .peso-stat { padding: 12px 8px; }
-            .peso-stat-valor { font-size: 1em; }
-            .peso-grafico-container { height: 180px; padding: 10px; }
-            .btn-add-peso { width: calc(100% - 30px); margin: 0 15px 15px; padding: 12px; }
-            .peso-historico { padding: 0 15px 15px; }
-        }
-        
-        /* ==================== REFEIÇÕES / DIETA ==================== */
-        .dieta-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .dieta-header h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3em;
-            color: #d4af7d;
-        }
-        
-        .refeicoes-container {
-            padding: 0 20px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .refeicao-card {
-            background: #1a1a1a;
-            border: 1px solid rgba(212, 175, 125, 0.15);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        .refeicao-card:hover {
-            border-color: rgba(212, 175, 125, 0.3);
-        }
-        
-        .refeicao-card-header {
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            transition: background 0.2s;
-        }
-        .refeicao-card-header:hover {
-            background: rgba(212, 175, 125, 0.05);
-        }
-        
-        .refeicao-header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .refeicao-expand-icon {
-            width: 20px;
-            height: 20px;
-            color: #d4af7d;
-            transition: transform 0.3s;
-        }
-        .refeicao-card.collapsed .refeicao-expand-icon {
-            transform: rotate(-90deg);
-        }
-        
-        .refeicao-nome {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .refeicao-subtitulo {
-            font-size: 0.8em;
-            color: rgba(255,255,255,0.6);
-            margin-top: 2px;
-        }
-        
-        .refeicao-header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .refeicao-horario {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 12px;
-            background: rgba(212, 175, 125, 0.1);
-            border: 1px solid rgba(212, 175, 125, 0.2);
-            border-radius: 20px;
-            font-size: 0.85em;
-            color: #d4af7d;
-        }
-        .refeicao-horario svg {
-            width: 14px;
-            height: 14px;
-            stroke: #d4af7d;
-        }
-        
-        .refeicao-card-actions {
-            display: flex;
-            gap: 8px;
-        }
-        .refeicao-card-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: #fff;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .refeicao-card-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.1);
-        }
-        .refeicao-card-btn.delete:hover {
-            background: rgba(231,76,60,0.8);
-        }
-        .refeicao-card-btn.done {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
-        }
-        .refeicao-card-btn.done.checked {
-            background: #2ecc71;
-            color: #fff;
-        }
-        .refeicao-card-btn.duplicate {
-            background: rgba(52, 152, 219, 0.2);
-            color: #3498db;
-        }
-        .refeicao-card-btn.duplicate:hover {
-            background: rgba(52, 152, 219, 0.4);
-        }
-        .refeicao-card-btn svg {
-            width: 16px;
-            height: 16px;
-        }
-        
-        /* Refeição concluída */
-        .refeicao-card.feita {
-            opacity: 0.6;
-            border-color: rgba(46, 204, 113, 0.3);
-        }
-        .refeicao-card.feita .refeicao-nome {
-            text-decoration: line-through;
-            color: rgba(255,255,255,0.5);
-        }
-        
-        .refeicao-card-body {
-            display: none;
-            border-top: 1px solid rgba(212, 175, 125, 0.1);
-        }
-        .refeicao-card.expanded .refeicao-card-body {
-            display: block;
-        }
-        
-        /* Alimentos vem primeiro, observações depois */
-        .refeicao-alimentos {
-            padding: 0;
-            order: 1;
-        }
-        
-        .refeicao-observacoes {
-            padding: 15px 20px;
-            background: rgba(212, 175, 125, 0.05);
-            border-top: 1px solid rgba(212, 175, 125, 0.1);
-            order: 2;
-        }
-        .refeicao-obs-titulo {
-            font-weight: 600;
-            font-size: 0.85em;
-            color: #d4af7d;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .refeicao-obs-texto {
-            font-size: 0.9em;
-            color: rgba(255,255,255,0.7);
-            line-height: 1.7;
-            white-space: pre-line;
-        }
-        
-        .refeicao-alimentos {
-            padding: 0;
-        }
-        
-        .refeicao-alimentos-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .refeicao-alimentos-table th {
-            background: #141414;
-            color: #d4af7d;
-            padding: 12px 20px;
-            text-align: left;
-            font-size: 0.75em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid rgba(212, 175, 125, 0.1);
-        }
-        .refeicao-alimentos-table td {
-            padding: 12px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            color: rgba(255,255,255,0.85);
-            font-size: 0.9em;
-        }
-        .refeicao-alimentos-table tr:last-child td {
-            border-bottom: none;
-        }
-        .refeicao-alimentos-table tr:hover {
-            background: rgba(212, 175, 125, 0.05);
-        }
-        
-        .refeicao-alimento-nome {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .refeicao-check-icon {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2ecc71;
-        }
-        .refeicao-check-icon svg {
-            width: 20px;
-            height: 20px;
-            stroke: #2ecc71;
-            stroke-width: 2;
-        }
-        
-        .refeicoes-empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: rgba(255,255,255,0.4);
-        }
-        .refeicoes-empty-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-            opacity: 0.3;
-        }
-        
-        /* Modal Refeição */
-        .alimento-input-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .alimento-input-row input {
-            flex: 1;
-        }
-        .alimento-input-row .btn-remove-alimento {
-            background: transparent;
-            border: 1px solid rgba(231,76,60,0.3);
-            color: #e74c3c;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        .alimento-input-row .btn-remove-alimento:hover {
-            background: rgba(231,76,60,0.1);
-        }
-        .alimento-input-row .btn-remove-alimento svg {
-            width: 18px;
-            height: 18px;
-        }
-        
-        .btn-add-alimento {
-            width: 100%;
-            padding: 12px;
-            background: rgba(212,175,125,0.1);
-            border: 1px dashed rgba(212,175,125,0.3);
-            border-radius: 8px;
-            color: #d4af7d;
-            font-size: 0.85em;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .btn-add-alimento:hover {
-            background: rgba(212,175,125,0.15);
-            border-color: #d4af7d;
-        }
-        
-        /* Responsivo Dieta */
-        @media(max-width:768px) {
-            .dieta-header {
-                padding: 15px;
-            }
-            .dieta-header h2 {
-                font-size: 1.1em;
-            }
-            .refeicoes-container {
-                padding: 0 15px 15px;
-            }
-            .refeicao-card-header {
-                padding: 15px;
-                flex-direction: column;
-                gap: 10px;
-            }
-            .refeicao-nome {
-                font-size: 1.2em;
-            }
-            .refeicao-horario {
-                align-self: flex-start;
-            }
-            .refeicao-observacoes {
-                padding: 15px;
-            }
-            .refeicao-alimentos {
-                padding: 10px 15px;
-            }
-            .refeicao-alimento-item {
-                padding: 12px 0;
-            }
-            .refeicao-alimento-texto {
-                font-size: 0.95em;
-            }
-        }
+html { scroll-behavior: smooth; background: #0a0a0a !important; }
+body { font-family: 'Inter', sans-serif; background: #0a0a0a !important; color: #fff; min-height: 100vh; padding: 20px; padding-bottom: 80px; }
+body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #d4af7d, transparent); z-index: 9999; }
+body::after { content: ''; position: fixed; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #d4af7d, transparent); z-index: 9999; }
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 100%);
+    border-right: 1px solid rgba(212, 175, 125, 0.15);
+    z-index: 1000;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 0;
+    transition: width 0.3s;
+    overflow: hidden;
+}
+.sidebar:hover { width: 200px; }
+.sidebar-logo {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid rgba(212, 175, 125, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2em;
+    color: #d4af7d;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+.sidebar-logo:hover { background: rgba(212, 175, 125, 0.1); }
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    flex: 1;
+}
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 10px;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 0.85em;
+    transition: all 0.3s;
+    border-left: 2px solid transparent;
+    white-space: nowrap;
+}
+.sidebar-menu a:hover {
+    background: rgba(212, 175, 125, 0.1);
+    border-left-color: #d4af7d;
+    color: #fff;
+}
+.sidebar-menu a.active {
+    background: rgba(212, 175, 125, 0.15);
+    border-left-color: #d4af7d;
+    color: #d4af7d;
+}
+.sidebar-menu a svg {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    margin-left: 10px;
+}
+.sidebar-menu a span {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.sidebar:hover .sidebar-menu a span { opacity: 1; }
+.sidebar-divider {
+    height: 1px;
+    background: rgba(212, 175, 125, 0.2);
+    margin: 8px 10px;
+    width: calc(100% - 20px);
+}
+.sidebar-footer {
+    padding: 15px 10px;
+    text-align: center;
+    border-top: 1px solid rgba(212, 175, 125, 0.2);
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+}
+.sidebar-footer p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.7em;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.sidebar-footer .instituto {
+    font-size: 0.85em;
+    color: #d4af7d;
+    display: block;
+    margin-bottom: 3px;
+}
+.sidebar:hover .sidebar-footer p { opacity: 1; }
+
+/* Mobile Nav */
+.mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%); border-top: 1px solid rgba(212, 175, 125, 0.15); padding: 10px 0; z-index: 1000; }
+.mobile-nav-items { display: flex; justify-content: space-around; align-items: center; }
+.mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.65em; padding: 5px 10px; transition: all 0.3s; }
+.mobile-nav-item svg { width: 22px; height: 22px; }
+.mobile-nav-item.active { color: #d4af7d; }
+
+@media (max-width: 768px) { body { padding-left: 10px; padding-bottom: 80px; } .sidebar { display: none; } .mobile-nav { display: block; } .container { margin-left: 0 !important; } #globalTabs { margin-left: 0 !important; } }
+@media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } #globalTabs { margin-left: 0; } }
+
+/* Container e Layout */
+.container { max-width: 1200px; margin: 0 auto; background: #141414; border: 1px solid rgba(212, 175, 125, 0.15); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; }
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%); border-bottom: 1px solid rgba(212, 175, 125, 0.2); color: white; padding: 30px; text-align: center; position: relative; }
+.header h1 { font-family: 'Playfair Display', serif; font-size: 2em; margin-bottom: 10px; font-weight: 400; letter-spacing: 3px; color: #fff; }
+.header p { font-size: 0.9em; color: rgba(212, 175, 125, 0.8); letter-spacing: 1px; }
+
+/* Sync Status */
+#syncStatus { position: fixed; bottom: 100px; right: 20px; padding: 12px 22px; border-radius: 10px; font-size: 0.9em; font-weight: 500; z-index: 10001; opacity: 0; transition: opacity 0.3s; color: #fff; }
+@media (max-width: 768px) { #syncStatus { bottom: 90px; right: 10px; left: 10px; text-align: center; } }
+
+/* Tabs */
+.tabs-container { background: #141414; padding: 10px 15px; border-bottom: 1px solid rgba(212, 175, 125, 0.15); position: sticky; top: 0; z-index: 100; }
+.tabs-header { display: flex; gap: 8px; justify-content: space-around; }
+.tab-btn { display: flex; align-items: center; gap: 6px; padding: 10px 15px; background: transparent; border: none; color: rgba(255,255,255,0.5); font-size: 0.8em; cursor: pointer; border-radius: 8px; transition: all 0.3s; white-space: nowrap; }
+.tab-btn:hover { color: #d4af7d; background: rgba(212, 175, 125, 0.1); }
+.tab-btn.active { background: rgba(212, 175, 125, 0.2); color: #d4af7d; }
+.tab-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* Sub Tabs */
+.sub-tabs { display: flex; gap: 5px; padding: 15px 20px; background: #1a1a1a; border-bottom: 1px solid rgba(212, 175, 125, 0.1); }
+.sub-tab-btn { padding: 10px 20px; background: transparent; border: 1px solid rgba(212, 175, 125, 0.2); color: rgba(255,255,255,0.5); font-size: 0.85em; cursor: pointer; border-radius: 6px; transition: all 0.3s; }
+.sub-tab-btn:hover { border-color: rgba(212, 175, 125, 0.4); color: #d4af7d; }
+.sub-tab-btn.active { background: rgba(212, 175, 125, 0.15); border-color: #d4af7d; color: #d4af7d; }
+.sub-content { display: none; padding: 20px; }
+.sub-content.active { display: block; }
+
+/* Tabela */
+.table-container { overflow-x: auto; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; background: #1a1a1a; border-radius: 15px; overflow: hidden; border: 1px solid rgba(212, 175, 125, 0.1); }
+th { background: linear-gradient(135deg, #1f1f1f 0%, #151515 100%); color: #d4af7d; padding: 15px; text-align: center; font-weight: 500; font-size: 0.85em; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(212, 175, 125, 0.2); }
+th:first-child { border-top-left-radius: 15px; text-align: left; }
+th:last-child { border-top-right-radius: 15px; }
+td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; vertical-align: middle; color: rgba(255,255,255,0.8); }
+td:first-child { text-align: left; }
+tr:hover { background: rgba(212, 175, 125, 0.05); }
+
+/* Checkbox */
+.checkbox-status { appearance: none; -webkit-appearance: none; width: 24px; height: 24px; border: 2px solid #2ecc71; border-radius: 50%; cursor: pointer; position: relative; background: transparent; transition: all 0.3s; }
+.checkbox-status:checked { background: #2ecc71; border-color: #2ecc71; }
+.checkbox-status:checked::after { content: ''; position: absolute; width: 6px; height: 10px; border: solid #0a0a0a; border-width: 0 2px 2px 0; top: 50%; left: 50%; transform: translate(-50%, -60%) rotate(45deg); }
+
+/* Mensagens e Status */
+.empty-message { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.4); font-size: 0.95em; }
+.estoque-ok { color: #2ecc71; }
+.estoque-baixo { color: #f1c40f; }
+.estoque-critico { color: #e74c3c; }
+
+/* Dias da Semana */
+.dia-header { padding: 15px 20px; background: rgba(212, 175, 125, 0.08); border-bottom: 1px solid rgba(212, 175, 125, 0.15); margin-top: 20px; }
+.dia-header:first-child { margin-top: 0; }
+.dia-header h3 { font-family: 'Playfair Display', serif; font-size: 1.1em; font-weight: 400; color: #d4af7d; letter-spacing: 1px; }
+.dia-lista { padding: 10px 20px; }
+.dia-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.dia-item:last-child { border-bottom: none; }
+.dia-item-info { display: flex; gap: 20px; align-items: center; }
+.dia-item-hora { color: #d4af7d; font-size: 0.9em; min-width: 50px; }
+.dia-item-nome { color: #fff; }
+.dia-item-dose { color: rgba(255,255,255,0.5); font-size: 0.85em; }
+
+/* Formulários */
+.form-section { background: #1a1a1a; border: 1px solid rgba(212, 175, 125, 0.1); border-radius: 12px; padding: 25px; margin-bottom: 20px; }
+.form-section h3 { font-family: 'Playfair Display', serif; font-size: 1.1em; font-weight: 400; color: #d4af7d; margin-bottom: 20px; letter-spacing: 1px; }
+.form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 15px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 0.75em; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; }
+.form-group input, .form-group select { padding: 12px; background: #141414; border: 1px solid rgba(212, 175, 125, 0.2); border-radius: 8px; color: #fff; font-size: 0.9em; outline: none; transition: border-color 0.3s; }
+.form-group input:focus, .form-group select:focus { border-color: #d4af7d; }
+.form-group input::placeholder { color: rgba(255,255,255,0.3); }
+.form-group select option { background: #141414; color: #fff; }
+
+/* Dias Selector */
+.dias-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
+.dia-check { display: flex; align-items: center; gap: 5px; }
+.dia-check input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 1px solid rgba(212, 175, 125, 0.3); border-radius: 4px; cursor: pointer; position: relative; background: transparent; }
+.dia-check input[type="checkbox"]:checked { background: rgba(212, 175, 125, 0.3); border-color: #d4af7d; }
+.dia-check input[type="checkbox"]:checked::after { content: ''; position: absolute; width: 4px; height: 8px; border: solid #d4af7d; border-width: 0 2px 2px 0; top: 50%; left: 50%; transform: translate(-50%, -60%) rotate(45deg); }
+.dia-check label { font-size: 0.8em; color: rgba(255,255,255,0.6); cursor: pointer; }
+
+/* Botões */
+.btn-primary { padding: 12px 25px; background: linear-gradient(135deg, #d4af7d, #c9a066); border: none; border-radius: 8px; color: #0a0a0a; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212, 175, 125, 0.3); }
+.btn-secondary { padding: 12px 25px; background: transparent; border: 1px solid rgba(212, 175, 125, 0.3); border-radius: 8px; color: #d4af7d; font-size: 0.9em; cursor: pointer; transition: all 0.3s; }
+.btn-secondary:hover { background: rgba(212, 175, 125, 0.1); }
+.btn-delete-small { background: transparent; border: none; color: rgba(220, 53, 69, 0.6); cursor: pointer; padding: 5px; transition: color 0.3s; }
+.btn-delete-small:hover { color: #dc3545; }
+.btn-edit-small { background: transparent; border: none; color: rgba(212, 175, 125, 0.6); cursor: pointer; padding: 5px; transition: color 0.3s; }
+.btn-edit-small:hover { color: #d4af7d; }
+.form-buttons { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.plano-item-actions { display: flex; gap: 5px; }
+
+/* Dashboard KPIs Medicamentos */
+.med-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; padding: 20px; background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%); border-bottom: 1px solid rgba(212, 175, 125, 0.15); }
+.med-kpi { display: flex; align-items: center; gap: 12px; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(212, 175, 125, 0.1); border-radius: 10px; }
+.med-kpi-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.med-kpi-icon svg { width: 22px; height: 22px; }
+.med-kpi-icon.tomados { background: rgba(46, 204, 113, 0.15); color: #2ecc71; }
+.med-kpi-icon.proximo { background: rgba(52, 152, 219, 0.15); color: #3498db; }
+.med-kpi-icon.estoque { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
+.med-kpi-icon.aderencia { background: rgba(212, 175, 125, 0.15); color: #d4af7d; }
+.med-kpi-info { display: flex; flex-direction: column; min-width: 0; }
+.med-kpi-valor { font-family: 'Playfair Display', serif; font-size: 1.3em; color: #fff; white-space: nowrap; }
+.med-kpi-label { font-size: 0.7em; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Alertas Estoque */
+.med-alertas { background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.3); margin: 15px 20px; border-radius: 10px; padding: 15px; }
+.med-alerta-header { display: flex; align-items: center; gap: 10px; color: #e74c3c; font-weight: 500; margin-bottom: 10px; }
+.med-alerta-header svg { width: 20px; height: 20px; }
+.med-alerta-lista { display: flex; flex-direction: column; gap: 8px; }
+.med-alerta-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(0,0,0,0.2); border-radius: 6px; }
+.med-alerta-nome { color: #fff; font-size: 0.9em; }
+.med-alerta-qtd { color: #e74c3c; font-size: 0.85em; font-weight: 500; }
+
+/* Timeline Medicamentos - Formato Tabular */
+.med-timeline { padding: 15px; }
+.med-timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(212, 175, 125, 0.1);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: all 0.3s;
+}
+.med-timeline-item:hover { border-color: rgba(212, 175, 125, 0.25); }
+.med-timeline-item.tomado { opacity: 0.5; }
+.med-col { display: flex; flex-direction: column; gap: 4px; }
+.med-col-label { font-size: 0.65em; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; }
+.med-col-valor { font-size: 0.95em; color: #fff; }
+.med-col-hora { min-width: 70px; }
+.med-col-hora .med-col-valor { font-family: 'Playfair Display', serif; font-size: 1.1em; color: #d4af7d; }
+.med-col-status { font-size: 0.7em; text-transform: uppercase; }
+.med-col-status.pendente { color: rgba(255,255,255,0.4); }
+.med-col-status.tomado { color: #2ecc71; }
+.med-col-status.atrasado { color: #f1c40f; }
+.med-col-status.perdido { color: #e74c3c; }
+.med-col-nome { flex: 1; min-width: 120px; }
+.med-col-dose { min-width: 80px; }
+.med-col-estoque { min-width: 80px; }
+.med-col-actions { display: flex; gap: 8px; align-items: center; }
+.med-check-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(46, 204, 113, 0.4); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+.med-check-btn:hover { border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
+.med-check-btn.checked { background: #2ecc71; border-color: #2ecc71; }
+.med-check-btn svg { width: 16px; height: 16px; color: #fff; opacity: 0; }
+.med-check-btn.checked svg { opacity: 1; }
+.med-timeline-categoria { font-size: 0.65em; padding: 2px 8px; border-radius: 10px; background: rgba(212, 175, 125, 0.2); color: #d4af7d; margin-top: 4px; display: inline-block; }
+.med-timeline-categoria.sos { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+.med-timeline-categoria.antibiotico { background: rgba(155, 89, 182, 0.2); color: #9b59b6; }
+
+@media (max-width: 768px) {
+    .med-timeline-item { flex-wrap: wrap; gap: 10px; }
+    .med-col-hora { min-width: 60px; }
+    .med-col-nome { flex: 1 1 100%; order: -1; }
+    .med-col-dose, .med-col-estoque { flex: 1; min-width: 70px; }
+    .med-col-actions { width: 100%; justify-content: flex-end; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+}
+
+/* Histórico */
+.historico-filtros { display: flex; gap: 10px; padding: 15px 20px; border-bottom: 1px solid rgba(212, 175, 125, 0.1); }
+.filtro-btn { padding: 8px 16px; background: transparent; border: 1px solid rgba(212, 175, 125, 0.2); border-radius: 20px; color: rgba(255,255,255,0.5); font-size: 0.8em; cursor: pointer; transition: all 0.3s; }
+.filtro-btn:hover { border-color: rgba(212, 175, 125, 0.4); }
+.filtro-btn.active { background: rgba(212, 175, 125, 0.15); border-color: #d4af7d; color: #d4af7d; }
+.historico-lista { padding: 20px; }
+.historico-dia { margin-bottom: 25px; }
+.historico-dia-header { font-family: 'Playfair Display', serif; font-size: 1em; color: #d4af7d; padding-bottom: 10px; border-bottom: 1px solid rgba(212, 175, 125, 0.15); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+.historico-dia-aderencia { font-size: 0.8em; padding: 4px 10px; border-radius: 12px; }
+.historico-dia-aderencia.bom { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+.historico-dia-aderencia.medio { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
+.historico-dia-aderencia.ruim { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+.historico-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.historico-item:last-child { border-bottom: none; }
+.historico-item-status { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.historico-item-status.tomado { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+.historico-item-status.atrasado { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
+.historico-item-status.perdido { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+.historico-item-status svg { width: 14px; height: 14px; }
+.historico-item-info { flex: 1; }
+.historico-item-nome { color: #fff; font-size: 0.9em; }
+.historico-item-hora { color: rgba(255,255,255,0.5); font-size: 0.8em; }
+
+/* Notificação Telegram - Sino */
+.btn-notify { background: transparent; border: none; color: rgba(255,255,255,0.3); cursor: pointer; padding: 5px; transition: all 0.3s; }
+.btn-notify:hover { color: #d4af7d; }
+.btn-notify.active { color: #2ecc71; }
+.btn-notify.active:hover { color: #27ae60; }
+.btn-notify svg { width: 18px; height: 18px; }
+
+/* Botão Duplicar */
+.btn-duplicate { background: transparent; border: none; color: rgba(52, 152, 219, 0.6); cursor: pointer; padding: 5px; transition: color 0.3s; }
+.btn-duplicate:hover { color: #3498db; }
+.btn-duplicate svg { width: 18px; height: 18px; }
+
+/* Config Telegram */
+.telegram-config { background: rgba(212, 175, 125, 0.08); border: 1px solid rgba(212, 175, 125, 0.15); border-radius: 10px; padding: 15px; margin-bottom: 20px; }
+.telegram-config-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; cursor: pointer; }
+.telegram-config-header h4 { font-family: 'Playfair Display', serif; font-size: 0.95em; color: #d4af7d; display: flex; align-items: center; gap: 8px; }
+.telegram-config-header svg { width: 18px; height: 18px; }
+.telegram-config-body { display: none; }
+.telegram-config-body.active { display: block; }
+.telegram-status { display: flex; align-items: center; gap: 6px; font-size: 0.75em; }
+.telegram-status.connected { color: #2ecc71; }
+.telegram-status.disconnected { color: #e74c3c; }
+.telegram-status-dot { width: 8px; height: 8px; border-radius: 50%; }
+.telegram-status.connected .telegram-status-dot { background: #2ecc71; }
+.telegram-status.disconnected .telegram-status-dot { background: #e74c3c; }
+
+/* Plano Lista */
+.plano-lista { margin-top: 20px; }
+.plano-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #141414; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 10px; }
+.plano-item-info { flex: 1; min-width: 0; }
+.plano-item-nome { color: #fff; font-size: 0.95em; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.plano-item-detalhes { color: rgba(255,255,255,0.5); font-size: 0.8em; word-wrap: break-word; }
+.plano-item-obs { color: rgba(212, 175, 125, 0.6); font-size: 0.75em; font-style: italic; margin-top: 4px; }
+.plano-item-estoque { font-size: 0.75em; padding: 3px 8px; border-radius: 10px; margin-left: 5px; }
+.plano-item-estoque.ok { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+.plano-item-estoque.baixo { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
+.plano-item-estoque.critico { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+
+/* Mobile Medicamentos */
+@media (max-width: 768px) {
+    .med-dashboard { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 15px; }
+    .med-kpi { padding: 12px; flex-direction: column; text-align: center; gap: 8px; }
+    .med-kpi-icon { width: 40px; height: 40px; }
+    .med-kpi-valor { font-size: 1.1em; }
+    .med-timeline-item { flex-wrap: wrap; }
+    .med-timeline-actions { width: 100%; justify-content: flex-end; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+    .historico-filtros { overflow-x: auto; }
+}
+
+/* Modal */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; }
+.modal-overlay.active { display: flex; }
+.modal-content { background: #1a1a1a; border: 1px solid rgba(212, 175, 125, 0.2); border-radius: 15px; padding: 30px; width: 90%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
+.modal-content h3 { font-family: 'Playfair Display', serif; font-size: 1.2em; color: #d4af7d; margin-bottom: 20px; text-align: center; }
+.modal-content .form-group { margin-bottom: 15px; }
+.modal-buttons { display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end; }
+
+/* ==================== TREINO CARDS ==================== */
+.treino-header{display:flex;justify-content:space-between;align-items:center;padding:20px;flex-wrap:wrap;gap:15px}
+.treino-header h2{font-family:'Playfair Display',serif;font-size:1.3em;color:#d4af7d}
+.treinos-container{padding:0 20px 20px;display:flex;flex-direction:column;gap:20px}
+
+.treino-card{background:#1a1a1a;border:1px solid rgba(212,175,125,0.15);border-radius:16px;overflow:hidden;transition:all 0.3s}
+.treino-card:hover{border-color:rgba(212,175,125,0.3)}
+
+.treino-card-header{background:linear-gradient(135deg,#c0392b,#e74c3c);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;transition:filter 0.2s}
+.treino-card-header:hover{filter:brightness(1.1)}
+.treino-card-header.peito{background:linear-gradient(135deg,#27ae60,#2ecc71)}
+.treino-card-header.costas{background:linear-gradient(135deg,#2980b9,#3498db)}
+.treino-card-header.pernas{background:linear-gradient(135deg,#8e44ad,#9b59b6)}
+.treino-card-header.ombros{background:linear-gradient(135deg,#d35400,#e67e22)}
+.treino-card-header.bracos{background:linear-gradient(135deg,#16a085,#1abc9c)}
+.treino-card-header.abdomen{background:linear-gradient(135deg,#c0392b,#e74c3c)}
+.treino-card-header.cardio{background:linear-gradient(135deg,#f39c12,#f1c40f)}
+.treino-card-header.full{background:linear-gradient(135deg,#2c3e50,#34495e)}
+
+.treino-card-titulo{font-family:'Playfair Display',serif;font-size:1.1em;color:#fff;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.treino-card-subtitulo{font-size:0.8em;color:rgba(255,255,255,0.8);margin-top:3px}
+.treino-card-actions{display:flex;gap:8px}
+.treino-card-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.treino-card-btn:hover{background:rgba(255,255,255,0.3);transform:scale(1.1)}
+.treino-card-btn.delete:hover{background:rgba(231,76,60,0.8)}
+
+.treino-card-body{padding:0}
+.exercicio-table{width:100%;border-collapse:collapse}
+.exercicio-table th{background:#141414;color:#d4af7d;padding:12px 15px;text-align:left;font-size:0.75em;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(212,175,125,0.1)}
+.exercicio-table th:first-child{padding-left:20px}
+.exercicio-table td{padding:12px 15px;border-bottom:1px solid rgba(255,255,255,0.03);color:rgba(255,255,255,0.85);font-size:0.9em}
+.exercicio-table td:first-child{padding-left:20px;color:#fff;font-weight:500}
+.exercicio-table tr:last-child td{border-bottom:none}
+.exercicio-table tr:hover{background:rgba(212,175,125,0.05)}
+
+.exercicio-nome{display:flex;align-items:center;gap:10px}
+.exercicio-nome span{flex:1}
+.exercicio-acoes{display:flex;gap:5px;opacity:0;transition:opacity 0.2s}
+.exercicio-table tr:hover .exercicio-acoes{opacity:1}
+.exercicio-btn{background:transparent;border:none;color:rgba(255,255,255,0.4);cursor:pointer;padding:4px;border-radius:4px;transition:all 0.2s}
+.exercicio-btn:hover{color:#d4af7d;background:rgba(212,175,125,0.1)}
+.exercicio-btn.delete:hover{color:#e74c3c;background:rgba(231,76,60,0.1)}
+.exercicio-btn.duplicate:hover{color:#2ecc71;background:rgba(46,204,113,0.1)}
+
+.treino-card-footer{padding:15px 20px;background:#141414;border-top:1px solid rgba(212,175,125,0.1)}
+.add-exercicio-btn{width:100%;padding:12px;background:rgba(212,175,125,0.1);border:1px dashed rgba(212,175,125,0.3);border-radius:8px;color:#d4af7d;font-size:0.85em;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.add-exercicio-btn:hover{background:rgba(212,175,125,0.15);border-color:#d4af7d}
+
+.treino-empty{text-align:center;padding:60px 20px;color:rgba(255,255,255,0.4)}
+.treino-empty-icon{font-size:3em;margin-bottom:15px;opacity:0.3}
+
+/* Modal Treino */
+.modal-treino{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:2000;justify-content:center;align-items:center;padding:20px}
+.modal-treino.active{display:flex}
+.modal-treino-content{background:#1a1a1a;border:1px solid rgba(212,175,125,0.2);border-radius:15px;padding:25px;width:100%;max-width:500px;max-height:85vh;overflow-y:auto}
+.modal-treino-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-treino-title{font-family:'Playfair Display',serif;font-size:1.2em;color:#d4af7d}
+.modal-treino-close{background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5em;cursor:pointer}
+.modal-treino-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:15px;border-top:1px solid rgba(255,255,255,0.05)}
+
+.grupo-muscular-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.grupo-muscular-opt{padding:12px 8px;background:#141414;border:1px solid rgba(212,175,125,0.2);border-radius:8px;color:rgba(255,255,255,0.6);font-size:0.8em;cursor:pointer;text-align:center;transition:all 0.2s}
+.grupo-muscular-opt:hover{border-color:#d4af7d;color:#d4af7d}
+.grupo-muscular-opt.selected{background:rgba(212,175,125,0.15);border-color:#d4af7d;color:#d4af7d}
+
+.duplicar-container{background:#141414;border:1px solid rgba(212,175,125,0.15);border-radius:8px;padding:15px;margin-top:15px}
+.duplicar-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.duplicar-header input[type="checkbox"]{width:18px;height:18px;accent-color:#d4af7d}
+.duplicar-header label{font-size:0.85em;color:rgba(255,255,255,0.7)}
+.duplicar-info{font-size:0.8em;color:rgba(255,255,255,0.4);font-style:italic}
+
+/* Exercício Feito */
+.exercicio-check{appearance:none;width:20px;height:20px;border:2px solid rgba(212,175,125,0.4);border-radius:50%;cursor:pointer;background:transparent;position:relative;transition:all 0.2s;flex-shrink:0}
+.exercicio-check:hover{border-color:#d4af7d}
+.exercicio-check:checked{background:#2ecc71;border-color:#2ecc71}
+.exercicio-check:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:11px;font-weight:bold}
+.exercicio-feito td{opacity:0.5}
+.exercicio-feito .exercicio-nome-texto{text-decoration:line-through}
+
+/* Treino Colapsável */
+.treino-card.collapsed .treino-card-body,.treino-card.collapsed .treino-card-footer,.treino-card.collapsed .treino-prog-wrap,.treino-card.collapsed .treino-volume{display:none}
+.treino-card-header .treino-toggle{width:20px;height:20px;transition:transform 0.3s;margin-right:10px;flex-shrink:0;color:#fff}
+.treino-card.collapsed .treino-toggle{transform:rotate(-90deg)}
+.treino-card-header > div:first-child{display:flex;align-items:center}
+
+/* Botão Limpar */
+.btn-clear{padding:8px 16px;background:transparent;border:1px solid rgba(231,76,60,0.4);color:#e74c3c;font-size:0.8em;cursor:pointer;border-radius:6px;transition:all 0.2s;display:flex;align-items:center;gap:6px}
+.btn-clear:hover{background:rgba(231,76,60,0.1);border-color:#e74c3c}
+.btn-clear svg{width:16px;height:16px}
+
+/* Exercícios - Layout ajustado */
+.exercicio-table th,.exercicio-table td{text-align:center;padding:10px 8px}
+.exercicio-table th:nth-child(1),.exercicio-table td:nth-child(1){width:35px;padding:10px 5px}
+.exercicio-table th:nth-child(2),.exercicio-table td:nth-child(2){text-align:left;padding-left:5px}
+.exercicio-nome-texto .conjugado-plus{color:#d4af7d;font-weight:600;margin:0 4px}
+.exercicio-obs{font-size:0.75em;color:rgba(255,255,255,0.5);margin-top:3px;font-style:italic}
+
+/* Alertas/Notas de Treino */
+.treino-alertas{background:#1a1a1a;border:1px solid rgba(212,175,125,0.15);border-radius:12px;margin:20px 20px 20px;padding:15px 20px}
+.treino-alertas-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.treino-alertas-title{font-family:'Inter',sans-serif;font-size:0.85em;color:#d4af7d;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:1px}
+.treino-alertas-title svg{width:16px;height:16px}
+.treino-alertas-btn{background:transparent;border:1px solid rgba(212,175,125,0.3);color:#d4af7d;padding:5px 12px;border-radius:6px;font-size:0.75em;cursor:pointer;transition:all 0.2s}
+.treino-alertas-btn:hover{background:rgba(212,175,125,0.1)}
+.treino-alertas-lista{display:flex;flex-direction:column;gap:8px}
+.treino-alerta-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:#141414;border-radius:8px;border-left:3px solid #e74c3c}
+.treino-alerta-item.meta{border-left-color:#f39c12}
+.treino-alerta-item.lembrete{border-left-color:#3498db}
+.treino-alerta-item.sucesso{border-left-color:#2ecc71}
+.treino-alerta-icon{flex-shrink:0;width:18px;height:18px;color:rgba(255,255,255,0.6)}
+.treino-alerta-item.alerta .treino-alerta-icon{color:#e74c3c}
+.treino-alerta-item.meta .treino-alerta-icon{color:#f39c12}
+.treino-alerta-item.lembrete .treino-alerta-icon{color:#3498db}
+.treino-alerta-item.sucesso .treino-alerta-icon{color:#2ecc71}
+.treino-alerta-content{flex:1}
+.treino-alerta-texto{font-family:'Inter',sans-serif;font-size:0.85em;color:rgba(255,255,255,0.85);line-height:1.4}
+.treino-alerta-acoes{display:flex;gap:5px;opacity:0;transition:opacity 0.2s}
+.treino-alerta-item:hover .treino-alerta-acoes{opacity:1}
+.treino-alerta-btn-sm{background:transparent;border:none;color:rgba(255,255,255,0.4);cursor:pointer;padding:4px;border-radius:4px}
+.treino-alerta-btn-sm:hover{color:#e74c3c}
+.treino-alertas-empty{text-align:center;padding:15px;color:rgba(255,255,255,0.3);font-size:0.85em}
+
+/* Modal Alerta */
+.alerta-tipo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:15px}
+.alerta-tipo-opt{padding:12px 8px;background:#141414;border:1px solid rgba(212,175,125,0.2);border-radius:8px;color:rgba(255,255,255,0.6);font-size:0.75em;cursor:pointer;text-align:center;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.alerta-tipo-opt:hover{border-color:#d4af7d;color:#d4af7d}
+.alerta-tipo-opt.selected{background:rgba(212,175,125,0.15);border-color:#d4af7d;color:#d4af7d}
+.alerta-tipo-opt svg{width:20px;height:20px}
+.alerta-tipo-opt.selected svg{stroke:#d4af7d}
+
+/* Mobile - Tabela de exercícios responsiva */
+@media(max-width:768px){
+    /* Body e Container */
+    body { padding: 10px; padding-bottom: 85px; }
+    .container { border-radius: 12px; }
+    
+    /* Header */
+    .header { padding: 20px 15px; }
+    .header h1 { font-size: 1.4em; letter-spacing: 1px; }
+    .header p { font-size: 0.8em; }
+    
+    /* Tabs Global */
+    #globalTabs { margin: 0 0 15px; border-radius: 10px; padding: 8px 10px; }
+    .tabs-header { gap: 2px; }
+    .tab-btn { padding: 10px 8px; font-size: 0.65em; gap: 3px; flex-direction: column; flex: 1; text-align: center; border-radius: 6px; }
+    .tab-btn svg { width: 18px; height: 18px; }
+    
+    /* Sub Tabs */
+    .sub-tabs { padding: 10px 15px; gap: 8px; overflow-x: auto; flex-wrap: nowrap; }
+    .sub-tab-btn { flex-shrink: 0; padding: 8px 14px; font-size: 0.75em; }
+    
+    /* Sub Content */
+    .sub-content { padding: 15px; }
+    
+    /* Tabelas gerais */
+    .table-container { margin: 0 -5px; }
+    table { font-size: 0.85em; border-radius: 10px; }
+    th, td { padding: 10px 8px; }
+    th { font-size: 0.7em; letter-spacing: 0.5px; }
+    
+    /* Formulários */
+    .form-section { padding: 15px; margin-bottom: 15px; border-radius: 10px; }
+    .form-section h3 { font-size: 1em; margin-bottom: 15px; }
+    .form-row { gap: 12px; margin-bottom: 12px; }
+    .form-group input, .form-group select { padding: 10px; font-size: 0.85em; }
+    .form-group label { font-size: 0.7em; }
+    .form-buttons { flex-direction: column; }
+    .form-buttons .btn-primary { width: 100%; }
+    
+    /* Botões */
+    .btn-primary, .btn-secondary { padding: 12px 20px; font-size: 0.85em; width: 100%; }
+    
+    /* Modais */
+    .modal-content, .modal-treino-content { padding: 20px; width: 95%; max-height: 80vh; border-radius: 12px; }
+    .modal-treino { padding: 10px; }
+    .modal-treino-footer { flex-direction: column; }
+    .modal-treino-footer button { width: 100%; }
+    .modal-buttons { flex-direction: column; }
+    .modal-buttons button { width: 100%; }
+    
+    /* Treino Header */
+    .treino-header { padding: 15px; gap: 12px; }
+    .treino-header h2 { font-size: 1.1em; width: 100%; }
+    .treino-header > div { width: 100%; display: flex; gap: 10px; }
+    .treino-header .btn-clear { flex: 1; justify-content: center; }
+    .treino-header .btn-primary { flex: 1; }
+    
+    /* Treino Cards */
+    .treinos-container { padding: 0 15px 15px; gap: 15px; }
+    .treino-card { border-radius: 12px; }
+    .treino-card-header { padding: 12px 15px; flex-wrap: wrap; gap: 10px; }
+    .treino-card-header .treino-toggle { width: 16px; height: 16px; margin-right: 8px; }
+    .treino-card-titulo { font-size: 0.9em; letter-spacing: 0.5px; }
+    .treino-card-subtitulo { font-size: 0.7em; }
+    .treino-card-actions { gap: 6px; }
+    .treino-card-btn { width: 28px; height: 28px; }
+    .treino-card-btn svg { width: 14px; height: 14px; }
+    
+    /* Tabela de Exercícios Mobile */
+    .exercicio-table { display: block; }
+    .exercicio-table thead { display: none; }
+    .exercicio-table tbody { display: block; }
+    .exercicio-table tr { display: flex; flex-wrap: wrap; padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: flex-start; gap: 8px; }
+    .exercicio-table td { display: block; padding: 0; border: none; text-align: left; }
+    .exercicio-table td:nth-child(1) { width: auto; order: 1; }
+    .exercicio-table td:nth-child(2) { width: calc(100% - 35px); order: 2; padding-left: 0; }
+    .exercicio-table td:nth-child(3), .exercicio-table td:nth-child(4), .exercicio-table td:nth-child(5), .exercicio-table td:nth-child(6) {
+        order: 3; font-size: 0.7em; color: rgba(255,255,255,0.7); background: rgba(212,175,125,0.08); padding: 5px 10px; border-radius: 4px; margin-top: 4px;
+    }
+    .exercicio-table td:nth-child(3)::before { content: 'Séries: '; color: #d4af7d; font-weight: 500; }
+    .exercicio-table td:nth-child(4)::before { content: 'Reps: '; color: #d4af7d; font-weight: 500; }
+    .exercicio-table td:nth-child(5)::before { content: 'Método: '; color: #d4af7d; font-weight: 500; }
+    .exercicio-table td:nth-child(6)::before { content: 'Desc: '; color: #d4af7d; font-weight: 500; }
+    .exercicio-nome-texto { font-size: 0.9em; }
+    .exercicio-acoes { opacity: 1; }
+    .exercicio-obs { font-size: 0.7em; }
+    
+    /* Treino Footer */
+    .treino-card-footer { padding: 12px 15px; }
+    .add-exercicio-btn { padding: 10px; font-size: 0.8em; }
+    
+    /* Alertas */
+    .treino-alertas { margin: 15px; padding: 12px 15px; border-radius: 10px; }
+    .treino-alertas-header { flex-wrap: wrap; gap: 10px; }
+    .treino-alertas-title { font-size: 0.75em; }
+    .treino-alertas-btn { padding: 6px 10px; font-size: 0.7em; }
+    .treino-alerta-item { padding: 10px; gap: 8px; }
+    .treino-alerta-texto { font-size: 0.8em; }
+    .treino-alerta-acoes { opacity: 1; }
+    .alerta-tipo-grid { grid-template-columns: repeat(2, 1fr); }
+    
+    /* Grupo Muscular Grid */
+    .grupo-muscular-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .grupo-muscular-opt { padding: 10px 6px; font-size: 0.75em; }
+    
+    /* Dias da Semana */
+    .dia-header { padding: 12px 15px; }
+    .dia-header h3 { font-size: 1em; }
+    .dia-lista { padding: 8px 15px; }
+    .dia-item { padding: 10px 0; flex-wrap: wrap; gap: 8px; }
+    .dia-item-info { gap: 12px; width: 100%; }
+    .dia-item-hora { font-size: 0.85em; min-width: 45px; }
+    .dia-item-nome { font-size: 0.9em; }
+    .dia-item-dose { font-size: 0.8em; }
+    
+    /* Plano Lista */
+    .plano-item { padding: 12px; flex-wrap: wrap; gap: 10px; }
+    .plano-item-info { width: 100%; }
+    .plano-item-nome { font-size: 0.9em; }
+    .plano-item-detalhes { font-size: 0.75em; }
+    .plano-item-actions { width: 100%; justify-content: flex-end; }
+    
+    /* Checkbox */
+    .checkbox-status { width: 22px; height: 22px; }
+    .exercicio-check { width: 22px; height: 22px; }
+    
+    /* Dias Selector */
+    .dias-selector { gap: 6px; }
+    .dia-check label { font-size: 0.75em; }
+    .dia-check input[type="checkbox"] { width: 16px; height: 16px; }
+    
+    /* Duplicar Container */
+    .duplicar-container { padding: 12px; }
+    .duplicar-header label { font-size: 0.8em; }
+    .duplicar-info { font-size: 0.75em; }
+    
+    /* Empty States */
+    .treino-empty { padding: 40px 15px; }
+    .treino-empty-icon { font-size: 2.5em; }
+    .empty-message { padding: 30px 15px; font-size: 0.85em; }
+}
+
+/* Extra Small Mobile */
+@media(max-width:380px){
+    body { padding: 8px; }
+    .tab-btn { padding: 8px 5px; font-size: 0.6em; }
+    .tab-btn svg { width: 16px; height: 16px; }
+    .treino-card-titulo { font-size: 0.8em; }
+    .treino-card-header { padding: 10px 12px; }
+    .header h1 { font-size: 1.2em; }
+    .treino-header h2 { font-size: 1em; }
+    .sub-tab-btn { padding: 7px 10px; font-size: 0.7em; }
+    .grupo-muscular-opt { padding: 8px 4px; font-size: 0.7em; }
+    .modal-content, .modal-treino-content { padding: 15px; }
+    .treino-alertas { margin: 10px; padding: 10px; }
+}
+
+/* ==================== DIETA - NOVO SISTEMA ==================== */
+/* Resumo Nutricional */
+.nutri-resumo {
+    margin: 15px 20px;
+    background: #1a1a1a;
+    border: 1px solid rgba(212, 175, 125, 0.15);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.nutri-resumo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid rgba(212, 175, 125, 0.1);
+}
+.nutri-resumo-titulo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9em;
+    color: #d4af7d;
+}
+.nutri-resumo-titulo svg { width: 20px; height: 20px; }
+.btn-edit-nutri {
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(212, 175, 125, 0.3);
+    border-radius: 8px;
+    background: transparent;
+    color: #d4af7d;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.btn-edit-nutri:hover { background: rgba(212, 175, 125, 0.1); }
+.btn-edit-nutri svg { width: 16px; height: 16px; }
+.nutri-resumo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 15px;
+    gap: 10px;
+}
+.nutri-item {
+    text-align: center;
+    padding: 12px 8px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+}
+.nutri-item-label { font-size: 0.65em; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.nutri-item-valor { font-family: 'Playfair Display', serif; font-size: 1.1em; color: #fff; }
+.nutri-item-vazio { color: rgba(255,255,255,0.3); font-style: italic; font-size: 0.8em; }
+
+/* Água Tracker */
+.agua-tracker {
+    margin: 0 20px 15px;
+    background: #1a1a1a;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    border-radius: 12px;
+    padding: 15px;
+}
+.agua-tracker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.agua-tracker-titulo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9em;
+    color: #3498db;
+}
+.agua-tracker-titulo svg { width: 20px; height: 20px; }
+.agua-tracker-meta {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2em;
+    color: #3498db;
+}
+.agua-tracker-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.agua-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    background: transparent;
+    color: #3498db;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.agua-btn:hover { background: rgba(52, 152, 219, 0.15); border-color: #3498db; }
+.agua-btn svg { width: 18px; height: 18px; }
+.agua-btn.config { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); }
+.agua-btn.config:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+.agua-progress {
+    flex: 1;
+    height: 12px;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+.agua-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    border-radius: 6px;
+    transition: width 0.3s;
+    width: 0%;
+}
+
+/* Informações Adicionais */
+.info-section {
+    margin: 0 20px 15px;
+}
+.info-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.info-section-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1em;
+    color: #d4af7d;
+}
+.btn-add-info {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(212, 175, 125, 0.3);
+    background: transparent;
+    color: #d4af7d;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.btn-add-info:hover { background: rgba(212, 175, 125, 0.15); }
+.btn-add-info svg { width: 16px; height: 16px; }
+.info-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.info-item-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background: #1a1a1a;
+    border: 1px solid rgba(212, 175, 125, 0.1);
+    border-radius: 10px;
+}
+.info-item-card:hover { border-color: rgba(212, 175, 125, 0.25); }
+.info-item-texto {
+    flex: 1;
+    color: #fff;
+    font-size: 0.9em;
+}
+.info-item-acoes {
+    display: flex;
+    gap: 5px;
+}
+.info-item-acoes button {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+.info-item-acoes button:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.info-item-acoes button.delete:hover { color: #e74c3c; }
+.info-item-acoes svg { width: 16px; height: 16px; }
+.info-vazia {
+    text-align: center;
+    padding: 30px;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.85em;
+}
+
+/* Mobile Dieta */
+@media (max-width: 768px) {
+    .nutri-resumo { margin: 10px 15px; }
+    .nutri-resumo-grid { grid-template-columns: repeat(2, 1fr); padding: 12px; }
+    .nutri-item { padding: 10px 6px; }
+    .nutri-item-valor { font-size: 1em; }
+    .agua-tracker { margin: 0 15px 10px; padding: 12px; }
+    .agua-btn { width: 32px; height: 32px; }
+    .agua-btn svg { width: 16px; height: 16px; }
+    .info-section { margin: 0 15px 10px; }
+}
+
+/* ==================== EVOLUÇÃO / PESO ==================== */
+.evolucao-filtros {
+    display: flex;
+    gap: 8px;
+    padding: 15px 20px;
+    overflow-x: auto;
+}
+.filtro-periodo {
+    padding: 10px 18px;
+    background: rgba(255,255,255,0.05);
+    border: none;
+    border-radius: 20px;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.85em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.filtro-periodo:hover { background: rgba(255,255,255,0.1); }
+.filtro-periodo.active {
+    background: #3498db;
+    color: #fff;
+}
+
+.peso-card {
+    margin: 0 20px 20px;
+    background: linear-gradient(135deg, #1a2634 0%, #1a1a2e 100%);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+}
+.peso-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+}
+.peso-card-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(241, 196, 15, 0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.peso-card-icon svg {
+    width: 28px;
+    height: 28px;
+    color: #f1c40f;
+}
+.peso-card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.peso-card-titulo {
+    font-size: 1.1em;
+    color: #fff;
+    font-weight: 500;
+}
+.peso-card-tendencia {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85em;
+}
+.peso-card-tendencia svg { width: 16px; height: 16px; }
+.peso-card-tendencia.subindo { color: #2ecc71; }
+.peso-card-tendencia.descendo { color: #e74c3c; }
+.peso-card-tendencia.estavel { color: #f1c40f; }
+.peso-card-atual {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.peso-valor {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2em;
+    color: #3498db;
+    line-height: 1;
+}
+.peso-variacao {
+    font-size: 0.85em;
+    color: #3498db;
+}
+.peso-variacao.positivo { color: #2ecc71; }
+.peso-variacao.negativo { color: #e74c3c; }
+
+.peso-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: rgba(0,0,0,0.2);
+    border-top: 1px solid rgba(52, 152, 219, 0.1);
+    border-bottom: 1px solid rgba(52, 152, 219, 0.1);
+}
+.peso-stat {
+    padding: 15px;
+    text-align: center;
+    border-right: 1px solid rgba(52, 152, 219, 0.1);
+}
+.peso-stat:last-child { border-right: none; }
+.peso-stat-label {
+    display: block;
+    font-size: 0.7em;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+.peso-stat-valor {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2em;
+    color: #fff;
+}
+.peso-stat-valor.positivo { color: #2ecc71; }
+.peso-stat-valor.negativo { color: #e74c3c; }
+
+.peso-desde {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 0.8em;
+    color: rgba(255,255,255,0.5);
+}
+.peso-desde svg { width: 16px; height: 16px; }
+
+.peso-grafico-container {
+    padding: 15px;
+    height: 220px;
+}
+#pesoGrafico {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.btn-add-peso {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: calc(100% - 40px);
+    margin: 0 20px 20px;
+    padding: 15px;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-add-peso:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(52, 152, 219, 0.3); }
+.btn-add-peso svg { width: 20px; height: 20px; }
+
+.peso-historico {
+    padding: 0 20px 20px;
+}
+.peso-historico h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1em;
+    color: #d4af7d;
+    margin-bottom: 15px;
+}
+.peso-historico-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.peso-historico-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background: #1a1a1a;
+    border: 1px solid rgba(212, 175, 125, 0.1);
+    border-radius: 10px;
+}
+.peso-historico-item:hover { border-color: rgba(212, 175, 125, 0.25); }
+.peso-historico-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.peso-historico-valor {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1em;
+    color: #fff;
+}
+.peso-historico-data {
+    font-size: 0.8em;
+    color: rgba(255,255,255,0.5);
+}
+.peso-historico-obs {
+    font-size: 0.75em;
+    color: rgba(212, 175, 125, 0.7);
+    font-style: italic;
+}
+.peso-historico-acoes {
+    display: flex;
+    gap: 5px;
+}
+.peso-historico-acoes button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.peso-historico-acoes button:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.peso-historico-acoes button.delete:hover { color: #e74c3c; }
+.peso-historico-acoes svg { width: 16px; height: 16px; }
+.peso-historico-vazio {
+    text-align: center;
+    padding: 40px;
+    color: rgba(255,255,255,0.4);
+}
+
+/* Mobile Evolução */
+@media (max-width: 768px) {
+    .evolucao-filtros { padding: 10px 15px; gap: 6px; }
+    .filtro-periodo { padding: 8px 14px; font-size: 0.8em; }
+    .peso-card { margin: 0 15px 15px; }
+    .peso-card-header { padding: 15px; gap: 12px; }
+    .peso-card-icon { width: 42px; height: 42px; }
+    .peso-card-icon svg { width: 22px; height: 22px; }
+    .peso-valor { font-size: 1.8em; }
+    .peso-stats { grid-template-columns: repeat(3, 1fr); }
+    .peso-stat { padding: 12px 8px; }
+    .peso-stat-valor { font-size: 1em; }
+    .peso-grafico-container { height: 180px; padding: 10px; }
+    .btn-add-peso { width: calc(100% - 30px); margin: 0 15px 15px; padding: 12px; }
+    .peso-historico { padding: 0 15px 15px; }
+}
+
+/* ==================== REFEIÇÕES / DIETA ==================== */
+.dieta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+.dieta-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3em;
+    color: #d4af7d;
+}
+
+.refeicoes-container {
+    padding: 0 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.refeicao-card {
+    background: #1a1a1a;
+    border: 1px solid rgba(212, 175, 125, 0.15);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+.refeicao-card:hover {
+    border-color: rgba(212, 175, 125, 0.3);
+}
+
+.refeicao-card-header {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+.refeicao-card-header:hover {
+    background: rgba(212, 175, 125, 0.05);
+}
+
+.refeicao-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.refeicao-expand-icon {
+    width: 20px;
+    height: 20px;
+    color: #d4af7d;
+    transition: transform 0.3s;
+}
+.refeicao-card.collapsed .refeicao-expand-icon {
+    transform: rotate(-90deg);
+}
+
+.refeicao-nome {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.refeicao-subtitulo {
+    font-size: 0.8em;
+    color: rgba(255,255,255,0.6);
+    margin-top: 2px;
+}
+
+.refeicao-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.refeicao-horario {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: rgba(212, 175, 125, 0.1);
+    border: 1px solid rgba(212, 175, 125, 0.2);
+    border-radius: 20px;
+    font-size: 0.85em;
+    color: #d4af7d;
+}
+.refeicao-horario svg {
+    width: 14px;
+    height: 14px;
+    stroke: #d4af7d;
+}
+
+.refeicao-card-actions {
+    display: flex;
+    gap: 8px;
+}
+.refeicao-card-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.refeicao-card-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.1);
+}
+.refeicao-card-btn.delete:hover {
+    background: rgba(231,76,60,0.8);
+}
+.refeicao-card-btn.done {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+}
+.refeicao-card-btn.done.checked {
+    background: #2ecc71;
+    color: #fff;
+}
+.refeicao-card-btn.duplicate {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+}
+.refeicao-card-btn.duplicate:hover {
+    background: rgba(52, 152, 219, 0.4);
+}
+.refeicao-card-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Refeição concluída */
+.refeicao-card.feita {
+    opacity: 0.6;
+    border-color: rgba(46, 204, 113, 0.3);
+}
+.refeicao-card.feita .refeicao-nome {
+    text-decoration: line-through;
+    color: rgba(255,255,255,0.5);
+}
+
+.refeicao-card-body {
+    display: none;
+    border-top: 1px solid rgba(212, 175, 125, 0.1);
+}
+.refeicao-card.expanded .refeicao-card-body {
+    display: block;
+}
+
+/* Alimentos vem primeiro, observações depois */
+.refeicao-alimentos {
+    padding: 0;
+    order: 1;
+}
+
+.refeicao-observacoes {
+    padding: 15px 20px;
+    background: rgba(212, 175, 125, 0.05);
+    border-top: 1px solid rgba(212, 175, 125, 0.1);
+    order: 2;
+}
+.refeicao-obs-titulo {
+    font-weight: 600;
+    font-size: 0.85em;
+    color: #d4af7d;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.refeicao-obs-texto {
+    font-size: 0.9em;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+.refeicao-alimentos {
+    padding: 0;
+}
+
+.refeicao-alimentos-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.refeicao-alimentos-table th {
+    background: #141414;
+    color: #d4af7d;
+    padding: 12px 20px;
+    text-align: left;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(212, 175, 125, 0.1);
+}
+.refeicao-alimentos-table td {
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    color: rgba(255,255,255,0.85);
+    font-size: 0.9em;
+}
+.refeicao-alimentos-table tr:last-child td {
+    border-bottom: none;
+}
+.refeicao-alimentos-table tr:hover {
+    background: rgba(212, 175, 125, 0.05);
+}
+
+.refeicao-alimento-nome {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.refeicao-check-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2ecc71;
+}
+.refeicao-check-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: #2ecc71;
+    stroke-width: 2;
+}
+
+.refeicoes-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255,255,255,0.4);
+}
+.refeicoes-empty-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+    opacity: 0.3;
+}
+
+/* Modal Refeição */
+.alimento-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.alimento-input-row input {
+    flex: 1;
+}
+.alimento-input-row .btn-remove-alimento {
+    background: transparent;
+    border: 1px solid rgba(231,76,60,0.3);
+    color: #e74c3c;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+.alimento-input-row .btn-remove-alimento:hover {
+    background: rgba(231,76,60,0.1);
+}
+.alimento-input-row .btn-remove-alimento svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-add-alimento {
+    width: 100%;
+    padding: 12px;
+    background: rgba(212,175,125,0.1);
+    border: 1px dashed rgba(212,175,125,0.3);
+    border-radius: 8px;
+    color: #d4af7d;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+.btn-add-alimento:hover {
+    background: rgba(212,175,125,0.15);
+    border-color: #d4af7d;
+}
+
+/* Responsivo Dieta */
+@media(max-width:768px) {
+    .dieta-header {
+        padding: 15px;
+    }
+    .dieta-header h2 {
+        font-size: 1.1em;
+    }
+    .refeicoes-container {
+        padding: 0 15px 15px;
+    }
+    .refeicao-card-header {
+        padding: 15px;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .refeicao-nome {
+        font-size: 1.2em;
+    }
+    .refeicao-horario {
+        align-self: flex-start;
+    }
+    .refeicao-observacoes {
+        padding: 15px;
+    }
+    .refeicao-alimentos {
+        padding: 10px 15px;
+    }
+    .refeicao-alimento-item {
+        padding: 12px 0;
+    }
+    .refeicao-alimento-texto {
+        font-size: 0.95em;
+    }
+}
     
 /* ZARA v5 - Sidebar Maior */
 .sidebar { width: 70px !important; }
