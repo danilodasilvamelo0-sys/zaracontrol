@@ -1524,3 +1524,46 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 .exercicio-table tr.drag-over td{background:rgba(212,175,125,.08)!important}
 tr[draggable]{cursor:grab}
 tr[draggable]:active{cursor:grabbing}
+
+/* ============================================================
+   MEDICAMENTOS: Calendário de Aderência, Dias Restantes, Notas
+   ============================================================ */
+
+/* Calendário de aderência */
+.med-cal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;gap:10px}
+.med-cal-titulo{font-size:.85em;font-weight:700;letter-spacing:1px;color:#d4af7d;text-transform:uppercase}
+.med-cal-nav{background:transparent;border:1px solid rgba(212,175,125,.2);color:#d4af7d;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1em;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.med-cal-nav:hover{background:rgba(212,175,125,.1);border-color:#d4af7d}
+.med-cal-legenda{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.med-cal-leg{font-size:.62em;font-weight:600;letter-spacing:.5px;display:flex;align-items:center;gap:5px;text-transform:uppercase}
+.med-cal-leg::before{content:'';width:10px;height:10px;border-radius:2px;display:inline-block}
+.med-cal-leg.tomado::before{background:#2ecc71}
+.med-cal-leg.parcial::before{background:#f39c12}
+.med-cal-leg.perdido::before{background:#e74c3c}
+.med-cal-leg.sem-dados::before{background:rgba(255,255,255,.1)}
+.med-cal-leg{color:rgba(255,255,255,.5)}
+.med-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.med-cal-dia-label{font-size:.55em;text-align:center;color:rgba(255,255,255,.3);font-weight:600;letter-spacing:.5px;padding:4px 0;text-transform:uppercase}
+.med-cal-dia{aspect-ratio:1;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;position:relative;font-size:.7em;font-weight:600;color:rgba(255,255,255,.5)}
+.med-cal-dia:hover{transform:scale(1.1)}
+.med-cal-dia.tomado{background:rgba(46,204,113,.25);color:#2ecc71}
+.med-cal-dia.parcial{background:rgba(243,156,18,.2);color:#f39c12}
+.med-cal-dia.perdido{background:rgba(231,76,60,.2);color:#e74c3c}
+.med-cal-dia.sem-dados{background:rgba(255,255,255,.04);color:rgba(255,255,255,.2)}
+.med-cal-dia.hoje{box-shadow:0 0 0 2px #d4af7d}
+.med-cal-dia.outro-mes{opacity:.3}
+
+/* Dias restantes de estoque */
+.med-dias-restantes{font-size:.7em;margin-top:2px;font-weight:600}
+.med-dias-restantes.ok{color:rgba(46,204,113,.7)}
+.med-dias-restantes.atencao{color:#f39c12}
+.med-dias-restantes.critico{color:#e74c3c}
+
+/* Nota por tomada */
+.med-nota-chip{font-size:.62em;color:rgba(212,175,125,.6);font-style:italic;margin-top:3px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+
+/* Badge múltiplos horários */
+.med-horarios-badge{font-size:.6em;background:rgba(212,175,125,.1);border:1px solid rgba(212,175,125,.2);color:#d4af7d;padding:2px 6px;border-radius:8px;margin-left:6px;font-weight:600}
+
+/* Ciclo/pausa badge */
+.med-ciclo-badge{font-size:.6em;color:rgba(52,152,219,.7);border:1px solid rgba(52,152,219,.2);padding:2px 6px;border-radius:8px;background:rgba(52,152,219,.08)}
