@@ -119,6 +119,7 @@
         <div class="sub-tabs">
             <button class="sub-tab-btn active" onclick="mudarSubAba('hoje', this)">Hoje</button>
             <button class="sub-tab-btn" onclick="mudarSubAba('historico', this)">Histórico</button>
+            <button class="sub-tab-btn" onclick="mudarSubAba('calendario', this)">Calendário</button>
             <button class="sub-tab-btn" onclick="mudarSubAba('semana', this)">Semana</button>
             <button class="sub-tab-btn" onclick="mudarSubAba('editar', this)">Gerenciar</button>
         </div>
@@ -137,6 +138,22 @@
                 <button class="filtro-btn" onclick="filtrarHistorico(30, this)">30 dias</button>
             </div>
             <div class="historico-lista" id="historicoLista"></div>
+        </div>
+
+        <!-- Aba Calendário de Aderência -->
+        <div class="sub-content" id="sub-calendario">
+            <div class="med-cal-header">
+                <button class="med-cal-nav" onclick="calMedNav(-1)">&#8592;</button>
+                <span class="med-cal-titulo" id="calMedTitulo"></span>
+                <button class="med-cal-nav" onclick="calMedNav(1)">&#8594;</button>
+            </div>
+            <div class="med-cal-legenda">
+                <span class="med-cal-leg tomado">Tomou</span>
+                <span class="med-cal-leg parcial">Parcial</span>
+                <span class="med-cal-leg perdido">Perdeu</span>
+                <span class="med-cal-leg sem-dados">Sem dados</span>
+            </div>
+            <div class="med-cal-grid" id="medCalGrid"></div>
         </div>
 
         <!-- Aba Semana -->
@@ -186,7 +203,10 @@
                     <div class="form-group"><label>Dose</label><input type="text" id="novoMedDose" placeholder="Ex: 500mg"></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>Horário</label><input type="time" id="novoMedHora"></div>
+                    <div class="form-group"><label>Horário Principal</label><input type="time" id="novoMedHora"></div>
+                    <div class="form-group"><label>Horários Adicionais <small style="color:rgba(255,255,255,.3)">(separados por vírgula, ex: 08:00,20:00)</small></label><input type="text" id="novoMedHorasExtra" placeholder="08:00, 14:00, 20:00"></div>
+                    <div class="form-group"><label>Ciclo (dias de uso)</label><input type="number" id="novoMedCiclo" min="0" placeholder="0 = sem ciclo" value="0"></div>
+                    <div class="form-group"><label>Pausa (dias de descanso)</label><input type="number" id="novoMedPausa" min="0" placeholder="0" value="0"></div>
                     <div class="form-group"><label>Tolerância (min)</label><input type="number" id="novoMedTolerancia" min="0" max="120" value="30" placeholder="30"></div>
                 </div>
                 <div class="form-row">
@@ -713,5 +733,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="saude.js?v=20260721"></script>
+    <!-- Modal Nota por Tomada -->
+    <div class="modal-overlay" id="modalNota" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9000;align-items:center;justify-content:center;">
+        <div style="background:#1a1a1a;border:1px solid rgba(212,175,125,.2);border-radius:16px;padding:28px;max-width:360px;width:90%;display:flex;flex-direction:column;gap:16px;">
+            <h3 style="font-size:1em;color:#d4af7d;margin:0;" id="modalNotaNome">Registrar tomada</h3>
+            <input type="text" id="modalNotaTexto" placeholder="Nota opcional: pressão, sintoma, glicose..." style="background:#111;border:1px solid rgba(255,255,255,.1);color:#fff;padding:10px 12px;font-size:.9em;outline:none;border-radius:8px;">
+            <div style="display:flex;gap:10px;">
+                <button onclick="cancelarNota()" style="flex:1;padding:12px;background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);cursor:pointer;border-radius:8px;font-size:.85em;">Cancelar</button>
+                <button onclick="confirmarNota()" style="flex:1;padding:12px;background:rgba(212,175,125,.15);border:1px solid rgba(212,175,125,.3);color:#d4af7d;cursor:pointer;border-radius:8px;font-size:.85em;font-weight:700;">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
