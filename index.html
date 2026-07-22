@@ -281,6 +281,122 @@
             font-weight: 500;
         }
 
+
+        /* ── LAYOUT PREMIUM INDEX ── */
+        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .logo { animation: fadeUp 0.5s ease both; }
+        .logo-z {
+            font-size: 3.5em;
+            font-weight: 200;
+            color: var(--gold);
+            letter-spacing: 8px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .subtitle {
+            font-size: 0.6em;
+            font-weight: 700;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        .menu { margin-top: 48px; display: flex; flex-direction: column; gap: 0; }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 22px 28px;
+            background: var(--surface);
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+            position: relative;
+            border-bottom: 1px solid var(--gold-glow);
+        }
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 2px;
+            background: var(--gold);
+            transform: scaleY(0);
+            transition: transform 0.25s ease;
+        }
+        .menu-item:hover {
+            background: rgba(201,168,76,0.06);
+            padding-left: 36px;
+        }
+        .menu-item:hover::before { transform: scaleY(1); }
+        .menu-item:first-child { border-radius: 14px 14px 0 0; }
+        .menu-item:last-child  { border-radius: 0 0 14px 14px; border-bottom: none; }
+
+        .menu-item .icon {
+            width: 46px;
+            height: 46px;
+            border: 1px solid var(--gold-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface2);
+            flex-shrink: 0;
+            transition: all 0.25s;
+        }
+        .menu-item:hover .icon {
+            border-color: var(--gold);
+            background: rgba(201,168,76,0.1);
+        }
+        .menu-item .icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--gold);
+            fill: none;
+            stroke-width: 1.5;
+        }
+        .menu-item .info { flex: 1; }
+        .menu-item .info h2 {
+            font-size: 0.85em;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        .menu-item .info p {
+            font-size: 0.68em;
+            color: var(--text-dim);
+            margin-top: 3px;
+            letter-spacing: 0.3px;
+        }
+        .menu-item .arrow {
+            color: var(--gold-border);
+            transition: all 0.25s;
+            opacity: 0;
+        }
+        .menu-item:hover .arrow { opacity: 1; color: var(--gold); transform: translateX(4px); }
+
+        .menu-container {
+            background: var(--surface);
+            border: 1px solid var(--gold-border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+            animation: fadeUp 0.5s ease 0.15s both;
+        }
+
+        /* Animação escalonada dos itens */
+        .menu-item:nth-child(1) { animation: fadeUp 0.4s ease 0.1s both; }
+        .menu-item:nth-child(2) { animation: fadeUp 0.4s ease 0.15s both; }
+        .menu-item:nth-child(3) { animation: fadeUp 0.4s ease 0.2s both; }
+        .menu-item:nth-child(4) { animation: fadeUp 0.4s ease 0.25s both; }
+        .menu-item:nth-child(5) { animation: fadeUp 0.4s ease 0.3s both; }
+
         /* Responsive */
         @media (max-width: 480px) {
             h1 {
