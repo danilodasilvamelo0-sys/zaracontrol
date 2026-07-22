@@ -447,7 +447,7 @@
         .exercicio-feito .exercicio-nome-texto{text-decoration:line-through}
         
         /* Treino Colapsável */
-        .treino-card.collapsed .treino-card-body,.treino-card.collapsed .treino-card-footer{display:none}
+        .treino-card.collapsed .treino-card-body,.treino-card.collapsed .treino-card-footer,.treino-card.collapsed .treino-prog-wrap,.treino-card.collapsed .treino-volume{display:none}
         .treino-card-header .treino-toggle{width:20px;height:20px;transition:transform 0.3s;margin-right:10px;flex-shrink:0;color:#fff}
         .treino-card.collapsed .treino-toggle{transform:rotate(-90deg)}
         .treino-card-header > div:first-child{display:flex;align-items:center}
