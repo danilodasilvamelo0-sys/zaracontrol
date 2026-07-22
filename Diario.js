@@ -318,7 +318,7 @@ async function salvar(modo) {
   if (modo === 'diario') renderTimeline();
   const p = modo === 'diario' ? 'd' : 'n';
   const b = document.getElementById(p + 'BtnSalvar');
-  b.textContent = '✓ Salvo'; b.classList.add('saved');
+  b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg> Salvo'; b.classList.add('saved');
   mostrarAutoSave(p);
   setTimeout(() => resetSalvarBtn(p), 2200);
 }
