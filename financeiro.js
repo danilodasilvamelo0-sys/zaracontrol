@@ -4969,7 +4969,151 @@
     renderizar = function() {
         originalRenderizar();
         pa_renderizar();
+        renderFinCal();
     };
+
+    // ==========================================
+    // CALENDÁRIO FINANCEIRO
+    // ==========================================
+    let finCalAberto = false;
+
+    function toggleFinCal() {
+        finCalAberto = !finCalAberto;
+        const body   = document.getElementById('finCalBody');
+        const toggle = document.getElementById('finCalToggle');
+        body.style.display   = finCalAberto ? 'block' : 'none';
+        toggle.classList.toggle('open', finCalAberto);
+        if (finCalAberto) renderFinCal();
+    }
+
+    function renderFinCal() {
+        if (!finCalAberto) return;
+        const grid = document.getElementById('finCalGrid');
+        if (!grid) return;
+
+        const mesAno   = getMesAnoKey();           // 'YYYY-MM'
+        const [ano, mes] = mesAno.split('-').map(Number);
+        const hoje     = new Date().toISOString().split('T')[0];
+
+        // ── Coletar todos os eventos do mês ──
+        // Receitas (fixas + variáveis)
+        const receitas = getReceitasMes();          // [{data, valor, recebido}]
+        const despesas = [
+            ...getDespesasFixasMes(),               // [{data/dia, valor, pago}]
+            ...filtrarPorMes(financeiro.despesasVariaveis || []),
+            ...filtrarPorMes(financeiro.despesasAvulsas || []),
+        ];
+
+        // Mapear por dia: dia -> {receitaValor, despesaValor, temReceita, temDespesa, temVencido}
+        const dias = {};
+        const pad  = n => String(n).padStart(2, '0');
+
+        const getIso = d => {
+            if (d.data) return d.data.substring(0, 10);
+            if (d.dia)  return `${mesAno}-${pad(d.dia)}`;
+            return null;
+        };
+
+        receitas.forEach(r => {
+            const iso = getIso(r);
+            if (!iso || !iso.startsWith(mesAno)) return;
+            const dia = parseInt(iso.split('-')[2]);
+            if (!dias[dia]) dias[dia] = { rec: 0, desp: 0, vencido: false };
+            dias[dia].rec += r.valor || 0;
+        });
+
+        despesas.forEach(d => {
+            const iso = getIso(d);
+            if (!iso || !iso.startsWith(mesAno)) return;
+            const dia = parseInt(iso.split('-')[2]);
+            if (!dias[dia]) dias[dia] = { rec: 0, desp: 0, vencido: false };
+            dias[dia].desp += d.valor || 0;
+            if (!d.pago && iso < hoje) dias[dia].vencido = true;
+        });
+
+        // ── Calcular saldo acumulado dia a dia ──
+        const daysInMonth = new Date(ano, mes, 0).getDate();
+        let saldoAcum = 0;
+        const saldoPorDia = {};
+        for (let d = 1; d <= daysInMonth; d++) {
+            const info = dias[d] || { rec: 0, desp: 0 };
+            saldoAcum += info.rec - info.desp;
+            saldoPorDia[d] = saldoAcum;
+        }
+        const maxAbsSaldo = Math.max(...Object.values(saldoPorDia).map(Math.abs), 1);
+
+        // ── Montar grid ──
+        const nomesDias = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+        let html = nomesDias.map(n => `<div class="fin-cal-dia-label">${n}</div>`).join('');
+
+        const firstDay   = new Date(ano, mes - 1, 1).getDay();
+        const prevDays   = new Date(ano, mes - 1, 0).getDate();
+
+        // Dias do mês anterior
+        for (let i = 0; i < firstDay; i++) {
+            const d = prevDays - firstDay + i + 1;
+            html += `<div class="fin-cal-dia outro-mes"><span class="fin-cal-num">${d}</span></div>`;
+        }
+
+        // Dias do mês
+        for (let d = 1; d <= daysInMonth; d++) {
+            const iso    = `${ano}-${pad(mes)}-${pad(d)}`;
+            const isHoje = iso === hoje;
+            const info   = dias[d];
+            const saldo  = saldoPorDia[d] || 0;
+            const pct    = Math.min(100, Math.round((Math.abs(saldo) / maxAbsSaldo) * 100));
+            const barCls = saldo >= 0 ? 'positivo' : 'negativo';
+
+            let dots = '';
+            if (info) {
+                if (info.rec > 0 && info.desp > 0) {
+                    dots = `<div class="fin-cal-dot ambos"></div>`;
+                } else {
+                    if (info.rec  > 0) dots += `<div class="fin-cal-dot receita"></div>`;
+                    if (info.desp > 0) dots += `<div class="fin-cal-dot ${info.vencido ? 'vencido' : 'despesa'}"></div>`;
+                }
+            }
+
+            const saldoFmt = formatarMoeda(saldo);
+            const tooltip  = info
+                ? `Saldo: ${saldoFmt}${info.rec > 0 ? ' · Rec: ' + formatarMoeda(info.rec) : ''}${info.desp > 0 ? ' · Desp: ' + formatarMoeda(info.desp) : ''}`
+                : `Saldo: ${saldoFmt}`;
+
+            html += `
+            <div class="fin-cal-dia${isHoje ? ' hoje' : ''}" onclick="filtrarPorDiaFinCal('${iso}')">
+                <span class="fin-cal-num">${d}</span>
+                <div class="fin-cal-dots">${dots}</div>
+                <div class="fin-cal-barra-wrap">
+                    <div class="fin-cal-barra ${barCls}" style="width:${pct}%"></div>
+                </div>
+                <div class="fin-cal-tooltip">${tooltip}</div>
+            </div>`;
+        }
+
+        // Completar última semana
+        const total = firstDay + daysInMonth;
+        const rem   = total % 7 === 0 ? 0 : 7 - (total % 7);
+        for (let d = 1; d <= rem; d++) {
+            html += `<div class="fin-cal-dia outro-mes"><span class="fin-cal-num">${d}</span></div>`;
+        }
+
+        grid.innerHTML = html;
+
+        // Saldo final do mês
+        const saldoFinal    = saldoPorDia[daysInMonth] || 0;
+        const saldoFinalEl  = document.getElementById('finCalSaldoFinal');
+        if (saldoFinalEl) {
+            saldoFinalEl.textContent  = formatarMoeda(saldoFinal);
+            saldoFinalEl.className    = saldoFinal >= 0 ? 'positivo' : 'negativo';
+        }
+    }
+
+    function filtrarPorDiaFinCal(iso) {
+        // Navegar para o mês correto e mostrar lançamentos do dia no campo de busca (se houver)
+        // Por ora, apenas faz scroll para as seções de despesas/receitas
+        const secoes = document.querySelectorAll('.section');
+        if (secoes.length) secoes[0].scrollIntoView({ behavior: 'smooth' });
+    }
 
     // Iniciar aplicação
     init();
