@@ -304,3 +304,180 @@ body.focus-mode #focusIndicator:hover{opacity:1}
 @media(max-width:768px){.noir-cats-row{padding:7px 16px}}
 
 @media print{.sidebar,.mobile-nav,.list-col,.editor-topbar,.tags-row,.timeline-bar-wrap,#ctxMenu,#floatTB,.toast,#lockScreen{display:none!important}body{padding:0;background:#fff;color:#111}.writing-scroll{padding:40px;overflow:visible}.writing-inp,.page-title-inp{color:#111;font-size:13pt}}
+
+
+/* ── LAYOUT PREMIUM DIÁRIO ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* Header da lista */
+.list-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--s1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.list-header-title {
+    font-size: 0.62em;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+}
+
+/* Abas */
+.tabs-bar { border-bottom: 1px solid var(--border); background: var(--s1); }
+.tab-btn {
+    padding: 14px 24px;
+    font-size: 0.68em;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.tab-btn:hover { color: var(--text-sub); }
+.tab-btn.on { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* Entry items */
+.entry-item {
+    padding: 16px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-s);
+    transition: background 0.18s ease;
+    position: relative;
+}
+.entry-item:hover { background: rgba(201,168,76,0.04); }
+.entry-item.active { background: var(--gold-dim); border-left: 2px solid var(--gold); }
+.entry-item-date {
+    font-size: 0.58em;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+.entry-item-title {
+    font-size: 0.88em;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+}
+.entry-item-preview {
+    font-size: 0.75em;
+    color: var(--text-dim);
+    margin-top: 4px;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Botão nova entrada */
+.btn-nova {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--gold-dim);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72em;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.25s;
+}
+.btn-nova:hover {
+    background: rgba(201,168,76,0.18);
+    border-color: var(--gold);
+    box-shadow: 0 4px 16px rgba(201,168,76,0.15);
+}
+
+/* Editor topbar */
+.editor-topbar {
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--border-s);
+    background: var(--s1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+/* Inputs do editor */
+.page-title-inp {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border-s);
+    padding-bottom: 6px;
+    transition: border-color 0.2s;
+}
+.page-title-inp:focus { border-bottom-color: var(--gold-mid); }
+
+/* Tags */
+.tag-chip {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.62em;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: var(--s3);
+    cursor: pointer;
+    transition: all 0.18s;
+}
+.tag-chip:hover, .tag-chip.on {
+    border-color: var(--gold-mid);
+    color: var(--gold);
+    background: var(--gold-dim);
+}
+
+/* Botões do editor */
+.btn-salvar, .tl-btn {
+    padding: 9px 18px;
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    color: #080808;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7em;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+.btn-salvar:hover, .tl-btn:hover {
+    background: var(--gold-b);
+    box-shadow: 0 4px 16px rgba(201,168,76,0.25);
+}
+.btn-del {
+    padding: 9px 18px;
+    background: transparent;
+    border: 1px solid rgba(231,76,60,0.2);
+    border-radius: 8px;
+    color: rgba(231,76,60,0.6);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7em;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-del:hover { border-color: #e74c3c; color: #e74c3c; background: rgba(231,76,60,0.08); }
