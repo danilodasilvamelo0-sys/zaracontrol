@@ -86,6 +86,30 @@
     </div>
 </div>
 
+<!-- CALENDÁRIO FINANCEIRO -->
+<div id="finCalendario" style="margin:0 0 24px 0;">
+    <div class="fin-cal-header">
+        <button class="fin-cal-toggle" id="finCalToggle" onclick="toggleFinCal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Calendário do Mês
+            <svg class="fin-cal-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;margin-left:auto;transition:transform .25s;"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+    </div>
+    <div id="finCalBody" style="display:none;">
+        <div class="fin-cal-legenda">
+            <span class="fin-cal-leg receita">Receita</span>
+            <span class="fin-cal-leg despesa">Despesa</span>
+            <span class="fin-cal-leg ambos">Ambos</span>
+            <span class="fin-cal-leg vencido">Vencido</span>
+        </div>
+        <div class="fin-cal-grid" id="finCalGrid"></div>
+        <div class="fin-cal-saldo-label">
+            <span>Saldo acumulado ao longo do mês</span>
+            <span id="finCalSaldoFinal"></span>
+        </div>
+    </div>
+</div>
+
 <!-- DASHBOARD KPIs -->
 <div class="dashboard-kpis" id="dashboardKpis">
     <!-- KPI 1: Receita Total -->
