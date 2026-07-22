@@ -457,7 +457,14 @@
         </div>
         <div class="pq-campo">
             <label for="pqExtraMensal">Quanto a mais por mês você pode destinar às dívidas? (R$)</label>
-            <input type="number" id="pqExtraMensal" class="pq-input" step="0.01" min="0" placeholder="0,00" oninput="pa_renderizar()">
+            <input type="number" id="pqExtraMensal" class="pq-input" step="0.01" min="0" placeholder="0,00" oninput="document.getElementById('pqSlider').value=this.value;pa_renderizar()">
+            <div class="pq-slider-wrap">
+                <input type="range" id="pqSlider" class="pq-slider" min="0" max="5000" step="50" value="0"
+                    oninput="document.getElementById('pqExtraMensal').value=parseFloat(this.value).toFixed(2);pa_renderizar()">
+                <div class="pq-slider-labels">
+                    <span>R$ 0</span><span id="pqSliderLabel"></span><span>Máx</span>
+                </div>
+            </div>
         </div>
     </div>
 
