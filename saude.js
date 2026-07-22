@@ -1058,7 +1058,6 @@
                             </button>
                         </div>
                     </div>
-                    </div>
                     ${(() => {
                         const total = exercicios.length;
                         const feitos = exercicios.filter(e => e.feito).length;
