@@ -95,6 +95,12 @@
         <input class="search-inp" id="searchDiario" type="text" placeholder="Buscar..." oninput="filtrar('diario')" />
       </div>
       <div class="entries-scroll" id="listDiario"></div>
+
+      <!-- Estatísticas -->
+      <div id="statsPanel" class="stats-panel"></div>
+
+      <!-- Lembrete inteligente -->
+      <div id="lembretePanel" class="lembrete-panel" style="display:none;"></div>
     </div>
 
     <!-- Noir list -->
@@ -150,6 +156,16 @@
         <p style="font-size:.72em;letter-spacing:1px;color:var(--td)">Selecione ou crie uma entrada</p>
       </div>
 
+      <!-- Barra de formatação -->
+      <div class="fmt-bar" id="fmtBar" style="display:none;">
+        <button class="fmt-btn" onclick="aplicarFormato('bold')" title="Negrito"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></button>
+        <button class="fmt-btn" onclick="aplicarFormato('italic')" title="Itálico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></button>
+        <button class="fmt-btn" onclick="aplicarFormato('h2')" title="Título" style="font-size:.7em;font-weight:800;letter-spacing:0">H2</button>
+        <button class="fmt-btn" onclick="aplicarFormato('ul')" title="Lista"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+        <button class="fmt-btn" onclick="aplicarFormato('quote')" title="Citação"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 2.083L2 11c0 1.25.75 2 2 2v3c-1 .5-2 1-2 2z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 2.083L14 11c0 1.25.75 2 2 2v3c-1 .5-2 1-2 2z"/></svg></button>
+        <button class="fmt-btn" onclick="aplicarFormato('hr')" title="Separador" style="font-size:.9em;font-weight:600">—</button>
+      </div>
+
       <div id="editorActive" style="display:none;flex:1;flex-direction:column;overflow:hidden">
         <button class="btn-voltar-lista" onclick="voltarParaLista('diario')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Voltar
@@ -157,8 +173,7 @@
         <div class="editor-topbar">
           <div class="editor-meta">
             <input class="editor-date-inp" type="date" id="dDate" />
-            <input class="editor-estado-inp" id="dEstado" type="text" placeholder="Como você está hoje?" maxlength="80" />
-          </div>
+            <input class="editor-estado-inp" id="dEstado" type="text" placeholder="Como você está hoje?" maxlength="80" />          </div>
           <div class="editor-actions">
             <span class="autosave-indicator" id="dAutoSave"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Salvo</span>
             <button class="focus-btn" onclick="toggleFocus()" title="Modo foco"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
