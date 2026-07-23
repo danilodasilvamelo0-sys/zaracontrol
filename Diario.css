@@ -481,3 +481,193 @@ body.focus-mode #focusIndicator:hover{opacity:1}
     transition: all 0.2s;
 }
 .btn-del:hover { border-color: #e74c3c; color: #e74c3c; background: rgba(231,76,60,0.08); }
+
+/* ════════════════════════════════════════════
+   DIÁRIO — 5 melhorias premium
+   ════════════════════════════════════════════ */
+
+/* Entry item enriquecido */
+.entry-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+.entry-humor-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.8;
+    transition: transform 0.2s;
+}
+.entry-item:hover .entry-humor-dot { transform: scale(1.3); }
+.entry-item-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 5px;
+    gap: 6px;
+}
+.entry-palavras {
+    font-size: 0.58em;
+    color: var(--text-dim);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+mark.busca-highlight {
+    background: rgba(201,168,76,0.3);
+    color: var(--gold);
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+/* Barra de formatação */
+.fmt-bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    background: var(--s1);
+    border-bottom: 1px solid var(--border-s);
+    flex-wrap: wrap;
+}
+.fmt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px;
+    background: transparent;
+    border: 1px solid var(--border-s);
+    border-radius: 6px;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75em;
+    font-weight: 600;
+    transition: all 0.15s ease;
+}
+.fmt-btn:hover {
+    background: var(--gold-dim);
+    border-color: var(--border);
+    color: var(--gold);
+}
+.fmt-btn:active { transform: scale(0.92); }
+
+/* Estatísticas */
+.stats-panel {
+    padding: 14px 16px;
+    border-top: 1px solid var(--border-s);
+    margin-top: 8px;
+}
+.stats-vazio {
+    font-size: 0.7em;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 12px 0;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+.stats-card {
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 10px;
+    padding: 10px 12px;
+    text-align: center;
+    transition: border-color 0.2s;
+}
+.stats-card:hover { border-color: var(--border); }
+.stats-val {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1.1;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.stats-val.stats-tag {
+    font-size: 0.85em;
+    font-style: italic;
+    color: var(--text-sub);
+}
+.stats-label {
+    font-size: 0.58em;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* Lembrete inteligente */
+.lembrete-panel {
+    padding: 14px 16px;
+    border-top: 1px solid var(--border-s);
+}
+.lembrete-titulo {
+    font-size: 0.62em;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+.lembrete-item {
+    padding: 10px 12px;
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+.lembrete-item:hover {
+    border-color: var(--gold-mid);
+    background: var(--gold-dim);
+}
+.lembrete-label {
+    font-size: 0.6em;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+}
+.lembrete-titulo-item {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.lembrete-preview {
+    font-size: 0.7em;
+    color: var(--text-dim);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Blockquote no editor */
+.entry-body blockquote, #dTexto blockquote, #nTexto blockquote {
+    border-left: 3px solid var(--gold-mid);
+    padding: 8px 14px;
+    margin: 8px 0;
+    color: var(--text-sub);
+    font-style: italic;
+    background: var(--gold-dim);
+    border-radius: 0 6px 6px 0;
+}
+
