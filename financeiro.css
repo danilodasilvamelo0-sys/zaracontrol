@@ -5110,3 +5110,202 @@ font-size: 1.1em;
     .pq-timeline-bar { height: 28px; }
 }
 
+/* ════════════════════════════════════════════
+   DESPESAS PREMIUM — cards + tabela responsiva
+   ════════════════════════════════════════════ */
+
+/* Badges de status */
+.desp-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.65em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+.desp-badge.pago     { background: rgba(46,204,113,0.12);  color: var(--green); border: 1px solid rgba(46,204,113,0.25); }
+.desp-badge.vencido  { background: rgba(231,76,60,0.12);   color: var(--red);   border: 1px solid rgba(231,76,60,0.25); }
+.desp-badge.pendente { background: rgba(255,255,255,0.05); color: var(--text-dim); border: 1px solid var(--border-s); }
+
+.desp-atraso-badge {
+    margin-left: 6px;
+    background: rgba(231,76,60,0.12);
+    color: var(--red);
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-size: 0.7em;
+    font-weight: 700;
+    border: 1px solid rgba(231,76,60,0.2);
+}
+
+/* Barra de progresso do mês */
+.desp-prog-row td { padding: 12px 16px 8px !important; }
+.desp-prog-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65em;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.desp-prog-track {
+    height: 4px;
+    background: var(--border-s);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.desp-prog-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* Barra de progresso inline no item */
+.desp-prog-wrap {
+    flex: 1;
+    height: 3px;
+    background: var(--border-s);
+    border-radius: 2px;
+    overflow: hidden;
+    max-width: 80px;
+}
+.desp-prog-bar {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+}
+
+/* Cabeçalho de categoria na tabela */
+.desp-cat-header td {
+    padding: 10px 16px 6px !important;
+    background: transparent;
+    border-bottom: 1px solid var(--border-s);
+}
+
+/* Linhas de tabela premium */
+.desp-tr {
+    border-left: 3px solid transparent;
+    transition: background 0.18s ease, border-color 0.2s;
+}
+.desp-tr:hover { background: rgba(201,168,76,0.04); }
+.desp-tr.desp-vencida { background: rgba(231,76,60,0.03); }
+.desp-tr.desp-paga    { opacity: 0.65; }
+
+/* ── CARDS MOBILE ── */
+.desp-mobile-wrap {
+    display: none; /* escondido por padrão — aparece só em mobile via media query */
+}
+.desp-cards-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 0 4px;
+}
+.desp-cat-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.6em;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 14px 4px 6px;
+}
+.desp-card {
+    background: var(--s3);
+    border: 1px solid var(--border-s);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+}
+.desp-card:hover, .desp-card:active { border-color: var(--border); }
+.desp-card.desp-card-vencida { background: rgba(231,76,60,0.04); border-color: rgba(231,76,60,0.2); }
+.desp-card.desp-card-paga    { opacity: 0.65; }
+
+.desp-card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+}
+.desp-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--s4);
+    border: 1px solid var(--border-s);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-dim);
+}
+.desp-card-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.desp-card-nome {
+    font-size: 0.88em;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.desp-card-meta {
+    font-size: 0.65em;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+}
+.desp-card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+}
+.desp-card-valor {
+    font-size: 1em;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+}
+.desp-card-detail {
+    padding: 0 16px 12px;
+}
+.desp-card-acoes {
+    display: flex;
+    gap: 4px;
+    padding: 8px 16px;
+    border-top: 1px solid var(--border-s);
+    justify-content: flex-end;
+}
+
+/* ── RESPONSIVO: esconder tabela / mostrar cards em mobile ── */
+@media (max-width: 640px) {
+    .accordion-table,
+    .accordion-table + * { /* esconder a tabela */ }
+
+    /* Esconder tabela de despesas fixas em mobile */
+    #despesasFixasTable,
+    #despesasFixasTable + * {
+        display: none;
+    }
+    .desp-mobile-wrap {
+        display: block !important;
+        padding: 0 16px 12px;
+    }
+    .section-table-header {
+        display: none; /* esconder th em mobile */
+    }
+}
+
