@@ -3610,6 +3610,92 @@
     // RENDERIZAÇÃO
     // ==========================================
     
+
+    // ── HELPERS PREMIUM DE DESPESAS ──
+    function getCategIcon(cat) {
+        const icons = {
+            'Moradia':       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+            'Alimentação':   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
+            'Transporte':    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+            'Saúde':         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+            'Educação':      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+            'Lazer':         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-3.92-8.32-4.48-14.17-1.84"/></svg>',
+            'Assinaturas':   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>',
+            'Dívidas':       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+        };
+        return icons[cat] || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>';
+    }
+
+    function getStatusBadge(pago, vencido) {
+        if (pago)    return '<span class="desp-badge pago"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px;vertical-align:-1px;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg>Pago</span>';
+        if (vencido) return '<span class="desp-badge vencido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px;vertical-align:-1px;margin-right:3px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Vencido</span>';
+        return '<span class="desp-badge pendente">Pendente</span>';
+    }
+
+    function buildDespCard(opts) {
+        // Gera tanto a linha de tabela (desktop) quanto o card (mobile)
+        // opts: { id, descricao, categoria, data, pago, vencido, valor, extra, acoes, detailId, detailBody, onclick, progresso }
+        const badge   = getStatusBadge(opts.pago, opts.vencido);
+        const icon    = getCategIcon(opts.categoria || 'Outros');
+        const dataFmt = opts.data || '—';
+        const cor     = opts.pago ? 'var(--green)' : opts.vencido ? 'var(--red)' : 'var(--text-sub)';
+        const bordaL  = opts.vencido ? '3px solid var(--red)' : opts.pago ? '3px solid var(--green)' : '3px solid transparent';
+        const progBar = opts.progresso !== undefined ? `
+            <div class="desp-prog-wrap">
+                <div class="desp-prog-bar" style="width:${opts.progresso}%;background:${opts.progresso===100?'var(--green)':'var(--gold)'}"></div>
+            </div>` : '';
+
+        // ── LINHA DESKTOP ──
+        const tr = `
+            <tr class="acc-row desp-tr${opts.vencido?' desp-vencida':''}${opts.pago?' desp-paga':''}" style="border-left:${bordaL}">
+                <td style="cursor:pointer;padding-left:8px;" onclick="toggleAccordion('${opts.detailId}')">
+                    <span class="acc-chevron" id="chev-${opts.detailId}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </span>
+                </td>
+                <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${opts.detailId}')">
+                    <div style="display:flex;flex-direction:column;gap:2px;">
+                        <span style="font-weight:600;">${opts.descricao}${opts.extra||''}</span>
+                        <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+                            <span style="display:inline-flex;align-items:center;gap:4px;color:var(--text-dim);font-size:0.65em;font-weight:600;letter-spacing:.5px;text-transform:uppercase;">
+                                ${icon}<span>${opts.categoria||'Outros'}</span>
+                            </span>
+                            ${progBar}
+                        </div>
+                    </div>
+                </td>
+                <td class="acc-mobile-meta" style="white-space:nowrap;font-size:0.78em;color:var(--text-sub);">${dataFmt}</td>
+                <td class="acc-mobile-meta">${badge}</td>
+                <td style="text-align:right;font-weight:700;color:${cor};white-space:nowrap;">${formatarMoeda(opts.valor)}</td>
+                <td onclick="event.stopPropagation()"><div style="display:flex;gap:4px;">${opts.acoes||''}</div></td>
+            </tr>
+            <tr class="acc-detail-row" id="${opts.detailId}" style="display:none;">
+                <td colspan="6" style="padding:0;">${opts.detailBody||'<div style="padding:12px 20px;color:var(--text-dim);font-size:.8em;">Sem detalhes.</div>'}</td>
+            </tr>`;
+
+        // ── CARD MOBILE ──
+        const card = `
+            <div class="desp-card${opts.vencido?' desp-card-vencida':''}${opts.pago?' desp-card-paga':''}" style="border-left:${bordaL}">
+                <div class="desp-card-top" onclick="${opts.onclick||''}">
+                    <div class="desp-card-icon">${icon}</div>
+                    <div class="desp-card-info">
+                        <div class="desp-card-nome">${opts.descricao}${opts.extra||''}</div>
+                        <div class="desp-card-meta">${opts.categoria||'Outros'} · ${dataFmt}</div>
+                        ${progBar}
+                    </div>
+                    <div class="desp-card-right">
+                        <div class="desp-card-valor" style="color:${cor};">${formatarMoeda(opts.valor)}</div>
+                        ${badge}
+                    </div>
+                </div>
+                ${opts.detailBody ? `<div class="desp-card-detail" id="mob-${opts.detailId}" style="display:none;">${opts.detailBody}</div>` : ''}
+                <div class="desp-card-acoes" onclick="event.stopPropagation()">${opts.acoes||''}</div>
+            </div>`;
+
+        return { tr, card };
+    }
+
+
     function renderizar() {
         if (viewMode === 'arquivados') {
             renderizarArquivados();
@@ -4016,6 +4102,7 @@
         const fixasTable = document.getElementById('despesasFixasTable');
         document.getElementById('emptyDespesasFixas').style.display = fixasMes.length ? 'none' : 'block';
 
+        // ── Agrupar por modeloId ──
         const despesasAgrupadas = {};
         fixasMes.forEach(d => {
             if (!despesasAgrupadas[d.modeloId]) despesasAgrupadas[d.modeloId] = { atual: null, atrasadas: [] };
@@ -4023,90 +4110,127 @@
             else despesasAgrupadas[d.modeloId].atual = d;
         });
 
-        let htmlFixas = '';
-        Object.keys(despesasAgrupadas).forEach(modeloId => {
+        // ── Montar lista com info de status ──
+        let despFixasList = Object.keys(despesasAgrupadas).map(modeloId => {
             const grupo = despesasAgrupadas[modeloId];
             const atual = grupo.atual;
             const atrasadas = grupo.atrasadas;
-            if (!atual && atrasadas.length === 0) return;
-            const despesaRef = atual || atrasadas[0];
+            if (!atual && atrasadas.length === 0) return null;
+            const ref = atual || atrasadas[0];
             const todasPagas = (!atual || atual.pago) && atrasadas.every(a => a.pago);
-            const totalPendente = (atual && !atual.pago ? atual.valor : 0) + atrasadas.filter(a => !a.pago).reduce((s,a) => s+a.valor, 0);
-            const detailId = 'detail-fixa-' + modeloId;
-            const hasAtrasadas = atrasadas.length > 0;
-            // Caso novo (sem clonagem): o próprio item do mês pode estar vencido
-            // (data de vencimento já passou e ainda não foi pago).
-            const statusAtual = atual ? getStatusVencimento(atual.data, atual.pago) : { classe: '', badge: '' };
-            const estaVencido = hasAtrasadas || statusAtual.classe === 'vencido';
+            const totalPendente = (atual && !atual.pago ? atual.valor : 0) + atrasadas.filter(a => !a.pago).reduce((s,a)=>s+a.valor,0);
+            const statusAtual = atual ? getStatusVencimento(atual.data, atual.pago) : { classe: '' };
+            const vencido = atrasadas.length > 0 || statusAtual.classe === 'vencido';
+            return { modeloId, atual, atrasadas, ref, todasPagas, totalPendente, vencido };
+        }).filter(Boolean);
 
-            htmlFixas += `
-                <tr class="acc-row">
-                    <td style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
-                        <span class="acc-chevron" id="chev-${detailId}">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </span>
-                    </td>
-                    <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">${despesaRef.descricao}</td>
-                    <td class="acc-mobile-meta"><span class="categoria">${despesaRef.categoria}</span></td>
-                    <td class="acc-condicao acc-mobile-meta">${formatarData(despesaRef.dia ? (getMesAnoKey() + '-' + String(despesaRef.dia).padStart(2,'0')) : despesaRef.data)}</td>
-                    <td class="acc-mobile-meta">
-                        ${todasPagas
-                            ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Pago</span>'
-                            : estaVencido
-                                ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Vencido</span>'
-                                : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>'}
-                    </td>
-                    <td class="${todasPagas ? 'valor-positivo' : 'valor-negativo'} acc-mobile-valor" style="text-align:right;">
-                        ${formatarMoeda(todasPagas ? (despesaRef.valor || 0) : totalPendente)}
-                    </td>
-                    <td>
-                        <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
-                            ${atual ? `
-                            <button class="acc-delete-btn" onclick="editarValorInstancia(${atual.id}, 'fixa')" title="Editar valor deste mês (ex: conta de água/luz que mudou)" style="color:rgba(46,204,113,0.6);">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                            </button>
-                            ` : ''}
-                            <button class="acc-delete-btn" onclick="editarDespesaFixaModelo(${despesaRef.modeloId})" title="Editar valor padrão (afeta os próximos meses)" style="color:rgba(212,175,125,0.5);">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                            </button>
-                            <button class="acc-delete-btn" onclick="encerrarDespesaFixa(${despesaRef.modeloId})" title="Encerrar (não aparece mais nos próximos meses)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr class="acc-detail-row" id="${detailId}" style="display:none;">
-                    <td colspan="7">
-                        <div class="parcelas-detail-box">
-                            <div class="parcelas-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-                                ${atrasadas.map(d => `
-                                    <div class="parcela-item${d.pago ? ' pago' : ' vencida'}" onclick="togglePagoFixa(${d.id})">
-                                        <div class="parcela-check${d.pago ? ' checked' : ''}"></div>
-                                        <div class="parcela-info-box">
-                                            <div class="parcela-nome" style="color:#e74c3c;">Em atraso</div>
-                                            <div class="parcela-data-txt">${formatarData(d.data)}</div>
-                                        </div>
-                                        <div class="parcela-valor-txt">${formatarMoeda(d.valor)}</div>
-                                    </div>
-                                `).join('')}
-                                ${atual ? `
-                                    <div class="parcela-item${atual.pago ? ' pago' : ''}" onclick="togglePagoFixa(${atual.id})">
-                                        <div class="parcela-check${atual.pago ? ' checked' : ''}"></div>
-                                        <div class="parcela-info-box">
-                                            <div class="parcela-nome">Mês atual</div>
-                                            <div class="parcela-data-txt">${formatarData(atual.data)}</div>
-                                        </div>
-                                        <div class="parcela-valor-txt">${formatarMoeda(atual.valor)}</div>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            `;
+        // ── Ordenar: vencidas → pendentes → pagas ──
+        despFixasList.sort((a, b) => {
+            const ordemA = a.vencido && !a.todasPagas ? 0 : !a.todasPagas ? 1 : 2;
+            const ordemB = b.vencido && !b.todasPagas ? 0 : !b.todasPagas ? 1 : 2;
+            if (ordemA !== ordemB) return ordemA - ordemB;
+            // dentro do mesmo grupo, ordenar por data de vencimento
+            const dataA = a.ref.dia ? parseInt(a.ref.dia) : 99;
+            const dataB = b.ref.dia ? parseInt(b.ref.dia) : 99;
+            return dataA - dataB;
         });
 
+        // ── Barra de progresso do mês ──
+        const totalFixas = despFixasList.length;
+        const pagasFixas = despFixasList.filter(d => d.todasPagas).length;
+        const pctMes = totalFixas > 0 ? Math.round((pagasFixas / totalFixas) * 100) : 0;
+
+        // ── Agrupar por categoria ──
+        const catGrupos = {};
+        despFixasList.forEach(d => {
+            const cat = d.ref.categoria || 'Outros';
+            if (!catGrupos[cat]) catGrupos[cat] = [];
+            catGrupos[cat].push(d);
+        });
+
+        let htmlFixas = '';
+        let htmlMobileFixas = '<div class="desp-cards-wrap">';
+
+        // Barra de progresso global
+        const barraHtml = `<tr class="desp-prog-row"><td colspan="6">
+            <div class="desp-prog-header">
+                <span>${pagasFixas} de ${totalFixas} pagas</span>
+                <span>${pctMes}%</span>
+            </div>
+            <div class="desp-prog-track"><div class="desp-prog-fill" style="width:${pctMes}%;background:${pctMes===100?'var(--green)':'var(--gold)'}"></div></div>
+        </td></tr>`;
+        htmlFixas += barraHtml;
+
+        Object.keys(catGrupos).forEach(cat => {
+            // Cabeçalho de categoria
+            const icon = getCategIcon(cat);
+            htmlFixas += `<tr class="desp-cat-header"><td colspan="6">
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.62em;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);">
+                    ${icon}${cat}
+                </span>
+            </td></tr>`;
+            htmlMobileFixas += `<div class="desp-cat-label">${icon}<span>${cat}</span></div>`;
+
+            catGrupos[cat].forEach(({ modeloId, atual, atrasadas, ref, todasPagas, totalPendente, vencido }) => {
+                const detailId = 'detail-fixa-' + modeloId;
+                const dataFmt = formatarData(ref.dia ? (getMesAnoKey() + '-' + String(ref.dia).padStart(2,'0')) : ref.data);
+                const valor   = todasPagas ? (ref.valor || 0) : totalPendente;
+                const extraBadge = atrasadas.length > 0
+                    ? `<span class="desp-atraso-badge">${atrasadas.length} em atraso</span>`
+                    : '';
+
+                const acoes = `
+                    ${atual ? `<button class="acc-delete-btn" onclick="editarValorInstancia(${atual.id},'fixa')" title="Editar valor deste mês" style="color:rgba(46,204,113,0.6);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </button>` : ''}
+                    <button class="acc-delete-btn" onclick="editarDespesaFixaModelo(${ref.modeloId})" title="Editar modelo" style="color:rgba(201,168,76,0.6);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="acc-delete-btn" onclick="encerrarDespesaFixa(${ref.modeloId})" title="Encerrar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>`;
+
+                const detailBody = `<div class="parcelas-detail-box">
+                    <div class="parcelas-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+                        ${atrasadas.map(d => `
+                            <div class="parcela-item${d.pago?' pago':' vencida'}" onclick="togglePagoFixa(${d.id})">
+                                <div class="parcela-check${d.pago?' checked':''}"></div>
+                                <div class="parcela-info-box">
+                                    <div class="parcela-nome" style="color:var(--red)">Em atraso</div>
+                                    <div class="parcela-data-txt">${formatarData(d.data)}</div>
+                                </div>
+                                <div class="parcela-valor-txt">${formatarMoeda(d.valor)}</div>
+                            </div>`).join('')}
+                        ${atual ? `
+                            <div class="parcela-item${atual.pago?' pago':''}" onclick="togglePagoFixa(${atual.id})">
+                                <div class="parcela-check${atual.pago?' checked':''}"></div>
+                                <div class="parcela-info-box">
+                                    <div class="parcela-nome">Mês atual</div>
+                                    <div class="parcela-data-txt">${formatarData(atual.data)}</div>
+                                </div>
+                                <div class="parcela-valor-txt">${formatarMoeda(atual.valor)}</div>
+                            </div>` : ''}
+                    </div>
+                </div>`;
+
+                const built = buildDespCard({
+                    id: modeloId, descricao: ref.descricao, categoria: ref.categoria || 'Outros',
+                    data: dataFmt, pago: todasPagas, vencido, valor, extra: extraBadge,
+                    acoes, detailId, detailBody,
+                    onclick: `toggleAccordion('${detailId}');var mob=document.getElementById('mob-${detailId}');if(mob)mob.style.display=mob.style.display==='none'?'block':'none';`
+                });
+
+                htmlFixas += built.tr;
+                htmlMobileFixas += built.card;
+            });
+        });
+
+        htmlMobileFixas += '</div>';
         fixasTable.innerHTML = htmlFixas;
+
+        // Injetar cards mobile
+        const mobileWrap = document.getElementById('despesasFixasMobile');
+        if (mobileWrap) mobileWrap.innerHTML = htmlMobileFixas;
 
         // === TABELA DESPESAS VARIÁVEIS ===
         const variaveisTable = document.getElementById('despesasVariaveisTable');
