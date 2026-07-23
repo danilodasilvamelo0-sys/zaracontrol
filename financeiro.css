@@ -5309,3 +5309,204 @@ font-size: 1.1em;
     }
 }
 
+/* ════════════════════════════════════════════
+   PLANO QUITAÇÃO — versão clara e prática
+   ════════════════════════════════════════════ */
+
+/* Card "O que fazer agora" */
+.pq-agora {
+    background: linear-gradient(135deg, rgba(201,168,76,0.10), rgba(201,168,76,0.04));
+    border: 1px solid var(--gold-mid);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 18px;
+    animation: fadeUp 0.4s ease both;
+}
+.pq-agora-titulo {
+    font-size: 0.78em;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+.pq-agora-sub {
+    font-size: 0.75em;
+    color: var(--text-sub);
+    margin-bottom: 14px;
+    line-height: 1.5;
+}
+.pq-agora-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.pq-agora-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--s3);
+    border: 1px solid var(--border-s);
+    border-radius: 10px;
+    transition: border-color 0.2s;
+}
+.pq-agora-item:hover { border-color: var(--border); }
+.pq-agora-item.pq-agora-quita {
+    background: rgba(46,204,113,0.06);
+    border-color: rgba(46,204,113,0.2);
+}
+.pq-agora-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    font-size: 0.7em;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0;
+}
+.pq-agora-quita .pq-agora-num {
+    background: rgba(46,204,113,0.12);
+    border-color: rgba(46,204,113,0.3);
+    color: var(--green);
+}
+.pq-agora-info {
+    flex: 1;
+    min-width: 0;
+}
+.pq-agora-nome {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pq-agora-detalhe {
+    font-size: 0.7em;
+    color: var(--text-dim);
+    margin-top: 2px;
+}
+.pq-agora-valor {
+    font-size: 1.05em;
+    font-weight: 700;
+    color: var(--gold);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.pq-agora-proximo {
+    font-size: 0.68em;
+    color: var(--text-dim);
+    padding-top: 10px;
+    border-top: 1px solid var(--border-s);
+    display: flex;
+    align-items: flex-start;
+    line-height: 1.5;
+}
+
+/* Resumo simples */
+.pq-resumo-simples {
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+.pq-resumo-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-s);
+    font-size: 0.8em;
+    gap: 12px;
+}
+.pq-resumo-linha:last-child { border-bottom: none; }
+.pq-resumo-linha span:first-child { color: var(--text-sub); }
+.pq-resumo-linha span:last-child { text-align: right; }
+
+/* Ordem de prioridade explicada */
+.pq-ordem-explicada {
+    margin-bottom: 18px;
+}
+.pq-secao-titulo {
+    font-size: 0.68em;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+.pq-ordem-desc {
+    font-size: 0.75em;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    line-height: 1.6;
+    padding: 10px 14px;
+    background: var(--s1);
+    border-radius: 8px;
+    border-left: 2px solid var(--border);
+}
+.pq-ordem-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    transition: border-color 0.2s;
+}
+.pq-ordem-item:hover { border-color: var(--border); }
+.pq-ordem-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.6em;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: var(--gold-dim);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    flex-shrink: 0;
+}
+.pq-ordem-dados { flex: 1; min-width: 0; }
+.pq-ordem-nome {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+}
+.pq-ordem-meta {
+    font-size: 0.7em;
+    color: var(--text-dim);
+    line-height: 1.4;
+}
+
+/* Cards de comparação */
+.pq-comp-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 480px) {
+    .pq-comp-cards { grid-template-columns: 1fr; }
+    .pq-agora-item { padding: 10px 12px; gap: 10px; }
+    .pq-agora-valor { font-size: .9em; }
+}
+
