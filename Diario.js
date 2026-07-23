@@ -88,7 +88,7 @@ async function carregar(modo) {
     dados[modo] = carregarLocalModo(modo);
   }
   renderLista(modo);
-  if (modo === 'diario') renderTimeline();
+  if (modo === 'diario') { renderTimeline(); renderStats(); renderLembrete(); }
 }
 
 async function migrarLocalParaSupabase(modo) {
@@ -243,6 +243,8 @@ function novaEntrada(modo) {
 function abrirEntrada(modo, id) {
   const e = dados[modo].find(x => x.id === id);
   if (!e) return;
+  const fmtBar = document.getElementById('fmtBar');
+  if (fmtBar) fmtBar.style.display = modo === 'diario' ? 'flex' : 'none';
   atual[modo] = { ...e };
   tags[modo] = [...(e.tags || [])];
   document.querySelectorAll(`#listDiario .entry-item, #listNoir .entry-item`).forEach(el => el.classList.remove('active','noir-active'));
@@ -364,6 +366,25 @@ async function deletarDaLista(modo, id) {
   showToast('Excluído.');
 }
 
+// ── EDITOR MARKDOWN — barra de formatação ──
+function aplicarFormato(tag) {
+  const ed = document.getElementById('dTexto') || document.getElementById('nTexto');
+  if (!ed) return;
+  const sel = window.getSelection();
+  const texto = sel && !sel.isCollapsed ? sel.toString() : 'texto';
+  const mapa = {
+    bold:   `<strong>${texto}</strong>`,
+    italic: `<em>${texto}</em>`,
+    h2:     `<h2>${texto}</h2>`,
+    ul:     `<ul><li>${texto}</li></ul>`,
+    hr:     '<hr>',
+    quote:  `<blockquote>${texto}</blockquote>`,
+  };
+  const html = mapa[tag];
+  if (html) document.execCommand('insertHTML', false, html);
+  onInput(modoAtual);
+}
+
 function onInput(modo) {
   clearTimeout(aTimer);
   aTimer = setTimeout(() => { if (atual[modo]) salvar(modo); }, 3500);
@@ -374,6 +395,118 @@ function fmtData(iso) {
   if (!iso) return '';
   const d = new Date(iso + 'T12:00:00');
   return d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
+}
+
+
+// ── ESTATÍSTICAS ──
+function renderStats() {
+  const el = document.getElementById('statsPanel');
+  if (!el) return;
+  const entradas = dados.diario;
+  if (!entradas.length) { el.innerHTML = '<div class="stats-vazio">Escreva sua primeira entrada para ver estatísticas.</div>'; return; }
+
+  // Dias escritos
+  const diasEscritos = new Set(entradas.map(e => e.data?.substring(0,10))).size;
+
+  // Streak recorde
+  const datas = [...new Set(entradas.map(e => e.data?.substring(0,10)).filter(Boolean))].sort();
+  let recorde = 1, streak = 1;
+  for (let i = 1; i < datas.length; i++) {
+    const diff = (new Date(datas[i]) - new Date(datas[i-1])) / 86400000;
+    if (diff === 1) { streak++; recorde = Math.max(recorde, streak); }
+    else streak = 1;
+  }
+
+  // Humor médio
+  const humores = entradas.map(e => calcHumor(e.texto || ''));
+  const humorMedio = humores.length ? (humores.reduce((a,b) => a+b, 0) / humores.length).toFixed(1) : 0;
+
+  // Total de palavras
+  const totalPalavras = entradas.reduce((s,e) => s + (e.texto || '').replace(/<[^>]+>/g,'').trim().split(/\s+/).filter(Boolean).length, 0);
+
+  // Tag mais usada
+  const tagCount = {};
+  entradas.forEach(e => (e.tags||[]).forEach(t => tagCount[t] = (tagCount[t]||0)+1));
+  const tagTop = Object.entries(tagCount).sort((a,b) => b[1]-a[1])[0];
+
+  // Palavra mais usada (excluindo stopwords)
+  const stopwords = new Set(['de','a','o','que','e','do','da','em','um','para','com','uma','os','no','se','na','por','mais','as','dos','como','mas','foi','ao','ele','das','tem','à','seu','sua','ou','ser','quando','muito','há','nos','já','também','só','pelo','pela','até','isso','ela','entre','era','depois','sem','mesmo','aos','ter','seus','quem','nas','me','esse','eles','estão','você','tinha','foram','essa','num','nem','suas','meu','às','minha','têm','numa','pelos','elas','havia','seja','qual','será','nós','tenho','lhe','deles','essas','esses','pelas','este','dele','tu','te','vocês','vos','lhes','meus','minhas','teu','tua','teus','tuas','nosso','nossa','nossos','nossas','dela','delas','esta','estes','estas','aquele','aquela','aqueles','aquelas','isto','aquilo','estou','está','estamos','estão','estive','esteve','estivemos','estiveram','estava','estávamos','estavam','estivera','estivéramos','esteja','estejamos','estejam','estivesse','estivéssemos','estivessem','estiver','estivermos','estiverem','mas','não','the','and','of','to','in','is','it','that','for','on','are','with','as','be','this','was','have','from','or','an','by','at','which','but','his','they','his','she','he','were','been','their','has','had','word','what','there','use','each','she','how','their','if','will','up','about','out','many','then','them','these','so','some','her','would','make','like','him','into','time','has','two','more','write','go','see','number','no','way','could','people','my','than','first','water','been','call','who','oil','its','now','find','long','down','day','did','get','come','made','may','part','over','new','sound','take','only','little','work','know','place','years','live','me','back','give','most','very']);
+  const wordCount = {};
+  entradas.forEach(e => {
+    (e.texto || '').replace(/<[^>]+>/g,'').toLowerCase().match(/\w{4,}/g)?.forEach(w => {
+      if (!stopwords.has(w)) wordCount[w] = (wordCount[w]||0)+1;
+    });
+  });
+  const palavraTop = Object.entries(wordCount).sort((a,b) => b[1]-a[1])[0];
+
+  const humorCores = ['','#e74c3c','#e67e22','#f39c12','#d4ac0d','#a9b700','#7dbb00','#4caf50','#27ae60','#1abc9c','#16a085'];
+  const hc = humorCores[Math.round(parseFloat(humorMedio))] || 'var(--gold)';
+
+  el.innerHTML = `
+    <div class="stats-grid">
+      <div class="stats-card">
+        <div class="stats-val">${diasEscritos}</div>
+        <div class="stats-label">dias escritos</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-val">${recorde}</div>
+        <div class="stats-label">streak recorde</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-val" style="color:${hc}">${humorMedio}</div>
+        <div class="stats-label">humor médio /10</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-val">${totalPalavras.toLocaleString('pt-BR')}</div>
+        <div class="stats-label">palavras escritas</div>
+      </div>
+      ${tagTop ? `<div class="stats-card">
+        <div class="stats-val stats-tag">${tagTop[0]}</div>
+        <div class="stats-label">tag mais usada (${tagTop[1]}x)</div>
+      </div>` : ''}
+      ${palavraTop ? `<div class="stats-card">
+        <div class="stats-val stats-tag">${palavraTop[0]}</div>
+        <div class="stats-label">palavra mais usada (${palavraTop[1]}x)</div>
+      </div>` : ''}
+    </div>`;
+}
+
+
+// ── LEMBRETE INTELIGENTE ──
+function renderLembrete() {
+  const el = document.getElementById('lembretePanel');
+  if (!el || !dados.diario.length) return;
+  const hoje = new Date();
+  const semanaAtras  = new Date(hoje); semanaAtras.setDate(hoje.getDate() - 7);
+  const mesAtras     = new Date(hoje); mesAtras.setMonth(hoje.getMonth() - 1);
+  const anoAtras     = new Date(hoje); anoAtras.setFullYear(hoje.getFullYear() - 1);
+
+  const fmt = d => d.toISOString().split('T')[0];
+  const buscar = (data) => dados.diario.find(e => e.data?.substring(0,10) === fmt(data));
+
+  const sem  = buscar(semanaAtras);
+  const mes  = buscar(mesAtras);
+  const ano  = buscar(anoAtras);
+
+  const items = [
+    sem  && { label: 'Há 1 semana', data: fmt(semanaAtras), titulo: sem.titulo || sem.estado || 'Entrada sem título', preview: (sem.texto||'').replace(/<[^>]+>/g,'').slice(0,100), id: sem.id },
+    mes  && { label: 'Há 1 mês',   data: fmt(mesAtras),    titulo: mes.titulo || mes.estado || 'Entrada sem título', preview: (mes.texto||'').replace(/<[^>]+>/g,'').slice(0,100), id: mes.id },
+    ano  && { label: 'Há 1 ano',   data: fmt(anoAtras),    titulo: ano.titulo || ano.estado || 'Entrada sem título', preview: (ano.texto||'').replace(/<[^>]+>/g,'').slice(0,100), id: ano.id },
+  ].filter(Boolean);
+
+  if (!items.length) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div class="lembrete-titulo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:13px;height:13px;vertical-align:-1px;margin-right:5px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Neste dia...
+    </div>
+    ${items.map(it => `
+      <div class="lembrete-item" onclick="abrirEntrada('diario','${it.id}')">
+        <div class="lembrete-label">${it.label}</div>
+        <div class="lembrete-titulo-item">${it.titulo}</div>
+        ${it.preview ? `<div class="lembrete-preview">${it.preview}...</div>` : ''}
+      </div>`).join('')}`;
 }
 
 function renderLista(modo) {
@@ -400,25 +533,46 @@ function renderLista(modo) {
     return;
   }
   const atId = atual[modo]?.id;
+  const humorCores = ['','#e74c3c','#e67e22','#f39c12','#d4ac0d','#a9b700','#7dbb00','#4caf50','#27ae60','#1abc9c','#16a085'];
   el.innerHTML = lista.map(e => {
     const isA = atId === e.id;
     const tagHtml = (e.tags || []).map(t => `<span class="tag-chip${modo === 'noir' ? ' noir-tag' : ''}">${t}</span>`).join('');
-    const prev = (e.texto || '').replace(/<[^>]+>/g, '').slice(0, 55);
+    const prev = (e.texto || '').replace(/<[^>]+>/g, '').slice(0, 80);
     const catLabel = modo === 'noir' && e.categoria ? `<span class="tag-chip noir-tag">${e.categoria}</span>` : '';
-    return `<div class="entry-item${isA ? (modo === 'noir' ? ' noir-active' : ' active') : ''}" data-id="${e.id}" onclick="abrirEntrada('${modo}','${e.id}')">
+    const humor = calcHumor(e.texto || '');
+    const humorCor = humorCores[humor] || 'var(--text-dim)';
+    const palavras = (e.texto || '').replace(/<[^>]+>/g, '').trim().split(/\s+/).filter(Boolean).length;
+    return `<div class="entry-item${isA ? (modo === 'noir' ? ' noir-active' : ' active') : ''}" data-id="${e.id}"
+      style="border-left:3px solid ${isA ? 'var(--gold)' : humor >= 7 ? humorCor : humor <= 3 ? humorCor : 'transparent'}"
+      onclick="abrirEntrada('${modo}','${e.id}')">
       <button class="entry-del-btn" onclick="event.stopPropagation();deletarDaLista('${modo}','${e.id}')" title="Excluir entrada">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
       </button>
-      <div class="entry-item-date">${fmtData(e.data)}</div>
+      <div class="entry-item-header">
+        <div class="entry-item-date">${fmtData(e.data)}</div>
+        <div class="entry-humor-dot" style="background:${humorCor}" title="Humor ${humor}/10"></div>
+      </div>
       <div class="entry-item-title">${e.titulo || e.estado || 'Sem título'}</div>
       ${prev ? `<div class="entry-item-preview">${prev}</div>` : ''}
-      ${(tagHtml || catLabel) ? `<div class="entry-item-tags">${tagHtml}${catLabel}</div>` : ''}
+      <div class="entry-item-footer">
+        ${(tagHtml || catLabel) ? `<div class="entry-item-tags">${tagHtml}${catLabel}</div>` : '<span></span>'}
+        <span class="entry-palavras">${palavras} ${palavras === 1 ? 'palavra' : 'palavras'}</span>
+      </div>
     </div>`;
   }).join('');
   if (modo === 'diario') { renderStreak(); }
 }
 
 function filtrar(modo) { renderLista(modo); }
+
+// Highlight de palavra-chave na busca
+function highlightBusca(texto, busca) {
+  if (!busca) return texto;
+  const re = new RegExp('(' + busca.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+  return texto.replace(re, '<mark class="busca-highlight">$1</mark>');
+}
+
+
 
 // ── TIMELINE ──
 function calcHumor(txt) {
