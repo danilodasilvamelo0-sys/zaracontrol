@@ -5510,3 +5510,277 @@ font-size: 1.1em;
     .pq-agora-valor { font-size: .9em; }
 }
 
+/* ════════════════════════════════════════════
+   PLANO QUITAÇÃO — 5 melhorias premium
+   ════════════════════════════════════════════ */
+
+/* 1. PAINEL DE SAÚDE */
+.pq-saude {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    background: var(--s2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
+    animation: fadeUp 0.4s ease both;
+}
+.pq-saude-gauge-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.pq-saude-svg {
+    width: 80px;
+    height: 80px;
+}
+.pq-saude-num {
+    font-size: 10px;
+    font-weight: 800;
+    text-anchor: middle;
+    font-family: 'Montserrat', sans-serif;
+}
+.pq-saude-label {
+    font-size: 0.65em;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+.pq-saude-info { flex: 1; min-width: 0; }
+.pq-saude-frase {
+    font-size: 0.8em;
+    color: var(--text-sub);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+.pq-saude-metricas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+.pq-saude-metrica {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.pq-sm-label {
+    font-size: 0.6em;
+    color: var(--text-dim);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.pq-sm-val {
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* 5. CUSTO DIÁRIO */
+.pq-custo-dia {
+    background: linear-gradient(135deg, rgba(231,76,60,0.08), rgba(231,76,60,0.03));
+    border: 1px solid rgba(231,76,60,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.pq-custo-valor {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--red);
+    line-height: 1;
+}
+.pq-custo-desc {
+    font-size: 0.75em;
+    color: var(--text-sub);
+}
+.pq-custo-fim {
+    font-size: 0.72em;
+    color: var(--green);
+    margin-top: 4px;
+}
+
+/* 2. PRÓXIMOS 3 MESES */
+.pq-3meses { margin-bottom: 14px; }
+.pq-3meses-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+.pq-mes-card {
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 12px;
+    padding: 14px;
+    transition: border-color 0.2s;
+}
+.pq-mes-card:hover { border-color: var(--border); }
+.pq-mes-card.pq-mes-atual {
+    border-color: var(--gold-mid);
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), var(--s2));
+}
+.pq-mes-titulo {
+    font-size: 0.65em;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+}
+.pq-mes-total {
+    font-size: 0.7em;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-s);
+}
+.pq-mes-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 0;
+    font-size: 0.75em;
+    border-bottom: 1px solid var(--border-s);
+    flex-wrap: wrap;
+}
+.pq-mes-item:last-child { border-bottom: none; }
+.pq-mes-item.pq-mes-quita { color: var(--green); }
+.pq-mes-num {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--s4);
+    color: var(--text-dim);
+    font-size: 0.8em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.pq-mes-nome { flex: 1; min-width: 0; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pq-mes-valor { font-weight: 700; color: var(--text); white-space: nowrap; }
+.pq-mes-badge {
+    font-size: 0.65em;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--green);
+    background: rgba(46,204,113,0.12);
+    border: 1px solid rgba(46,204,113,0.25);
+    padding: 2px 6px;
+    border-radius: 8px;
+}
+
+/* 3. CELEBRAÇÃO DE PROGRESSO */
+.pq-celebracao { margin-bottom: 14px; }
+.pq-prog-total {
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 10px;
+}
+.pq-prog-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78em;
+    margin-bottom: 8px;
+}
+.pq-prog-track {
+    display: flex;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    gap: 1px;
+    margin-bottom: 6px;
+}
+.pq-prog-fill {
+    background: var(--green);
+    height: 100%;
+    border-radius: 4px 0 0 4px;
+    transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.pq-prog-fill-pending {
+    background: var(--border-s);
+    height: 100%;
+    flex: 1;
+}
+.pq-prog-legenda {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65em;
+    color: var(--text-dim);
+}
+.pq-marcos {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.pq-marco {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.75em;
+    color: var(--text-sub);
+    padding: 8px 12px;
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 8px;
+}
+
+/* 4. SIMULADOR DE CENÁRIOS */
+.pq-simulador { margin-bottom: 14px; }
+.pq-cenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+.pq-cenario {
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    transition: all 0.2s;
+}
+.pq-cenario:hover {
+    border-color: var(--gold-mid);
+    transform: translateY(-2px);
+}
+.pq-cenario-label {
+    font-size: 0.65em;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+}
+.pq-cenario-val {
+    font-size: 1.1em;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 3px;
+}
+.pq-cenario-sub {
+    font-size: 0.68em;
+    color: var(--text-dim);
+}
+
+@media (max-width: 640px) {
+    .pq-saude { flex-direction: column; align-items: flex-start; }
+    .pq-saude-gauge-wrap { flex-direction: row; align-items: center; gap: 12px; }
+    .pq-saude-svg { width: 60px; height: 60px; }
+    .pq-saude-metricas { grid-template-columns: 1fr 1fr; }
+    .pq-3meses-grid { grid-template-columns: 1fr; }
+    .pq-cenarios-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .pq-cenario { padding: 10px 8px; }
+    .pq-cenario-label { font-size: 0.58em; }
+}
+
