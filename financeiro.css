@@ -5863,6 +5863,21 @@ font-size: 1.1em;
 .emp-hist-valor-amort { color: #2ecc71; }
 .emp-hist-valor-juros { color: #f39c12; }
 .emp-hist-valor-pend  { color: #e74c3c; font-weight: 800; }
+.emp-hist-del {
+    background: transparent;
+    border: 1px solid rgba(231,76,60,0.2);
+    border-radius: 6px;
+    color: rgba(231,76,60,0.5);
+    cursor: pointer;
+    padding: 4px 6px;
+    display: flex;
+    align-items: center;
+    transition: all 0.18s;
+    flex-shrink: 0;
+    opacity: 0;
+}
+.emp-historico-item:hover .emp-hist-del { opacity: 1; }
+.emp-hist-del:hover { color: #e74c3c; background: rgba(231,76,60,0.12); border-color: rgba(231,76,60,0.4); }
 .emp-hist-badge.juros-pend {
     background: rgba(231,76,60,0.15);
     color: #ff6b6b;
