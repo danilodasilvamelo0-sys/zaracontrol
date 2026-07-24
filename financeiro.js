@@ -31,7 +31,6 @@
         receitas: [],
         despesasFixas: [],           // Modelos de despesas recorrentes
         despesasFixasMes: {},        // Instâncias mensais: {"2025-01": [...]}
-        despesasAdiadas: [],         // [{modeloId, mesOrigem, mesDestino, valor, descricao}]
         despesasVariaveis: [],       // Despesas parceladas
         despesasAvulsas: [],         // Despesas variáveis (avulsas, não recorrentes)
         emprestimos: [],
@@ -54,7 +53,6 @@
     // Garantir estrutura completa
     if (!financeiro.arquivados) financeiro.arquivados = JSON.parse(JSON.stringify(dadosVazios.arquivados));
     if (!financeiro.despesasFixasMes) financeiro.despesasFixasMes = {};
-    if (!financeiro.despesasAdiadas) financeiro.despesasAdiadas = [];
     if (!financeiro.receitasFixas) financeiro.receitasFixas = [];
     if (!financeiro.receitasMes) financeiro.receitasMes = {};
     if (!financeiro.receitasAvulsas) financeiro.receitasAvulsas = [];
@@ -1330,19 +1328,8 @@
 
         // Gerar instâncias NOVAS para o mês atual
         financeiro.despesasFixas.filter(df => df.ativa).forEach(modelo => {
-            // Verificar se já existe instância para este modelo neste mês
-            const adiados = financeiro.despesasAdiadas || [];
-            // Se este modelo foi adiado para outro mês, não gerar instância no mês atual
-            const foiAdiado = adiados.some(
-                a => String(a.modeloId) === String(modelo.id) && a.mesOrigem === key
-            );
-            // Se este modelo está chegando de um mês anterior (adiado para cá), não gerar duplicata
-            const chegouAqui = adiados.some(
-                a => String(a.modeloId) === String(modelo.id) && a.mesDestino === key
-            );
-            const jaExiste = foiAdiado || chegouAqui || financeiro.despesasFixasMes[key].some(
-                d => String(d.modeloId) === String(modelo.id) && !d.atrasada
-            );
+            // Verificar se já existe instância para este modelo neste mês (que não seja atrasada)
+            const jaExiste = financeiro.despesasFixasMes[key].some(d => d.modeloId === modelo.id && !d.atrasada);
             if (!jaExiste) {
                 financeiro.despesasFixasMes[key].push({
                     id: gerarId(),
@@ -1384,91 +1371,16 @@
         salvarDados();
     }
 
-    // ── Adiar despesa fixa para o próximo mês ──
-    function adiarDespesa(id) {
-        const keyAtual = getMesAnoKey();
-        const [ano, mes] = keyAtual.split('-').map(Number);
-        const proxAno = mes === 12 ? ano + 1 : ano;
-        const proxMes = mes === 12 ? 1 : mes + 1;
-        const keyProx = `${proxAno}-${String(proxMes).padStart(2,'0')}`;
-
-        // Encontrar a instância no mês atual
-        const arr = financeiro.despesasFixasMes[keyAtual] || [];
-        const desp = arr.find(d => String(d.id) === String(id));
-        if (!desp) return;
-        if (desp.pago) { mostrarStatus('Despesa já paga — não pode ser adiada.', 'error'); return; }
-
-        const nomeMes = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][proxMes];
-        if (!confirm(`Adiar "${desp.descricao}" (${formatarMoeda(desp.valor)}) para ${nomeMes}/${proxAno}?`)) return;
-
-        // ── Registrar o adiamento numa lista separada ──
-        if (!financeiro.despesasAdiadas) financeiro.despesasAdiadas = [];
-
-        // Remover registro anterior do mesmo modelo neste mês (se houver)
-        financeiro.despesasAdiadas = financeiro.despesasAdiadas.filter(
-            a => !(String(a.modeloId) === String(desp.modeloId) && a.mesOrigem === keyAtual)
-        );
-
-        financeiro.despesasAdiadas.push({
-            modeloId: desp.modeloId,
-            mesOrigem: keyAtual,
-            mesDestino: keyProx,
-            valor: desp.valor,
-            descricao: desp.descricao,
-            categoria: desp.categoria,
-        });
-
-        salvarDados();
-        renderizar();
-        mostrarStatus(`"${desp.descricao}" adiada para ${nomeMes}/${proxAno}.`, 'success');
-    }
-
 
     function getDespesasFixasMes() {
         const key = getMesAnoKey();
         if (key < '2026-01') return [];
-
-        const adiadas = financeiro.despesasAdiadas || [];
-
-        // IDs de modelos adiados DESTE mês (não mostrar)
-        const modelosAdiados = new Set(
-            adiadas.filter(a => a.mesOrigem === key).map(a => String(a.modeloId))
-        );
-
-        const despesas = (financeiro.despesasFixasMes[key] || []).filter(d => {
-            if (modelosAdiados.has(String(d.modeloId))) return false;
+        const despesas = financeiro.despesasFixasMes[key] || [];
+        return despesas.filter(d => {
             const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(d.modeloId));
             return modelo && modelo.ativa !== false;
         });
-
-        // Adicionar despesas recebidas de meses anteriores (adiadas para ESTE mês)
-        const recebidas = adiadas
-            .filter(a => a.mesDestino === key)
-            .map(a => {
-                // Verificar se já não existe uma instância normal deste modelo neste mês
-                const jaTemNormal = despesas.some(d => String(d.modeloId) === String(a.modeloId));
-                if (jaTemNormal) return null;
-                // Criar instância virtual baseada no modelo
-                const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(a.modeloId));
-                if (!modelo || modelo.ativa === false) return null;
-                const diaVenc = modelo.diaVencimento || modelo.dia || 1;
-                return {
-                    id: `adiada_${a.modeloId}_${key}`,
-                    modeloId: a.modeloId,
-                    descricao: a.descricao || modelo.descricao,
-                    valor: a.valor || modelo.valor,
-                    categoria: a.categoria || modelo.categoria,
-                    data: `${key}-${String(diaVenc).padStart(2,'0')}`,
-                    pago: false,
-                    atrasada: false,
-                    vinda_de_adiamento: true,
-                };
-            })
-            .filter(Boolean);
-
-        return [...despesas, ...recebidas];
     }
-
     // Função para editar valor de uma instância de despesa fixa (ex: adicionar juros)
     function editarValorInstancia(id, tipo) {
         const key = getMesAnoKey();
@@ -4339,9 +4251,6 @@
                     : '';
 
                 const acoes = `
-                    ${atual && !atual.pago ? `<button class="acc-delete-btn" onclick="adiarDespesa(${atual.id})" title="Adiar para o próximo mês" style="color:rgba(52,152,219,0.85);">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><polyline points="9 18 15 12 9 6"/><polyline points="15 18 21 12 15 6"/></svg>
-                    </button>` : ''}
                     ${atual ? `<button class="acc-delete-btn" onclick="editarValorInstancia(${atual.id},'fixa')" title="Editar valor deste mês" style="color:rgba(46,204,113,0.6);">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                     </button>` : ''}
