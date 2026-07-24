@@ -243,7 +243,7 @@ body::after { bottom: 0; }
     flex-shrink: 0;
     border: 1px solid rgba(255,255,255,0.06);
 }
-.kpi-icon svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+.kpi-icon svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; filter: drop-shadow(0 0 4px currentColor); }
 .kpi-label {
     color: var(--text-dim);
     font-size: 0.62em;
@@ -952,7 +952,7 @@ gap: 4px;
 .subtotal .sub-pago   { color: #27ae60; font-weight: var(--fw-semi); }
 .subtotal .sub-total  { color: var(--text-sub); font-weight: var(--fw-medium); }
 .subtotal .sub-pendente { color: #e74c3c; font-weight: var(--fw-semi); }
-.subtotal .sub-sep    { color: rgba(26,26,26,0.25); font-weight: var(--fw-regular); }
+.subtotal .sub-sep    { color: rgba(255,255,255,0.35); font-weight: var(--fw-regular); }
 
 .btn-add {
 background: rgba(212, 175, 125, 0.12);
@@ -1253,6 +1253,7 @@ border-color: rgba(232,193,96,0.70);
 }
 
 .btn-add-section .icon {
+color: rgba(255,255,255,0.85);
 width: 16px;
 height: 16px;
 }
@@ -1616,7 +1617,7 @@ background: #313136;
 }
 
 .form-group input::placeholder {
-color: rgba(255,255,255,0.3);
+color: rgba(255,255,255,0.50);
 }
 
 .form-group select option {
@@ -1946,11 +1947,12 @@ justify-content: center;
 width: 22px;
 height: 22px;
 border-radius: 50%;
-background: rgba(26,26,26,0.06);
+background: rgba(255,255,255,0.06);
+border: 1px solid rgba(255,255,255,0.10);
 transition: transform 0.25s;
 flex-shrink: 0;
 }
-.acc-chevron svg { width: 13px; height: 13px; stroke: rgba(26,26,26,0.45); }
+.acc-chevron svg { width: 13px; height: 13px; stroke: rgba(255,255,255,0.80); }
 .acc-chevron.open { transform: rotate(180deg); }
 
 /* Progresso inline na tabela */
@@ -2121,7 +2123,7 @@ transition: all 0.2s;
 box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 .btn-add-novo:hover { background: #333; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-.btn-add-novo svg { width: 14px; height: 14px; stroke: #fff; }
+.btn-add-novo svg { width: 14px; height: 14px; stroke: #000; stroke-width: 2.5; }
 
 /* Botão adicionar empréstimo — igual ao padrão */
 .btn-add-emp {
@@ -2140,7 +2142,7 @@ transition: all 0.2s;
 box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 .btn-add-emp:hover { background: #333; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-.btn-add-emp svg { width: 14px; height: 14px; stroke: #fff; }
+.btn-add-emp svg { width: 14px; height: 14px; stroke: #000; stroke-width: 2.5; }
 
 /* Cor texto tabela acc */
 .acc-descricao { font-weight: var(--fw-semi); color: var(--text); font-size: var(--font-base); }
@@ -2152,17 +2154,17 @@ box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 .acc-taxa-val { color: var(--text-sub); font-size: var(--font-sm); font-weight: var(--fw-medium); }
 .acc-delete-btn {
 background: none;
-border: none;
+border: 1px solid rgba(255,255,255,0.12);
 cursor: pointer;
-padding: 6px;
-color: rgba(255,255,255,0.55);
-border-radius: 6px;
+padding: 7px;
+color: rgba(255,255,255,0.75);
+border-radius: 8px;
 transition: all 0.2s;
-transition: color 0.2s;
 display: flex;
 align-items: center;
+justify-content: center;
 }
-.acc-delete-btn:hover { color: #e74c3c; background: rgba(231,76,60,0.08); }
+.acc-delete-btn:hover { color: #ff6b6b; background: rgba(231,76,60,0.15); border-color: rgba(231,76,60,0.4); transform: scale(1.05); }
 .acc-delete-btn[style*="rgba(184,151,46"]:hover { color: var(--gold); background: rgba(184,151,46,0.1); }
 .acc-delete-btn svg { width: 15px; height: 15px; }
 
@@ -3399,6 +3401,7 @@ body { padding: 15px; }
 }
 
 .btn-add-section .icon {
+color: rgba(255,255,255,0.85);
     width: 14px;
     height: 14px;
 }
