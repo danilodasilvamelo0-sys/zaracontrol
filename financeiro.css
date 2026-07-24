@@ -5788,3 +5788,78 @@ font-size: 1.1em;
     .pq-cenario-label { font-size: 0.58em; }
 }
 
+/* ── HISTÓRICO DE MOVIMENTAÇÕES — premium ── */
+.emp-hist-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.emp-historico-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 10px;
+    transition: border-color 0.18s;
+}
+.emp-historico-item:hover { border-color: var(--border); }
+.emp-hist-esq {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+.emp-hist-data {
+    font-size: 0.68em;
+    color: rgba(255,255,255,0.55);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.emp-hist-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.65em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    width: fit-content;
+}
+.emp-hist-badge.juros {
+    background: rgba(243,156,18,0.15);
+    color: #f39c12;
+    border: 1px solid rgba(243,156,18,0.3);
+}
+.emp-hist-badge.parcela {
+    background: rgba(52,152,219,0.15);
+    color: #5dade2;
+    border: 1px solid rgba(52,152,219,0.3);
+}
+.emp-hist-badge.amort {
+    background: rgba(46,204,113,0.12);
+    color: #2ecc71;
+    border: 1px solid rgba(46,204,113,0.3);
+}
+.emp-hist-saldo {
+    font-size: 0.65em;
+    color: rgba(255,255,255,0.45);
+    margin-top: 1px;
+}
+.emp-hist-saldo strong {
+    color: rgba(255,255,255,0.70);
+    font-weight: 600;
+}
+.emp-hist-valor {
+    font-size: 0.88em;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.emp-hist-valor-amort { color: #2ecc71; }
+.emp-hist-valor-juros { color: #f39c12; }
+
