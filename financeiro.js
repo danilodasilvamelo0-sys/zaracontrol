@@ -1329,9 +1329,9 @@
         // Gerar instâncias NOVAS para o mês atual
         financeiro.despesasFixas.filter(df => df.ativa).forEach(modelo => {
             // Verificar se já existe instância para este modelo neste mês
-            // Considera: normais (!atrasada), adiadas (adiada:true) — ambas contam
+            // Inclui: normais, adiadas (adiada:true no mês origem) e vindas de adiamento (mesOrigem definido)
             const jaExiste = financeiro.despesasFixasMes[key].some(
-                d => String(d.modeloId) === String(modelo.id) && (!d.atrasada || d.adiada)
+                d => String(d.modeloId) === String(modelo.id) && (!d.atrasada || d.adiada || d.mesOrigem)
             );
             if (!jaExiste) {
                 financeiro.despesasFixasMes[key].push({
@@ -5227,10 +5227,12 @@
         // 4. Remover instâncias duplicadas (mesmo modeloId e não-atrasada aparecendo mais de uma vez)
         Object.keys(financeiro.despesasFixasMes || {}).forEach(key => {
             const despesas = financeiro.despesasFixasMes[key] || [];
+            // Ordenar: instâncias com mesOrigem (adiadas) têm prioridade sobre normais geradas
+            despesas.sort((a, b) => (b.mesOrigem ? 1 : 0) - (a.mesOrigem ? 1 : 0));
             const vistos = new Set();
             const antes = despesas.length;
             financeiro.despesasFixasMes[key] = despesas.filter(d => {
-                // Instâncias adiadas são únicas por definição — nunca remover
+                // Instâncias marcadas como adiada:true (no mês origem) — sempre manter
                 if (d.adiada) return true;
 
                 if (!d.atrasada) {
