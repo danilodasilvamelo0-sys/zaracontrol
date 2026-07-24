@@ -9,11 +9,11 @@
   --s2:       #141414;
   --s3:       #1c1c1c;
   --s4:       #242424;
-  --text:     #f0ece4;
-  --text-sub: rgba(240,236,228,0.55);
-  --text-dim: rgba(240,236,228,0.30);
-  --gold:     #c9a84c;
-  --gold-b:   #e8c96a;
+  --text:     #f5f2ec;
+  --text-sub: rgba(245,242,236,0.80);
+  --text-dim: rgba(245,242,236,0.55);
+  --gold:     #d4b05a;
+  --gold-b:   #f0d070;
   --gold-dim: rgba(201,168,76,0.10);
   --gold-mid: rgba(201,168,76,0.28);
   --border:   rgba(201,168,76,0.14);
