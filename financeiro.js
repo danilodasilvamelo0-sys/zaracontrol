@@ -1398,17 +1398,33 @@
         // Adicionar no próximo mês
         if (!financeiro.despesasFixasMes[keyProx]) financeiro.despesasFixasMes[keyProx] = [];
 
+        // Verificar se já existe instância deste modelo no próximo mês — evitar duplicata
+        const jaExisteProx = financeiro.despesasFixasMes[keyProx].some(
+            d => String(d.modeloId) === String(desp.modeloId) && !d.atrasada
+        );
+        if (jaExisteProx) {
+            // Já existe — apenas restaurar no mês atual com flag de adiada visualmente
+            mostrarStatus('Já existe uma instância desta despesa no próximo mês.', 'error');
+            despAtual.splice(idx, 0, desp); // desfaz a remoção
+            financeiro.despesasFixasMes[keyAtual] = despAtual;
+            return;
+        }
+
         // Calcular nova data de vencimento
         const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(desp.modeloId));
         const diaVenc = modelo ? modelo.diaVencimento || modelo.dia || 1 : 1;
         const novaData = `${keyProx}-${String(diaVenc).padStart(2,'0')}`;
 
+        // Inserir no próximo mês — NÃO marcando como atrasada (assim jaExiste a reconhece)
         financeiro.despesasFixasMes[keyProx].push({
             ...desp,
+            id: gerarId(),           // novo id para não colidir
             data: novaData,
             dia: diaVenc,
             pago: false,
-            adiada: true,
+            atrasada: false,         // ← garante que jaExiste a encontre e não gere duplicata
+            adiada: true,            // flag visual apenas
+            mesOrigem: keyAtual,
         });
 
         salvarDados();
