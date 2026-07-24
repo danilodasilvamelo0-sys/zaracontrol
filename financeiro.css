@@ -5907,3 +5907,92 @@ font-size: 1.1em;
     background: rgba(231,76,60,0.04);
 }
 
+/* ── COMPARATIVO 3 ESTRATÉGIAS ── */
+.pq-comp-3 {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.pq-comp-card {
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 12px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.pq-comp-card:hover { border-color: var(--border); transform: translateY(-2px); }
+.pq-comp-card.pq-ativo { background: rgba(201,168,76,0.06); }
+.pq-comp-titulo {
+    font-size: 0.72em;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+}
+.pq-comp-subtitulo {
+    font-size: 0.62em;
+    color: var(--text-dim);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+}
+.pq-comp-linha {
+    font-size: 0.72em;
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.pq-comp-prim {
+    font-size: 0.62em;
+    color: var(--text-dim);
+    margin-top: 2px;
+}
+.pq-comp-explicacao {
+    font-size: 0.62em;
+    color: var(--text-dim);
+    line-height: 1.4;
+    margin-top: 4px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border-s);
+}
+.pq-comp-tag {
+    background: var(--gold-dim);
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 8px;
+    font-size: 0.75em;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.pq-comp-tag.verde {
+    background: rgba(46,204,113,0.10);
+    color: var(--green);
+    border-color: rgba(46,204,113,0.25);
+}
+.pq-comp-ativa-tag {
+    font-size: 0.62em;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+.pq-comp-selecionar {
+    font-size: 0.62em;
+    color: var(--text-dim);
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+}
+
+@media(max-width:640px) {
+    .pq-comp-3 { grid-template-columns: 1fr; }
+    .pq-comp-card { padding: 12px; }
+}
+
