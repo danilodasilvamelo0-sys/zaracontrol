@@ -1328,8 +1328,11 @@
 
         // Gerar instâncias NOVAS para o mês atual
         financeiro.despesasFixas.filter(df => df.ativa).forEach(modelo => {
-            // Verificar se já existe instância para este modelo neste mês (que não seja atrasada)
-            const jaExiste = financeiro.despesasFixasMes[key].some(d => d.modeloId === modelo.id && !d.atrasada);
+            // Verificar se já existe instância para este modelo neste mês
+            // (inclui instâncias adiadas — não recriar se foi adiada)
+            const jaExiste = financeiro.despesasFixasMes[key].some(
+                d => String(d.modeloId) === String(modelo.id) && !d.atrasada
+            );
             if (!jaExiste) {
                 financeiro.despesasFixasMes[key].push({
                     id: gerarId(),
@@ -1379,7 +1382,6 @@
         const proxMes = mes === 12 ? 1 : mes + 1;
         const keyProx = `${proxAno}-${String(proxMes).padStart(2,'0')}`;
 
-        // Encontrar a instância no mês atual
         const despAtual = financeiro.despesasFixasMes[keyAtual];
         if (!despAtual) return;
         const idx = despAtual.findIndex(d => String(d.id) === String(id));
@@ -1391,41 +1393,34 @@
         const nomeMes = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][proxMes];
         if (!confirm(`Adiar "${desp.descricao}" (${formatarMoeda(desp.valor)}) para ${nomeMes}/${proxAno}?`)) return;
 
-        // Remover do mês atual
-        despAtual.splice(idx, 1);
-        financeiro.despesasFixasMes[keyAtual] = despAtual;
+        // ── NÃO remover do mês atual: marcar como adiada ──
+        // Isso garante que gerarInstanciasDespesasFixas não recrie
+        desp.adiada = true;
+        desp.pago   = false;
 
-        // Adicionar no próximo mês
+        // Adicionar no próximo mês se ainda não existe
         if (!financeiro.despesasFixasMes[keyProx]) financeiro.despesasFixasMes[keyProx] = [];
 
-        // Verificar se já existe instância deste modelo no próximo mês — evitar duplicata
         const jaExisteProx = financeiro.despesasFixasMes[keyProx].some(
-            d => String(d.modeloId) === String(desp.modeloId) && !d.atrasada
+            d => String(d.modeloId) === String(desp.modeloId) && !d.atrasada && !d.adiada
         );
-        if (jaExisteProx) {
-            // Já existe — apenas restaurar no mês atual com flag de adiada visualmente
-            mostrarStatus('Já existe uma instância desta despesa no próximo mês.', 'error');
-            despAtual.splice(idx, 0, desp); // desfaz a remoção
-            financeiro.despesasFixasMes[keyAtual] = despAtual;
-            return;
+
+        if (!jaExisteProx) {
+            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(desp.modeloId));
+            const diaVenc = modelo ? (modelo.diaVencimento || modelo.dia || 1) : 1;
+            const novaData = `${keyProx}-${String(diaVenc).padStart(2,'0')}`;
+
+            financeiro.despesasFixasMes[keyProx].push({
+                ...desp,
+                id: gerarId(),
+                data: novaData,
+                dia: diaVenc,
+                pago: false,
+                atrasada: false,
+                adiada: false,        // no próximo mês é uma instância normal
+                mesOrigem: keyAtual,
+            });
         }
-
-        // Calcular nova data de vencimento
-        const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(desp.modeloId));
-        const diaVenc = modelo ? modelo.diaVencimento || modelo.dia || 1 : 1;
-        const novaData = `${keyProx}-${String(diaVenc).padStart(2,'0')}`;
-
-        // Inserir no próximo mês — NÃO marcando como atrasada (assim jaExiste a reconhece)
-        financeiro.despesasFixasMes[keyProx].push({
-            ...desp,
-            id: gerarId(),           // novo id para não colidir
-            data: novaData,
-            dia: diaVenc,
-            pago: false,
-            atrasada: false,         // ← garante que jaExiste a encontre e não gere duplicata
-            adiada: true,            // flag visual apenas
-            mesOrigem: keyAtual,
-        });
 
         salvarDados();
         renderizar();
@@ -1441,8 +1436,9 @@
         const despesas = financeiro.despesasFixasMes[key] || [];
         
         // Retornar todas as despesas (do mês atual + atrasadas de meses anteriores)
+        // Excluir instâncias adiadas para o próximo mês
         return despesas.filter(d => {
-            // Verificar se o modelo ainda está ativo
+            if (d.adiada) return false; // adiada — não exibir neste mês
             const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(d.modeloId));
             return modelo && modelo.ativa !== false;
         });
