@@ -2788,6 +2788,16 @@
             mesRef: getMesAnoKey()
         });
 
+        // Registrar no histórico de exibição como juros PENDENTES (não pagos)
+        if (!emp.historicoPagamentos) emp.historicoPagamentos = [];
+        emp.historicoPagamentos.push({
+            tipo: 'juros_gerado',
+            valor: valorJuros,
+            data: new Date().toISOString().split('T')[0],
+            pago: false,
+            saldoJurosApos: emp.jurosAcumulados
+        });
+
         salvarDados();
         renderizar();
         mostrarStatus(`Juros de ${formatarMoeda(valorJuros)} adicionados`, 'success');
@@ -4517,11 +4527,17 @@
             // ── 5. HISTÓRICO (últimos 5) ──
             const historicoHtml = (e.historicoPagamentos && e.historicoPagamentos.length > 0)
                 ? `<div class="emp-hist-lista">` + e.historicoPagamentos.slice().reverse().map((h, i) => {
-                    const isJuros  = h.tipo === 'juros';
-                    const isParcela = h.tipo === 'parcela';
-                    const isAmort   = h.tipo === 'amortizacao';
+                    const isJuros      = h.tipo === 'juros';
+                    const isJurosGer   = h.tipo === 'juros_gerado';
+                    const isParcela    = h.tipo === 'parcela';
+                    const isAmort      = h.tipo === 'amortizacao';
 
-                    const badge = isJuros
+                    const badge = isJurosGer
+                        ? `<span class="emp-hist-badge juros-pend">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            Juros gerados — NÃO PAGOS
+                          </span>`
+                        : isJuros
                         ? `<span class="emp-hist-badge juros">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                             Juros pagos
@@ -4536,7 +4552,9 @@
                             Amortização
                           </span>`;
 
-                    const saldoApos = h.saldoApos !== undefined
+                    const saldoApos = isJurosGer && h.saldoJurosApos !== undefined
+                        ? `<span class="emp-hist-saldo">Juros acumulados: <strong style="color:#e74c3c">${formatarMoeda(h.saldoJurosApos)}</strong></span>`
+                        : h.saldoApos !== undefined
                         ? `<span class="emp-hist-saldo">Saldo após: <strong>${formatarMoeda(h.saldoApos)}</strong></span>`
                         : '';
 
@@ -4546,7 +4564,7 @@
                             ${badge}
                             ${saldoApos}
                         </div>
-                        <span class="emp-hist-valor ${isJuros ? 'emp-hist-valor-juros' : 'emp-hist-valor-amort'}">${formatarMoeda(h.valor)}</span>
+                        <span class="emp-hist-valor ${isJurosGer ? 'emp-hist-valor-pend' : isJuros ? 'emp-hist-valor-juros' : 'emp-hist-valor-amort'}">${formatarMoeda(h.valor)}</span>
                     </div>`;
                 }).join('') + `</div>`
                 : '<div class="emp-historico-vazio">Nenhum histórico registrado.</div>';
