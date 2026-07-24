@@ -1371,6 +1371,51 @@
         salvarDados();
     }
 
+    // ── Adiar despesa fixa para o próximo mês ──
+    function adiarDespesa(id) {
+        const keyAtual = getMesAnoKey();
+        const [ano, mes] = keyAtual.split('-').map(Number);
+        const proxAno = mes === 12 ? ano + 1 : ano;
+        const proxMes = mes === 12 ? 1 : mes + 1;
+        const keyProx = `${proxAno}-${String(proxMes).padStart(2,'0')}`;
+
+        // Encontrar a instância no mês atual
+        const despAtual = financeiro.despesasFixasMes[keyAtual];
+        if (!despAtual) return;
+        const idx = despAtual.findIndex(d => String(d.id) === String(id));
+        if (idx === -1) return;
+
+        const desp = despAtual[idx];
+        if (desp.pago) { mostrarStatus('Despesa já paga — não pode ser adiada.', 'error'); return; }
+
+        const nomeMes = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][proxMes];
+        if (!confirm(`Adiar "${desp.descricao}" (${formatarMoeda(desp.valor)}) para ${nomeMes}/${proxAno}?`)) return;
+
+        // Remover do mês atual
+        despAtual.splice(idx, 1);
+        financeiro.despesasFixasMes[keyAtual] = despAtual;
+
+        // Adicionar no próximo mês
+        if (!financeiro.despesasFixasMes[keyProx]) financeiro.despesasFixasMes[keyProx] = [];
+
+        // Calcular nova data de vencimento
+        const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(desp.modeloId));
+        const diaVenc = modelo ? modelo.diaVencimento || modelo.dia || 1 : 1;
+        const novaData = `${keyProx}-${String(diaVenc).padStart(2,'0')}`;
+
+        financeiro.despesasFixasMes[keyProx].push({
+            ...desp,
+            data: novaData,
+            dia: diaVenc,
+            pago: false,
+            adiada: true,
+        });
+
+        salvarDados();
+        renderizar();
+        mostrarStatus(`"${desp.descricao}" adiada para ${nomeMes}/${proxAno}.`, 'success');
+    }
+
     function getDespesasFixasMes() {
         const key = getMesAnoKey();
         
@@ -4257,6 +4302,9 @@
                     : '';
 
                 const acoes = `
+                    ${atual && !atual.pago ? `<button class="acc-delete-btn" onclick="adiarDespesa(${atual.id})" title="Adiar para o próximo mês" style="color:rgba(52,152,219,0.85);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><polyline points="9 18 15 12 9 6"/><polyline points="15 18 21 12 15 6"/></svg>
+                    </button>` : ''}
                     ${atual ? `<button class="acc-delete-btn" onclick="editarValorInstancia(${atual.id},'fixa')" title="Editar valor deste mês" style="color:rgba(46,204,113,0.6);">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                     </button>` : ''}
