@@ -1329,9 +1329,9 @@
         // Gerar instâncias NOVAS para o mês atual
         financeiro.despesasFixas.filter(df => df.ativa).forEach(modelo => {
             // Verificar se já existe instância para este modelo neste mês
-            // (inclui instâncias adiadas — não recriar se foi adiada)
+            // Considera: normais (!atrasada), adiadas (adiada:true) — ambas contam
             const jaExiste = financeiro.despesasFixasMes[key].some(
-                d => String(d.modeloId) === String(modelo.id) && !d.atrasada
+                d => String(d.modeloId) === String(modelo.id) && (!d.atrasada || d.adiada)
             );
             if (!jaExiste) {
                 financeiro.despesasFixasMes[key].push({
@@ -5230,6 +5230,9 @@
             const vistos = new Set();
             const antes = despesas.length;
             financeiro.despesasFixasMes[key] = despesas.filter(d => {
+                // Instâncias adiadas são únicas por definição — nunca remover
+                if (d.adiada) return true;
+
                 if (!d.atrasada) {
                     const chave = `normal_${d.modeloId}`;
                     if (vistos.has(chave)) return false;
