@@ -5878,6 +5878,20 @@ font-size: 1.1em;
 }
 .emp-historico-item:hover .emp-hist-del { opacity: 1; }
 .emp-hist-del:hover { color: #e74c3c; background: rgba(231,76,60,0.12); border-color: rgba(231,76,60,0.4); }
+.emp-hist-badge.cancelado {
+    background: rgba(149,165,166,0.15);
+    color: #bdc3c7;
+    border: 1px solid rgba(149,165,166,0.3);
+}
+.emp-btn-cancelar-juros {
+    background: rgba(231,76,60,0.08) !important;
+    border-color: rgba(231,76,60,0.3) !important;
+    color: #ff6b6b !important;
+}
+.emp-btn-cancelar-juros:hover {
+    background: rgba(231,76,60,0.18) !important;
+    border-color: #e74c3c !important;
+}
 .emp-hist-badge.juros-pend {
     background: rgba(231,76,60,0.15);
     color: #ff6b6b;
