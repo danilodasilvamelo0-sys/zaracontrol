@@ -2865,7 +2865,8 @@
         emp.historicoPagamentos.push({
             tipo: 'juros',
             valor: valor,
-            data: data
+            data: data,
+            saldoApos: emp.principal
         });
 
         salvarDados();
@@ -2948,7 +2949,8 @@
         emp.historicoPagamentos.push({
             tipo: 'amortizacao',
             valor: valor,
-            data: data
+            data: data,
+            saldoApos: emp.principal
         });
 
         // Arquivar automaticamente se quitado
@@ -3059,9 +3061,12 @@
         // Adicionar ao histórico de pagamentos para exibição
         if (!emp.historicoPagamentos) emp.historicoPagamentos = [];
         emp.historicoPagamentos.push({
-            tipo: 'amortizacao',
+            tipo: 'parcela',
             valor: valorAplicado,
-            data: data
+            data: data,
+            numeroParcela: numeroParcela,
+            totalParcelas: emp.totalParcelas,
+            saldoApos: emp.principal
         });
 
         let msg = `Parcela ${numeroParcela}/${emp.totalParcelas} paga: ${formatarMoeda(valorAplicado)}`;
@@ -4511,13 +4516,39 @@
 
             // ── 5. HISTÓRICO (últimos 5) ──
             const historicoHtml = (e.historicoPagamentos && e.historicoPagamentos.length > 0)
-                ? e.historicoPagamentos.slice().reverse().slice(0,5).map(h => `
-                    <div class="emp-historico-item">
-                        <span class="emp-hist-data">${formatarData(h.data)}</span>
-                        <span class="emp-hist-tipo">${h.tipo === 'amortizacao' ? 'Amortização' : 'Juros'}</span>
-                        <span class="${h.tipo === 'amortizacao' ? 'emp-hist-valor-amort' : 'emp-hist-valor-juros'}">${formatarMoeda(h.valor)}</span>
-                    </div>
-                `).join('')
+                ? `<div class="emp-hist-lista">` + e.historicoPagamentos.slice().reverse().map((h, i) => {
+                    const isJuros  = h.tipo === 'juros';
+                    const isParcela = h.tipo === 'parcela';
+                    const isAmort   = h.tipo === 'amortizacao';
+
+                    const badge = isJuros
+                        ? `<span class="emp-hist-badge juros">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            Juros pagos
+                          </span>`
+                        : isParcela
+                        ? `<span class="emp-hist-badge parcela">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                            Parcela ${h.numeroParcela || ''} paga
+                          </span>`
+                        : `<span class="emp-hist-badge amort">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                            Amortização
+                          </span>`;
+
+                    const saldoApos = h.saldoApos !== undefined
+                        ? `<span class="emp-hist-saldo">Saldo após: <strong>${formatarMoeda(h.saldoApos)}</strong></span>`
+                        : '';
+
+                    return `<div class="emp-historico-item">
+                        <div class="emp-hist-esq">
+                            <span class="emp-hist-data">${formatarData(h.data)}</span>
+                            ${badge}
+                            ${saldoApos}
+                        </div>
+                        <span class="emp-hist-valor ${isJuros ? 'emp-hist-valor-juros' : 'emp-hist-valor-amort'}">${formatarMoeda(h.valor)}</span>
+                    </div>`;
+                }).join('') + `</div>`
                 : '<div class="emp-historico-vazio">Nenhum histórico registrado.</div>';
 
             return `
