@@ -2774,6 +2774,45 @@
     }
 
     // Gerar juros do mês (manual)
+    function removerHistorico(empId, idx) {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(empId));
+        if (!emp || !emp.historicoPagamentos) return;
+        const h = emp.historicoPagamentos[idx];
+        if (!h) return;
+
+        const tipo = h.tipo;
+        const valor = h.valor;
+        const desc = tipo === 'juros_gerado' ? `juros gerados de ${formatarMoeda(valor)}`
+                   : tipo === 'juros'        ? `pagamento de juros de ${formatarMoeda(valor)}`
+                   : tipo === 'parcela'      ? `parcela ${h.numeroParcela || ''} de ${formatarMoeda(valor)}`
+                   : `amortização de ${formatarMoeda(valor)}`;
+
+        if (!confirm(`Remover ${desc}?\n\nIsso vai reverter o efeito desta operação nos saldos.`)) return;
+
+        // Reverter o efeito no saldo
+        if (tipo === 'juros_gerado') {
+            // Desfazer: subtrair os juros gerados dos acumulados
+            emp.jurosAcumulados = Math.max(0, (emp.jurosAcumulados || 0) - valor);
+        } else if (tipo === 'juros') {
+            // Desfazer pagamento de juros: devolver aos acumulados
+            emp.jurosAcumulados = (emp.jurosAcumulados || 0) + valor;
+        } else if (tipo === 'amortizacao' || tipo === 'parcela') {
+            // Desfazer amortização: devolver ao principal
+            emp.principal = (emp.principal || 0) + valor;
+            emp.totalAmortizado = Math.max(0, (emp.totalAmortizado || 0) - valor);
+            if (tipo === 'parcela' && h.numeroParcela) {
+                emp.parcelasPagas = Math.max(0, (emp.parcelasPagas || 0) - 1);
+            }
+        }
+
+        // Remover do array
+        emp.historicoPagamentos.splice(idx, 1);
+
+        salvarDados();
+        renderizar();
+        mostrarStatus(`Entrada removida e saldo revertido.`, 'success');
+    }
+
     function gerarJurosMes(id) {
         const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
         if (!emp || emp.principal <= 0) return;
@@ -4564,7 +4603,12 @@
                             ${badge}
                             ${saldoApos}
                         </div>
-                        <span class="emp-hist-valor ${isJurosGer ? 'emp-hist-valor-pend' : isJuros ? 'emp-hist-valor-juros' : 'emp-hist-valor-amort'}">${formatarMoeda(h.valor)}</span>
+                        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                            <span class="emp-hist-valor ${isJurosGer ? 'emp-hist-valor-pend' : isJuros ? 'emp-hist-valor-juros' : 'emp-hist-valor-amort'}">${formatarMoeda(h.valor)}</span>
+                            <button class="emp-hist-del" onclick="event.stopPropagation();removerHistorico('${e.id}',${e.historicoPagamentos.length - 1 - i})" title="Remover esta entrada">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </div>
                     </div>`;
                 }).join('') + `</div>`
                 : '<div class="emp-historico-vazio">Nenhum histórico registrado.</div>';
