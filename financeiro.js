@@ -1,4 +1,43 @@
-/* ==========================================================
+/* ======
+
+        // Cards mobile para avulsas
+        const mobileAvulsas = document.getElementById('despesasAvulsasMobile');
+        if (mobileAvulsas) {
+            let htmlMobAvulsas = '<div class="desp-cards-wrap">';
+            avulsasMes.forEach(d => {
+                const hj = new Date(); hj.setHours(0,0,0,0);
+                const dv = d.data ? new Date(d.data+'T00:00:00') : null;
+                const vencido = dv && dv < hj && !d.pago;
+                const badge = getStatusBadge(d.pago, vencido);
+                const cor = d.pago ? 'var(--green)' : vencido ? 'var(--red)' : 'var(--text-sub)';
+                const bordaL = vencido ? '3px solid var(--red)' : d.pago ? '3px solid var(--green)' : '3px solid transparent';
+                const icon = getCategIcon(d.categoria || 'Outros');
+                htmlMobAvulsas += `<div class="desp-card${vencido?' desp-card-vencida':''}${d.pago?' desp-card-paga':''}" style="border-left:${bordaL}">
+                    <div class="desp-card-top">
+                        <div class="desp-card-icon">${icon}</div>
+                        <div class="desp-card-info">
+                            <div class="desp-card-nome">${d.descricao}</div>
+                            <div class="desp-card-meta">${d.categoria||'Outros'} · ${formatarData(d.data)}</div>
+                        </div>
+                        <div class="desp-card-right">
+                            <div class="desp-card-valor" style="color:${cor};">${formatarMoeda(d.valor)}</div>
+                            ${badge}
+                        </div>
+                    </div>
+                    <div class="desp-card-acoes">
+                        <button class="acc-delete-btn" onclick="marcarPagoAvulsa(${d.id})" style="color:rgba(46,204,113,0.8);" title="Marcar pago">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><polyline points="20 6 9 17 4 12"/></svg>
+                        </button>
+                        <button class="acc-delete-btn" onclick="deletarDespesaAvulsa(${d.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>`;
+            });
+            htmlMobAvulsas += '</div>';
+            mobileAvulsas.innerHTML = htmlMobAvulsas;
+        }
+====================================================
    FINANCEIRO.JS
    Logica extraida de financeiro.html (separacao de
    responsabilidades: HTML / CSS / JS)
@@ -4447,6 +4486,93 @@
         });
 
         variaveisTable.innerHTML = htmlVariaveis;
+
+        // Cards mobile para variáveis
+        const mobileVar = document.getElementById('despesasVariaveisMobile');
+        if (mobileVar) {
+            let htmlMobVar = '<div class="desp-cards-wrap">';
+            // Não parceladas
+            naoParceladas.forEach(d => {
+                const status = getStatusVencimento(d.data, d.pago);
+                const vencido = status.classe === 'vencido';
+                const badge = getStatusBadge(d.pago, vencido);
+                const cor = d.pago ? 'var(--green)' : vencido ? 'var(--red)' : 'var(--text-sub)';
+                const bordaL = vencido ? '3px solid var(--red)' : d.pago ? '3px solid var(--green)' : '3px solid transparent';
+                const icon = getCategIcon(d.categoria || 'Outros');
+                htmlMobVar += `<div class="desp-card${vencido?' desp-card-vencida':''}${d.pago?' desp-card-paga':''}" style="border-left:${bordaL}">
+                    <div class="desp-card-top">
+                        <div class="desp-card-icon">${icon}</div>
+                        <div class="desp-card-info">
+                            <div class="desp-card-nome">${d.descricao}</div>
+                            <div class="desp-card-meta">${d.categoria||'Outros'} · ${formatarData(d.data)}</div>
+                        </div>
+                        <div class="desp-card-right">
+                            <div class="desp-card-valor" style="color:${cor};">${formatarMoeda(d.valor)}</div>
+                            ${badge}
+                        </div>
+                    </div>
+                    <div class="desp-card-acoes">
+                        <button class="acc-delete-btn" onclick="deletarDespesaVariavel(${d.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>`;
+            });
+            // Parceladas
+            Object.keys(gruposParcelados).forEach(grupoId => {
+                const parcelasDoMes = gruposParcelados[grupoId];
+                const todasP = financeiro.despesasVariaveis.filter(dv => String(dv.grupoParcelaId) === String(grupoId));
+                if (!todasP.length) return;
+                const prim = parcelasDoMes[0] || todasP[0];
+                const pagas = todasP.filter(p => p.pago).length;
+                const total = todasP.length;
+                const pct = total > 0 ? Math.round((pagas/total)*100) : 0;
+                const atrasadas = parcelasEmAtraso.filter(d => String(d.grupoParcelaId) === String(grupoId));
+                const vencido = atrasadas.length > 0;
+                const bordaL = vencido ? '3px solid var(--red)' : pct===100 ? '3px solid var(--green)' : '3px solid transparent';
+                const icon = getCategIcon(prim.categoria || 'Outros');
+                const detailId = 'mob-parcela-' + grupoId;
+                htmlMobVar += `<div class="desp-card${vencido?' desp-card-vencida':''}" style="border-left:${bordaL}">
+                    <div class="desp-card-top" onclick="var el=document.getElementById('${detailId}');el.style.display=el.style.display==='none'?'block':'none'">
+                        <div class="desp-card-icon">${icon}</div>
+                        <div class="desp-card-info">
+                            <div class="desp-card-nome">${prim.descricao}${atrasadas.length>0?`<span class="desp-atraso-badge">${atrasadas.length} em atraso</span>`:''}</div>
+                            <div class="desp-card-meta">${total}x · ${pagas}/${total} pagas</div>
+                            <div class="desp-prog-wrap" style="max-width:100%;margin-top:4px;">
+                                <div class="desp-prog-bar" style="width:${pct}%;background:${pct===100?'var(--green)':'var(--gold)'}"></div>
+                            </div>
+                        </div>
+                        <div class="desp-card-right">
+                            <div class="desp-card-valor">${formatarMoeda(todasP.reduce((s,p)=>s+p.valor,0))}</div>
+                            <span class="desp-badge ${pct===100?'pago':'pendente'}">${pct===100?'Pago':'Pendente'}</span>
+                        </div>
+                    </div>
+                    <div id="${detailId}" style="display:none;padding:8px 12px;">
+                        ${todasP.sort((a,b)=>a.parcelaAtual-b.parcelaAtual).map(p => {
+                            const isPago=p.pago;
+                            const dP=p.data?new Date(p.data+'T00:00:00'):null;
+                            const hj=new Date();hj.setHours(0,0,0,0);
+                            const isV=dP&&dP<hj&&!isPago;
+                            return `<div class="parcela-item${isPago?' pago':''}${isV?' vencida':''}" onclick="togglePagoVariavel(${p.id})">
+                                <div class="parcela-check${isPago?' checked':''}"></div>
+                                <div class="parcela-info-box"><div class="parcela-nome">Parcela ${p.parcelaAtual}/${p.totalParcelas}</div><div class="parcela-data-txt">${p.data?p.data.split('-').reverse().join('/'):'—'}</div></div>
+                                <div class="parcela-valor-txt">${formatarMoeda(p.valor)}</div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                    <div class="desp-card-acoes">
+                        <button class="acc-delete-btn" onclick="editarDespesaParcelada(${prim.grupoParcelaId||prim.id})" style="color:rgba(201,168,76,0.8);" title="Editar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="acc-delete-btn" onclick="deletarTodasParcelas(${prim.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>`;
+            });
+            htmlMobVar += '</div>';
+            mobileVar.innerHTML = htmlMobVar;
+        }
 
         // === TABELA DESPESAS AVULSAS ===
         const avulsasTable = document.getElementById('despesasAvulsasTable');
