@@ -2774,6 +2774,29 @@
     }
 
     // Gerar juros do mês (manual)
+    function cancelarJuros(id) {
+        const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
+        if (!emp) return;
+        const valor = emp.jurosAcumulados || 0;
+        if (valor <= 0) return;
+        if (!confirm(`Cancelar/remover os ${formatarMoeda(valor)} de juros acumulados do "${emp.descricao}"?\n\nIsso zerará os juros pendentes sem registrar pagamento.`)) return;
+
+        emp.jurosAcumulados = 0;
+
+        // Registrar no histórico como cancelamento
+        if (!emp.historicoPagamentos) emp.historicoPagamentos = [];
+        emp.historicoPagamentos.push({
+            tipo: 'cancelamento',
+            valor: valor,
+            data: new Date().toISOString().split('T')[0],
+            saldoJurosApos: 0
+        });
+
+        salvarDados();
+        renderizar();
+        mostrarStatus(`Juros de ${formatarMoeda(valor)} cancelados.`, 'success');
+    }
+
     function removerHistorico(empId, idx) {
         const emp = financeiro.emprestimos.find(e => String(e.id) === String(empId));
         if (!emp || !emp.historicoPagamentos) return;
@@ -4570,8 +4593,14 @@
                     const isJurosGer   = h.tipo === 'juros_gerado';
                     const isParcela    = h.tipo === 'parcela';
                     const isAmort      = h.tipo === 'amortizacao';
+                    const isCancelado  = h.tipo === 'cancelamento';
 
-                    const badge = isJurosGer
+                    const badge = isCancelado
+                        ? `<span class="emp-hist-badge cancelado">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            Juros cancelados
+                          </span>`
+                        : isJurosGer
                         ? `<span class="emp-hist-badge juros-pend">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                             Juros gerados — NÃO PAGOS
@@ -4678,6 +4707,11 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                                     Gerar Juros (Mensal)
                                 </button>
+                                ${(e.jurosAcumulados || 0) > 0 ? `
+                                <button class="emp-btn-acao emp-btn-cancelar-juros" onclick="cancelarJuros('${e.id}')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                    Cancelar Juros (${formatarMoeda(e.jurosAcumulados)})
+                                </button>` : ''}
                                 <button class="emp-btn-acao" onclick="abrirModalPagarJuros(${e.id})">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
                                     Pagar Juros
