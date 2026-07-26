@@ -1411,6 +1411,58 @@
     }
 
 
+    // ── Adiar despesa atrasada para o mês seguinte ──
+    function adiarDespesaAtrasada(id, mesOrigem) {
+        // Encontrar a instância atrasada
+        const arr = financeiro.despesasFixasMes[mesOrigem] || [];
+        const idx = arr.findIndex(d => String(d.id) === String(id));
+        if (idx === -1) return;
+
+        const desp = arr[idx];
+        if (desp.pago) { mostrarStatus('Despesa já paga.', 'error'); return; }
+
+        // Calcular mês de destino = mês atual + 1
+        const hoje = new Date();
+        const proxMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 1);
+        const keyProx = proxMes.getFullYear() + '-' + String(proxMes.getMonth() + 1).padStart(2,'0');
+        const nomeMes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][proxMes.getMonth()];
+
+        if (!confirm(`Adiar "${desp.descricao}" (${formatarMoeda(desp.valor)}) para ${nomeMes}/${proxMes.getFullYear()}?`)) return;
+
+        // Remover do mês de origem
+        arr.splice(idx, 1);
+        financeiro.despesasFixasMes[mesOrigem] = arr;
+
+        // Inserir no próximo mês
+        if (!financeiro.despesasFixasMes[keyProx]) financeiro.despesasFixasMes[keyProx] = [];
+
+        // Verificar se já existe instância normal deste modelo no próximo mês
+        const jaExiste = financeiro.despesasFixasMes[keyProx].some(
+            d => String(d.modeloId) === String(desp.modeloId) && !d.atrasada
+        );
+
+        if (jaExiste) {
+            // Já existe — apenas remover do mês antigo (não duplicar)
+            mostrarStatus(`"${desp.descricao}" removida de ${mesOrigem} — já existe em ${keyProx}.`, 'success');
+        } else {
+            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(desp.modeloId));
+            const diaVenc = modelo ? (modelo.diaVencimento || modelo.dia || 1) : 1;
+            financeiro.despesasFixasMes[keyProx].push({
+                ...desp,
+                id: gerarId(),
+                data: `${keyProx}-${String(diaVenc).padStart(2,'0')}`,
+                dia: diaVenc,
+                pago: false,
+                atrasada: false,
+                mesOrigem: mesOrigem,
+            });
+            mostrarStatus(`"${desp.descricao}" adiada para ${nomeMes}/${proxMes.getFullYear()}.`, 'success');
+        }
+
+        salvarDados();
+        renderizar();
+    }
+
     function getDespesasFixasMes() {
         const key = getMesAnoKey();
         if (key < '2026-01') return [];
@@ -4375,15 +4427,24 @@
 
                 const detailBody = `<div class="parcelas-detail-box">
                     <div class="parcelas-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
-                        ${atrasadas.map(d => `
-                            <div class="parcela-item${d.pago?' pago':' vencida'}" onclick="togglePagoFixa(${d.id})">
-                                <div class="parcela-check${d.pago?' checked':''}"></div>
-                                <div class="parcela-info-box">
+                        ${atrasadas.map(d => {
+                            const mesOrig = d.data ? d.data.substring(0,7) : d.mesOriginal || keyAtual;
+                            return `<div class="parcela-item${d.pago?' pago':' vencida'}">
+                                <div class="parcela-check${d.pago?' checked':''}" onclick="togglePagoFixa(${d.id})" style="cursor:pointer;"></div>
+                                <div class="parcela-info-box" onclick="togglePagoFixa(${d.id})" style="cursor:pointer;flex:1;">
                                     <div class="parcela-nome" style="color:var(--red)">Em atraso</div>
                                     <div class="parcela-data-txt">${formatarData(d.data)}</div>
                                 </div>
-                                <div class="parcela-valor-txt">${formatarMoeda(d.valor)}</div>
-                            </div>`).join('')}
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    <div class="parcela-valor-txt">${formatarMoeda(d.valor)}</div>
+                                    ${!d.pago ? `<button onclick="event.stopPropagation();adiarDespesaAtrasada('${d.id}','${mesOrig}')" title="Adiar para o próximo mês"
+                                        style="background:rgba(52,152,219,0.12);border:1px solid rgba(52,152,219,0.3);border-radius:6px;color:#5dade2;padding:3px 6px;cursor:pointer;font-size:0.7em;font-weight:700;display:flex;align-items:center;gap:3px;white-space:nowrap;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;"><polyline points="9 18 15 12 9 6"/><polyline points="15 18 21 12 15 6"/></svg>
+                                        Adiar
+                                    </button>` : ''}
+                                </div>
+                            </div>`;
+                        }).join('')}
                         ${atual ? `
                             <div class="parcela-item${atual.pago?' pago':''}" onclick="togglePagoFixa(${atual.id})">
                                 <div class="parcela-check${atual.pago?' checked':''}"></div>
