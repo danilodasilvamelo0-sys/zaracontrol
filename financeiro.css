@@ -5996,3 +5996,105 @@ font-size: 1.1em;
     .pq-comp-card { padding: 12px; }
 }
 
+/* ════════════════════════════════════════════
+   EDITOR DE DESPESAS — visual premium
+   ════════════════════════════════════════════ */
+
+/* Preview card no topo do modal */
+.edit-preview-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--s1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+}
+.edit-preview-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--s3);
+    border: 1px solid var(--border-s);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--gold);
+}
+.edit-preview-icon svg { width: 18px; height: 18px; }
+.edit-preview-info { flex: 1; min-width: 0; }
+.edit-preview-nome {
+    font-size: 0.95em;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.edit-preview-meta {
+    font-size: 0.68em;
+    color: var(--text-dim);
+    margin-top: 3px;
+    letter-spacing: 0.3px;
+}
+.edit-preview-valor {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--gold);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Aviso informativo */
+.edit-aviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.72em;
+    color: var(--text-sub);
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+.edit-aviso svg { color: var(--gold); margin-top: 1px; }
+
+/* Progresso de parcelas */
+.edit-progresso {
+    background: var(--s2);
+    border: 1px solid var(--border-s);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+}
+.edit-prog-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72em;
+    margin-bottom: 8px;
+    color: var(--text-sub);
+}
+.edit-prog-track {
+    height: 6px;
+    background: var(--border-s);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+.edit-prog-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+.edit-prog-valores {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.68em;
+    color: var(--text-dim);
+}
+
