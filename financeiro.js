@@ -1739,15 +1739,40 @@
 
     function salvarEdicaoModelo() {
         const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(itemEditando.id));
-        if (modelo) {
-            modelo.descricao = document.getElementById('editDescricao').value.trim();
-            modelo.valor = parseFloat(document.getElementById('editValor').value) || modelo.valor;
-            modelo.categoria = document.getElementById('editCategoria').value;
-            modelo.diaVencimento = parseInt(document.getElementById('editDia').value) || modelo.diaVencimento;
-            salvarDados();
-        }
+        if (!modelo) { fecharModal('modalEditar'); return; }
+
+        const novaDescricao  = document.getElementById('editDescricao').value.trim() || modelo.descricao;
+        const novoValor      = parseFloat(document.getElementById('editValor').value);
+        const novaCategoria  = document.getElementById('editCategoria').value;
+        const novoDia        = parseInt(document.getElementById('editDia').value);
+
+        if (!novaDescricao) { alert('A descrição não pode ficar em branco.'); return; }
+
+        // Atualizar o modelo (afeta meses futuros)
+        modelo.descricao    = novaDescricao;
+        if (!isNaN(novoValor) && novoValor > 0) modelo.valor = novoValor;
+        modelo.categoria    = novaCategoria;
+        if (!isNaN(novoDia) && novoDia >= 1 && novoDia <= 31) modelo.diaVencimento = novoDia;
+
+        // ── Atualizar também a instância já gerada no mês atual ──
+        const keyAtual = getMesAnoKey();
+        const instancias = financeiro.despesasFixasMes[keyAtual] || [];
+        instancias.forEach(inst => {
+            if (String(inst.modeloId) === String(modelo.id) && !inst.pago) {
+                inst.descricao = modelo.descricao;
+                inst.categoria = modelo.categoria;
+                if (!isNaN(novoValor) && novoValor > 0) inst.valor = novoValor;
+                if (!isNaN(novoDia)   && novoDia >= 1)  {
+                    inst.dia  = novoDia;
+                    inst.data = `${keyAtual}-${String(novoDia).padStart(2,'0')}`;
+                }
+            }
+        });
+
+        salvarDados();
         fecharModal('modalEditar');
         renderizar();
+        mostrarStatus('Despesa atualizada com sucesso.', 'success');
     }
 
     function encerrarDespesaFixa(modeloId) {
