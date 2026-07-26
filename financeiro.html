@@ -603,5 +603,107 @@
 
 <script src="financeiro.js?v=1785104432"></script>
 
+<script>
+// ── PATCH v1785104432 — sobrescreve funções independente do cache ──
+document.addEventListener('DOMContentLoaded', function() {
+    // Aguarda o app inicializar
+    setTimeout(function patchFunctions() {
+        if (typeof financeiro === 'undefined') { setTimeout(patchFunctions, 200); return; }
+
+        // ── editarDespesaFixaModelo CORRIGIDO ──
+        window.editarDespesaFixaModelo = function(modeloId) {
+            modeloId = isNaN(modeloId) ? modeloId : Number(modeloId);
+            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(modeloId));
+            if (!modelo) return;
+            window.itemEditando = { tipo: 'despesaFixaModelo', id: modeloId };
+            const cats = typeof getCategorias === 'function' ? getCategorias('despesaFixa') : ['Moradia','Internet','Energia','Água','Escola','Streaming','Plano de Saúde','Outros'];
+            const body = document.getElementById('modalEditarBody');
+            body.innerHTML = `
+                <div style="display:flex;align-items:center;gap:12px;background:var(--s1,#0e0e0e);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+                    <div style="flex:1;">
+                        <div style="font-size:0.95em;font-weight:700;color:var(--text,#fff);">${modelo.descricao}</div>
+                        <div style="font-size:0.7em;color:rgba(255,255,255,0.5);margin-top:3px;">${modelo.categoria||'Outros'} · Dia ${modelo.diaVencimento}</div>
+                    </div>
+                    <div style="font-size:1.1em;font-weight:700;color:#c9a84c;">${typeof formatarMoeda==='function'?formatarMoeda(modelo.valor):'R$ '+modelo.valor.toFixed(2)}</div>
+                </div>
+                <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px 12px;font-size:0.72em;color:rgba(255,255,255,0.7);margin-bottom:16px;">
+                    ⚠ Altera o valor padrão — afeta próximos meses. Para mudar só este mês use o ícone verde na linha da despesa.
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <input type="text" id="editDescricao" value="${modelo.descricao}">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor (R$)</label>
+                        <input type="number" id="editValor" step="0.01" min="0.01" value="${modelo.valor.toFixed(2)}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="editCategoria">
+                            ${cats.map(c => `<option value="${c}"${c===modelo.categoria?' selected':''}>${c}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Dia do vencimento</label>
+                        <input type="number" id="editDia" min="1" max="31" value="${modelo.diaVencimento}">
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
+                    <button class="btn-salvar" onclick="salvarEdicaoModelo()">Salvar alterações</button>
+                </div>`;
+            document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Despesa Fixa';
+            if (typeof abrirModal === 'function') abrirModal('modalEditar');
+        };
+
+        // ── salvarEdicaoModelo CORRIGIDO ──
+        window.salvarEdicaoModelo = function() {
+            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(window.itemEditando.id));
+            if (!modelo) { if(typeof fecharModal==='function') fecharModal('modalEditar'); return; }
+
+            const novaDescricao = document.getElementById('editDescricao').value.trim();
+            const novoValor     = parseFloat(document.getElementById('editValor').value);
+            const novaCategoria = document.getElementById('editCategoria').value;
+            const novoDia       = parseInt(document.getElementById('editDia').value);
+
+            if (!novaDescricao) { alert('Descrição não pode ser vazia.'); return; }
+            if (isNaN(novoValor) || novoValor <= 0) { alert('Digite um valor válido maior que zero.'); return; }
+
+            // Salvar no modelo
+            modelo.descricao    = novaDescricao;
+            modelo.valor        = novoValor;
+            modelo.categoria    = novaCategoria;
+            if (!isNaN(novoDia) && novoDia >= 1 && novoDia <= 31) modelo.diaVencimento = novoDia;
+
+            // Atualizar instância do mês atual
+            const keyAtual = typeof getMesAnoKey === 'function' ? getMesAnoKey() : (function(){
+                const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+            })();
+            const instancias = financeiro.despesasFixasMes[keyAtual] || [];
+            instancias.forEach(inst => {
+                if (String(inst.modeloId) === String(modelo.id) && !inst.pago) {
+                    inst.descricao = modelo.descricao;
+                    inst.categoria = modelo.categoria;
+                    inst.valor     = novoValor;
+                    if (!isNaN(novoDia) && novoDia >= 1 && novoDia <= 31) {
+                        inst.dia  = novoDia;
+                        inst.data = keyAtual + '-' + String(novoDia).padStart(2,'0');
+                    }
+                }
+            });
+
+            if (typeof salvarDados === 'function') salvarDados();
+            if (typeof fecharModal === 'function') fecharModal('modalEditar');
+            if (typeof renderizar === 'function') renderizar();
+            if (typeof mostrarStatus === 'function') mostrarStatus('Despesa atualizada com sucesso!', 'success');
+        };
+
+    }, 500);
+});
+</script>
+
 </body>
 </html>
