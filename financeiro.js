@@ -1687,34 +1687,50 @@
         if (!modelo) return;
 
         itemEditando = { tipo: 'despesaFixaModelo', id: modeloId };
+        const cats = getCategorias('despesaFixa');
         const body = document.getElementById('modalEditarBody');
+
         body.innerHTML = `
-            <div class="info-box warning">
-                Isto edita o <strong>valor padrão</strong> e afeta os <strong>próximos meses</strong>. Para mudar só o valor deste mês (ex: conta de água/luz que veio diferente), use o ícone verde <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg> na linha da despesa.
+            <div class="edit-preview-card">
+                <div class="edit-preview-icon">${getCategIcon(modelo.categoria || 'Outros')}</div>
+                <div class="edit-preview-info">
+                    <div class="edit-preview-nome">${modelo.descricao}</div>
+                    <div class="edit-preview-meta">${modelo.categoria || 'Outros'} · Dia ${modelo.diaVencimento}</div>
+                </div>
+                <div class="edit-preview-valor">${formatarMoeda(modelo.valor)}</div>
+            </div>
+            <div class="edit-aviso">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Altera o <strong>valor padrão</strong> — afeta os próximos meses. Para mudar só o valor deste mês use o ícone verde na linha da despesa.
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Descrição</label>
-                    <input type="text" id="editDescricao" value="${modelo.descricao}">
+                    <input type="text" id="editDescricao" value="${modelo.descricao}" placeholder="Nome da despesa">
                 </div>
                 <div class="form-group">
-                    <label>Valor</label>
-                    <input type="number" id="editValor" step="0.01" value="${modelo.valor}">
+                    <label>Valor (R$)</label>
+                    <input type="number" id="editValor" step="0.01" min="0" value="${modelo.valor}" placeholder="0,00">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Categoria</label>
-                    <input type="text" id="editCategoria" value="${modelo.categoria}">
+                    <select id="editCategoria">
+                        ${cats.map(c => `<option value="${c}" ${c === modelo.categoria ? 'selected' : ''}>${c}</option>`).join('')}
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label>Dia Vencimento</label>
-                    <input type="number" id="editDia" min="1" max="31" value="${modelo.diaVencimento}">
+                    <label>Dia do vencimento</label>
+                    <input type="number" id="editDia" min="1" max="31" value="${modelo.diaVencimento}" placeholder="Ex: 10">
                 </div>
             </div>
             <div class="form-buttons">
                 <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
-                <button class="btn-salvar" onclick="salvarEdicaoModelo()">Salvar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoModelo()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;vertical-align:-1px;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg>
+                    Salvar alterações
+                </button>
             </div>
         `;
         document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Despesa Fixa';
@@ -1976,38 +1992,62 @@
         const parcelas = financeiro.despesasVariaveis.filter(d =>
             String(d.grupoParcelaId) === String(grupoParcelaId)
         );
-        if (parcelas.length === 0) { console.warn('editarDespesaParcelada: grupo não encontrado', grupoParcelaId); return; }
+        if (parcelas.length === 0) return;
 
         const ref = parcelas[0];
         itemEditando = { tipo: 'despesaParcelada', grupoParcelaId };
-
-        const categoriasDisponiveis = getCategorias('despesaVariavel');
-        const valorTotalAtual = parcelas.reduce((s, p) => s + (p.valor || 0), 0);
+        const cats = getCategorias('despesaVariavel');
+        const pagas = parcelas.filter(p => p.pago).length;
+        const total = parcelas.length;
+        const valorTotal = parcelas.reduce((s,p) => s + (p.valor||0), 0);
+        const valorPago = parcelas.filter(p=>p.pago).reduce((s,p) => s + (p.valor||0), 0);
+        const pct = Math.round((pagas/total)*100);
 
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
-            <div class="info-box" style="background:rgba(184,151,46,0.08);border-color:rgba(184,151,46,0.3)">
-                Isto edita <strong>todas as ${parcelas.length} parcelas</strong> deste grupo (descrição e categoria).
-                Para mudar o valor, a data ou adicionar uma nota em uma parcela específica, use o lápis dentro do detalhamento de cada parcela.
+            <div class="edit-preview-card">
+                <div class="edit-preview-icon">${getCategIcon(ref.categoria||'Outros')}</div>
+                <div class="edit-preview-info">
+                    <div class="edit-preview-nome">${ref.descricao}</div>
+                    <div class="edit-preview-meta">${ref.categoria||'Outros'} · ${total}x de ${formatarMoeda(ref.valor)}</div>
+                </div>
+                <div class="edit-preview-valor">${formatarMoeda(valorTotal)}</div>
+            </div>
+            <div class="edit-progresso">
+                <div class="edit-prog-header">
+                    <span>${pagas} de ${total} parcelas pagas</span>
+                    <span style="color:var(--green)">${pct}%</span>
+                </div>
+                <div class="edit-prog-track">
+                    <div class="edit-prog-fill" style="width:${pct}%"></div>
+                </div>
+                <div class="edit-prog-valores">
+                    <span>Pago: <strong style="color:var(--green)">${formatarMoeda(valorPago)}</strong></span>
+                    <span>Restante: <strong style="color:var(--red)">${formatarMoeda(valorTotal-valorPago)}</strong></span>
+                </div>
+            </div>
+            <div class="edit-aviso">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Edita <strong>todas as ${total} parcelas</strong>. Para mudar valor, data ou nota de uma parcela específica, abra o detalhamento e clique no lápis.
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Descrição</label>
-                    <input type="text" id="editParcDescricao" value="${ref.descricao}">
+                    <input type="text" id="editParcDescricao" value="${ref.descricao}" placeholder="Nome da compra">
                 </div>
                 <div class="form-group">
                     <label>Categoria</label>
                     <select id="editParcCategoria">
-                        ${categoriasDisponiveis.map(c => `<option value="${c}" ${c === ref.categoria ? 'selected' : ''}>${c}</option>`).join('')}
+                        ${cats.map(c => `<option value="${c}" ${c === ref.categoria ? 'selected' : ''}>${c}</option>`).join('')}
                     </select>
                 </div>
             </div>
-            <div class="info-box">
-                <small>Total do grupo: <strong>${formatarMoeda(valorTotalAtual)}</strong> em ${parcelas.length}x</small>
-            </div>
             <div class="form-buttons">
                 <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
-                <button class="btn-salvar" onclick="salvarEdicaoDespesaParcelada('${grupoParcelaId}')">Salvar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoDespesaParcelada('${grupoParcelaId}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;vertical-align:-1px;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg>
+                    Salvar alterações
+                </button>
             </div>
         `;
         document.querySelector('#modalEditar .modal-header h3').textContent = 'Editar Compra Parcelada';
