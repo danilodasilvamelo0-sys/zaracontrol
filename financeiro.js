@@ -3937,6 +3937,26 @@
             return;
         }
 
+        // ── Atualizar saldo líquido no header ──
+        const _recTotal = getReceitasMes().filter(r => r.recebido).reduce((s, r) => s + (r.valor||0), 0);
+        const _despTotal = [
+            ...getDespesasFixasMes(),
+            ...filtrarPorMes(financeiro.despesasVariaveis||[]),
+            ...filtrarPorMes(financeiro.despesasAvulsas||[])
+        ].reduce((s, d) => s + (d.valor||0), 0);
+        const _saldoLiq = _recTotal - _despTotal;
+        const _elSaldo  = document.getElementById('headerSaldoLiquido');
+        const _elSub    = document.getElementById('headerSaldoSub');
+        if (_elSaldo) {
+            _elSaldo.textContent = formatarMoeda(Math.abs(_saldoLiq));
+            _elSaldo.className   = 'header-saldo-valor ' + (_saldoLiq >= 0 ? 'positivo' : 'negativo');
+        }
+        if (_elSub) {
+            _elSub.textContent = _saldoLiq >= 0
+                ? `↑ ${formatarMoeda(_recTotal)} rec. − ${formatarMoeda(_despTotal)} desp.`
+                : `↓ Déficit de ${formatarMoeda(Math.abs(_saldoLiq))}`;
+        }
+
         // Restaurar exibição normal (caso venha do modo arquivados)
         const empTableWrapperNormal = document.querySelector('#sectionEmprestimos .table-container');
         const empArqContainerNormal = document.getElementById('emprestimosArquivadosContainer');
