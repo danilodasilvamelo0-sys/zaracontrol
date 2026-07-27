@@ -110,31 +110,6 @@ body::after { bottom: 0; }
 }
 
 /* ========== HEADER ========== */
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(212, 175, 125, 0.15);
-}
-
-.header-title h1 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: var(--font-display);
-    font-weight: var(--fw-regular);
-    color: var(--text);
-    letter-spacing: 2px;
-}
-
-.header-title p {
-    color: var(--text-sub);
-    font-size: var(--font-sm);
-    font-weight: var(--fw-regular);
-    margin-top: 4px;
-    letter-spacing: 0.3px;
-}
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -157,6 +132,213 @@ body::after { bottom: 0; }
 @keyframes glowPulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); }
     50%       { box-shadow: 0 0 20px 2px rgba(201,168,76,0.12); }
+}
+
+/* ════════════════════════════════════════════
+   LAYOUT PREMIUM — FINANCEIRO
+   Header saldo líquido · KPI · Seções
+   ════════════════════════════════════════════ */
+
+/* ── HEADER PREMIUM ── */
+.header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.5s ease both;
+}
+.header-title h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2em;
+    font-weight: 200;
+    color: var(--text);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    line-height: 1;
+}
+.header-title p {
+    color: var(--text-dim);
+    font-size: 0.65em;
+    font-weight: 600;
+    margin-top: 8px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+/* Saldo líquido no header */
+.header-saldo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+}
+.header-saldo-label {
+    font-size: 0.58em;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.header-saldo-valor {
+    font-size: 1.6em;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    transition: color 0.3s;
+}
+.header-saldo-valor.positivo { color: #2ecc71; }
+.header-saldo-valor.negativo { color: #e74c3c; }
+.header-saldo-sub {
+    font-size: 0.62em;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+}
+
+/* ── KPI CARDS PREMIUM ── */
+.kpi-card {
+    background: var(--s2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px 20px 18px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    cursor: default;
+}
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 50px rgba(0,0,0,0.55),
+                0 0 0 1px var(--gold-mid),
+                0 0 40px rgba(201,168,76,0.06);
+    border-color: rgba(201,168,76,0.4);
+}
+/* Linha dourada no topo */
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+.kpi-card:hover::before { opacity: 1; }
+/* Reflexo sutil no canto */
+.kpi-card::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    transition: opacity 0.3s;
+    opacity: 0;
+}
+.kpi-card:hover::after { opacity: 1; }
+
+/* ── SEÇÕES PREMIUM ── */
+.section {
+    background: var(--s2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.section:hover {
+    border-color: rgba(201,168,76,0.3);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,168,76,0.08);
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    background: var(--s1);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    position: relative;
+}
+/* Linha dourada lateral na section-header */
+.section-header::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 20%; bottom: 20%;
+    width: 2px;
+    background: var(--gold);
+    opacity: 0.7;
+    border-radius: 0 2px 2px 0;
+}
+.section-header:hover { background: rgba(255,255,255,0.02); }
+.section-header h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.68em;
+    font-weight: 800;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    padding-left: 10px;
+}
+.section-header .subtotal {
+    font-size: 0.75em;
+    color: var(--text-sub);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+.section-content { padding: 0; }
+
+/* Separador dourado entre seções */
+.section + .section {
+    margin-top: 0;
+}
+.sections-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-mid), transparent);
+    margin: 4px 0 24px;
+    opacity: 0.4;
+}
+
+/* ── ACCORDION CHEVRON ── */
+.section-chevron {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--s3);
+    border: 1px solid var(--border-s);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+    flex-shrink: 0;
+}
+.section-header:hover .section-chevron {
+    background: var(--gold-dim);
+    border-color: var(--border);
+}
+.section-chevron svg {
+    width: 13px;
+    height: 13px;
+    stroke: var(--text-sub);
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.section-header.open .section-chevron svg { transform: rotate(180deg); }
+
+@media (max-width: 768px) {
+    .header { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .header-saldo { align-items: flex-start; }
+    .header-title h1 { font-size: 1.5em; letter-spacing: 5px; }
+    .header-saldo-valor { font-size: 1.3em; }
+    .section-header { padding: 16px 18px; }
+    .section-header h2 { font-size: 0.64em; letter-spacing: 2px; }
 }
 
 /* ── HEADER ── */
@@ -196,36 +378,6 @@ body::after { bottom: 0; }
     margin-bottom: 36px;
     animation: fadeUp 0.5s ease 0.1s both;
 }
-.kpi-card {
-    background: var(--s2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 22px 20px 18px;
-    text-align: left;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
-                box-shadow 0.3s ease,
-                border-color 0.3s ease;
-    box-shadow: var(--shadow-s);
-    cursor: default;
-}
-.kpi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px var(--gold-mid);
-    border-color: var(--gold-mid);
-}
-.kpi-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--gold);
-    opacity: 0.6;
-    transition: opacity 0.3s;
-}
-.kpi-card:hover::before { opacity: 1; }
-
 .kpi-header {
     display: flex;
     align-items: center;
@@ -291,42 +443,8 @@ body::after { bottom: 0; }
 
 /* ── SECTIONS ── */
 .sections-grid { animation: fadeUp 0.5s ease 0.2s both; }
-.section {
-    background: var(--s2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    margin-bottom: 28px;
-    overflow: hidden;
-    transition: border-color 0.3s ease;
-    box-shadow: var(--shadow-s);
-}
-.section:hover { border-color: var(--gold-mid); }
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 24px;
-    background: var(--s1);
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-.section-header:hover { background: var(--s2); }
-.section-header h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.72em;
-    font-weight: 700;
-    color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 2.5px;
-}
-.section-header .subtotal {
-    font-size: 0.78em;
-    color: var(--text-sub);
-    font-weight: 500;
-}
-.section-content { padding: 0; }
+
 
 /* ── BOTÕES ADD ── */
 .btn-add-novo, .btn-add-receita, .btn-add-emp {
