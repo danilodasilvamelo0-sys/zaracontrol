@@ -1436,7 +1436,6 @@
 
     // ── Adiar despesa atrasada para o mês seguinte ──
     function adiarDespesaAtrasada(id, mesOrigem) {
-        // Encontrar a instância atrasada
         const arr = financeiro.despesasFixasMes[mesOrigem] || [];
         const idx = arr.findIndex(d => String(d.id) === String(id));
         if (idx === -1) return;
@@ -1444,7 +1443,6 @@
         const desp = arr[idx];
         if (desp.pago) { mostrarStatus('Despesa já paga.', 'error'); return; }
 
-        // Calcular mês de destino = mês atual + 1
         const hoje = new Date();
         const proxMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 1);
         const keyProx = proxMes.getFullYear() + '-' + String(proxMes.getMonth() + 1).padStart(2,'0');
@@ -1452,42 +1450,37 @@
 
         confirmar(
             `Adiar "${desp.descricao}" (${formatarMoeda(desp.valor)}) para ${nomeMes}/${proxMes.getFullYear()}?`,
-            () => _executarAdiarDespesaAtrasada(id, mesOrigem, desp, keyProx, nomeMes, proxMes),
+            () => {
+                arr.splice(idx, 1);
+                financeiro.despesasFixasMes[mesOrigem] = arr;
+
+                if (!financeiro.despesasFixasMes[keyProx]) financeiro.despesasFixasMes[keyProx] = [];
+
+                const jaExiste = financeiro.despesasFixasMes[keyProx].some(
+                    d => String(d.modeloId) === String(desp.modeloId) && !d.atrasada
+                );
+
+                if (jaExiste) {
+                    mostrarStatus(`"${desp.descricao}" removida de ${mesOrigem} — já existe em ${keyProx}.`, 'success');
+                } else {
+                    const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(desp.modeloId));
+                    const diaVenc = modelo ? (modelo.diaVencimento || modelo.dia || 1) : 1;
+                    financeiro.despesasFixasMes[keyProx].push({
+                        ...desp,
+                        id: gerarId(),
+                        data: `${keyProx}-${String(diaVenc).padStart(2,'0')}`,
+                        dia: diaVenc,
+                        pago: false,
+                        atrasada: false,
+                        mesOrigem: mesOrigem,
+                    });
+                    mostrarStatus(`"${desp.descricao}" adiada para ${nomeMes}/${proxMes.getFullYear()}.`, 'success');
+                }
+                salvarDados();
+                renderizar();
+            },
             'Adiar Despesa', 'Adiar', '#3498db'
-        ); return;
-
-        // Remover do mês de origem
-        arr.splice(idx, 1);
-        financeiro.despesasFixasMes[mesOrigem] = arr;
-
-        // Inserir no próximo mês
-        if (!financeiro.despesasFixasMes[keyProx]) financeiro.despesasFixasMes[keyProx] = [];
-
-        // Verificar se já existe instância normal deste modelo no próximo mês
-        const jaExiste = financeiro.despesasFixasMes[keyProx].some(
-            d => String(d.modeloId) === String(desp.modeloId) && !d.atrasada
         );
-
-        if (jaExiste) {
-            // Já existe — apenas remover do mês antigo (não duplicar)
-            mostrarStatus(`"${desp.descricao}" removida de ${mesOrigem} — já existe em ${keyProx}.`, 'success');
-        } else {
-            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(desp.modeloId));
-            const diaVenc = modelo ? (modelo.diaVencimento || modelo.dia || 1) : 1;
-            financeiro.despesasFixasMes[keyProx].push({
-                ...desp,
-                id: gerarId(),
-                data: `${keyProx}-${String(diaVenc).padStart(2,'0')}`,
-                dia: diaVenc,
-                pago: false,
-                atrasada: false,
-                mesOrigem: mesOrigem,
-            });
-            mostrarStatus(`"${desp.descricao}" adiada para ${nomeMes}/${proxMes.getFullYear()}.`, 'success');
-        }
-
-        salvarDados();
-        renderizar();
     }
 
     function getDespesasFixasMes() {
@@ -2950,7 +2943,7 @@
         renderizar();
     }
 
-    // Gerar juros do mês (manual)
+    // Cancelar juros acumulados
     function cancelarJuros(id) {
         const emp = financeiro.emprestimos.find(e => String(e.id) === String(id));
         if (!emp) return;
@@ -2958,24 +2951,21 @@
         if (valor <= 0) return;
         confirmar(
             `Cancelar ${formatarMoeda(valor)} de juros acumulados do "${emp.descricao}"? Isso zerará os juros pendentes sem registrar pagamento.`,
-            () => _executarCancelarJuros(id, emp, valor),
+            () => {
+                emp.jurosAcumulados = 0;
+                if (!emp.historicoPagamentos) emp.historicoPagamentos = [];
+                emp.historicoPagamentos.push({
+                    tipo: 'cancelamento',
+                    valor: valor,
+                    data: new Date().toISOString().split('T')[0],
+                    saldoJurosApos: 0
+                });
+                salvarDados();
+                renderizar();
+                mostrarStatus(`Juros de ${formatarMoeda(valor)} cancelados.`, 'success');
+            },
             'Cancelar Juros', 'Cancelar Juros', '#e67e22'
-        ); return;
-
-        emp.jurosAcumulados = 0;
-
-        // Registrar no histórico como cancelamento
-        if (!emp.historicoPagamentos) emp.historicoPagamentos = [];
-        emp.historicoPagamentos.push({
-            tipo: 'cancelamento',
-            valor: valor,
-            data: new Date().toISOString().split('T')[0],
-            saldoJurosApos: 0
-        });
-
-        salvarDados();
-        renderizar();
-        mostrarStatus(`Juros de ${formatarMoeda(valor)} cancelados.`, 'success');
+        );
     }
 
     function removerHistorico(empId, idx) {
@@ -2993,32 +2983,25 @@
 
         confirmar(
             `Remover ${desc}? Isso vai reverter o efeito desta operação nos saldos.`,
-            () => _executarRemoverHistorico(empId, idx, h, emp),
+            () => {
+                if (tipo === 'juros_gerado') {
+                    emp.jurosAcumulados = Math.max(0, (emp.jurosAcumulados || 0) - valor);
+                } else if (tipo === 'juros') {
+                    emp.jurosAcumulados = (emp.jurosAcumulados || 0) + valor;
+                } else if (tipo === 'amortizacao' || tipo === 'parcela') {
+                    emp.principal = (emp.principal || 0) + valor;
+                    emp.totalAmortizado = Math.max(0, (emp.totalAmortizado || 0) - valor);
+                    if (tipo === 'parcela' && h.numeroParcela) {
+                        emp.parcelasPagas = Math.max(0, (emp.parcelasPagas || 0) - 1);
+                    }
+                }
+                emp.historicoPagamentos.splice(idx, 1);
+                salvarDados();
+                renderizar();
+                mostrarStatus('Entrada removida e saldo revertido.', 'success');
+            },
             'Remover Entrada', 'Remover', '#e74c3c'
-        ); return;
-
-        // Reverter o efeito no saldo
-        if (tipo === 'juros_gerado') {
-            // Desfazer: subtrair os juros gerados dos acumulados
-            emp.jurosAcumulados = Math.max(0, (emp.jurosAcumulados || 0) - valor);
-        } else if (tipo === 'juros') {
-            // Desfazer pagamento de juros: devolver aos acumulados
-            emp.jurosAcumulados = (emp.jurosAcumulados || 0) + valor;
-        } else if (tipo === 'amortizacao' || tipo === 'parcela') {
-            // Desfazer amortização: devolver ao principal
-            emp.principal = (emp.principal || 0) + valor;
-            emp.totalAmortizado = Math.max(0, (emp.totalAmortizado || 0) - valor);
-            if (tipo === 'parcela' && h.numeroParcela) {
-                emp.parcelasPagas = Math.max(0, (emp.parcelasPagas || 0) - 1);
-            }
-        }
-
-        // Remover do array
-        emp.historicoPagamentos.splice(idx, 1);
-
-        salvarDados();
-        renderizar();
-        mostrarStatus(`Entrada removida e saldo revertido.`, 'success');
+        );
     }
 
     function gerarJurosMes(id) {
@@ -3963,6 +3946,88 @@
             </div>`;
 
         return { tr, card };
+    }
+
+
+
+    // ══════════════════════════════════════════════
+    //  SISTEMA DE LOG DE ERROS — ZARA DEBUG
+    // ══════════════════════════════════════════════
+    const _erros = [];
+    const _erroOriginal = window.onerror;
+    window.onerror = function(msg, url, linha, col, erro) {
+        const entry = {
+            ts: new Date().toLocaleTimeString('pt-BR'),
+            msg: String(msg).replace(/.*Error:\s*/,''),
+            local: (url||'').split('financeiro.js')[1] || url || '',
+            linha,
+            stack: erro?.stack?.split('\n').slice(0,3).join(' | ') || ''
+        };
+        _erros.unshift(entry);
+        if (_erros.length > 30) _erros.pop();
+        _atualizarBadgeErros();
+        if (_erroOriginal) _erroOriginal.apply(this, arguments);
+        return false;
+    };
+    window.addEventListener('unhandledrejection', (e) => {
+        const entry = {
+            ts: new Date().toLocaleTimeString('pt-BR'),
+            msg: 'Promise: ' + String(e.reason?.message || e.reason || '').slice(0,120),
+            local: 'async', linha: '-', stack: ''
+        };
+        _erros.unshift(entry);
+        if (_erros.length > 30) _erros.pop();
+        _atualizarBadgeErros();
+    });
+
+    function _atualizarBadgeErros() {
+        const badge = document.getElementById('zara-err-badge');
+        if (badge) {
+            badge.textContent = _erros.length;
+            badge.style.display = _erros.length > 0 ? 'flex' : 'none';
+        }
+    }
+
+    function abrirLogErros() {
+        let modal = document.getElementById('zara-log-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'zara-log-modal';
+            modal.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999999;padding:20px;overflow:auto;';
+            modal.onclick = (e) => { if(e.target===modal) modal.style.display='none'; };
+            document.body.appendChild(modal);
+        }
+
+        const rows = _erros.length === 0
+            ? '<div style="color:rgba(255,255,255,0.4);padding:20px;text-align:center;">Nenhum erro registrado ✓</div>'
+            : _erros.map((e,i) => `
+                <div style="border-bottom:1px solid rgba(255,255,255,0.06);padding:12px 0;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                        <span style="background:rgba(231,76,60,0.15);color:#ff6b6b;padding:2px 8px;border-radius:6px;font-size:0.7em;font-weight:700;">#${_erros.length - i}</span>
+                        <span style="color:rgba(255,255,255,0.4);font-size:0.7em;">${e.ts} ${e.local ? '· ' + e.local : ''} ${e.linha ? 'L' + e.linha : ''}</span>
+                    </div>
+                    <div style="color:#ffffff;font-size:0.85em;font-weight:600;margin-bottom:4px;">${e.msg}</div>
+                    ${e.stack ? `<div style="color:rgba(255,255,255,0.4);font-size:0.68em;font-family:monospace;white-space:pre-wrap;">${e.stack}</div>` : ''}
+                </div>`).join('');
+
+        modal.innerHTML = `
+            <div style="background:#0e0e0e;border:1px solid rgba(231,76,60,0.3);border-radius:16px;max-width:720px;margin:0 auto;padding:24px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <div>
+                        <h2 style="color:#e74c3c;font-size:0.9em;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin:0;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:-2px;margin-right:6px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            Log de Erros ZARA
+                        </h2>
+                        <div style="color:rgba(255,255,255,0.4);font-size:0.72em;margin-top:4px;">${_erros.length} erro(s) desde o carregamento da página</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <button onclick="_erros.length=0;_atualizarBadgeErros();abrirLogErros();" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);padding:6px 12px;border-radius:8px;font-size:0.75em;cursor:pointer;">Limpar</button>
+                        <button onclick="document.getElementById('zara-log-modal').style.display='none'" style="background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;padding:6px 12px;border-radius:8px;font-size:0.75em;cursor:pointer;">Fechar</button>
+                    </div>
+                </div>
+                <div style="max-height:60vh;overflow-y:auto;">${rows}</div>
+            </div>`;
+        modal.style.display = 'block';
     }
 
 
