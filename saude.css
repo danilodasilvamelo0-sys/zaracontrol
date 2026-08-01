@@ -122,8 +122,8 @@ body::after { content: ''; position: fixed; bottom: 0; left: 0; right: 0; height
 .mobile-nav-item svg { width: 22px; height: 22px; }
 .mobile-nav-item.active { color: #d4af7d; }
 
-@media (max-width: 768px) { body { padding-left: 10px; padding-bottom: 80px; } .sidebar { display: none; } .mobile-nav { display: block; } .container { margin-left: 0 !important; } #globalTabs { margin-left: 0 !important; } }
-@media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } #globalTabs { margin-left: 0; } }
+@media (max-width: 768px) { body { padding-left: 10px; padding-bottom: 80px; padding-top: 70px; } .sidebar { display: none; } .mobile-nav { display: block; } .container { margin-left: 0 !important; padding-top: 0 !important; } #globalTabs { margin-left: 0 !important; } .tabs-container { left: 0 !important; } }
+@media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } #globalTabs { margin-left: 0; } .tabs-container { left: 70px; } }
 
 /* Container e Layout */
 .container { max-width: 1200px; margin: 0 auto; background: #141414; border: 1px solid rgba(212, 175, 125, 0.15); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; }
@@ -140,7 +140,7 @@ body::after { content: ''; position: fixed; bottom: 0; left: 0; right: 0; height
 @media (max-width: 768px) { #syncStatus { bottom: 90px; right: 10px; left: 10px; text-align: center; } }
 
 /* Tabs */
-.tabs-container { background: #141414; padding: 10px 15px; border-bottom: 1px solid rgba(212, 175, 125, 0.15); position: sticky; top: 0; z-index: 300; }
+.tabs-container { background: rgba(14,14,14,0.97); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 10px 15px; border-bottom: 1px solid rgba(212,175,125,0.15); position: fixed; top: 0; left: 0; right: 0; z-index: 500; box-shadow: 0 2px 20px rgba(0,0,0,0.4); }
 .tabs-header { display: flex; gap: 8px; justify-content: space-around; }
 .tab-btn { display: flex; align-items: center; gap: 6px; padding: 10px 15px; background: transparent; border: none; color: rgba(255,255,255,0.82); font-size: 0.8em; cursor: pointer; border-radius: 8px; transition: all 0.3s; white-space: nowrap; }
 .tab-btn:hover { color: #d4af7d; background: rgba(212, 175, 125, 0.1); }
@@ -439,7 +439,13 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 .duplicar-info{font-size:0.8em;color:rgba(255,255,255,0.4);font-style:italic}
 
 /* Exercício Feito */
-.exercicio-check{appearance:none;width:20px;height:20px;border:2px solid rgba(212,175,125,0.4);border-radius:50%;cursor:pointer;background:transparent;position:relative;transition:all 0.2s;flex-shrink:0}
+.ex-check-td {
+    width: 40px;
+    vertical-align: middle;
+    text-align: center;
+    padding: 0 8px !important;
+}
+.exercicio-check{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:2px solid rgba(212,175,125,0.4);border-radius:50%;cursor:pointer;background:transparent;position:relative;transition:all 0.2s;flex-shrink:0;display:block;margin:0 auto;}
 .exercicio-check:hover{border-color:#d4af7d}
 .exercicio-check:checked{background:#2ecc71;border-color:#2ecc71}
 .exercicio-check:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:11px;font-weight:bold}
@@ -459,7 +465,7 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 
 /* Exercícios - Layout ajustado */
 .exercicio-table th,.exercicio-table td{text-align:center;padding:10px 8px}
-.exercicio-table th:nth-child(1),.exercicio-table td:nth-child(1){width:35px;padding:10px 5px}
+.exercicio-table th:nth-child(1),.exercicio-table td:nth-child(1){width:40px;padding:10px 8px;vertical-align:middle;text-align:center}
 .exercicio-table th:nth-child(2),.exercicio-table td:nth-child(2){text-align:left;padding-left:5px}
 .exercicio-nome-texto .conjugado-plus{color:#d4af7d;font-weight:600;margin:0 4px}
 .exercicio-obs{font-size:0.75em;color:rgba(255,255,255,0.5);margin-top:3px;font-style:italic}
@@ -569,10 +575,10 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
     .exercicio-table { display: block; }
     .exercicio-table thead { display: none; }
     .exercicio-table tbody { display: block; }
-    .exercicio-table tr { display: flex; flex-wrap: wrap; padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: flex-start; gap: 8px; }
+    .exercicio-table tr { display: flex; flex-wrap: wrap; padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; gap: 8px; }
     .exercicio-table td { display: block; padding: 0; border: none; text-align: left; }
-    .exercicio-table td:nth-child(1) { width: auto; order: 1; }
-    .exercicio-table td:nth-child(2) { width: calc(100% - 35px); order: 2; padding-left: 0; }
+    .exercicio-table td:nth-child(1) { width: 32px; order: 1; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0 !important; }
+    .exercicio-table td:nth-child(2) { flex: 1; min-width: 0; order: 2; padding-left: 4px !important; }
     .exercicio-table td:nth-child(3), .exercicio-table td:nth-child(4), .exercicio-table td:nth-child(5), .exercicio-table td:nth-child(6) {
         order: 3; font-size: 0.7em; color: rgba(255,255,255,0.90); background: rgba(212,175,125,0.08); padding: 5px 10px; border-radius: 4px; margin-top: 4px;
     }
