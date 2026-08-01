@@ -1288,13 +1288,12 @@
                                     
                                     return `
                                 <tr class="${todosFeitos ? 'exercicio-feito' : ''}">
-                                    <td style="display:flex;align-items:center;gap:4px;padding-left:12px">
-                                        <span class="exercicio-drag-handle" title="Arrastar para reordenar"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="17" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="1.5" fill="currentColor" stroke="none"/></svg></span>
+                                    <td class="ex-check-td">
                                         <input type="checkbox" class="exercicio-check" ${todosFeitos ? 'checked' : ''} onchange="marcarExercicio('${treino.id}','${ex.id}',this.checked,${temConjugados ? `'${ex.conjugadosCom.map(c=>c.id).join(',')}'` : 'null'})">
-                                    </td>
                                     </td>
                                     <td>
                                         <div class="exercicio-nome">
+                                            <span class="exercicio-drag-handle" title="Arrastar para reordenar"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="17" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="1.5" fill="currentColor" stroke="none"/></svg></span>
                                             <div style="flex:1">
                                                 <span class="exercicio-nome-texto">${nomeCompleto}</span>
                                                 ${obsConjunto ? `<div class="exercicio-obs">${obsConjunto}</div>` : ''}
