@@ -518,7 +518,7 @@ body::after { bottom: 0; }
 /* ── MODAIS ── */
 .modal-content {
     background: var(--s2);
-    color: var(--text);
+    color: var(--text) !important;
     border: 1px solid var(--border);
     border-radius: 18px;
     padding: 28px 28px 24px;
@@ -6218,3 +6218,10 @@ font-size: 1.1em;
     color: var(--text-dim);
 }
 
+
+/* Prevenir zoom em inputs no iOS */
+@media (max-width: 768px) {
+    input, select, textarea, .form-group input, .form-group select {
+        font-size: 16px !important;
+    }
+}
