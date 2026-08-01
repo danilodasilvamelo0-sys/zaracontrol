@@ -720,9 +720,9 @@
 
                     // Hint para campos de data — pode ser qualquer mês
                     if (isParcelaData) {
-                        html += `<span style="font-size:11px;color:rgba(26,26,26,0.45);margin-top:4px;display:flex;align-items:center;gap:3px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Pode ser em qualquer mês — as parcelas serão distribuídas a partir desta data</span>`;
+                        html += `<span style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:4px;display:flex;align-items:center;gap:3px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Pode ser em qualquer mês — as parcelas serão distribuídas a partir desta data</span>`;
                     } else if (isAvulsaData) {
-                        html += `<span style="font-size:11px;color:rgba(26,26,26,0.45);margin-top:4px;display:flex;align-items:center;gap:3px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Pode ser em qualquer mês — aparecerá no mês correspondente</span>`;
+                        html += `<span style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:4px;display:flex;align-items:center;gap:3px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Pode ser em qualquer mês — aparecerá no mês correspondente</span>`;
                     }
                 }
                 html += '</div>';
@@ -1947,9 +1947,9 @@
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
             <div style="background:#f8f6f0;border:1px solid rgba(184,151,46,0.15);border-radius:10px;padding:14px;margin-bottom:18px;">
-                <div style="font-size:0.78em;color:rgba(26,26,26,0.5);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Editando</div>
-                <div style="font-weight:600;color:#1a1a1a;font-size:0.95em;">${parcela.descricao} — Parcela ${parcela.parcelaAtual}/${parcela.totalParcelas}</div>
-                <div style="font-size:0.8em;color:rgba(26,26,26,0.55);margin-top:3px;">
+                <div style="font-size:0.78em;color:rgba(255,255,255,0.60);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Editando</div>
+                <div style="font-weight:600;color:var(--text,#fff);font-size:0.95em;">${parcela.descricao} — Parcela ${parcela.parcelaAtual}/${parcela.totalParcelas}</div>
+                <div style="font-size:0.8em;color:rgba(255,255,255,0.65);margin-top:3px;">
                     Valor atual: <strong>${formatarMoeda(parcela.valor)}</strong> &nbsp;·&nbsp;
                     Total do grupo: <strong>${formatarMoeda(somaAtual)}</strong>
                 </div>
@@ -1975,7 +1975,7 @@
             </div>
 
             <div id="previewParcela" style="background:#f0ede6;border:1px solid rgba(184,151,46,0.2);border-radius:10px;padding:12px;margin-bottom:16px;font-size:0.82em;color:rgba(26,26,26,0.7);display:none;">
-                <div style="font-weight:600;color:#1a1a1a;margin-bottom:4px;">Impacto no total</div>
+                <div style="font-weight:600;color:var(--text,#fff);margin-bottom:4px;">Impacto no total</div>
                 <div id="previewParcelaTexto"></div>
             </div>
 
@@ -4193,7 +4193,7 @@
             </span>`
         ).join('');
         document.getElementById('kpiEconomiaDetalhe').innerHTML = reservasList ||
-            '<span style="color:rgba(26,26,26,.45);">Nenhuma reserva ativa</span>';
+            '<span style="color:rgba(255,255,255,0.55);">Nenhuma reserva ativa</span>';
         
         // KPI 6: Previsão Fechamento — lista o que falta pagar por categoria
         const previsaoCard = document.getElementById('kpiPrevisaoCard');
@@ -4582,7 +4582,7 @@
                     <td class="acc-mobile-meta">
                         <div class="acc-progress-wrap">
                             <div class="acc-bar"><div class="acc-bar-fill parcela" style="width:${percentPago}%"></div></div>
-                            <span style="font-size:0.75em;color:rgba(26,26,26,0.4);white-space:nowrap;">${parcelasPagasCount}/${totalParcelas}</span>
+                            <span style="font-size:0.75em;color:rgba(255,255,255,0.55);white-space:nowrap;">${parcelasPagasCount}/${totalParcelas}</span>
                         </div>
                     </td>
                     <td class="acc-valor-total acc-mobile-valor" style="text-align:right;">${formatarMoeda(valorTotal)}</td>
@@ -4939,7 +4939,7 @@
                     <td class="acc-mobile-meta">
                         <div class="acc-progress-wrap acc-quitacao-wrap" title="${percentQuitado}% quitado">
                             <div class="acc-bar"><div class="acc-bar-fill emprestimo" style="width:${percentQuitado}%"></div></div>
-                            <span style="font-size:0.7em;color:rgba(26,26,26,0.45);margin-top:2px;">${percentQuitado}%</span>
+                            <span style="font-size:0.7em;color:rgba(255,255,255,0.60);margin-top:2px;">${percentQuitado}%</span>
                         </div>
                     </td>
                     <td>
@@ -6644,7 +6644,7 @@
   .relatorio-secao { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid #e5e5e5; }
   .relatorio-secao:last-child { border-bottom: none; }
   .relatorio-secao h2 { font-size: 13px; font-weight: 700; color: #7a5c10; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .relatorio-secao h4 { font-size: 11px; font-weight: 600; color: #333; margin: 12px 0 6px; }
+  .relatorio-secao h4 { font-size: 11px; font-weight: 600; color: var(--text, #fff); margin: 12px 0 6px; }
   .relatorio-secao p, .relatorio-secao li { font-size: 11px; line-height: 1.6; color: #444; margin-bottom: 4px; }
   .relatorio-tabela { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 10px; }
   .relatorio-tabela th { background: #f5f0e8; color: #7a5c10; font-weight: 700; padding: 6px 8px; text-align: left; border-bottom: 2px solid #d4a84340; }
