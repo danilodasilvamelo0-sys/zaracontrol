@@ -372,10 +372,10 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 .treino-header h2{font-family:'Playfair Display',serif;font-size:1.3em;color:#d4af7d}
 .treinos-container{padding:0 20px 20px;display:flex;flex-direction:column;gap:20px}
 
-.treino-card{background:#1a1a1a;border:1px solid rgba(212,175,125,0.15);border-radius:16px;overflow:hidden;transition:all 0.3s}
+.treino-card{background:var(--s2,#1a1a1a);border:1px solid rgba(212,175,125,0.2);border-radius:16px;overflow:hidden;transition:all 0.3s;-webkit-tap-highlight-color:transparent}
 .treino-card:hover{border-color:rgba(212,175,125,0.3)}
 
-.treino-card-header{background:linear-gradient(135deg,#c0392b,#e74c3c);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;transition:filter 0.2s}
+.treino-card-header{background:linear-gradient(135deg,#c0392b,#e74c3c);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;-webkit-user-select:none;transition:filter 0.2s;-webkit-tap-highlight-color:transparent}
 .treino-card-header:hover{filter:brightness(1.1)}
 .treino-card-header.peito{background:linear-gradient(135deg,#27ae60,#2ecc71)}
 .treino-card-header.costas{background:linear-gradient(135deg,#2980b9,#3498db)}
@@ -386,7 +386,7 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 .treino-card-header.cardio{background:linear-gradient(135deg,#f39c12,#f1c40f)}
 .treino-card-header.full{background:linear-gradient(135deg,#2c3e50,#34495e)}
 
-.treino-card-titulo{font-family:'Playfair Display',serif;font-size:1.1em;color:#fff;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.treino-card-titulo{font-family:'Playfair Display',serif;font-size:1.1em;color:#fff !important;font-weight:700;text-transform:uppercase;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,0.4)}
 .treino-card-subtitulo{font-size:0.8em;color:rgba(255,255,255,0.8);margin-top:3px}
 .treino-card-actions{display:flex;gap:8px}
 .treino-card-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
@@ -1679,3 +1679,41 @@ tr[draggable]:active{cursor:grabbing}
     font-size: 0.65em !important;
     letter-spacing: 0.5px !important;
 }
+
+/* ── VARREDURA GLOBAL — correções de UX ── */
+
+/* Remover highlight azul do iOS/Android em todos elementos interativos */
+button, a, [onclick], .tab-btn, .global-tab-btn, .treino-card-header,
+.acc-row, .entry-item, .menu-item, .desp-card, .kpi-card,
+.parcela-item, .med-item, .plano-item {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+/* user-select: none em headers e elementos de arrastar */
+.treino-card-header, .section-header, .acc-row td,
+.tab-btn, .global-tab-btn, .kpi-card, .desp-cat-label {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Garantir texto visível em todos os estados de hover/active em mobile */
+*:focus { outline: none; }
+*:focus-visible { outline: 2px solid rgba(201,168,76,0.5); outline-offset: 2px; }
+
+/* Scrollbar premium em todos os containers */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.45); }
+
+/* Evitar zoom no iOS em inputs */
+input, select, textarea { font-size: 16px !important; }
+
+/* Texto não selectionável em labels e badges */
+.desp-badge, .emp-hist-badge, .kpi-label, .section-header h2,
+.pq-comp-titulo, .pq-mes-titulo, .tab-btn span {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
