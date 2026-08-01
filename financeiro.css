@@ -578,7 +578,7 @@ body::after { bottom: 0; }
     background: var(--s3);
     border: 1px solid var(--border-s);
     border-radius: 10px;
-    color: var(--text);
+    color: var(--text) !important;
     font-family: 'Montserrat', sans-serif;
     font-size: 0.85em;
     outline: none;
@@ -4713,7 +4713,7 @@ margin-top: 6px;
 .emp-btn-parcela {
 background: rgba(46,204,113,0.08) !important;
 border-color: rgba(46,204,113,0.80) !important;
-color: #1e8449 !important;
+color: #2ecc71 !important;
 }
 .emp-btn-parcela:hover {
 background: rgba(46,204,113,0.15) !important;
