@@ -1096,7 +1096,7 @@ padding: 20px 25px;
 
 /* ========== TABELAS (Layout igual saude.html) ========== */
 .table-container {
-overflow-x: auto;
+overflow-x: visible;
 }
 
 .transacoes-table {
@@ -6453,5 +6453,46 @@ font-size: 1.1em;
     .rec-badge { display: none; }
     .rec-valor { font-size: 0.82em; }
     .rec-check-td { padding: 8px 4px 8px 10px !important; }
+}
+
+/* ── RECEITAS — tabela sem scroll horizontal ── */
+.col-cat-rwd { white-space: nowrap; }
+
+/* Colunas de receita bem proporcionadas */
+#receitasFixasTable tr,
+#receitasVariaveisTable tr { table-layout: fixed; }
+
+/* Badge e ações na mesma célula sem explodir */
+.rec-acoes {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Tabela de receitas sem min-width que cause scroll */
+#sectionReceitasFixas .accordion-table,
+#sectionReceitasVariaveis .accordion-table {
+    table-layout: fixed;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Truncar nome longo */
+#receitasFixasTable .rec-nome,
+#receitasVariaveisTable .rec-nome {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: none;
+}
+
+/* No mobile esconder categoria e data das receitas */
+@media (max-width: 640px) {
+    .col-cat-rwd { display: none !important; }
+    #sectionReceitasFixas .accordion-table,
+    #sectionReceitasVariaveis .accordion-table {
+        table-layout: auto;
+    }
+    .rec-acoes { padding: 6px 8px !important; }
+    .rec-badge { display: none !important; }
 }
 
