@@ -2723,3 +2723,50 @@
         }
         
         inicializar();
+
+// ── Swipe entre abas no mobile ──
+document.addEventListener('touchstart', function(e){ window._sx=e.touches[0].clientX; window._sy=e.touches[0].clientY; }, {passive:true});
+document.addEventListener('touchend', function(e){
+    var dx=e.changedTouches[0].clientX-(window._sx||0);
+    var dy=e.changedTouches[0].clientY-(window._sy||0);
+    if(Math.abs(dx)<60||Math.abs(dy)>Math.abs(dx)) return;
+    var a=document.querySelector('.tab-btn.active');
+    if(!a) return;
+    var tabs=['medicamentos','dieta','treino','fotos'];
+    var i=tabs.indexOf(a.getAttribute('data-tab')||'');
+    if(dx<0&&i<tabs.length-1&&typeof showTab==='function') showTab(tabs[i+1]);
+    if(dx>0&&i>0&&typeof showTab==='function') showTab(tabs[i-1]);
+}, {passive:true});
+
+// ── Modal de confirmação premium (saude) ──
+function confirmarAcao(msg, callback, titulo, okLabel, okColor) {
+    titulo   = titulo   || 'Confirmar';
+    okLabel  = okLabel  || 'Confirmar';
+    okColor  = okColor  || '#e74c3c';
+    var el = document.getElementById('saude-confirm-modal');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'saude-confirm-modal';
+        el.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:99999;align-items:center;justify-content:center;padding:20px;';
+        el.innerHTML = '<div style="background:#141414;border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:28px 24px;max-width:350px;width:100%;text-align:center;">'
+            + '<div style="width:50px;height:50px;border-radius:50%;background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">'
+            + '<svg viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2" style="width:22px;height:22px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+            + '</div>'
+            + '<h3 id="saudeConfirmT" style="color:#e8c160;font-size:.82em;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;"></h3>'
+            + '<p id="saudeConfirmM" style="color:rgba(255,255,255,0.82);font-size:.84em;line-height:1.6;margin-bottom:20px;"></p>'
+            + '<div style="display:flex;gap:10px;justify-content:center;">'
+            + '<button id="saudeConfirmN" style="flex:1;max-width:120px;padding:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:rgba(255,255,255,0.7);font-size:.78em;font-weight:600;cursor:pointer;">Cancelar</button>'
+            + '<button id="saudeConfirmS" style="flex:1;max-width:140px;padding:10px;border:none;border-radius:10px;color:#fff;font-size:.78em;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;"></button>'
+            + '</div></div>';
+        document.body.appendChild(el);
+        document.getElementById('saudeConfirmN').onclick = function(){ el.style.display='none'; };
+        el.onclick = function(e){ if(e.target===el) el.style.display='none'; };
+    }
+    document.getElementById('saudeConfirmT').textContent = titulo;
+    document.getElementById('saudeConfirmM').textContent = msg;
+    var ok = document.getElementById('saudeConfirmS');
+    ok.textContent = okLabel;
+    ok.style.background = okColor;
+    ok.onclick = function(){ el.style.display='none'; callback(); };
+    el.style.display = 'flex';
+}
