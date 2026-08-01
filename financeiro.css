@@ -6337,3 +6337,121 @@ font-size: 1.1em;
     .modal-confirm-cancel, .modal-confirm-ok { max-width: 100%; }
 }
 
+/* ════════════════════════════════════════════
+   RECEITAS — linhas compactas premium
+   ════════════════════════════════════════════ */
+.rec-row {
+    border-bottom: 1px solid var(--border-s);
+    transition: background 0.15s;
+}
+.rec-row:hover { background: rgba(201,168,76,0.03); }
+.rec-row:last-child { border-bottom: none; }
+.rec-row.rec-row-ok { opacity: 0.72; }
+
+/* Check compacto */
+.rec-check-td {
+    width: 36px;
+    padding: 8px 6px 8px 14px !important;
+    cursor: pointer;
+}
+.rec-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-s);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    color: transparent;
+    background: transparent;
+}
+.rec-check.rec-check-ativo {
+    background: rgba(46,204,113,0.15);
+    border-color: rgba(46,204,113,0.5);
+    color: #2ecc71;
+}
+.rec-check-td:hover .rec-check { border-color: var(--gold-mid); }
+
+/* Nome + categoria em linha única */
+.rec-nome {
+    font-size: 0.82em;
+    font-weight: 600;
+    color: var(--text);
+    padding: 8px 8px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+.rec-cat {
+    display: inline-block;
+    font-size: 0.75em;
+    color: var(--text-dim);
+    font-weight: 400;
+    margin-left: 6px;
+    background: var(--s3);
+    padding: 1px 6px;
+    border-radius: 6px;
+    border: 1px solid var(--border-s);
+    vertical-align: middle;
+}
+
+/* Data compacta */
+.rec-data {
+    font-size: 0.72em;
+    color: var(--text-dim);
+    padding: 8px 8px !important;
+    white-space: nowrap;
+}
+
+/* Valor */
+.rec-valor {
+    font-size: 0.88em;
+    font-weight: 700;
+    text-align: right;
+    padding: 8px 10px !important;
+    white-space: nowrap;
+}
+.valor-pendente { color: var(--text-sub); }
+
+/* Ações + badge na mesma coluna */
+.rec-acoes {
+    padding: 6px 10px 6px 6px !important;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-end;
+}
+
+/* Badge de status compacto */
+.rec-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 0.62em;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+.rec-badge-ok {
+    background: rgba(46,204,113,0.12);
+    color: #2ecc71;
+    border: 1px solid rgba(46,204,113,0.2);
+}
+.rec-badge-pend {
+    background: var(--s3);
+    color: var(--text-dim);
+    border: 1px solid var(--border-s);
+}
+
+@media (max-width: 640px) {
+    .rec-nome { max-width: 140px; font-size: 0.78em; }
+    .rec-cat  { display: none; }
+    .rec-data { display: none; }
+    .rec-badge { display: none; }
+    .rec-valor { font-size: 0.82em; }
+    .rec-check-td { padding: 8px 4px 8px 10px !important; }
+}
+
