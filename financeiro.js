@@ -4329,31 +4329,28 @@
         const recFixasTable = document.getElementById('receitasFixasTable');
         document.getElementById('emptyReceitasFixas').style.display = receitasMes.length ? 'none' : 'block';
         recFixasTable.innerHTML = receitasMes.map(r => {
-            const badgeSt = r.recebido
-                ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Recebido</span>'
-                : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>';
-            return `
-            <tr>
-                <td>
-                    <span class="acc-chevron" style="cursor:pointer;background:${r.recebido ? 'rgba(46,204,113,0.15)' : 'rgba(26, 26, 26, 0.07)'};"
-                          onclick="toggleRecebido(${r.id})" title="Marcar recebido">
-                        ${r.recebido ? '<svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26, 26, 26, 0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
-                    </span>
-                </td>
-                <td class="acc-descricao">${r.descricao}</td>
-                <td class="col-cat acc-mobile-meta"><span class="categoria">${r.categoria}</span></td>
-                <td class="col-cat acc-condicao acc-mobile-meta">${formatarData(r.data)}</td>
-                <td style="text-align:right;" class="${r.recebido ? 'valor-positivo' : 'valor-negativo'} acc-mobile-valor">${formatarMoeda(r.valor)}</td>
-                <td>
-                    <div style="display:flex;gap:4px;">
-                        <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                        </button>
-                        <button class="acc-delete-btn" onclick="deletarReceita(${r.id}, ${r.modeloId || 'null'}, ${!!r.recorrente})" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        </button>
+            const recBadge = r.recebido
+                ? `<span class="rec-badge rec-badge-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 17 4 12"/></svg>Recebido</span>`
+                : `<span class="rec-badge rec-badge-pend">Pendente</span>`;
+            return `<tr class="rec-row${r.recebido?' rec-row-ok':''}">
+                <td class="rec-check-td" onclick="toggleRecebido(${r.id})" title="Marcar recebido">
+                    <div class="rec-check${r.recebido?' rec-check-ativo':''}">
+                        ${r.recebido
+                            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="20 6 9 17 4 12"/></svg>'
+                            : ''}
                     </div>
+                </td>
+                <td class="rec-nome">${r.descricao}<span class="rec-cat">${r.categoria}</span></td>
+                <td class="rec-data acc-mobile-meta">${formatarData(r.data)}</td>
+                <td class="rec-valor ${r.recebido?'valor-positivo':'valor-pendente'}">${formatarMoeda(r.valor)}</td>
+                <td class="rec-acoes" onclick="event.stopPropagation()">
+                    ${recBadge}
+                    <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(201,168,76,0.7);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="acc-delete-btn" onclick="deletarReceita(${r.id},${r.modeloId||'null'},${!!r.recorrente})" title="Excluir">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
                 </td>
             </tr>`;
         }).join('');
@@ -4362,28 +4359,28 @@
         const recVarTable = document.getElementById('receitasVariaveisTable');
         document.getElementById('emptyReceitasVariaveis').style.display = receitasVariaveisMesArr.length ? 'none' : 'block';
         recVarTable.innerHTML = receitasVariaveisMesArr.map(r => {
-            return `
-            <tr>
-                <td>
-                    <span class="acc-chevron" style="cursor:pointer;background:${r.recebido ? 'rgba(46,204,113,0.15)' : 'rgba(26, 26, 26, 0.07)'};"
-                          onclick="toggleRecebido(${r.id})" title="Marcar recebido">
-                        ${r.recebido ? '<svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26, 26, 26, 0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
-                    </span>
-                </td>
-                <td class="acc-descricao">${r.descricao}</td>
-                <td class="col-cat acc-mobile-meta"><span class="categoria">${r.categoria}</span></td>
-                <td class="col-cat acc-condicao acc-mobile-meta">${formatarData(r.data)}</td>
-                <td style="text-align:right;" class="${r.recebido ? 'valor-positivo' : 'valor-negativo'} acc-mobile-valor">${formatarMoeda(r.valor)}</td>
-                <td>
-                    <div style="display:flex;gap:4px;">
-                        <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                        </button>
-                        <button class="acc-delete-btn" onclick="deletarReceita(${r.id})" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        </button>
+            const recBadge = r.recebido
+                ? `<span class="rec-badge rec-badge-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 17 4 12"/></svg>Recebido</span>`
+                : `<span class="rec-badge rec-badge-pend">Pendente</span>`;
+            return `<tr class="rec-row${r.recebido?' rec-row-ok':''}">
+                <td class="rec-check-td" onclick="toggleRecebido(${r.id})" title="Marcar recebido">
+                    <div class="rec-check${r.recebido?' rec-check-ativo':''}">
+                        ${r.recebido
+                            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="20 6 9 17 4 12"/></svg>'
+                            : ''}
                     </div>
+                </td>
+                <td class="rec-nome">${r.descricao}<span class="rec-cat">${r.categoria}</span></td>
+                <td class="rec-data acc-mobile-meta">${formatarData(r.data)}</td>
+                <td class="rec-valor ${r.recebido?'valor-positivo':'valor-pendente'}">${formatarMoeda(r.valor)}</td>
+                <td class="rec-acoes" onclick="event.stopPropagation()">
+                    ${recBadge}
+                    <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(201,168,76,0.7);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="acc-delete-btn" onclick="deletarReceita(${r.id})" title="Excluir">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
                 </td>
             </tr>`;
         }).join('');
