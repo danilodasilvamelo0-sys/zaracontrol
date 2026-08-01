@@ -538,7 +538,7 @@
             const obs = document.getElementById('novoMedObs').value.trim();
             const frequencia = document.getElementById('novoMedFrequencia').value;
             
-            if (!nome || !dose) { alert('Preencha o nome e a dose.'); return; }
+            if (!nome || !dose) { mostrarStatus('Preencha o nome e a dose.', 'error'); return; }
             
             let dias = [];
             if (frequencia === 'todos') {
@@ -551,7 +551,7 @@
                 });
             }
             
-            if (dias.length === 0) { alert('Selecione pelo menos um dia.'); return; }
+            if (dias.length === 0) { mostrarStatus('Selecione pelo menos um dia.', 'error'); return; }
             
             const novoMed = { 
                 id: Date.now().toString(), 
@@ -783,7 +783,7 @@
             const tipo = document.getElementById('editMedTipo').value;
             const frequencia = document.getElementById('editMedFrequencia').value;
             
-            if (!nome || !dose) { alert('Preencha o nome e a dose.'); return; }
+            if (!nome || !dose) { mostrarStatus('Preencha o nome e a dose.', 'error'); return; }
             
             let novosDias = [];
             if (frequencia === 'todos') {
@@ -796,7 +796,7 @@
                 });
             }
             
-            if (novosDias.length === 0) { alert('Selecione pelo menos um dia.'); return; }
+            if (novosDias.length === 0) { mostrarStatus('Selecione pelo menos um dia.', 'error'); return; }
             
             // Remover de todos os dias
             Object.keys(saude.planoSemanal).forEach(dia => {
@@ -1430,8 +1430,8 @@
 
         function salvarAlerta() {
             const texto = document.getElementById('alertaTexto').value.trim();
-            if (!texto) return alert('Informe o texto do alerta');
-            if (!alertaTipoSelecionado) return alert('Selecione um tipo');
+            if (!texto) { mostrarStatus('Informe o texto do alerta', 'error'); return; };
+            if (!alertaTipoSelecionado) { mostrarStatus('Selecione um tipo', 'error'); return; };
 
             saude.alertasTreino.push({
                 id: Date.now().toString(),
@@ -1476,8 +1476,8 @@
         function salvarTreino() {
             const id = document.getElementById('treinoId').value;
             const nome = document.getElementById('treinoNome').value.trim();
-            if (!nome) return alert('Informe o nome do treino');
-            if (!gruposSelecionados.length) return alert('Selecione pelo menos um grupo muscular');
+            if (!nome) { mostrarStatus('Informe o nome do treino', 'error'); return; };
+            if (!gruposSelecionados.length) { mostrarStatus('Selecione pelo menos um grupo muscular', 'error'); return; };
 
             if (id) {
                 const treino = saude.treinos.find(t => t.id === id);
@@ -1577,10 +1577,10 @@
             const obs = document.getElementById('exercicioObs').value.trim();
             const conjugado = document.getElementById('exercicioConjugado').value;
 
-            if (!nome) return alert('Informe o nome do exercício');
-            if (!series) return alert('Informe as séries');
-            if (!reps) return alert('Informe as repetições');
-            if (!descanso) return alert('Informe o descanso');
+            if (!nome) { mostrarStatus('Informe o nome do exercício', 'error'); return; };
+            if (!series) { mostrarStatus('Informe as séries', 'error'); return; };
+            if (!reps) { mostrarStatus('Informe as repetições', 'error'); return; };
+            if (!descanso) { mostrarStatus('Informe o descanso', 'error'); return; };
 
             const treino = saude.treinos.find(t => t.id === treinoId);
             if (!treino) return;
@@ -1939,12 +1939,12 @@
             const obs = document.getElementById('pesoObs').value.trim();
             
             if (!peso || peso < 20 || peso > 300) {
-                alert('Digite um peso válido (entre 20 e 300 kg)');
+                mostrarStatus('Digite um peso válido (entre 20 e 300 kg)', 'error');
                 return;
             }
             
             if (!data) {
-                alert('Selecione uma data');
+                mostrarStatus('Selecione uma data', 'error');
                 return;
             }
             
@@ -2055,7 +2055,7 @@
             const chatId = document.getElementById('telegramChatId').value.trim();
             
             if (!token || !chatId) {
-                alert('Preencha o Bot Token e o Chat ID.');
+                mostrarStatus('Preencha o Bot Token e o Chat ID.', 'error');
                 return;
             }
             
@@ -2070,20 +2070,20 @@
                 
                 const data = await response.json();
                 if (data.ok) {
-                    alert('✅ Conexão bem-sucedida! Verifique o Telegram.\n\nAs notificações funcionarão 24/7, mesmo com o computador desligado.');
+                    mostrarStatus('✅ Conexão bem-sucedida! Verifique o Telegram.\n\nAs notificações funcionarão 24/7, mesmo com o computador desligado.', 'error');
                     salvarTelegramConfig();
                 } else {
-                    alert('❌ Erro: ' + (data.description || 'Falha na conexão'));
+                    mostrarStatus('Erro: ' + (data.description || 'Falha na conexão'), 'error');
                 }
             } catch (e) {
-                alert('❌ Erro de conexão: ' + e.message);
+                mostrarStatus('❌ Erro de conexão: ' + e.message, 'error');
             }
         }
         
         async function obterChatId() {
             const token = document.getElementById('telegramBotToken').value.trim();
             if (!token) {
-                alert('Preencha o Bot Token primeiro.');
+                mostrarStatus('Preencha o Bot Token primeiro.', 'error');
                 return;
             }
             
@@ -2097,15 +2097,15 @@
                     if (chatId) {
                         document.getElementById('telegramChatId').value = chatId;
                         salvarTelegramConfig();
-                        alert('✅ Chat ID obtido: ' + chatId);
+                        mostrarStatus('✅ Chat ID obtido: ' + chatId, 'error');
                     } else {
-                        alert('❌ Envie uma mensagem para o bot primeiro e tente novamente.');
+                        mostrarStatus('❌ Envie uma mensagem para o bot primeiro e tente novamente.', 'error');
                     }
                 } else {
-                    alert('❌ Nenhuma mensagem encontrada. Envie qualquer mensagem para o seu bot no Telegram e clique novamente.');
+                    mostrarStatus('❌ Nenhuma mensagem encontrada. Envie qualquer mensagem para o seu bot no Telegram e clique novamente.', 'error');
                 }
             } catch (e) {
-                alert('❌ Erro: ' + e.message);
+                mostrarStatus('❌ Erro: ' + e.message, 'error');
             }
         }
         
@@ -2320,7 +2320,7 @@
             const conteudo = document.getElementById('infoConteudo').value.trim();
             
             if (!titulo || !conteudo) {
-                alert('Preencha o título e o conteúdo.');
+                mostrarStatus('Preencha o título e o conteúdo.', 'error');
                 return;
             }
             
@@ -2593,12 +2593,12 @@
                 .filter(v => v !== '');
             
             if (!nome) {
-                alert('Digite o nome da refeição');
+                mostrarStatus('Digite o nome da refeição', 'error');
                 return;
             }
             
             if (alimentos.length === 0) {
-                alert('Adicione pelo menos um alimento');
+                mostrarStatus('Adicione pelo menos um alimento', 'error');
                 return;
             }
             
