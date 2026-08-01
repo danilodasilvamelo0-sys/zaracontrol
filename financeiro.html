@@ -574,7 +574,7 @@
             <h3 id="modalConfirmTitle" style="font-size:1.1em;">Confirmar</h3>
         </div>
         <div class="modal-body" style="padding:16px 24px 24px;">
-            <p id="modalConfirmMsg" style="color:rgba(26,26,26,0.75);font-size:0.95em;line-height:1.5;margin-bottom:20px;"></p>
+            <p id="modalConfirmMsg" style="color:var(--text-sub, rgba(255,255,255,0.85));font-size:0.95em;line-height:1.5;margin-bottom:20px;"></p>
             <div style="display:flex;gap:10px;justify-content:flex-end;">
                 <button class="btn-cancelar" onclick="confirmarResposta(false)" style="padding:10px 20px;">Cancelar</button>
                 <button id="modalConfirmOkBtn" class="btn-salvar" onclick="confirmarResposta(true)" style="padding:10px 20px;background:#e74c3c;">Excluir</button>
@@ -591,7 +591,7 @@
             <button class="modal-close" onclick="document.getElementById('modalCategorias').classList.remove('active')">&times;</button>
         </div>
         <div class="modal-body" style="padding:20px 24px 24px;">
-            <p style="font-size:0.85em;color:rgba(26,26,26,0.55);margin-bottom:14px;">Adicione ou remova as categorias que aparecem no formulário.</p>
+            <p style="font-size:0.85em;color:var(--text-sub, rgba(255,255,255,0.75));margin-bottom:14px;">Adicione ou remova as categorias que aparecem no formulário.</p>
             <div class="modal-categorias-lista" id="modalCategoriasLista"></div>
             <div class="add-categoria-row">
                 <input type="text" id="novaCategoriaNome" placeholder="Nova categoria..." onkeydown="if(event.key==='Enter') adicionarCategoriaModal()">
