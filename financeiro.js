@@ -1011,7 +1011,7 @@
         const cat = document.getElementById('receitaFixaCategoria').value || 'Outros';
         const dia = parseInt(document.getElementById('receitaFixaDia').value) || 5;
         
-        if (!desc || !valor) return alert('Preencha descrição e valor!');
+        if (!desc || !valor) { mostrarStatus('Preencha descrição e valor!', 'error'); return; };
         
         // Criar receita recorrente (modelo)
         // mesInicio = mês atual selecionado — só gera instâncias daqui em diante
@@ -1038,7 +1038,7 @@
         const cat = document.getElementById('receitaVariavelCategoria').value || 'Outros';
         let data = document.getElementById('receitaVariavelData').value;
         
-        if (!desc || !valor) return alert('Preencha descrição e valor!');
+        if (!desc || !valor) { mostrarStatus('Preencha descrição e valor!', 'error'); return; };
         
         if (!data) {
             const hoje = new Date();
@@ -1333,7 +1333,7 @@
         const cat = document.getElementById('despesaFixaCategoria').value || 'Outros';
         const dia = parseInt(document.getElementById('despesaFixaDia').value) || 10;
         
-        if (!desc || !valor) return alert('Preencha todos os campos!');
+        if (!desc || !valor) { mostrarStatus('Preencha todos os campos!', 'error'); return; };
         
         // Criar modelo de despesa recorrente
         financeiro.despesasFixas.push({
@@ -1528,7 +1528,7 @@
         const motivo = document.getElementById('motivoAlteracao').value;
         
         if (isNaN(novoValor) || novoValor < 0) {
-            alert('Valor inválido!');
+            mostrarStatus('Valor inválido!', 'error');
             return;
         }
 
@@ -1599,7 +1599,7 @@
         const motivo = document.getElementById('motivoAlteracaoParcela').value;
         
         if (isNaN(novoValor) || novoValor < 0) {
-            alert('Valor inválido!');
+            mostrarStatus('Valor inválido!', 'error');
             return;
         }
 
@@ -1798,7 +1798,7 @@
         const novaCategoria  = document.getElementById('editCategoria').value;
         const novoDia        = parseInt(document.getElementById('editDia').value);
 
-        if (!novaDescricao) { alert('A descrição não pode ficar em branco.'); return; }
+        if (!novaDescricao) { mostrarStatus('A descrição não pode ficar em branco.', 'error'); return; }
 
         // Atualizar o modelo (afeta meses futuros)
         modelo.descricao    = novaDescricao;
@@ -1851,7 +1851,7 @@
         const parcelado = document.getElementById('despesaVariavelParcelado')?.checked || false;
         const totalParcelas = parseInt(document.getElementById('despesaVariavelTotalParcelas')?.value) || 0;
         
-        if (!desc || !valorTotal) return alert('Preencha descrição e valor!');
+        if (!desc || !valorTotal) { mostrarStatus('Preencha descrição e valor!', 'error'); return; };
         
         // Data obrigatória — campo já vem pré-preenchido
         if (!data) {
@@ -1867,7 +1867,7 @@
             // Validar soma
             const soma = valoresParcelas.reduce((s, v) => s + v, 0);
             if (Math.abs(soma - valorTotal) >= 0.01) {
-                alert(`A soma das parcelas (${formatarMoeda(soma)}) não corresponde ao valor total (${formatarMoeda(valorTotal)}).\n\nAjuste os valores antes de salvar.`);
+                mostrarStatus(`A soma das parcelas (${formatarMoeda(soma)}) não corresponde ao valor total (${formatarMoeda(valorTotal)}).\n\nAjuste os valores antes de salvar.`, 'error');
                 return;
             }
             
@@ -2135,7 +2135,7 @@
         const novaDescricao = document.getElementById('editParcDescricao').value.trim();
         const novaCategoria = document.getElementById('editParcCategoria').value;
 
-        if (!novaDescricao) return alert('A descrição não pode ficar em branco!');
+        if (!novaDescricao) { mostrarStatus('A descrição não pode ficar em branco!', 'error'); return; };
 
         const parcelas = financeiro.despesasVariaveis.filter(d =>
             String(d.grupoParcelaId) === String(grupoParcelaId)
@@ -2208,7 +2208,7 @@
         });
         
         if (parcelas.length === 0) {
-            alert('Grupo não encontrado: ' + grupoId);
+            mostrarStatus('Grupo não encontrado: ' + grupoId, 'error');
             return;
         }
         
@@ -2233,14 +2233,14 @@
             // Marcar pagas como não pausadas também
             parcelas.filter(p => p.pago).forEach(p => p.pausado = false);
             
-            alert(`"${desc}" foi REATIVADO!`);
+            mostrarStatus(`"${desc}" foi REATIVADO!`, 'error');
         } else {
             // PAUSAR: marcar todas as parcelas como pausadas
             parcelas.forEach(p => {
                 p.pausado = true;
             });
             
-            alert(`"${desc}" foi PAUSADO!`);
+            mostrarStatus(`"${desc}" foi PAUSADO!`, 'error');
         }
         
         salvarDados();
@@ -2291,7 +2291,7 @@
         );
 
         if (parcelasDoGrupo.length === 0) {
-            alert('Todas as parcelas já estão pagas!');
+            mostrarStatus('Todas as parcelas já estão pagas!', 'error');
             return;
         }
 
@@ -2613,13 +2613,13 @@
 
         // Validar: não pode ter menos parcelas que as já pagas
         if (novoTotalParcelas < parcelasPagas.length) {
-            alert(`Não é possível reduzir para menos de ${parcelasPagas.length} parcelas (já pagas).`);
+            mostrarStatus(`Não é possível reduzir para menos de ${parcelasPagas.length} parcelas (já pagas).`, 'error');
             return;
         }
 
         // Validar: novo valor total não pode ser menor que o já pago
         if (novoValorTotal < valorJaPago) {
-            alert(`O valor total não pode ser menor que ${formatarMoeda(valorJaPago)} (já pago).`);
+            mostrarStatus(`O valor total não pode ser menor que ${formatarMoeda(valorJaPago)} (já pago).`, 'error');
             return;
         }
 
@@ -2632,7 +2632,7 @@
         const somaPersonalizada = valoresPersonalizados.reduce((s, v) => s + v, 0);
         
         if (Math.abs(somaPersonalizada - valorRestante) >= 0.01) {
-            alert(`A soma das parcelas (${formatarMoeda(somaPersonalizada)}) não corresponde ao valor restante (${formatarMoeda(valorRestante)}).\n\nAjuste os valores ou clique em "Ajustar última".`);
+            mostrarStatus(`A soma das parcelas (${formatarMoeda(somaPersonalizada)}) não corresponde ao valor restante (${formatarMoeda(valorRestante)}).\n\nAjuste os valores ou clique em "Ajustar última".`, 'error');
             return;
         }
 
@@ -2734,7 +2734,7 @@
         const cat = document.getElementById('despesaAvulsaCategoria').value || 'Outros';
         let data = document.getElementById('despesaAvulsaData').value;
 
-        if (!desc || !valor) return alert('Preencha descrição e valor!');
+        if (!desc || !valor) { mostrarStatus('Preencha descrição e valor!', 'error'); return; };
 
         if (!data) {
             // Fallback: usa o mês/ano selecionado com dia 1
@@ -2865,7 +2865,7 @@
         const juros = parseFloat(document.getElementById('emprestimoJuros').value) || 0;
         const cat = document.getElementById('emprestimoCategoria').value || 'Outros';
         
-        if (!desc || !principal) return alert('Preencha os campos obrigatórios!');
+        if (!desc || !principal) { mostrarStatus('Preencha os campos obrigatórios!', 'error'); return; };
 
         // Parcelamento (opcional)
         const parcelado = document.getElementById('emprestimoParcelado')?.checked || false;
@@ -2878,10 +2878,10 @@
             const diaVencimento = parseInt(document.getElementById('emprestimoDiaVencimento')?.value) || 0;
 
             if (totalParcelas < 1 || valorParcela <= 0 || diaVencimento < 1 || diaVencimento > 31) {
-                return alert('Para empréstimo parcelado, informe total de parcelas, valor da parcela e dia de vencimento (1-31).');
+                { mostrarStatus('Para empréstimo parcelado, informe total de parcelas, valor da parcela e dia de vencimento (1-31).', 'error'); return; }
             }
             if (parcelasPagas > totalParcelas) {
-                return alert('"Parcelas já pagas" não pode ser maior que o total de parcelas.');
+                { mostrarStatus('Parcelas já pagas não pode ser maior que o total de parcelas.', 'error'); return; }
             }
 
             dadosParcelamento = {
@@ -3060,7 +3060,7 @@
         const valor = parseFloat(document.getElementById('pagarJurosValor').value) || 0;
         const data = document.getElementById('pagarJurosData').value;
 
-        if (!valor || valor <= 0) return alert('Informe o valor!');
+        if (!valor || valor <= 0) { mostrarStatus('Informe o valor!', 'error'); return; };
 
         // Criar comprovante com metadados completos
         const fileInput = document.getElementById('pagarJurosComprovante');
@@ -3143,8 +3143,8 @@
         const valor = parseFloat(document.getElementById('amortizarValor').value) || 0;
         const data = document.getElementById('amortizarData').value;
 
-        if (!valor || valor <= 0) return alert('Informe o valor!');
-        if (valor > emp.principal) return alert('Valor maior que a dívida atual!');
+        if (!valor || valor <= 0) { mostrarStatus('Informe o valor!', 'error'); return; };
+        if (valor > emp.principal) { mostrarStatus('Valor maior que a dívida atual!', 'error'); return; };
 
         // Criar comprovante com metadados completos
         const fileInput = document.getElementById('amortizarComprovante');
@@ -3245,7 +3245,7 @@
         const valorInformado = parseFloat(document.getElementById('amortizarValor').value) || 0;
         const data = document.getElementById('amortizarData').value;
 
-        if (!valorInformado || valorInformado <= 0) return alert('Informe o valor!');
+        if (!valorInformado || valorInformado <= 0) { mostrarStatus('Informe o valor!', 'error'); return; };
 
         // Não deixa o saldo ficar negativo: a última parcela "real" pode ser
         // menor que o valor cadastrado caso o saldo já esteja mais baixo
@@ -3414,10 +3414,10 @@
             novoDia = parseInt(document.getElementById('editEmpDiaVencimento')?.value) || 0;
 
             if (totalParcelas < 1 || valorParcela <= 0 || novoDia < 1 || novoDia > 31) {
-                return alert('Para empréstimo parcelado, informe total de parcelas, valor da parcela e dia de vencimento (1-31).');
+                { mostrarStatus('Para empréstimo parcelado, informe total de parcelas, valor da parcela e dia de vencimento (1-31).', 'error'); return; }
             }
             if (parcelasPagas > totalParcelas) {
-                return alert('"Parcelas já pagas" não pode ser maior que o total de parcelas.');
+                { mostrarStatus('Parcelas já pagas não pode ser maior que o total de parcelas.', 'error'); return; }
             }
         }
 
@@ -3617,7 +3617,7 @@
         const valorInicial = parseFloat(document.getElementById('economiaValorInicial').value) || 0;
         const cat = document.getElementById('economiaCategoria').value || 'Reserva';
         
-        if (!desc) return alert('Informe o nome da reserva!');
+        if (!desc) { mostrarStatus('Informe o nome da reserva!', 'error'); return; };
         
         const novaReserva = {
             id: gerarId(),
@@ -3741,7 +3741,7 @@
         const valor = parseFloat(document.getElementById('depositoValor').value) || 0;
         const obs = document.getElementById('depositoObs').value.trim() || 'Depósito';
 
-        if (valor <= 0) return alert('Informe um valor válido!');
+        if (valor <= 0) { mostrarStatus('Informe um valor válido!', 'error'); return; };
 
         // Garantir que movimentacoes existe
         if (!reserva.movimentacoes) reserva.movimentacoes = [];
@@ -3800,8 +3800,8 @@
         const valor = parseFloat(document.getElementById('retiradaValor').value) || 0;
         const obs = document.getElementById('retiradaObs').value.trim() || 'Retirada';
 
-        if (valor <= 0) return alert('Informe um valor válido!');
-        if (valor > (reserva.saldo || 0)) return alert('Saldo insuficiente!');
+        if (valor <= 0) { mostrarStatus('Informe um valor válido!', 'error'); return; };
+        if (valor > (reserva.saldo || 0)) { mostrarStatus('Saldo insuficiente!', 'error'); return; };
 
         // Garantir que movimentacoes existe
         if (!reserva.movimentacoes) reserva.movimentacoes = [];
