@@ -140,12 +140,13 @@ body::after { content: ''; position: fixed; bottom: 0; left: 0; right: 0; height
 @media (max-width: 768px) { #syncStatus { bottom: 90px; right: 10px; left: 10px; text-align: center; } }
 
 /* Tabs */
-.tabs-container { background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 0 20px; border-bottom: 1px solid rgba(212,175,125,0.18); position: fixed; top: 0; left: 0; right: 0; z-index: 500; box-shadow: 0 2px 24px rgba(0,0,0,0.5); height: 56px; display: flex; align-items: center; }
-.tabs-header { display: flex; gap: 4px; justify-content: flex-start; width: 100%; }
-.tab-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: transparent; border: none; color: rgba(255,255,255,0.75); font-size: 0.82em; font-weight: 500; cursor: pointer; border-radius: 8px; transition: all 0.25s; white-space: nowrap; letter-spacing: 0.3px; }
+.tabs-container { background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 0 16px; border-bottom: 1px solid rgba(212,175,125,0.18); position: fixed; top: 0; left: 0; right: 0; z-index: 500; box-shadow: 0 2px 24px rgba(0,0,0,0.5); height: 56px; display: flex; align-items: center; }
+.tabs-header { display: flex; gap: 2px; justify-content: flex-start; width: 100%; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; }
+.tab-btn { display: flex; align-items: center; gap: 5px; padding: 8px 14px; background: transparent; border: none; color: rgba(255,255,255,0.80); font-size: 0.80em; font-weight: 500; cursor: pointer; border-radius: 8px; transition: all 0.25s; white-space: nowrap; letter-spacing: 0.2px; flex-shrink: 0; }
 .tab-btn:hover { color: #e8c160; background: rgba(212,175,125,0.08); }
 .tab-btn.active { background: rgba(212,175,125,0.15); color: #e8c160; border-bottom: 2px solid #e8c160; border-radius: 8px 8px 0 0; font-weight: 700; }
 .tab-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.tabs-header::-webkit-scrollbar { display: none; }
 
 /* Sub Tabs */
 .sub-tabs { display: flex; gap: 5px; padding: 15px 20px; background: #1a1a1a; border-bottom: 1px solid rgba(212, 175, 125, 0.1); }
@@ -375,10 +376,10 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 .treino-card{background:var(--s2,#1a1a1a);border:1px solid rgba(212,175,125,0.2);border-radius:16px;overflow:hidden;transition:all 0.3s;-webkit-tap-highlight-color:transparent;position:relative;z-index:1}
 .treino-card:hover{border-color:rgba(212,175,125,0.3)}
 
-.treino-card-header{background:linear-gradient(135deg,#c0392b,#e74c3c);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;-webkit-user-select:none;transition:filter 0.2s;-webkit-tap-highlight-color:transparent;position:relative;z-index:1}
+.treino-card-header{background:linear-gradient(135deg,#c0392b,#e74c3c);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;transition:filter 0.2s;-webkit-tap-highlight-color:rgba(0,0,0,0) !important;outline:none;position:relative;z-index:1}
 .treino-card-header:hover{filter:brightness(1.1)}
 .treino-card-header.peito{background:linear-gradient(135deg,#27ae60,#2ecc71)}
-.treino-card-header.costas{background:linear-gradient(135deg,#2980b9,#3498db)}
+.treino-card-header.costas{background:linear-gradient(135deg,#1a5276,#2471a3)}
 .treino-card-header.pernas{background:linear-gradient(135deg,#8e44ad,#9b59b6)}
 .treino-card-header.ombros{background:linear-gradient(135deg,#d35400,#e67e22)}
 .treino-card-header.bracos{background:linear-gradient(135deg,#16a085,#1abc9c)}
@@ -396,13 +397,13 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 .treino-card-body{padding:0}
 .exercicio-table{width:100%;border-collapse:collapse}
 .exercicio-table th{background:#141414;color:#e8c160;padding:10px 12px;text-align:left;font-size:0.72em;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid rgba(212,175,125,0.15);font-weight:700}
-.exercicio-table th:first-child{padding-left:20px}
+.exercicio-table th:first-child{padding-left:6px;width:36px;text-align:center}
 .exercicio-table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.05);color:#ffffff;font-size:0.95em}
-.exercicio-table td:first-child{padding-left:8px;color:#fff;font-weight:500}
+.exercicio-table td:first-child{padding-left:6px;color:#fff;font-weight:500;width:36px;text-align:center;vertical-align:middle}
 .exercicio-table tr:last-child td{border-bottom:none}
 .exercicio-table tr:hover{background:rgba(212,175,125,0.07)}
 
-.exercicio-nome{display:flex;align-items:center;gap:10px}
+.exercicio-nome{display:flex;align-items:flex-start;gap:6px}
 .exercicio-nome span{flex:1}
 .exercicio-acoes{display:flex;gap:5px;opacity:0;transition:opacity 0.2s}
 .exercicio-table tr:hover .exercicio-acoes{opacity:1}
@@ -440,10 +441,10 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 
 /* Exercício Feito */
 .ex-check-td {
-    width: 32px;
+    width: 36px;
     vertical-align: middle;
     text-align: center;
-    padding: 0 4px 0 8px !important;
+    padding: 0 2px 0 6px !important;
 }
 .exercicio-check{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:2px solid rgba(212,175,125,0.4);border-radius:50%;cursor:pointer;background:transparent;position:relative;transition:all 0.2s;flex-shrink:0;display:block;margin:0 auto;}
 .exercicio-check:hover{border-color:#d4af7d}
@@ -465,8 +466,8 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 
 /* Exercícios - Layout ajustado */
 .exercicio-table th,.exercicio-table td{text-align:center;padding:10px 8px}
-.exercicio-table th:nth-child(1),.exercicio-table td:nth-child(1){width:32px;padding:10px 4px 10px 8px;vertical-align:middle;text-align:center}
-.exercicio-table th:nth-child(2),.exercicio-table td:nth-child(2){text-align:left;padding-left:4px}
+.exercicio-table th:nth-child(1),.exercicio-table td:nth-child(1){width:36px;padding:10px 2px 10px 6px;vertical-align:middle;text-align:center}
+.exercicio-table th:nth-child(2),.exercicio-table td:nth-child(2){text-align:left;padding-left:2px}
 .exercicio-nome-texto{font-size:1em;color:#ffffff;font-weight:600;}.exercicio-nome-texto .conjugado-plus{color:#e8c160;font-weight:700;margin:0 4px}
 .exercicio-obs{font-size:0.78em;color:rgba(255,255,255,0.65);margin-top:4px;font-style:italic;line-height:1.4}
 
