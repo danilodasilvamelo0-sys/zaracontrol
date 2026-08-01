@@ -3234,7 +3234,7 @@
                 <button class="btn-salvar" onclick="confirmarPagarParcela()">Confirmar Pagamento</button>
             </div>
         `;
-        document.querySelector('#modalAmortizar .modal-header h3').textContent = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Pagar Parcela';
+        document.querySelector('#modalAmortizar .modal-header h3').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;margin-right:3px"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Pagar Parcela';
         abrirModal('modalAmortizar');
     }
 
