@@ -450,9 +450,32 @@
     function confirmar(mensagem, callback, titulo = 'Confirmar exclusão', okLabel = 'Excluir', okColor = '#e74c3c') {
         document.getElementById('modalConfirmMsg').textContent = mensagem;
         document.getElementById('modalConfirmTitle').textContent = titulo;
-        const btn = document.getElementById('modalConfirmOkBtn');
+        const btn  = document.getElementById('modalConfirmOkBtn');
+        const icon = document.getElementById('modalConfirmIcon');
         btn.textContent = okLabel;
         btn.style.background = okColor;
+        // Ícone e cor conforme tipo
+        if (okColor === '#3498db') {
+            icon.style.background = 'rgba(52,152,219,0.12)';
+            icon.style.borderColor = 'rgba(52,152,219,0.25)';
+            icon.style.color = '#3498db';
+            icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><polyline points="9 18 15 12 9 6"/><polyline points="15 18 21 12 15 6"/></svg>';
+        } else if (okColor === '#e67e22') {
+            icon.style.background = 'rgba(230,126,34,0.12)';
+            icon.style.borderColor = 'rgba(230,126,34,0.25)';
+            icon.style.color = '#e67e22';
+            icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+        } else if (okColor === '#27ae60' || okColor === '#2ecc71') {
+            icon.style.background = 'rgba(46,204,113,0.12)';
+            icon.style.borderColor = 'rgba(46,204,113,0.25)';
+            icon.style.color = '#2ecc71';
+            icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><polyline points="20 6 9 17 4 12"/></svg>';
+        } else {
+            icon.style.background = 'rgba(231,76,60,0.12)';
+            icon.style.borderColor = 'rgba(231,76,60,0.25)';
+            icon.style.color = '#e74c3c';
+            icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+        }
         _confirmCallback = callback;
         document.getElementById('modalConfirm').classList.add('active');
     }
@@ -1427,7 +1450,11 @@
         const keyProx = proxMes.getFullYear() + '-' + String(proxMes.getMonth() + 1).padStart(2,'0');
         const nomeMes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][proxMes.getMonth()];
 
-        if (!confirm(`Adiar "${desp.descricao}" (${formatarMoeda(desp.valor)}) para ${nomeMes}/${proxMes.getFullYear()}?`)) return;
+        confirmar(
+            `Adiar "${desp.descricao}" (${formatarMoeda(desp.valor)}) para ${nomeMes}/${proxMes.getFullYear()}?`,
+            () => _executarAdiarDespesaAtrasada(id, mesOrigem, desp, keyProx, nomeMes, proxMes),
+            'Adiar Despesa', 'Adiar', '#3498db'
+        ); return;
 
         // Remover do mês de origem
         arr.splice(idx, 1);
@@ -2929,7 +2956,11 @@
         if (!emp) return;
         const valor = emp.jurosAcumulados || 0;
         if (valor <= 0) return;
-        if (!confirm(`Cancelar/remover os ${formatarMoeda(valor)} de juros acumulados do "${emp.descricao}"?\n\nIsso zerará os juros pendentes sem registrar pagamento.`)) return;
+        confirmar(
+            `Cancelar ${formatarMoeda(valor)} de juros acumulados do "${emp.descricao}"? Isso zerará os juros pendentes sem registrar pagamento.`,
+            () => _executarCancelarJuros(id, emp, valor),
+            'Cancelar Juros', 'Cancelar Juros', '#e67e22'
+        ); return;
 
         emp.jurosAcumulados = 0;
 
@@ -2960,7 +2991,11 @@
                    : tipo === 'parcela'      ? `parcela ${h.numeroParcela || ''} de ${formatarMoeda(valor)}`
                    : `amortização de ${formatarMoeda(valor)}`;
 
-        if (!confirm(`Remover ${desc}?\n\nIsso vai reverter o efeito desta operação nos saldos.`)) return;
+        confirmar(
+            `Remover ${desc}? Isso vai reverter o efeito desta operação nos saldos.`,
+            () => _executarRemoverHistorico(empId, idx, h, emp),
+            'Remover Entrada', 'Remover', '#e74c3c'
+        ); return;
 
         // Reverter o efeito no saldo
         if (tipo === 'juros_gerado') {
@@ -5268,12 +5303,30 @@
             status.id = 'syncStatus';
             document.body.appendChild(status);
         }
-        
-        status.textContent = msg;
-        status.style.background = tipo === 'success' ? 'rgba(39, 174, 96, 0.95)' : 'rgba(231, 76, 60, 0.95)';
-        status.style.opacity = '1';
-        
-        setTimeout(() => { status.style.opacity = '0'; }, 3000);
+
+        const icones = {
+            success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>',
+            error:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+            info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+        };
+
+        const cores = {
+            success: 'rgba(30,130,70,0.96)',
+            error:   'rgba(180,45,35,0.96)',
+            info:    'rgba(30,60,100,0.96)',
+        };
+
+        const t = tipo || 'info';
+        status.innerHTML = (icones[t] || icones.info) + `<span>${msg}</span>`;
+        status.style.background = cores[t] || cores.info;
+        status.style.opacity    = '1';
+        status.style.transform  = 'translateY(0)';
+
+        clearTimeout(status._timeout);
+        status._timeout = setTimeout(() => {
+            status.style.opacity   = '0';
+            status.style.transform = 'translateY(8px)';
+        }, 3500);
     }
 
     // ==========================================
