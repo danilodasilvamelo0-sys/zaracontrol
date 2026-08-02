@@ -1288,16 +1288,20 @@
                                     
                                     return `
                                 <tr class="${todosFeitos ? 'exercicio-feito' : ''}">
-                                    <td style="display:flex;align-items:center;gap:4px;padding-left:12px">
-                                        <span class="exercicio-drag-handle" title="Arrastar para reordenar"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="17" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="1.5" fill="currentColor" stroke="none"/></svg></span>
+                                    <td class="ex-check-td">
                                         <input type="checkbox" class="exercicio-check" ${todosFeitos ? 'checked' : ''} onchange="marcarExercicio('${treino.id}','${ex.id}',this.checked,${temConjugados ? `'${ex.conjugadosCom.map(c=>c.id).join(',')}'` : 'null'})">
                                     </td>
-                                    </td>
-                                    <td>
+                                    <td class="ex-nome-td">
                                         <div class="exercicio-nome">
-                                            <div style="flex:1">
+                                            <div class="ex-nome-inner">
                                                 <span class="exercicio-nome-texto">${nomeCompleto}</span>
                                                 ${obsConjunto ? `<div class="exercicio-obs">${obsConjunto}</div>` : ''}
+                                                <div class="ex-metricas-mobile">
+                                                    <span class="ex-met-chip"><span class="ex-met-label">S</span>${ex.series}</span>
+                                                    <span class="ex-met-chip"><span class="ex-met-label">R</span>${ex.reps}</span>
+                                                    ${ex.metodo && ex.metodo !== '-' ? `<span class="ex-met-chip">${ex.metodo}</span>` : ''}
+                                                    <span class="ex-met-chip"><span class="ex-met-label">⏱</span>${ex.descanso}min</span>
+                                                </div>
                                             </div>
                                             <div class="exercicio-acoes">
                                                 <button class="exercicio-btn duplicate" onclick="duplicarExercicio('${treino.id}','${ex.id}')" title="Duplicar">
