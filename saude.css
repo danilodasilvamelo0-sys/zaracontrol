@@ -122,11 +122,11 @@ body::after { content: ''; position: fixed; bottom: 0; left: 0; right: 0; height
 .mobile-nav-item svg { width: 22px; height: 22px; }
 .mobile-nav-item.active { color: #d4af7d; }
 
-@media (max-width: 768px) { body { padding-left: 10px; padding-bottom: 80px; } .sidebar { display: none; } .mobile-nav { display: block; } .container { margin-left: 0 !important; } #globalTabs { margin-left: 0 !important; } }
+@media (max-width: 768px) { body { padding-left: 0; padding-bottom: 80px; padding-top: 58px; } .sidebar { display: none; } .mobile-nav { display: block; } .container { margin-left: 0 !important; border-radius: 0 !important; } #globalTabs { margin-left: 0 !important; } .tabs-container { left: 0 !important; } }
 @media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } #globalTabs { margin-left: 0; } }
 
 /* Container e Layout */
-.container { max-width: 1200px; margin: 0 auto; background: #141414; border: 1px solid rgba(212, 175, 125, 0.15); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; }
+.container { max-width: 1200px; margin: 0 auto; background: #141414; border: 1px solid rgba(212, 175, 125, 0.15); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; padding-top: 58px; }
 .page-section { display: none; }
 .page-section.active { display: block; }
 
@@ -140,9 +140,9 @@ body::after { content: ''; position: fixed; bottom: 0; left: 0; right: 0; height
 @media (max-width: 768px) { #syncStatus { bottom: 90px; right: 10px; left: 10px; text-align: center; } }
 
 /* Tabs */
-.tabs-container { background: #141414; padding: 10px 15px; border-bottom: 1px solid rgba(212, 175, 125, 0.15); position: sticky; top: 0; z-index: 100; }
-.tabs-header { display: flex; gap: 8px; justify-content: space-around; }
-.tab-btn { display: flex; align-items: center; gap: 6px; padding: 10px 15px; background: transparent; border: none; color: rgba(255,255,255,0.82); font-size: 0.8em; cursor: pointer; border-radius: 8px; transition: all 0.3s; white-space: nowrap; }
+.tabs-container { background: rgba(14,14,14,0.97); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 8px 15px; border-bottom: 1px solid rgba(212,175,125,0.18); position: fixed; top: 0; left: 0; right: 0; z-index: 400; box-shadow: 0 2px 20px rgba(0,0,0,0.5); height: 58px; display: flex; align-items: center; }
+.tabs-header-SKIP { display: flex; gap: 8px; justify-content: space-around; }
+.tab-btn { display: flex; align-items: center; gap: 5px; padding: 8px 14px; background: transparent; border: none; color: rgba(255,255,255,0.80); font-size: 0.80em; font-weight: 500; cursor: pointer; border-radius: 8px; transition: all 0.25s; white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
 .tab-btn:hover { color: #d4af7d; background: rgba(212, 175, 125, 0.1); }
 .tab-btn.active { background: rgba(212, 175, 125, 0.2); color: #d4af7d; }
 .tab-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
@@ -510,7 +510,7 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
     
     /* Tabs Global */
     #globalTabs { margin: 0 0 15px; border-radius: 10px; padding: 8px 10px; }
-    .tabs-header { gap: 2px; }
+    .tabs-header-SKIP { gap: 2px; }
     .tab-btn { padding: 10px 8px; font-size: 0.65em; gap: 3px; flex-direction: column; flex: 1; text-align: center; border-radius: 6px; }
     .tab-btn svg { width: 18px; height: 18px; }
     
@@ -1769,3 +1769,6 @@ input, select, textarea { font-size: 16px !important; }
     -webkit-user-select: none;
 }
 
+
+.tabs-header { display: flex; gap: 2px; width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.tabs-header::-webkit-scrollbar { display: none; }
