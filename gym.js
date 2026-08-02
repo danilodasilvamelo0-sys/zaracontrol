@@ -426,7 +426,7 @@ function renderDieta() {
         return `<div class="refeicao-card">
             <div class="refeicao-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
                 <div class="refeicao-header-left">
-                    <div class="refeicao-icon">${r.icone||'jantar'}</div>
+                    <div class="refeicao-icon">${getRefIcon(r.icone||'jantar')}</div>
                     <div>
                         <div class="refeicao-nome">${r.nome}</div>
                         <div class="refeicao-hora">${r.hora||'--:--'} · ${r.alimentos.length} alimento${r.alimentos.length!==1?'s':''}</div>
