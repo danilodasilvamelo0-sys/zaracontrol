@@ -538,7 +538,7 @@
             const obs = document.getElementById('novoMedObs').value.trim();
             const frequencia = document.getElementById('novoMedFrequencia').value;
             
-            if (!nome || !dose) { mostrarStatus('Preencha o nome e a dose.', 'error'); return; }
+            if (!nome || !dose) { alert('Preencha o nome e a dose.'); return; }
             
             let dias = [];
             if (frequencia === 'todos') {
@@ -551,7 +551,7 @@
                 });
             }
             
-            if (dias.length === 0) { mostrarStatus('Selecione pelo menos um dia.', 'error'); return; }
+            if (dias.length === 0) { alert('Selecione pelo menos um dia.'); return; }
             
             const novoMed = { 
                 id: Date.now().toString(), 
@@ -783,7 +783,7 @@
             const tipo = document.getElementById('editMedTipo').value;
             const frequencia = document.getElementById('editMedFrequencia').value;
             
-            if (!nome || !dose) { mostrarStatus('Preencha o nome e a dose.', 'error'); return; }
+            if (!nome || !dose) { alert('Preencha o nome e a dose.'); return; }
             
             let novosDias = [];
             if (frequencia === 'todos') {
@@ -796,7 +796,7 @@
                 });
             }
             
-            if (novosDias.length === 0) { mostrarStatus('Selecione pelo menos um dia.', 'error'); return; }
+            if (novosDias.length === 0) { alert('Selecione pelo menos um dia.'); return; }
             
             // Remover de todos os dias
             Object.keys(saude.planoSemanal).forEach(dia => {
@@ -1288,12 +1288,13 @@
                                     
                                     return `
                                 <tr class="${todosFeitos ? 'exercicio-feito' : ''}">
-                                    <td class="ex-check-td">
+                                    <td style="display:flex;align-items:center;gap:4px;padding-left:12px">
+                                        <span class="exercicio-drag-handle" title="Arrastar para reordenar"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="17" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="1.5" fill="currentColor" stroke="none"/></svg></span>
                                         <input type="checkbox" class="exercicio-check" ${todosFeitos ? 'checked' : ''} onchange="marcarExercicio('${treino.id}','${ex.id}',this.checked,${temConjugados ? `'${ex.conjugadosCom.map(c=>c.id).join(',')}'` : 'null'})">
+                                    </td>
                                     </td>
                                     <td>
                                         <div class="exercicio-nome">
-                                            <span class="exercicio-drag-handle" title="Arrastar para reordenar"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="17" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="1.5" fill="currentColor" stroke="none"/></svg></span>
                                             <div style="flex:1">
                                                 <span class="exercicio-nome-texto">${nomeCompleto}</span>
                                                 ${obsConjunto ? `<div class="exercicio-obs">${obsConjunto}</div>` : ''}
@@ -1429,8 +1430,8 @@
 
         function salvarAlerta() {
             const texto = document.getElementById('alertaTexto').value.trim();
-            if (!texto) { mostrarStatus('Informe o texto do alerta', 'error'); return; };
-            if (!alertaTipoSelecionado) { mostrarStatus('Selecione um tipo', 'error'); return; };
+            if (!texto) return alert('Informe o texto do alerta');
+            if (!alertaTipoSelecionado) return alert('Selecione um tipo');
 
             saude.alertasTreino.push({
                 id: Date.now().toString(),
@@ -1475,8 +1476,8 @@
         function salvarTreino() {
             const id = document.getElementById('treinoId').value;
             const nome = document.getElementById('treinoNome').value.trim();
-            if (!nome) { mostrarStatus('Informe o nome do treino', 'error'); return; };
-            if (!gruposSelecionados.length) { mostrarStatus('Selecione pelo menos um grupo muscular', 'error'); return; };
+            if (!nome) return alert('Informe o nome do treino');
+            if (!gruposSelecionados.length) return alert('Selecione pelo menos um grupo muscular');
 
             if (id) {
                 const treino = saude.treinos.find(t => t.id === id);
@@ -1576,10 +1577,10 @@
             const obs = document.getElementById('exercicioObs').value.trim();
             const conjugado = document.getElementById('exercicioConjugado').value;
 
-            if (!nome) { mostrarStatus('Informe o nome do exercício', 'error'); return; };
-            if (!series) { mostrarStatus('Informe as séries', 'error'); return; };
-            if (!reps) { mostrarStatus('Informe as repetições', 'error'); return; };
-            if (!descanso) { mostrarStatus('Informe o descanso', 'error'); return; };
+            if (!nome) return alert('Informe o nome do exercício');
+            if (!series) return alert('Informe as séries');
+            if (!reps) return alert('Informe as repetições');
+            if (!descanso) return alert('Informe o descanso');
 
             const treino = saude.treinos.find(t => t.id === treinoId);
             if (!treino) return;
@@ -1938,12 +1939,12 @@
             const obs = document.getElementById('pesoObs').value.trim();
             
             if (!peso || peso < 20 || peso > 300) {
-                mostrarStatus('Digite um peso válido (entre 20 e 300 kg)', 'error');
+                alert('Digite um peso válido (entre 20 e 300 kg)');
                 return;
             }
             
             if (!data) {
-                mostrarStatus('Selecione uma data', 'error');
+                alert('Selecione uma data');
                 return;
             }
             
@@ -2054,7 +2055,7 @@
             const chatId = document.getElementById('telegramChatId').value.trim();
             
             if (!token || !chatId) {
-                mostrarStatus('Preencha o Bot Token e o Chat ID.', 'error');
+                alert('Preencha o Bot Token e o Chat ID.');
                 return;
             }
             
@@ -2069,20 +2070,20 @@
                 
                 const data = await response.json();
                 if (data.ok) {
-                    mostrarStatus('✅ Conexão bem-sucedida! Verifique o Telegram.\n\nAs notificações funcionarão 24/7, mesmo com o computador desligado.', 'error');
+                    alert('✅ Conexão bem-sucedida! Verifique o Telegram.\n\nAs notificações funcionarão 24/7, mesmo com o computador desligado.');
                     salvarTelegramConfig();
                 } else {
-                    mostrarStatus('Erro: ' + (data.description || 'Falha na conexão'), 'error');
+                    alert('❌ Erro: ' + (data.description || 'Falha na conexão'));
                 }
             } catch (e) {
-                mostrarStatus('❌ Erro de conexão: ' + e.message, 'error');
+                alert('❌ Erro de conexão: ' + e.message);
             }
         }
         
         async function obterChatId() {
             const token = document.getElementById('telegramBotToken').value.trim();
             if (!token) {
-                mostrarStatus('Preencha o Bot Token primeiro.', 'error');
+                alert('Preencha o Bot Token primeiro.');
                 return;
             }
             
@@ -2096,15 +2097,15 @@
                     if (chatId) {
                         document.getElementById('telegramChatId').value = chatId;
                         salvarTelegramConfig();
-                        mostrarStatus('✅ Chat ID obtido: ' + chatId, 'error');
+                        alert('✅ Chat ID obtido: ' + chatId);
                     } else {
-                        mostrarStatus('❌ Envie uma mensagem para o bot primeiro e tente novamente.', 'error');
+                        alert('❌ Envie uma mensagem para o bot primeiro e tente novamente.');
                     }
                 } else {
-                    mostrarStatus('❌ Nenhuma mensagem encontrada. Envie qualquer mensagem para o seu bot no Telegram e clique novamente.', 'error');
+                    alert('❌ Nenhuma mensagem encontrada. Envie qualquer mensagem para o seu bot no Telegram e clique novamente.');
                 }
             } catch (e) {
-                mostrarStatus('❌ Erro: ' + e.message, 'error');
+                alert('❌ Erro: ' + e.message);
             }
         }
         
@@ -2319,7 +2320,7 @@
             const conteudo = document.getElementById('infoConteudo').value.trim();
             
             if (!titulo || !conteudo) {
-                mostrarStatus('Preencha o título e o conteúdo.', 'error');
+                alert('Preencha o título e o conteúdo.');
                 return;
             }
             
@@ -2592,12 +2593,12 @@
                 .filter(v => v !== '');
             
             if (!nome) {
-                mostrarStatus('Digite o nome da refeição', 'error');
+                alert('Digite o nome da refeição');
                 return;
             }
             
             if (alimentos.length === 0) {
-                mostrarStatus('Adicione pelo menos um alimento', 'error');
+                alert('Adicione pelo menos um alimento');
                 return;
             }
             
@@ -2723,50 +2724,3 @@
         }
         
         inicializar();
-
-// ── Swipe entre abas no mobile ──
-document.addEventListener('touchstart', function(e){ window._sx=e.touches[0].clientX; window._sy=e.touches[0].clientY; }, {passive:true});
-document.addEventListener('touchend', function(e){
-    var dx=e.changedTouches[0].clientX-(window._sx||0);
-    var dy=e.changedTouches[0].clientY-(window._sy||0);
-    if(Math.abs(dx)<60||Math.abs(dy)>Math.abs(dx)) return;
-    var a=document.querySelector('.tab-btn.active');
-    if(!a) return;
-    var tabs=['medicamentos','dieta','treino','fotos'];
-    var i=tabs.indexOf(a.getAttribute('data-tab')||'');
-    if(dx<0&&i<tabs.length-1&&typeof showTab==='function') showTab(tabs[i+1]);
-    if(dx>0&&i>0&&typeof showTab==='function') showTab(tabs[i-1]);
-}, {passive:true});
-
-// ── Modal de confirmação premium (saude) ──
-function confirmarAcao(msg, callback, titulo, okLabel, okColor) {
-    titulo   = titulo   || 'Confirmar';
-    okLabel  = okLabel  || 'Confirmar';
-    okColor  = okColor  || '#e74c3c';
-    var el = document.getElementById('saude-confirm-modal');
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'saude-confirm-modal';
-        el.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:99999;align-items:center;justify-content:center;padding:20px;';
-        el.innerHTML = '<div style="background:#141414;border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:28px 24px;max-width:350px;width:100%;text-align:center;">'
-            + '<div style="width:50px;height:50px;border-radius:50%;background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">'
-            + '<svg viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2" style="width:22px;height:22px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
-            + '</div>'
-            + '<h3 id="saudeConfirmT" style="color:#e8c160;font-size:.82em;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;"></h3>'
-            + '<p id="saudeConfirmM" style="color:rgba(255,255,255,0.82);font-size:.84em;line-height:1.6;margin-bottom:20px;"></p>'
-            + '<div style="display:flex;gap:10px;justify-content:center;">'
-            + '<button id="saudeConfirmN" style="flex:1;max-width:120px;padding:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:rgba(255,255,255,0.7);font-size:.78em;font-weight:600;cursor:pointer;">Cancelar</button>'
-            + '<button id="saudeConfirmS" style="flex:1;max-width:140px;padding:10px;border:none;border-radius:10px;color:#fff;font-size:.78em;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;"></button>'
-            + '</div></div>';
-        document.body.appendChild(el);
-        document.getElementById('saudeConfirmN').onclick = function(){ el.style.display='none'; };
-        el.onclick = function(e){ if(e.target===el) el.style.display='none'; };
-    }
-    document.getElementById('saudeConfirmT').textContent = titulo;
-    document.getElementById('saudeConfirmM').textContent = msg;
-    var ok = document.getElementById('saudeConfirmS');
-    ok.textContent = okLabel;
-    ok.style.background = okColor;
-    ok.onclick = function(){ el.style.display='none'; callback(); };
-    el.style.display = 'flex';
-}
