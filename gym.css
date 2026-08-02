@@ -365,10 +365,13 @@
         }
         .refeicao-header-left { display:flex; align-items:center; gap:10px; }
         .refeicao-icon {
-            width:34px; height:34px; border-radius:9px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.1em; flex-shrink:0;
+            width: 38px; height: 38px; border-radius: 10px;
+            background: var(--gold-dim);
+            border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; color: var(--gold);
         }
+        .refeicao-icon svg { width: 18px; height: 18px; }
         .refeicao-nome { font-size:0.85em; font-weight:700; color:var(--text); }
         .refeicao-hora { font-size:0.65em; color:var(--text-dim); margin-top:2px; }
         .refeicao-kcal { font-size:0.75em; font-weight:700; color:var(--gold); }
