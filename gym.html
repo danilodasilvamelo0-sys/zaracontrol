@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZARA | GYM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════
+           ZARA — DESIGN SYSTEM (inline para isolamento)
+           ═══════════════════════════════════════════ */
+        :root {
+            --bg:        #080808;
+            --s1:        #0e0e0e;
+            --s2:        #141414;
+            --s3:        #1c1c1c;
+            --s4:        #242424;
+            --text:      #ffffff;
+            --text-sub:  rgba(255,255,255,0.88);
+            --text-dim:  rgba(255,255,255,0.55);
+            --gold:      #e8c160;
+            --gold-b:    #f5d870;
+            --gold-dim:  rgba(232,193,96,0.10);
+            --gold-mid:  rgba(232,193,96,0.28);
+            --border:    rgba(232,193,96,0.14);
+            --border-s:  rgba(255,255,255,0.06);
+            --green:     #2ecc71;
+            --red:       #e74c3c;
+            --blue:      #3498db;
+            --shadow:    0 4px 24px rgba(0,0,0,0.6);
+            --fw-bold:   700;
+            --fw-semi:   600;
+            --fw-regular:400;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding-left: 70px;
+            padding-bottom: 80px;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            position: fixed; top:0; left:0; width:70px; height:100vh;
+            background: var(--s1);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center;
+            z-index: 200; overflow: hidden; transition: width 0.3s ease;
+        }
+        .sidebar:hover { width: 200px; }
+        .sidebar-logo {
+            font-family:'Montserrat',sans-serif; font-size:1.4em; font-weight:800;
+            color: var(--gold); width:70px; height:70px;
+            display:flex; align-items:center; justify-content:center;
+            text-decoration:none; border-bottom:1px solid var(--border); flex-shrink:0;
+        }
+        .sidebar-menu { display:flex; flex-direction:column; gap:4px; padding:12px 8px; width:100%; flex:1; }
+        .sidebar-menu a {
+            display:flex; align-items:center; gap:12px; padding:10px 12px;
+            color: var(--text-dim); text-decoration:none; border-radius:10px;
+            transition: all 0.2s; white-space:nowrap; overflow:hidden;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active { color: var(--gold); background: var(--gold-dim); }
+        .sidebar-menu a.active { border-left: 2px solid var(--gold); }
+        .sidebar-menu a svg { width:20px; height:20px; flex-shrink:0; }
+        .sidebar-menu a span { opacity:0; transition:opacity 0.2s; font-size:0.82em; font-weight:600; }
+        .sidebar:hover .sidebar-menu a span { opacity:1; }
+        .sidebar-divider { height:1px; background:var(--border); margin:6px 12px; }
+        .sidebar-footer { padding:16px 8px; border-top:1px solid var(--border); width:100%; }
+        .sidebar-footer p { font-size:0.6em; color:var(--text-dim); text-align:center; opacity:0; transition:opacity 0.2s; white-space:nowrap; }
+        .sidebar:hover .sidebar-footer p { opacity:1; }
+        .sidebar-footer .instituto { color:var(--gold); font-weight:800; margin-right:4px; }
+
+        /* ── MOBILE NAV ── */
+        .mobile-nav {
+            display:none; position:fixed; bottom:0; left:0; right:0;
+            background: var(--s1); border-top:1px solid var(--border);
+            padding:8px 0; z-index:200;
+        }
+        .mobile-nav-items { display:flex; justify-content:space-around; }
+        .mobile-nav-item {
+            display:flex; flex-direction:column; align-items:center; gap:3px;
+            color:var(--text-dim); text-decoration:none; font-size:0.62em;
+            font-weight:600; padding:4px 8px; border-radius:8px; transition:color 0.2s;
+        }
+        .mobile-nav-item svg { width:20px; height:20px; }
+        .mobile-nav-item.active { color:var(--gold); }
+
+        /* ── CONTAINER ── */
+        .container { max-width:1200px; margin:0 auto; padding:32px 24px 40px; }
+
+        /* ── HEADER ── */
+        .page-header {
+            display:flex; align-items:flex-end; justify-content:space-between;
+            margin-bottom:32px; padding-bottom:24px;
+            border-bottom:1px solid var(--border);
+            animation: fadeUp 0.5s ease both;
+        }
+        .page-header h1 {
+            font-size:2em; font-weight:200; letter-spacing:8px;
+            text-transform:uppercase; color:var(--text);
+        }
+        .page-header p { color:var(--text-dim); font-size:0.65em; font-weight:600; margin-top:6px; letter-spacing:3px; text-transform:uppercase; }
+
+        /* ── TABS ── */
+        .gym-tabs {
+            display:flex; gap:4px; margin-bottom:28px;
+            background:var(--s1); border:1px solid var(--border);
+            border-radius:12px; padding:5px;
+        }
+        .gym-tab {
+            flex:1; display:flex; align-items:center; justify-content:center; gap:7px;
+            padding:10px 16px; border:none; border-radius:9px;
+            background:transparent; color:var(--text-dim); font-family:inherit;
+            font-size:0.80em; font-weight:600; cursor:pointer; transition:all 0.25s;
+            letter-spacing:0.5px; -webkit-tap-highlight-color:transparent;
+        }
+        .gym-tab svg { width:16px; height:16px; flex-shrink:0; }
+        .gym-tab:hover { color:var(--text-sub); background:var(--border-s); }
+        .gym-tab.active { background:var(--gold-dim); color:var(--gold); border:1px solid var(--border); }
+
+        /* ── SECTION CARD ── */
+        .section {
+            background:var(--s2); border:1px solid var(--border);
+            border-radius:18px; margin-bottom:24px; overflow:hidden;
+            box-shadow: var(--shadow); animation: fadeUp 0.4s ease both;
+        }
+        .section-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:18px 22px; background:var(--s1);
+            border-bottom:1px solid var(--border); position:relative;
+            cursor:pointer; -webkit-tap-highlight-color:transparent;
+            user-select:none; -webkit-user-select:none;
+        }
+        .section-header::before {
+            content:''; position:absolute; left:0; top:20%; bottom:20%;
+            width:2px; background:var(--gold); opacity:0.7; border-radius:0 2px 2px 0;
+        }
+        .section-header-left { display:flex; align-items:center; gap:10px; padding-left:10px; }
+        .section-icon {
+            width:34px; height:34px; border-radius:9px;
+            background:var(--gold-dim); border:1px solid var(--border);
+            display:flex; align-items:center; justify-content:center; color:var(--gold);
+        }
+        .section-icon svg { width:16px; height:16px; }
+        .section-title { font-size:0.70em; font-weight:800; text-transform:uppercase; letter-spacing:2.5px; color:var(--gold); }
+        .section-sub { font-size:0.65em; color:var(--text-dim); margin-top:2px; }
+        .section-header-right { display:flex; align-items:center; gap:8px; }
+        .section-content { padding:0; }
+        .section-body { padding:20px 22px; }
+
+        /* ── BOTÕES ── */
+        .btn-primary {
+            display:inline-flex; align-items:center; gap:7px;
+            padding:9px 18px; background:var(--gold); color:#000;
+            border:none; border-radius:10px; font-family:inherit;
+            font-size:0.75em; font-weight:800; letter-spacing:0.5px;
+            cursor:pointer; transition:all 0.25s; -webkit-tap-highlight-color:transparent;
+        }
+        .btn-primary:hover { filter:brightness(1.1); transform:translateY(-1px); }
+        .btn-primary svg { width:14px; height:14px; }
+        .btn-sec {
+            display:inline-flex; align-items:center; gap:6px;
+            padding:8px 14px; background:transparent;
+            border:1px solid var(--border-s); border-radius:9px;
+            color:var(--text-dim); font-family:inherit; font-size:0.73em;
+            font-weight:600; cursor:pointer; transition:all 0.2s;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-sec:hover { border-color:var(--border); color:var(--text-sub); }
+        .btn-sec svg { width:13px; height:13px; }
+        .btn-danger {
+            display:inline-flex; align-items:center; gap:6px;
+            padding:8px 14px; background:rgba(231,76,60,0.08);
+            border:1px solid rgba(231,76,60,0.25); border-radius:9px;
+            color:var(--red); font-family:inherit; font-size:0.73em;
+            font-weight:600; cursor:pointer; transition:all 0.2s;
+        }
+        .btn-danger:hover { background:rgba(231,76,60,0.15); border-color:var(--red); }
+
+        /* ── BADGE ── */
+        .badge {
+            display:inline-flex; align-items:center; gap:3px;
+            padding:2px 8px; border-radius:10px; font-size:0.65em; font-weight:700;
+        }
+        .badge-gold { background:var(--gold-dim); color:var(--gold); border:1px solid var(--border); }
+        .badge-green { background:rgba(46,204,113,0.10); color:var(--green); border:1px solid rgba(46,204,113,0.2); }
+        .badge-red { background:rgba(231,76,60,0.10); color:var(--red); border:1px solid rgba(231,76,60,0.2); }
+        .badge-blue { background:rgba(52,152,219,0.10); color:var(--blue); border:1px solid rgba(52,152,219,0.2); }
+
+        /* ══════════════════════════════════════════
+           TREINO
+           ══════════════════════════════════════════ */
+        /* Lista de treinos */
+        .treinos-list { display:flex; flex-direction:column; gap:12px; padding:20px 22px; }
+
+        .treino-card {
+            background:var(--s3); border:1px solid var(--border-s);
+            border-radius:14px; overflow:hidden;
+            transition:all 0.25s cubic-bezier(0.16,1,0.3,1);
+        }
+        .treino-card:hover { border-color:var(--border); box-shadow:0 4px 20px rgba(0,0,0,0.4); }
+
+        .treino-card-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:14px 18px; cursor:pointer;
+            background:linear-gradient(135deg, #1a5276, #2471a3);
+            user-select:none; -webkit-user-select:none;
+            -webkit-tap-highlight-color:rgba(0,0,0,0) !important;
+        }
+        .treino-card-header.peito   { background:linear-gradient(135deg,#1a7a40,#2ecc71); }
+        .treino-card-header.costas  { background:linear-gradient(135deg,#1a5276,#2471a3); }
+        .treino-card-header.pernas  { background:linear-gradient(135deg,#6c3483,#9b59b6); }
+        .treino-card-header.ombros  { background:linear-gradient(135deg,#a04000,#e67e22); }
+        .treino-card-header.bracos  { background:linear-gradient(135deg,#0e6655,#1abc9c); }
+        .treino-card-header.abdomen { background:linear-gradient(135deg,#922b21,#e74c3c); }
+        .treino-card-header.full    { background:linear-gradient(135deg,#1b2631,#34495e); }
+        .treino-card-header.cardio  { background:linear-gradient(135deg,#b7770d,#d4a017); }
+
+        .treino-card-info { flex:1; }
+        .treino-card-nome {
+            font-size:0.90em; font-weight:800; color:#fff;
+            text-transform:uppercase; letter-spacing:1.5px;
+            text-shadow:0 1px 3px rgba(0,0,0,0.4);
+        }
+        .treino-card-meta { font-size:0.65em; color:rgba(255,255,255,0.75); margin-top:3px; }
+        .treino-card-toggle {
+            width:28px; height:28px; border-radius:50%;
+            background:rgba(255,255,255,0.15); border:none;
+            color:#fff; display:flex; align-items:center; justify-content:center;
+            cursor:pointer; transition:all 0.25s; flex-shrink:0;
+        }
+        .treino-card-toggle svg { width:14px; height:14px; transition:transform 0.3s; }
+        .treino-card.collapsed .treino-card-toggle svg { transform:rotate(-90deg); }
+
+        .treino-card-body { display:block; }
+        .treino-card.collapsed .treino-card-body { display:none; }
+
+        /* Progress bar */
+        .treino-prog-wrap {
+            height:3px; background:rgba(255,255,255,0.07);
+            border-radius:2px; overflow:hidden;
+        }
+        .treino-prog-fill {
+            height:100%; border-radius:2px;
+            background:linear-gradient(90deg, var(--gold), var(--green));
+            transition:width 0.4s ease;
+        }
+
+        /* Tabela de exercícios */
+        .exercicio-table { width:100%; border-collapse:collapse; }
+        .exercicio-table thead tr {
+            background:var(--s2); border-bottom:1px solid var(--border-s);
+        }
+        .exercicio-table th {
+            padding:10px 14px; text-align:center;
+            font-size:0.63em; font-weight:700; color:var(--gold);
+            text-transform:uppercase; letter-spacing:1.5px;
+        }
+        .exercicio-table th:nth-child(2) { text-align:left; }
+        .exercicio-table td {
+            padding:12px 14px; border-bottom:1px solid var(--border-s);
+            color:var(--text); font-size:0.85em; text-align:center;
+            vertical-align:middle;
+        }
+        .exercicio-table td:nth-child(2) { text-align:left; }
+        .exercicio-table tr:last-child td { border-bottom:none; }
+        .exercicio-table tbody tr:hover { background:rgba(232,193,96,0.03); }
+        .exercicio-feito td { opacity:0.5; }
+        .exercicio-feito .ex-nome-txt { text-decoration:line-through; }
+
+        .ex-check {
+            appearance:none; -webkit-appearance:none;
+            width:20px; height:20px; border:2px solid rgba(232,193,96,0.4);
+            border-radius:50%; cursor:pointer; background:transparent;
+            position:relative; transition:all 0.2s; display:block; margin:0 auto;
+            flex-shrink:0;
+        }
+        .ex-check:hover { border-color:var(--gold); }
+        .ex-check:checked { background:var(--green); border-color:var(--green); }
+        .ex-check:checked::after {
+            content:'✓'; position:absolute; top:50%; left:50%;
+            transform:translate(-50%,-50%); color:#fff; font-size:11px; font-weight:700;
+        }
+
+        .ex-nome-txt { font-weight:600; color:var(--text); }
+        .ex-obs { font-size:0.72em; color:var(--text-dim); margin-top:3px; font-style:italic; }
+        .ex-acoes {
+            display:flex; gap:4px; opacity:0; transition:opacity 0.2s;
+            justify-content:center;
+        }
+        .exercicio-table tbody tr:hover .ex-acoes { opacity:1; }
+        .ex-btn {
+            background:transparent; border:none; color:var(--text-dim);
+            cursor:pointer; padding:4px; border-radius:6px; transition:all 0.2s;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .ex-btn:hover { color:var(--gold); background:var(--gold-dim); }
+        .ex-btn.del:hover { color:var(--red); background:rgba(231,76,60,0.1); }
+        .ex-btn svg { width:14px; height:14px; }
+
+        /* Add exercício */
+        .btn-add-ex {
+            width:100%; padding:12px; background:var(--gold-dim);
+            border:1px dashed rgba(232,193,96,0.3); border-radius:0 0 13px 13px;
+            color:var(--gold); font-family:inherit; font-size:0.80em; font-weight:600;
+            cursor:pointer; transition:all 0.2s; display:flex;
+            align-items:center; justify-content:center; gap:7px;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-add-ex:hover { background:rgba(232,193,96,0.15); }
+        .btn-add-ex svg { width:14px; height:14px; }
+
+        /* Volume badge */
+        .treino-volume {
+            display:flex; gap:12px; padding:10px 18px;
+            background:var(--s2); border-top:1px solid var(--border-s);
+            font-size:0.70em; color:var(--text-dim);
+        }
+        .treino-volume strong { color:var(--gold); }
+
+        /* Empty state */
+        .empty-state {
+            padding:40px 20px; text-align:center; color:var(--text-dim);
+            font-size:0.82em;
+        }
+        .empty-state svg { width:40px; height:40px; opacity:0.25; margin-bottom:12px; display:block; margin-left:auto; margin-right:auto; }
+
+        /* ══════════════════════════════════════════
+           DIETA
+           ══════════════════════════════════════════ */
+        /* Macros KPIs */
+        .macros-grid {
+            display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+            padding:20px 22px; border-bottom:1px solid var(--border-s);
+        }
+        .macro-card {
+            background:var(--s3); border:1px solid var(--border-s);
+            border-radius:12px; padding:14px 16px; text-align:center;
+            transition:all 0.25s;
+        }
+        .macro-card:hover { border-color:var(--border); transform:translateY(-2px); }
+        .macro-label { font-size:0.60em; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim); margin-bottom:6px; }
+        .macro-val { font-size:1.3em; font-weight:700; color:var(--text); }
+        .macro-unit { font-size:0.60em; color:var(--text-dim); margin-top:2px; }
+        .macro-bar-wrap { height:4px; background:var(--border-s); border-radius:2px; margin-top:8px; overflow:hidden; }
+        .macro-bar-fill { height:100%; border-radius:2px; transition:width 0.4s ease; }
+        .macro-kcal .macro-bar-fill { background:var(--gold); }
+        .macro-prot .macro-bar-fill { background:#e74c3c; }
+        .macro-carb .macro-bar-fill { background:#f39c12; }
+        .macro-gord .macro-bar-fill { background:#3498db; }
+        .macro-kcal .macro-val { color:var(--gold); }
+        .macro-prot .macro-val { color:#e74c3c; }
+        .macro-carb .macro-val { color:#f39c12; }
+        .macro-gord .macro-val { color:#3498db; }
+
+        /* Refeições */
+        .refeicoes-list { padding:16px 22px; display:flex; flex-direction:column; gap:12px; }
+
+        .refeicao-card {
+            background:var(--s3); border:1px solid var(--border-s);
+            border-radius:12px; overflow:hidden;
+            transition:border-color 0.2s;
+        }
+        .refeicao-card:hover { border-color:var(--border); }
+        .refeicao-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:12px 16px; cursor:pointer;
+            user-select:none; -webkit-user-select:none;
+        }
+        .refeicao-header-left { display:flex; align-items:center; gap:10px; }
+        .refeicao-icon {
+            width:34px; height:34px; border-radius:9px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.1em; flex-shrink:0;
+        }
+        .refeicao-nome { font-size:0.85em; font-weight:700; color:var(--text); }
+        .refeicao-hora { font-size:0.65em; color:var(--text-dim); margin-top:2px; }
+        .refeicao-kcal { font-size:0.75em; font-weight:700; color:var(--gold); }
+
+        .alimentos-list { padding:0 16px 12px; display:flex; flex-direction:column; gap:6px; }
+        .alimento-item {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:8px 12px; background:var(--s2); border-radius:8px;
+            border:1px solid var(--border-s);
+        }
+        .alimento-nome { font-size:0.80em; font-weight:600; color:var(--text-sub); }
+        .alimento-macros { display:flex; gap:8px; font-size:0.65em; color:var(--text-dim); }
+        .alimento-macros span { color:var(--text-sub); font-weight:600; }
+        .alimento-del {
+            background:transparent; border:none; color:var(--text-dim);
+            cursor:pointer; padding:4px; border-radius:6px; opacity:0;
+            transition:all 0.2s; display:flex;
+        }
+        .alimento-item:hover .alimento-del { opacity:1; }
+        .alimento-del:hover { color:var(--red); background:rgba(231,76,60,0.1); }
+        .alimento-del svg { width:13px; height:13px; }
+
+        .btn-add-alimento {
+            display:flex; align-items:center; justify-content:center; gap:6px;
+            width:100%; padding:8px; margin:4px 0 0;
+            background:transparent; border:1px dashed var(--border-s);
+            border-radius:8px; color:var(--text-dim); font-family:inherit;
+            font-size:0.73em; font-weight:600; cursor:pointer; transition:all 0.2s;
+        }
+        .btn-add-alimento:hover { border-color:var(--border); color:var(--text-sub); }
+        .btn-add-alimento svg { width:12px; height:12px; }
+
+        /* ══════════════════════════════════════════
+           MODAIS
+           ══════════════════════════════════════════ */
+        .modal-overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.75); z-index:9000;
+            align-items:center; justify-content:center; padding:20px;
+        }
+        .modal-overlay.active { display:flex; }
+        .modal-box {
+            background:var(--s2); border:1px solid var(--border);
+            border-radius:18px; padding:28px 24px; width:100%; max-width:480px;
+            max-height:85vh; overflow-y:auto; box-shadow:0 24px 80px rgba(0,0,0,0.7);
+            animation:fadeUp 0.25s ease;
+        }
+        .modal-title {
+            font-size:0.78em; font-weight:800; text-transform:uppercase;
+            letter-spacing:2px; color:var(--gold); margin-bottom:20px;
+            display:flex; align-items:center; gap:8px;
+        }
+        .modal-title svg { width:16px; height:16px; }
+        .form-group { margin-bottom:14px; }
+        .form-group label { display:block; font-size:0.68em; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width:100%; padding:10px 14px; background:var(--s3);
+            border:1px solid var(--border-s); border-radius:10px;
+            color:var(--text) !important; font-family:inherit; font-size:0.85em;
+            transition:border-color 0.2s; outline:none;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--border); }
+        .form-group select option { background:var(--s3); color:var(--text); }
+        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .modal-btns { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
+        .btn-cancel {
+            padding:10px 18px; background:transparent; border:1px solid var(--border-s);
+            border-radius:10px; color:var(--text-dim); font-family:inherit;
+            font-size:0.78em; font-weight:600; cursor:pointer; transition:all 0.2s;
+        }
+        .btn-cancel:hover { border-color:var(--border); color:var(--text-sub); }
+        .btn-save {
+            padding:10px 20px; background:var(--gold); border:none;
+            border-radius:10px; color:#000; font-family:inherit;
+            font-size:0.78em; font-weight:800; cursor:pointer; transition:all 0.25s;
+        }
+        .btn-save:hover { filter:brightness(1.1); }
+
+        /* Toast */
+        #gymStatus {
+            position:fixed; bottom:90px; right:20px; max-width:300px;
+            padding:11px 16px; border-radius:12px; font-size:0.80em;
+            font-weight:600; z-index:99999; opacity:0; pointer-events:none;
+            display:flex; align-items:center; gap:9px; color:#fff;
+            box-shadow:0 8px 32px rgba(0,0,0,0.4); backdrop-filter:blur(10px);
+            transition:opacity 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1);
+            transform:translateY(8px);
+        }
+        #gymStatus svg { width:15px; height:15px; flex-shrink:0; }
+
+        /* Animações */
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(16px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width:4px; height:4px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:rgba(232,193,96,0.25); border-radius:2px; }
+        ::-webkit-scrollbar-thumb:hover { background:rgba(232,193,96,0.45); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            body { padding-left:0; }
+            .sidebar { display:none; }
+            .mobile-nav { display:block; }
+            .container { padding:20px 16px 32px; }
+            .page-header h1 { font-size:1.5em; letter-spacing:5px; }
+            .macros-grid { grid-template-columns:repeat(2,1fr); gap:8px; }
+            .form-row { grid-template-columns:1fr; }
+            .gym-tabs { gap:2px; }
+            .gym-tab { font-size:0.72em; padding:8px 10px; gap:5px; }
+        }
+        @media (max-width: 420px) {
+            .macros-grid { padding:14px 14px; }
+            .macro-val { font-size:1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+    <a href="index.html" class="sidebar-logo">Z</a>
+    <div class="sidebar-menu">
+        <a href="index.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Início</span>
+        </a>
+        <a href="financeiro.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>Financeiro</span>
+        </a>
+        <div class="sidebar-divider"></div>
+        <a href="gym.html" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 6.5h11M6.5 17.5h11M2 9.5l2-3 2 3M18 9.5l2-3 2 3M2 14.5l2 3 2-3M18 14.5l2 3 2-3"/></svg>
+            <span>GYM</span>
+        </a>
+        <a href="comando.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Comando</span>
+        </a>
+        <a href="Diario.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>Diário</span>
+        </a>
+    </div>
+    <div class="sidebar-footer"><p><span class="instituto">ZARA</span>Private Access</p></div>
+</nav>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav">
+    <div class="mobile-nav-items">
+        <a href="index.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início
+        </a>
+        <a href="financeiro.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Financeiro
+        </a>
+        <a href="gym.html" class="mobile-nav-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 6.5h11M6.5 17.5h11M2 9.5l2-3 2 3M18 9.5l2-3 2 3M2 14.5l2 3 2-3M18 14.5l2 3 2-3"/></svg>GYM
+        </a>
+        <a href="comando.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Comando
+        </a>
+        <a href="Diario.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Diário
+        </a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>GYM</h1>
+            <p>Treino & Nutrição</p>
+        </div>
+        <div id="gymHeaderStats" style="text-align:right;"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="gym-tabs">
+        <button class="gym-tab active" onclick="showTab('treino',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5h11M6.5 17.5h11M2 9.5l2-3 2 3M18 9.5l2-3 2 3M2 14.5l2 3 2-3M18 14.5l2 3 2-3"/></svg>
+            Treinos
+        </button>
+        <button class="gym-tab" onclick="showTab('dieta',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            Dieta
+        </button>
+    </div>
+
+    <!-- ═══════ TAB TREINO ═══════ -->
+    <div id="tabTreino">
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.5 6.5h11M6.5 17.5h11M2 9.5l2-3 2 3M18 9.5l2-3 2 3M2 14.5l2 3 2-3M18 14.5l2 3 2-3"/></svg>
+                    </div>
+                    <div>
+                        <div class="section-title">Meus Treinos</div>
+                        <div class="section-sub" id="treinoSubtitle">0 treinos cadastrados</div>
+                    </div>
+                </div>
+                <div class="section-header-right">
+                    <button class="btn-primary" onclick="abrirModalTreino()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Novo Treino
+                    </button>
+                </div>
+            </div>
+            <div class="section-content">
+                <div id="treinosList" class="treinos-list"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ═══════ TAB DIETA ═══════ -->
+    <div id="tabDieta" style="display:none">
+
+        <!-- Macros KPIs -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <div>
+                        <div class="section-title">Metas Diárias</div>
+                        <div class="section-sub">Macronutrientes do dia</div>
+                    </div>
+                </div>
+                <button class="btn-sec" onclick="abrirModalMetas()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Editar Metas
+                </button>
+            </div>
+            <div class="macros-grid">
+                <div class="macro-card macro-kcal">
+                    <div class="macro-label">Calorias</div>
+                    <div class="macro-val" id="macroKcalVal">0</div>
+                    <div class="macro-unit">/ <span id="macroKcalMeta">2000</span> kcal</div>
+                    <div class="macro-bar-wrap"><div class="macro-bar-fill" id="macroKcalBar" style="width:0%"></div></div>
+                </div>
+                <div class="macro-card macro-prot">
+                    <div class="macro-label">Proteína</div>
+                    <div class="macro-val" id="macroProtVal">0</div>
+                    <div class="macro-unit">/ <span id="macroProtMeta">150</span>g</div>
+                    <div class="macro-bar-wrap"><div class="macro-bar-fill" id="macroProtBar" style="width:0%"></div></div>
+                </div>
+                <div class="macro-card macro-carb">
+                    <div class="macro-label">Carbo</div>
+                    <div class="macro-val" id="macroCarbVal">0</div>
+                    <div class="macro-unit">/ <span id="macroCarbMeta">250</span>g</div>
+                    <div class="macro-bar-wrap"><div class="macro-bar-fill" id="macroCarbBar" style="width:0%"></div></div>
+                </div>
+                <div class="macro-card macro-gord">
+                    <div class="macro-label">Gordura</div>
+                    <div class="macro-val" id="macroGordVal">0</div>
+                    <div class="macro-unit">/ <span id="macroGordMeta">70</span>g</div>
+                    <div class="macro-bar-wrap"><div class="macro-bar-fill" id="macroGordBar" style="width:0%"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Refeições -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                    </div>
+                    <div>
+                        <div class="section-title">Refeições</div>
+                        <div class="section-sub" id="refeicoesSubtitle">0 refeições cadastradas</div>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="abrirModalRefeicao()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Nova Refeição
+                </button>
+            </div>
+            <div class="section-content">
+                <div id="refeicoesListEl" class="refeicoes-list"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ═══════ MODAL NOVO TREINO ═══════ -->
+<div class="modal-overlay" id="modalTreino">
+    <div class="modal-box">
+        <div class="modal-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5h11M6.5 17.5h11M2 9.5l2-3 2 3M18 9.5l2-3 2 3M2 14.5l2 3 2-3M18 14.5l2 3 2-3"/></svg>
+            Novo Treino
+        </div>
+        <div class="form-group">
+            <label>Nome do Treino</label>
+            <input type="text" id="treinoNome" placeholder="Ex: Treino A — Peito e Tríceps">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Grupo Muscular</label>
+                <select id="treinoGrupo">
+                    <option value="costas">Costas</option>
+                    <option value="peito">Peito</option>
+                    <option value="pernas">Pernas</option>
+                    <option value="ombros">Ombros</option>
+                    <option value="bracos">Braços</option>
+                    <option value="abdomen">Abdômen</option>
+                    <option value="cardio">Cardio</option>
+                    <option value="full">Full Body</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Dia da Semana</label>
+                <select id="treinoDia">
+                    <option value="">Qualquer</option>
+                    <option value="Segunda">Segunda</option>
+                    <option value="Terça">Terça</option>
+                    <option value="Quarta">Quarta</option>
+                    <option value="Quinta">Quinta</option>
+                    <option value="Sexta">Sexta</option>
+                    <option value="Sábado">Sábado</option>
+                    <option value="Domingo">Domingo</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Observação (opcional)</label>
+            <input type="text" id="treinoObs" placeholder="Ex: Foco em hipertrofia">
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalTreino')">Cancelar</button>
+            <button class="btn-save" onclick="salvarTreino()">Criar Treino</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ MODAL NOVO EXERCÍCIO ═══════ -->
+<div class="modal-overlay" id="modalExercicio">
+    <div class="modal-box">
+        <div class="modal-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span id="modalExTitulo">Adicionar Exercício</span>
+        </div>
+        <div class="form-group">
+            <label>Nome do Exercício</label>
+            <input type="text" id="exNome" placeholder="Ex: Supino Reto com Barra">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Séries</label>
+                <input type="number" id="exSeries" min="1" max="20" value="4" placeholder="4">
+            </div>
+            <div class="form-group">
+                <label>Repetições</label>
+                <input type="text" id="exReps" value="10-12" placeholder="10-12">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Método</label>
+                <select id="exMetodo">
+                    <option value="">-</option>
+                    <option value="Work Set">Work Set</option>
+                    <option value="Drop Set">Drop Set</option>
+                    <option value="Super Set">Super Set</option>
+                    <option value="Rest Pause">Rest Pause</option>
+                    <option value="Pirâmide">Pirâmide</option>
+                    <option value="Bi-Set">Bi-Set</option>
+                    <option value="Cluster">Cluster</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Descanso (min)</label>
+                <input type="number" id="exDescanso" min="0" max="10" value="1" placeholder="1">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Observação (opcional)</label>
+            <input type="text" id="exObs" placeholder="Ex: Subindo carga, 3x subindo">
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalExercicio')">Cancelar</button>
+            <button class="btn-save" onclick="salvarExercicio()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ MODAL NOVA REFEIÇÃO ═══════ -->
+<div class="modal-overlay" id="modalRefeicao">
+    <div class="modal-box">
+        <div class="modal-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+            Nova Refeição
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Nome</label>
+                <input type="text" id="refNome" placeholder="Ex: Café da manhã">
+            </div>
+            <div class="form-group">
+                <label>Horário</label>
+                <input type="time" id="refHora" value="07:00">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Ícone</label>
+            <select id="refIcone">
+                <option value="🌅">🌅 Café da manhã</option>
+                <option value="🥗">🥗 Almoço</option>
+                <option value="🍽️">🍽️ Jantar</option>
+                <option value="🥜">🥜 Lanche</option>
+                <option value="💪">💪 Pré-treino</option>
+                <option value="🥛">🥛 Pós-treino</option>
+                <option value="🌙">🌙 Ceia</option>
+            </select>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalRefeicao')">Cancelar</button>
+            <button class="btn-save" onclick="salvarRefeicao()">Criar Refeição</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ MODAL NOVO ALIMENTO ═══════ -->
+<div class="modal-overlay" id="modalAlimento">
+    <div class="modal-box">
+        <div class="modal-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Adicionar Alimento
+        </div>
+        <div class="form-group">
+            <label>Alimento</label>
+            <input type="text" id="alNome" placeholder="Ex: Frango grelhado">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Quantidade (g/ml)</label>
+                <input type="number" id="alQtd" min="1" value="100">
+            </div>
+            <div class="form-group">
+                <label>Calorias (kcal)</label>
+                <input type="number" id="alKcal" min="0" value="0">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Proteína (g)</label>
+                <input type="number" id="alProt" min="0" step="0.1" value="0">
+            </div>
+            <div class="form-group">
+                <label>Carbo (g)</label>
+                <input type="number" id="alCarb" min="0" step="0.1" value="0">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Gordura (g)</label>
+            <input type="number" id="alGord" min="0" step="0.1" value="0">
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalAlimento')">Cancelar</button>
+            <button class="btn-save" onclick="salvarAlimento()">Adicionar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ MODAL METAS MACRO ═══════ -->
+<div class="modal-overlay" id="modalMetas">
+    <div class="modal-box">
+        <div class="modal-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Metas Diárias de Macros
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Calorias (kcal)</label>
+                <input type="number" id="metaKcal" placeholder="2000">
+            </div>
+            <div class="form-group">
+                <label>Proteína (g)</label>
+                <input type="number" id="metaProt" placeholder="150">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Carboidrato (g)</label>
+                <input type="number" id="metaCarb" placeholder="250">
+            </div>
+            <div class="form-group">
+                <label>Gordura (g)</label>
+                <input type="number" id="metaGord" placeholder="70">
+            </div>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalMetas')">Cancelar</button>
+            <button class="btn-save" onclick="salvarMetas()">Salvar Metas</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="gymStatus"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  ZARA GYM — Data Layer
+// ══════════════════════════════════════════
+
+const GYM_KEY = 'zara_gym_v1';
+let gym = carregarDados();
+
+function carregarDados() {
+    try {
+        return JSON.parse(localStorage.getItem(GYM_KEY)) || dadosVazios();
+    } catch { return dadosVazios(); }
+}
+function dadosVazios() {
+    return {
+        treinos: [],
+        refeicoes: [],
+        metas: { kcal: 2000, prot: 150, carb: 250, gord: 70 }
+    };
+}
+function salvarDados() {
+    localStorage.setItem(GYM_KEY, JSON.stringify(gym));
+}
+function gerarId() { return Date.now() + Math.random().toString(36).slice(2,7); }
+
+// ── TOAST ──
+function toast(msg, tipo) {
+    const el = document.getElementById('gymStatus');
+    const icones = {
+        success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
+        error:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    };
+    const cores = { success:'rgba(30,130,70,0.96)', error:'rgba(180,45,35,0.96)', info:'rgba(30,60,100,0.96)' };
+    el.innerHTML = (icones[tipo||'info']||icones.info) + `<span>${msg}</span>`;
+    el.style.background = cores[tipo||'info'];
+    el.style.opacity = '1'; el.style.transform = 'translateY(0)';
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.style.opacity='0'; el.style.transform='translateY(8px)'; }, 3200);
+}
+
+// ── MODAIS ──
+function abrirModal(id) { document.getElementById(id).classList.add('active'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('active'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if(e.target===m) m.classList.remove('active'); });
+});
+
+// ── TABS ──
+function showTab(tab, btn) {
+    document.getElementById('tabTreino').style.display = tab==='treino' ? '' : 'none';
+    document.getElementById('tabDieta').style.display  = tab==='dieta'  ? '' : 'none';
+    document.querySelectorAll('.gym-tab').forEach(b => b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+//  TREINOS
+// ══════════════════════════════════════════
+let _treinoEditandoId = null;
+let _exTreinoId = null;
+let _exEditandoId = null;
+
+function abrirModalTreino(treinoId) {
+    _treinoEditandoId = treinoId || null;
+    if(treinoId) {
+        const t = gym.treinos.find(x=>x.id===treinoId);
+        if(!t) return;
+        document.getElementById('treinoNome').value  = t.nome;
+        document.getElementById('treinoGrupo').value = t.grupo;
+        document.getElementById('treinoDia').value   = t.dia||'';
+        document.getElementById('treinoObs').value   = t.obs||'';
+    } else {
+        document.getElementById('treinoNome').value  = '';
+        document.getElementById('treinoDia').value   = '';
+        document.getElementById('treinoObs').value   = '';
+    }
+    abrirModal('modalTreino');
+    setTimeout(()=>document.getElementById('treinoNome').focus(),100);
+}
+
+function salvarTreino() {
+    const nome  = document.getElementById('treinoNome').value.trim();
+    const grupo = document.getElementById('treinoGrupo').value;
+    const dia   = document.getElementById('treinoDia').value;
+    const obs   = document.getElementById('treinoObs').value.trim();
+    if(!nome) { toast('Informe o nome do treino.','error'); return; }
+
+    if(_treinoEditandoId) {
+        const t = gym.treinos.find(x=>x.id===_treinoEditandoId);
+        if(t) { t.nome=nome; t.grupo=grupo; t.dia=dia; t.obs=obs; }
+        toast('Treino atualizado.','success');
+    } else {
+        gym.treinos.push({ id:gerarId(), nome, grupo, dia, obs, exercicios:[], collapsed:false });
+        toast('Treino criado!','success');
+    }
+    salvarDados(); fecharModal('modalTreino'); renderTreinos();
+}
+
+function excluirTreino(id) {
+    if(!confirm('Excluir este treino e todos os exercícios?')) return;
+    gym.treinos = gym.treinos.filter(t=>t.id!==id);
+    salvarDados(); renderTreinos(); toast('Treino excluído.','info');
+}
+
+function toggleTreino(id) {
+    const t = gym.treinos.find(x=>x.id===id);
+    if(t) { t.collapsed=!t.collapsed; salvarDados(); renderTreinos(); }
+}
+
+// Exercícios
+function abrirModalExercicio(treinoId, exId) {
+    _exTreinoId = treinoId; _exEditandoId = exId||null;
+    document.getElementById('modalExTitulo').textContent = exId ? 'Editar Exercício' : 'Adicionar Exercício';
+    if(exId) {
+        const t = gym.treinos.find(x=>x.id===treinoId);
+        const ex = t?.exercicios.find(x=>x.id===exId);
+        if(ex) {
+            document.getElementById('exNome').value     = ex.nome;
+            document.getElementById('exSeries').value   = ex.series;
+            document.getElementById('exReps').value     = ex.reps;
+            document.getElementById('exMetodo').value   = ex.metodo||'';
+            document.getElementById('exDescanso').value = ex.descanso;
+            document.getElementById('exObs').value      = ex.obs||'';
+        }
+    } else {
+        ['exNome','exObs'].forEach(id=>document.getElementById(id).value='');
+        document.getElementById('exSeries').value=4;
+        document.getElementById('exReps').value='10-12';
+        document.getElementById('exMetodo').value='';
+        document.getElementById('exDescanso').value=1;
+    }
+    abrirModal('modalExercicio');
+    setTimeout(()=>document.getElementById('exNome').focus(),100);
+}
+
+function salvarExercicio() {
+    const nome     = document.getElementById('exNome').value.trim();
+    const series   = document.getElementById('exSeries').value;
+    const reps     = document.getElementById('exReps').value;
+    const metodo   = document.getElementById('exMetodo').value;
+    const descanso = document.getElementById('exDescanso').value;
+    const obs      = document.getElementById('exObs').value.trim();
+    if(!nome) { toast('Informe o nome do exercício.','error'); return; }
+
+    const t = gym.treinos.find(x=>x.id===_exTreinoId);
+    if(!t) return;
+    if(_exEditandoId) {
+        const ex = t.exercicios.find(x=>x.id===_exEditandoId);
+        if(ex) Object.assign(ex, {nome,series,reps,metodo,descanso,obs});
+        toast('Exercício atualizado.','success');
+    } else {
+        t.exercicios.push({ id:gerarId(), nome, series, reps, metodo, descanso, obs, feito:false });
+        toast('Exercício adicionado!','success');
+    }
+    salvarDados(); fecharModal('modalExercicio'); renderTreinos();
+}
+
+function excluirExercicio(treinoId, exId) {
+    const t = gym.treinos.find(x=>x.id===treinoId);
+    if(!t) return;
+    t.exercicios = t.exercicios.filter(x=>x.id!==exId);
+    salvarDados(); renderTreinos(); toast('Exercício removido.','info');
+}
+
+function toggleExercicio(treinoId, exId) {
+    const t = gym.treinos.find(x=>x.id===treinoId);
+    const ex = t?.exercicios.find(x=>x.id===exId);
+    if(ex) { ex.feito=!ex.feito; salvarDados(); renderTreinos(); }
+}
+
+// Render
+function renderTreinos() {
+    const el = document.getElementById('treinosList');
+    const sub = document.getElementById('treinoSubtitle');
+    sub.textContent = `${gym.treinos.length} treino${gym.treinos.length!==1?'s':''} cadastrado${gym.treinos.length!==1?'s':''}`;
+
+    if(!gym.treinos.length) {
+        el.innerHTML = `<div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 6.5h11M6.5 17.5h11M2 9.5l2-3 2 3M18 9.5l2-3 2 3M2 14.5l2 3 2-3M18 14.5l2 3 2-3"/></svg>
+            Nenhum treino cadastrado.<br>Clique em <strong>Novo Treino</strong> para começar.
+        </div>`; return;
+    }
+
+    el.innerHTML = gym.treinos.map(t => {
+        const total = t.exercicios.length;
+        const feitos = t.exercicios.filter(e=>e.feito).length;
+        const pct = total > 0 ? Math.round((feitos/total)*100) : 0;
+        const series = t.exercicios.reduce((s,e)=>s+(parseInt(e.series)||0),0);
+        const vol = t.exercicios.reduce((s,e)=>s+(parseInt(e.series)||0)*(parseInt(e.reps)||0),0);
+
+        const exRows = t.exercicios.map(ex => `
+            <tr class="${ex.feito?'exercicio-feito':''}">
+                <td><input type="checkbox" class="ex-check" ${ex.feito?'checked':''} onchange="toggleExercicio('${t.id}','${ex.id}')"></td>
+                <td>
+                    <div class="ex-nome-txt">${ex.nome}</div>
+                    ${ex.obs?`<div class="ex-obs">${ex.obs}</div>`:''}
+                </td>
+                <td>${ex.series}</td>
+                <td>${ex.reps}</td>
+                <td>${ex.metodo||'-'}</td>
+                <td>${ex.descanso}min</td>
+                <td>
+                    <div class="ex-acoes">
+                        <button class="ex-btn" onclick="abrirModalExercicio('${t.id}','${ex.id}')" title="Editar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="ex-btn del" onclick="excluirExercicio('${t.id}','${ex.id}')" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+
+        return `<div class="treino-card${t.collapsed?' collapsed':''}">
+            <div class="treino-card-header ${t.grupo}" onclick="toggleTreino('${t.id}')">
+                <div class="treino-card-info">
+                    <div class="treino-card-nome">${t.nome}</div>
+                    <div class="treino-card-meta">${t.grupo.charAt(0).toUpperCase()+t.grupo.slice(1)}${t.dia?' · '+t.dia:''} · ${total} exercício${total!==1?'s':''} · ${feitos}/${total} feitos</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                    <button class="btn-sec" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:#fff;padding:5px 10px;font-size:0.70em;" onclick="event.stopPropagation();abrirModalTreino('${t.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="btn-sec" style="background:rgba(231,76,60,0.15);border-color:rgba(231,76,60,0.3);color:#e74c3c;padding:5px 10px;font-size:0.70em;" onclick="event.stopPropagation();excluirTreino('${t.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                    </button>
+                    <button class="treino-card-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="treino-prog-wrap"><div class="treino-prog-fill" style="width:${pct}%"></div></div>
+            <div class="treino-card-body">
+                ${total > 0 ? `
+                <table class="exercicio-table">
+                    <thead><tr>
+                        <th style="width:36px"></th>
+                        <th>Exercício</th>
+                        <th>S</th><th>R</th><th>Método</th><th>Desc</th><th></th>
+                    </tr></thead>
+                    <tbody>${exRows}</tbody>
+                </table>` : `<div class="empty-state" style="padding:20px">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:28px;height:28px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Nenhum exercício. Adicione abaixo.
+                </div>`}
+                <button class="btn-add-ex" onclick="abrirModalExercicio('${t.id}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Adicionar Exercício
+                </button>
+                ${series > 0 ? `<div class="treino-volume"><span>Séries: <strong>${series}</strong></span><span>Volume: <strong>${vol} reps</strong></span><span>Progresso: <strong>${pct}%</strong></span></div>` : ''}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ══════════════════════════════════════════
+//  DIETA
+// ══════════════════════════════════════════
+let _refEditandoId = null;
+let _alRefId = null;
+
+function abrirModalRefeicao(refId) {
+    _refEditandoId = refId || null;
+    if(refId) {
+        const r = gym.refeicoes.find(x=>x.id===refId);
+        if(r) {
+            document.getElementById('refNome').value  = r.nome;
+            document.getElementById('refHora').value  = r.hora||'';
+            document.getElementById('refIcone').value = r.icone||'🍽️';
+        }
+    } else {
+        document.getElementById('refNome').value  = '';
+        document.getElementById('refHora').value  = '';
+        document.getElementById('refIcone').value = '🌅';
+    }
+    abrirModal('modalRefeicao');
+    setTimeout(()=>document.getElementById('refNome').focus(),100);
+}
+
+function salvarRefeicao() {
+    const nome  = document.getElementById('refNome').value.trim();
+    const hora  = document.getElementById('refHora').value;
+    const icone = document.getElementById('refIcone').value;
+    if(!nome) { toast('Informe o nome da refeição.','error'); return; }
+    if(_refEditandoId) {
+        const r = gym.refeicoes.find(x=>x.id===_refEditandoId);
+        if(r) { r.nome=nome; r.hora=hora; r.icone=icone; }
+        toast('Refeição atualizada.','success');
+    } else {
+        gym.refeicoes.push({ id:gerarId(), nome, hora, icone, alimentos:[] });
+        toast('Refeição criada!','success');
+    }
+    salvarDados(); fecharModal('modalRefeicao'); renderDieta();
+}
+
+function excluirRefeicao(id) {
+    if(!confirm('Excluir esta refeição e todos os alimentos?')) return;
+    gym.refeicoes = gym.refeicoes.filter(r=>r.id!==id);
+    salvarDados(); renderDieta(); toast('Refeição excluída.','info');
+}
+
+function abrirModalAlimento(refId) {
+    _alRefId = refId;
+    ['alNome'].forEach(id=>document.getElementById(id).value='');
+    ['alKcal','alProt','alCarb','alGord'].forEach(id=>document.getElementById(id).value=0);
+    document.getElementById('alQtd').value = 100;
+    abrirModal('modalAlimento');
+    setTimeout(()=>document.getElementById('alNome').focus(),100);
+}
+
+function salvarAlimento() {
+    const nome = document.getElementById('alNome').value.trim();
+    if(!nome) { toast('Informe o nome do alimento.','error'); return; }
+    const r = gym.refeicoes.find(x=>x.id===_alRefId);
+    if(!r) return;
+    r.alimentos.push({
+        id:gerarId(), nome,
+        qtd:  parseFloat(document.getElementById('alQtd').value)||100,
+        kcal: parseFloat(document.getElementById('alKcal').value)||0,
+        prot: parseFloat(document.getElementById('alProt').value)||0,
+        carb: parseFloat(document.getElementById('alCarb').value)||0,
+        gord: parseFloat(document.getElementById('alGord').value)||0,
+    });
+    salvarDados(); fecharModal('modalAlimento'); renderDieta();
+    toast('Alimento adicionado!','success');
+}
+
+function excluirAlimento(refId, alId) {
+    const r = gym.refeicoes.find(x=>x.id===refId);
+    if(!r) return;
+    r.alimentos = r.alimentos.filter(a=>a.id!==alId);
+    salvarDados(); renderDieta();
+}
+
+function abrirModalMetas() {
+    document.getElementById('metaKcal').value = gym.metas.kcal;
+    document.getElementById('metaProt').value = gym.metas.prot;
+    document.getElementById('metaCarb').value = gym.metas.carb;
+    document.getElementById('metaGord').value = gym.metas.gord;
+    abrirModal('modalMetas');
+}
+function salvarMetas() {
+    gym.metas = {
+        kcal: parseFloat(document.getElementById('metaKcal').value)||2000,
+        prot: parseFloat(document.getElementById('metaProt').value)||150,
+        carb: parseFloat(document.getElementById('metaCarb').value)||250,
+        gord: parseFloat(document.getElementById('metaGord').value)||70,
+    };
+    salvarDados(); fecharModal('modalMetas'); renderDieta(); toast('Metas salvas!','success');
+}
+
+function renderDieta() {
+    // Totais
+    let totKcal=0, totProt=0, totCarb=0, totGord=0;
+    gym.refeicoes.forEach(r => r.alimentos.forEach(a => {
+        totKcal+=a.kcal||0; totProt+=a.prot||0; totCarb+=a.carb||0; totGord+=a.gord||0;
+    }));
+
+    const pct = (val,meta) => Math.min(100, meta>0 ? Math.round((val/meta)*100) : 0);
+    const m = gym.metas;
+
+    document.getElementById('macroKcalVal').textContent = Math.round(totKcal);
+    document.getElementById('macroProtVal').textContent = totProt.toFixed(0);
+    document.getElementById('macroCarbVal').textContent = totCarb.toFixed(0);
+    document.getElementById('macroGordVal').textContent = totGord.toFixed(0);
+    document.getElementById('macroKcalMeta').textContent = m.kcal;
+    document.getElementById('macroProtMeta').textContent = m.prot;
+    document.getElementById('macroCarbMeta').textContent = m.carb;
+    document.getElementById('macroGordMeta').textContent = m.gord;
+    document.getElementById('macroKcalBar').style.width = pct(totKcal,m.kcal)+'%';
+    document.getElementById('macroProtBar').style.width = pct(totProt,m.prot)+'%';
+    document.getElementById('macroCarbBar').style.width = pct(totCarb,m.carb)+'%';
+    document.getElementById('macroGordBar').style.width = pct(totGord,m.gord)+'%';
+
+    // Refeições
+    const el = document.getElementById('refeicoesListEl');
+    document.getElementById('refeicoesSubtitle').textContent =
+        `${gym.refeicoes.length} refeição${gym.refeicoes.length!==1?'ões':''}`;
+
+    if(!gym.refeicoes.length) {
+        el.innerHTML = `<div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            Nenhuma refeição. Clique em <strong>Nova Refeição</strong>.
+        </div>`; return;
+    }
+
+    el.innerHTML = gym.refeicoes.map(r => {
+        const rKcal = r.alimentos.reduce((s,a)=>s+(a.kcal||0),0);
+        const alRows = r.alimentos.map(a => `
+            <div class="alimento-item">
+                <div>
+                    <div class="alimento-nome">${a.nome} <span style="color:var(--text-dim);font-weight:400">${a.qtd}g</span></div>
+                    <div class="alimento-macros">
+                        <span>${Math.round(a.kcal)} kcal</span>
+                        <span>P:<span>${a.prot.toFixed(0)}g</span></span>
+                        <span>C:<span>${a.carb.toFixed(0)}g</span></span>
+                        <span>G:<span>${a.gord.toFixed(0)}g</span></span>
+                    </div>
+                </div>
+                <button class="alimento-del" onclick="excluirAlimento('${r.id}','${a.id}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                </button>
+            </div>`).join('');
+
+        return `<div class="refeicao-card">
+            <div class="refeicao-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+                <div class="refeicao-header-left">
+                    <div class="refeicao-icon">${r.icone||'🍽️'}</div>
+                    <div>
+                        <div class="refeicao-nome">${r.nome}</div>
+                        <div class="refeicao-hora">${r.hora||'--:--'} · ${r.alimentos.length} alimento${r.alimentos.length!==1?'s':''}</div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="refeicao-kcal">${Math.round(rKcal)} kcal</div>
+                    <button class="ex-btn" onclick="event.stopPropagation();abrirModalRefeicao('${r.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--text-dim)"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="ex-btn del" onclick="event.stopPropagation();excluirRefeicao('${r.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="alimentos-list">
+                ${alRows}
+                <button class="btn-add-alimento" onclick="abrirModalAlimento('${r.id}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Adicionar alimento
+                </button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// Render inicial
+renderTreinos();
+renderDieta();
+</script>
+</body>
+</html>
