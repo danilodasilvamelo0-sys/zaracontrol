@@ -122,8 +122,8 @@ body::after { content: ''; position: fixed; bottom: 0; left: 0; right: 0; height
 .mobile-nav-item svg { width: 22px; height: 22px; }
 .mobile-nav-item.active { color: #d4af7d; }
 
-@media (max-width: 768px) { body { padding-left: 10px; padding-bottom: 80px; padding-top: 70px; } .sidebar { display: none; } .mobile-nav { display: block; } .container { margin-left: 0 !important; padding-top: 0 !important; } #globalTabs { margin-left: 0 !important; } .tabs-container { left: 0 !important; } }
-@media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } #globalTabs { margin-left: 0; } .tabs-container { left: 70px; } }
+@media (max-width: 768px) { body { padding-left: 10px; padding-bottom: 80px; } .sidebar { display: none; } .mobile-nav { display: block; } .container { margin-left: 0 !important; } #globalTabs { margin-left: 0 !important; } }
+@media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } #globalTabs { margin-left: 0; } }
 
 /* Container e Layout */
 .container { max-width: 1200px; margin: 0 auto; background: #141414; border: 1px solid rgba(212, 175, 125, 0.15); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; }
@@ -140,13 +140,12 @@ body::after { content: ''; position: fixed; bottom: 0; left: 0; right: 0; height
 @media (max-width: 768px) { #syncStatus { bottom: 90px; right: 10px; left: 10px; text-align: center; } }
 
 /* Tabs */
-.tabs-container { background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 0 16px; border-bottom: 1px solid rgba(212,175,125,0.18); position: fixed; top: 0; left: 0; right: 0; z-index: 500; box-shadow: 0 2px 24px rgba(0,0,0,0.5); height: 56px; display: flex; align-items: center; }
-.tabs-header { display: flex; gap: 2px; justify-content: flex-start; width: 100%; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; }
-.tab-btn { display: flex; align-items: center; gap: 5px; padding: 8px 14px; background: transparent; border: none; color: rgba(255,255,255,0.80); font-size: 0.80em; font-weight: 500; cursor: pointer; border-radius: 8px; transition: all 0.25s; white-space: nowrap; letter-spacing: 0.2px; flex-shrink: 0; }
-.tab-btn:hover { color: #e8c160; background: rgba(212,175,125,0.08); }
-.tab-btn.active { background: rgba(212,175,125,0.15); color: #e8c160; border-bottom: 2px solid #e8c160; border-radius: 8px 8px 0 0; font-weight: 700; }
+.tabs-container { background: #141414; padding: 10px 15px; border-bottom: 1px solid rgba(212, 175, 125, 0.15); position: sticky; top: 0; z-index: 100; }
+.tabs-header { display: flex; gap: 8px; justify-content: space-around; }
+.tab-btn { display: flex; align-items: center; gap: 6px; padding: 10px 15px; background: transparent; border: none; color: rgba(255,255,255,0.82); font-size: 0.8em; cursor: pointer; border-radius: 8px; transition: all 0.3s; white-space: nowrap; }
+.tab-btn:hover { color: #d4af7d; background: rgba(212, 175, 125, 0.1); }
+.tab-btn.active { background: rgba(212, 175, 125, 0.2); color: #d4af7d; }
 .tab-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-.tabs-header::-webkit-scrollbar { display: none; }
 
 /* Sub Tabs */
 .sub-tabs { display: flex; gap: 5px; padding: 15px 20px; background: #1a1a1a; border-bottom: 1px solid rgba(212, 175, 125, 0.1); }
@@ -373,21 +372,21 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 .treino-header h2{font-family:'Playfair Display',serif;font-size:1.3em;color:#d4af7d}
 .treinos-container{padding:0 20px 20px;display:flex;flex-direction:column;gap:20px}
 
-.treino-card{background:var(--s2,#1a1a1a);border:1px solid rgba(212,175,125,0.2);border-radius:16px;overflow:hidden;transition:all 0.3s;-webkit-tap-highlight-color:transparent;position:relative;z-index:1}
+.treino-card{background:var(--s2,#1a1a1a);border:1px solid rgba(212,175,125,0.2);border-radius:16px;overflow:hidden;transition:all 0.3s;-webkit-tap-highlight-color:transparent}
 .treino-card:hover{border-color:rgba(212,175,125,0.3)}
 
-.treino-card-header{background:linear-gradient(135deg,#c0392b,#e74c3c);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;transition:filter 0.2s;-webkit-tap-highlight-color:rgba(0,0,0,0) !important;outline:none;position:relative;z-index:1}
+.treino-card-header{background:linear-gradient(135deg,#c0392b,#e74c3c);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;-webkit-user-select:none;transition:filter 0.2s;-webkit-tap-highlight-color:transparent}
 .treino-card-header:hover{filter:brightness(1.1)}
 .treino-card-header.peito{background:linear-gradient(135deg,#27ae60,#2ecc71)}
-.treino-card-header.costas{background:linear-gradient(135deg,#1a5276,#2471a3)}
+.treino-card-header.costas{background:linear-gradient(135deg,#2980b9,#3498db)}
 .treino-card-header.pernas{background:linear-gradient(135deg,#8e44ad,#9b59b6)}
 .treino-card-header.ombros{background:linear-gradient(135deg,#d35400,#e67e22)}
 .treino-card-header.bracos{background:linear-gradient(135deg,#16a085,#1abc9c)}
 .treino-card-header.abdomen{background:linear-gradient(135deg,#c0392b,#e74c3c)}
-.treino-card-header.cardio{background:linear-gradient(135deg,#b7770d,#d4a017)}
+.treino-card-header.cardio{background:linear-gradient(135deg,#f39c12,#f1c40f)}
 .treino-card-header.full{background:linear-gradient(135deg,#2c3e50,#34495e)}
 
-.treino-card-titulo{font-family:'Playfair Display',serif;font-size:1.15em;color:#ffffff !important;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;text-shadow:0 1px 4px rgba(0,0,0,0.5)}
+.treino-card-titulo{font-family:'Playfair Display',serif;font-size:1.1em;color:#fff !important;font-weight:700;text-transform:uppercase;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,0.4)}
 .treino-card-subtitulo{font-size:0.8em;color:rgba(255,255,255,0.8);margin-top:3px}
 .treino-card-actions{display:flex;gap:8px}
 .treino-card-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
@@ -396,14 +395,14 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 
 .treino-card-body{padding:0}
 .exercicio-table{width:100%;border-collapse:collapse}
-.exercicio-table th{background:#141414;color:#e8c160;padding:10px 12px;text-align:left;font-size:0.72em;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid rgba(212,175,125,0.15);font-weight:700}
-.exercicio-table th:first-child{padding-left:6px;width:36px;text-align:center}
-.exercicio-table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.05);color:#ffffff;font-size:0.95em}
-.exercicio-table td:first-child{padding-left:6px;color:#fff;font-weight:500;width:36px;text-align:center;vertical-align:middle}
+.exercicio-table th{background:#141414;color:#d4af7d;padding:12px 15px;text-align:left;font-size:0.75em;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(212,175,125,0.1)}
+.exercicio-table th:first-child{padding-left:20px}
+.exercicio-table td{padding:12px 15px;border-bottom:1px solid rgba(255,255,255,0.03);color:rgba(255,255,255,0.85);font-size:0.9em}
+.exercicio-table td:first-child{padding-left:20px;color:#fff;font-weight:500}
 .exercicio-table tr:last-child td{border-bottom:none}
-.exercicio-table tr:hover{background:rgba(212,175,125,0.07)}
+.exercicio-table tr:hover{background:rgba(212,175,125,0.05)}
 
-.exercicio-nome{display:flex;align-items:flex-start;gap:6px}
+.exercicio-nome{display:flex;align-items:center;gap:10px}
 .exercicio-nome span{flex:1}
 .exercicio-acoes{display:flex;gap:5px;opacity:0;transition:opacity 0.2s}
 .exercicio-table tr:hover .exercicio-acoes{opacity:1}
@@ -440,13 +439,7 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 .duplicar-info{font-size:0.8em;color:rgba(255,255,255,0.4);font-style:italic}
 
 /* Exercício Feito */
-.ex-check-td {
-    width: 36px;
-    vertical-align: middle;
-    text-align: center;
-    padding: 0 2px 0 6px !important;
-}
-.exercicio-check{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:2px solid rgba(212,175,125,0.4);border-radius:50%;cursor:pointer;background:transparent;position:relative;transition:all 0.2s;flex-shrink:0;display:block;margin:0 auto;}
+.exercicio-check{appearance:none;width:20px;height:20px;border:2px solid rgba(212,175,125,0.4);border-radius:50%;cursor:pointer;background:transparent;position:relative;transition:all 0.2s;flex-shrink:0}
 .exercicio-check:hover{border-color:#d4af7d}
 .exercicio-check:checked{background:#2ecc71;border-color:#2ecc71}
 .exercicio-check:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:11px;font-weight:bold}
@@ -466,10 +459,10 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
 
 /* Exercícios - Layout ajustado */
 .exercicio-table th,.exercicio-table td{text-align:center;padding:10px 8px}
-.exercicio-table th:nth-child(1),.exercicio-table td:nth-child(1){width:36px;padding:10px 2px 10px 6px;vertical-align:middle;text-align:center}
-.exercicio-table th:nth-child(2),.exercicio-table td:nth-child(2){text-align:left;padding-left:2px}
-.exercicio-nome-texto{font-size:1em;color:#ffffff;font-weight:600;}.exercicio-nome-texto .conjugado-plus{color:#e8c160;font-weight:700;margin:0 4px}
-.exercicio-obs{font-size:0.78em;color:rgba(255,255,255,0.65);margin-top:4px;font-style:italic;line-height:1.4}
+.exercicio-table th:nth-child(1),.exercicio-table td:nth-child(1){width:35px;padding:10px 5px}
+.exercicio-table th:nth-child(2),.exercicio-table td:nth-child(2){text-align:left;padding-left:5px}
+.exercicio-nome-texto .conjugado-plus{color:#d4af7d;font-weight:600;margin:0 4px}
+.exercicio-obs{font-size:0.75em;color:rgba(255,255,255,0.5);margin-top:3px;font-style:italic}
 
 /* Alertas/Notas de Treino */
 .treino-alertas{background:#1a1a1a;border:1px solid rgba(212,175,125,0.15);border-radius:12px;margin:20px 20px 20px;padding:15px 20px}
@@ -576,10 +569,10 @@ tr:hover { background: rgba(212, 175, 125, 0.05); }
     .exercicio-table { display: block; }
     .exercicio-table thead { display: none; }
     .exercicio-table tbody { display: block; }
-    .exercicio-table tr { display: flex; flex-wrap: wrap; padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; gap: 8px; }
+    .exercicio-table tr { display: flex; flex-wrap: wrap; padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: flex-start; gap: 8px; }
     .exercicio-table td { display: block; padding: 0; border: none; text-align: left; }
-    .exercicio-table td:nth-child(1) { width: 32px; order: 1; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0 !important; }
-    .exercicio-table td:nth-child(2) { flex: 1; min-width: 0; order: 2; padding-left: 4px !important; }
+    .exercicio-table td:nth-child(1) { width: auto; order: 1; }
+    .exercicio-table td:nth-child(2) { width: calc(100% - 35px); order: 2; padding-left: 0; }
     .exercicio-table td:nth-child(3), .exercicio-table td:nth-child(4), .exercicio-table td:nth-child(5), .exercicio-table td:nth-child(6) {
         order: 3; font-size: 0.7em; color: rgba(255,255,255,0.90); background: rgba(212,175,125,0.08); padding: 5px 10px; border-radius: 4px; margin-top: 4px;
     }
@@ -1724,29 +1717,3 @@ input, select, textarea { font-size: 16px !important; }
     -webkit-user-select: none;
 }
 
-/* ── SWIPE entre tabs no mobile ── */
-.tab-content-wrapper {
-    overflow: hidden;
-    position: relative;
-}
-
-
-/* Colunas numéricas do treino — branco puro */
-.exercicio-table td:nth-child(3),
-.exercicio-table td:nth-child(4),
-.exercicio-table td:nth-child(5),
-.exercicio-table td:nth-child(6) {
-    color: #ffffff !important;
-    font-weight: 600;
-    font-size: 0.95em;
-}
-/* Drag handle — visível */
-.exercicio-drag-handle {
-    color: rgba(255,255,255,0.35);
-    cursor: grab;
-    display: inline-flex;
-    align-items: center;
-    padding: 0 4px;
-    flex-shrink: 0;
-}
-.exercicio-drag-handle:hover { color: rgba(255,255,255,0.70); }
