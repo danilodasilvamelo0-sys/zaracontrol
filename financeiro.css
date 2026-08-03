@@ -6473,23 +6473,17 @@ font-size: 1.1em;
 /* ── RECEITAS — tabela sem scroll horizontal ── */
 .col-cat-rwd { white-space: nowrap; }
 
-/* Colunas de receita bem proporcionadas */
-#receitasFixasTable tr,
-#receitasVariaveisTable tr { table-layout: fixed; }
-
-/* Badge e ações na mesma célula sem explodir */
-.rec-acoes {
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-/* Tabela de receitas sem min-width que cause scroll */
+/* Tabelas de receita — descrição cresce, resto fixo */
 #sectionReceitasFixas .accordion-table,
 #sectionReceitasVariaveis .accordion-table {
-    table-layout: fixed;
+    table-layout: auto;
     width: 100%;
     min-width: 0;
 }
+
+/* Colunas de receita bem proporcionadas */
+#receitasFixasTable tr,
+#receitasVariaveisTable tr { table-layout: auto; }
 
 /* Truncar nome longo */
 #receitasFixasTable .rec-nome,
