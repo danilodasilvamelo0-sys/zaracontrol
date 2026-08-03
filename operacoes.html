@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>ZARA | Operações</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="operacoes.css?v=1785720000">
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+    <a href="index.html" class="sidebar-logo">Z</a>
+    <div class="sidebar-menu">
+        <a href="index.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Início</span>
+        </a>
+        <a href="financeiro.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>Financeiro</span>
+        </a>
+        <a href="gym.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>GYM</span>
+        </a>
+        <a href="blackbook.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="6" x2="16" y2="6"/><line x1="12" y1="10" x2="16" y2="10"/><line x1="10" y1="14" x2="16" y2="14"/></svg>
+            <span>Black Book</span>
+        </a>
+        <div class="sidebar-divider"></div>
+        <a href="operacoes.html" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            <span>Operações</span>
+        </a>
+        <a href="comando.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+            <span>Comando</span>
+        </a>
+    </div>
+    <div class="sidebar-footer"><p><span class="instituto">ZARA</span>Private Access</p></div>
+</nav>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav">
+    <div class="mobile-nav-items">
+        <a href="index.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início
+        </a>
+        <a href="financeiro.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Financeiro
+        </a>
+        <a href="gym.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>GYM
+        </a>
+        <a href="blackbook.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Black Book
+        </a>
+        <a href="operacoes.html" class="mobile-nav-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Operações
+        </a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- HERO -->
+    <div class="op-hero">
+        <div class="op-hero-eyebrow">Centro de Comando</div>
+        <h1><strong>Operações</strong></h1>
+        <div class="op-hero-status">
+            <div class="op-kpi">
+                <div class="op-kpi-val" id="heroNivel">5</div>
+                <div class="op-kpi-label">Nível de Poder</div>
+            </div>
+            <div class="op-kpi">
+                <div class="op-kpi-val parado" id="heroTendencia">→ Parado</div>
+                <div class="op-kpi-label">Tendência</div>
+            </div>
+            <div class="op-kpi">
+                <div class="op-kpi-val" id="heroDias">0d</div>
+                <div class="op-kpi-label">Tempo na tendência</div>
+            </div>
+            <div class="op-kpi">
+                <div class="op-kpi-val" id="heroMetas">0</div>
+                <div class="op-kpi-label">Metas atingidas</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="op-tabs">
+        <button class="op-tab active" onclick="showTab('operacoes',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            Operações <span class="op-tab-count" id="count_operacoes">0</span>
+        </button>
+        <button class="op-tab" onclick="showTab('status',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Status de Poder
+        </button>
+        <button class="op-tab" onclick="showTab('rede',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Rede de Influência
+        </button>
+        <button class="op-tab" onclick="showTab('favores',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            Livro de Favores
+        </button>
+    </div>
+
+    <!-- ═══ TAB: OPERAÇÕES ═══ -->
+    <div id="tab_operacoes">
+        <div class="op-section">
+            <div class="op-section-header">
+                <div>
+                    <div class="op-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                        Minhas Operações
+                    </div>
+                    <div class="op-section-sub">Jogadas e missões em andamento</div>
+                </div>
+                <button class="btn-novo" onclick="abrirModalOp()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Nova Operação
+                </button>
+            </div>
+            <!-- Filtros de status -->
+            <div style="display:flex;gap:5px;padding:12px 20px 0;flex-wrap:wrap;">
+                <button class="op-btn filtro-status-btn active" onclick="setFiltroStatus('ativa',this)" style="font-size:0.65em;">Ativas</button>
+                <button class="op-btn filtro-status-btn" onclick="setFiltroStatus('suspensa',this)" style="font-size:0.65em;">Suspensas</button>
+                <button class="op-btn filtro-status-btn" onclick="setFiltroStatus('executada',this)" style="font-size:0.65em;">Executadas</button>
+                <button class="op-btn filtro-status-btn" onclick="setFiltroStatus('descartada',this)" style="font-size:0.65em;">Descartadas</button>
+                <button class="op-btn filtro-status-btn" onclick="setFiltroStatus('todas',this)" style="font-size:0.65em;">Todas</button>
+            </div>
+            <div id="opList" class="op-list"></div>
+        </div>
+    </div>
+
+    <!-- ═══ TAB: STATUS DE PODER ═══ -->
+    <div id="tab_status" style="display:none">
+        <div class="op-section">
+            <div class="op-section-header">
+                <div>
+                    <div class="op-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                        Visão de Poder
+                    </div>
+                    <div class="op-section-sub">Seu posicionamento e movimento atual</div>
+                </div>
+            </div>
+            <div class="poder-grid">
+                <!-- Nível -->
+                <div class="poder-card">
+                    <div class="poder-card-label">Nível de Poder</div>
+                    <div class="poder-nivel-display">
+                        <div class="poder-nivel-num" id="statusNivel">5</div>
+                        <div class="poder-nivel-barra">
+                            <div class="poder-nivel-track"><div class="poder-nivel-fill" id="statusNivelBar" style="width:50%"></div></div>
+                            <div class="poder-nivel-sub" id="statusNivelSub">5 / 10</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:5px;margin-top:12px;flex-wrap:wrap;">
+                        <input type="range" min="1" max="10" value="5" oninput="setNivel(this.value)"
+                            style="width:100%;accent-color:var(--gold);background:transparent;cursor:pointer;">
+                    </div>
+                </div>
+                <!-- Tendência -->
+                <div class="poder-card">
+                    <div class="poder-card-label">Tendência Atual</div>
+                    <div id="statusTendencia"></div>
+                    <div style="display:flex;gap:5px;margin-top:12px;">
+                        <button class="op-btn" onclick="setTendencia('subindo')" style="flex:1;font-size:0.60em;color:var(--green-b);">↑ Subindo</button>
+                        <button class="op-btn" onclick="setTendencia('parado')" style="flex:1;font-size:0.60em;">→ Parado</button>
+                        <button class="op-btn" onclick="setTendencia('recuando')" style="flex:1;font-size:0.60em;color:#e74c3c;">↓ Recuando</button>
+                    </div>
+                </div>
+                <!-- Tempo na tendência -->
+                <div class="poder-card">
+                    <div class="poder-card-label">Tempo na Tendência</div>
+                    <div id="statusDias"></div>
+                </div>
+                <!-- Metas atingidas -->
+                <div class="poder-card">
+                    <div class="poder-card-label">Metas Atingidas</div>
+                    <div id="statusMetas"></div>
+                    <button class="op-btn" onclick="addMetaAtingida()" style="margin-top:10px;font-size:0.65em;color:var(--green-b);border-color:rgba(46,204,113,0.3);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Registrar meta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ TAB: REDE ═══ -->
+    <div id="tab_rede" style="display:none">
+        <div class="op-section">
+            <div class="op-section-header">
+                <div>
+                    <div class="op-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Rede de Influência
+                    </div>
+                    <div class="op-section-sub" id="redeSubtitle">0 pessoas na rede</div>
+                </div>
+                <button class="btn-novo" onclick="abrirModalAliado()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Adicionar
+                </button>
+            </div>
+            <div id="redeList" class="rede-list"></div>
+        </div>
+    </div>
+
+    <!-- ═══ TAB: FAVORES ═══ -->
+    <div id="tab_favores" style="display:none">
+        <div class="op-section">
+            <div class="op-section-header">
+                <div>
+                    <div class="op-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        Livro de Favores
+                    </div>
+                    <div class="op-section-sub" id="favoresSubtitle">0 pendentes</div>
+                </div>
+                <button class="btn-novo" onclick="abrirModalFavor()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Registrar
+                </button>
+            </div>
+            <div class="favores-tabs">
+                <button class="fav-tab active" onclick="showFavTab('receber',this)">Me devem</button>
+                <button class="fav-tab" onclick="showFavTab('dever',this)">Devo</button>
+            </div>
+            <div id="favoresList" class="favores-list"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL: NOVA OPERAÇÃO -->
+<div class="modal-overlay" id="modalOp">
+    <div class="modal-box">
+        <div class="modal-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            Operação
+        </div>
+        <div class="form-group">
+            <label>Nome da operação</label>
+            <input type="text" id="opNome" placeholder="Ex: Conversar com João sobre a vaga">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Tipo</label>
+                <select id="opTipo">
+                    <option value="jogada">Jogada pontual</option>
+                    <option value="missao">Missão complexa</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Prioridade</label>
+                <select id="opPrio">
+                    <option value="alta">Alta</option>
+                    <option value="media" selected>Média</option>
+                    <option value="baixa">Baixa</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Pessoa / alvo envolvido (opcional)</label>
+            <input type="text" id="opAlvo" placeholder="Ex: João Silva, Empresa X">
+        </div>
+        <div class="form-group">
+            <label>Etapas</label>
+            <div class="etapas-input-list" id="etapasInputList"></div>
+            <button class="btn-add-etapa" onclick="addEtapaModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Adicionar etapa
+            </button>
+        </div>
+        <div class="form-group">
+            <label>Notas confidenciais</label>
+            <textarea id="opNotas" rows="2" placeholder="Contexto, estratégia, riscos..."></textarea>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalOp')">Cancelar</button>
+            <button class="btn-save" onclick="salvarOp()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: ALIADO -->
+<div class="modal-overlay" id="modalAliado">
+    <div class="modal-box">
+        <div class="modal-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Pessoa da Rede
+        </div>
+        <div class="form-group">
+            <label>Nome</label>
+            <input type="text" id="alNome" placeholder="Nome completo">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Cargo / Posição</label>
+                <input type="text" id="alCargo" placeholder="Ex: Diretor, Vereador">
+            </div>
+            <div class="form-group">
+                <label>Confiança (1-5)</label>
+                <select id="alConf">
+                    <option value="1">1 — Conhecido</option>
+                    <option value="2">2 — Contato</option>
+                    <option value="3" selected>3 — Aliado</option>
+                    <option value="4">4 — Parceiro</option>
+                    <option value="5">5 — Confiança total</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Como pode ser útil</label>
+            <input type="text" id="alUtil" placeholder="Ex: Acesso a informação, recurso financeiro">
+        </div>
+        <div class="form-group">
+            <label>Notas (confidencial)</label>
+            <textarea id="alNotes" rows="2" placeholder="Pontos de atenção, histórico..."></textarea>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalAliado')">Cancelar</button>
+            <button class="btn-save" onclick="salvarAliado()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: FAVOR -->
+<div class="modal-overlay" id="modalFavor">
+    <div class="modal-box">
+        <div class="modal-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            Registrar Favor
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Pessoa</label>
+                <input type="text" id="favPessoa" placeholder="Nome da pessoa">
+            </div>
+            <div class="form-group">
+                <label>Direção</label>
+                <select id="favTipo">
+                    <option value="receber">Me deve</option>
+                    <option value="dever">Devo</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Descrição do favor</label>
+            <textarea id="favDesc" rows="2" placeholder="O que foi feito, o que é esperado em retorno..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Peso</label>
+            <select id="favPeso">
+                <option value="leve">Leve — favor simples</option>
+                <option value="medio" selected>Médio — esforço real</option>
+                <option value="pesado">Pesado — dívida significativa</option>
+            </select>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalFavor')">Cancelar</button>
+            <button class="btn-save" onclick="salvarFavor()">Registrar</button>
+        </div>
+    </div>
+</div>
+
+<div id="opStatus"></div>
+<script src="operacoes.js?v=1785720000"></script>
+</body>
+</html>
