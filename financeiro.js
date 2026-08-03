@@ -4406,7 +4406,7 @@
                     </div>
                 </td>
                 <td class="rec-nome">${r.descricao}</td>
-                <td class="rec-cat-td">${r.categoria}</td>
+                <td class="rec-cat-td"><span class="rec-cat">${r.categoria}</span></td>
                 <td class="rec-data acc-mobile-meta">${formatarData(r.data)}</td>
                 <td class="rec-valor ${r.recebido?'valor-positivo':'valor-pendente'}">${formatarMoeda(r.valor)}</td>
                 <td class="rec-badge-td" onclick="event.stopPropagation()">${recBadge}</td>
@@ -4437,7 +4437,7 @@
                     </div>
                 </td>
                 <td class="rec-nome">${r.descricao}</td>
-                <td class="rec-cat-td">${r.categoria}</td>
+                <td class="rec-cat-td"><span class="rec-cat">${r.categoria}</span></td>
                 <td class="rec-data acc-mobile-meta">${formatarData(r.data)}</td>
                 <td class="rec-valor ${r.recebido?'valor-positivo':'valor-pendente'}">${formatarMoeda(r.valor)}</td>
                 <td class="rec-badge-td" onclick="event.stopPropagation()">${recBadge}</td>
