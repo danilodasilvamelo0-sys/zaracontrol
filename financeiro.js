@@ -4408,8 +4408,8 @@
                 <td class="rec-nome">${r.descricao}<span class="rec-cat">${r.categoria}</span></td>
                 <td class="rec-data acc-mobile-meta">${formatarData(r.data)}</td>
                 <td class="rec-valor ${r.recebido?'valor-positivo':'valor-pendente'}">${formatarMoeda(r.valor)}</td>
+                <td class="rec-badge-td" onclick="event.stopPropagation()">${recBadge}</td>
                 <td class="rec-acoes" onclick="event.stopPropagation()">
-                    ${recBadge}
                     <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(201,168,76,0.7);">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
@@ -4438,8 +4438,8 @@
                 <td class="rec-nome">${r.descricao}<span class="rec-cat">${r.categoria}</span></td>
                 <td class="rec-data acc-mobile-meta">${formatarData(r.data)}</td>
                 <td class="rec-valor ${r.recebido?'valor-positivo':'valor-pendente'}">${formatarMoeda(r.valor)}</td>
+                <td class="rec-badge-td" onclick="event.stopPropagation()">${recBadge}</td>
                 <td class="rec-acoes" onclick="event.stopPropagation()">
-                    ${recBadge}
                     <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(201,168,76,0.7);">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
