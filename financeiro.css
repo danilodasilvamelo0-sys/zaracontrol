@@ -6410,17 +6410,24 @@ font-size: 1.1em;
     font-size: 0.88em;
     font-weight: 700;
     text-align: right;
-    padding: 8px 10px !important;
+    padding: 8px 12px !important;
     white-space: nowrap;
 }
 .valor-pendente { color: var(--text-sub); }
 
-/* Ações + badge na mesma coluna */
+/* Badge — coluna própria */
+.rec-badge-td {
+    padding: 8px 8px !important;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Ações — só botões, sem badge */
 .rec-acoes {
-    padding: 6px 10px 6px 6px !important;
+    padding: 6px 12px 6px 4px !important;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     justify-content: flex-end;
 }
 
@@ -6428,7 +6435,7 @@ font-size: 1.1em;
 .rec-badge {
     display: inline-flex;
     align-items: center;
-    padding: 2px 7px;
+    padding: 3px 9px;
     border-radius: 10px;
     font-size: 0.62em;
     font-weight: 700;
@@ -6450,6 +6457,7 @@ font-size: 1.1em;
     .rec-nome { max-width: 140px; font-size: 0.78em; }
     .rec-cat  { display: none; }
     .rec-data { display: none; }
+    .rec-badge-td { display: none; }
     .rec-badge { display: none; }
     .rec-valor { font-size: 0.82em; }
     .rec-check-td { padding: 8px 4px 8px 10px !important; }
