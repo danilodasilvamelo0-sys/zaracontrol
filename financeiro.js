@@ -4842,7 +4842,7 @@
                         </span>
                     </td>
                     <td class="acc-descricao">${d.descricao}</td>
-                    <td class="acc-mobile-meta"><span class="categoria">${d.categoria}</span></td>
+                    <td class="acc-mobile-meta" style="text-align:center;"><span class="rec-cat">${d.categoria}</span></td>
                     <td class="acc-condicao acc-mobile-meta">${formatarData(d.data)}</td>
                     <td class="acc-mobile-meta">${badgeSt}</td>
                     <td style="text-align:right;" class="${d.pago ? 'valor-positivo' : 'valor-negativo'} acc-mobile-valor">${formatarMoeda(d.valor)}</td>
