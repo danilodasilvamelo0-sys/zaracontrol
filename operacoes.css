@@ -553,3 +553,28 @@ body {
     .poder-grid { grid-template-columns:1fr; }
     .op-hero h1 { font-size:1.5em; }
 }
+
+/* ══════════════════════════════════════════════
+   ESTRELA NEGRA — Calendário
+   ══════════════════════════════════════════════ */
+/* Ícone da tab preenchido */
+.op-tab svg[fill="currentColor"] polygon {
+    fill: currentColor;
+}
+/* Dias do calendário hover suave */
+#calGrid > div:hover {
+    background: rgba(201,168,76,0.08) !important;
+    border-color: rgba(201,168,76,0.2) !important;
+}
+/* Dia com estrela — destaque */
+#calGrid > div.tem-estrela {
+    background: rgba(255,255,255,0.05) !important;
+    border-color: rgba(255,255,255,0.15) !important;
+}
+/* Filtro de status ativo */
+.filtro-status-btn.active {
+    color: var(--gold) !important;
+    border-color: var(--border) !important;
+    background: var(--gold-dim) !important;
+}
+
