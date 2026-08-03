@@ -6384,17 +6384,24 @@ font-size: 1.1em;
     text-overflow: ellipsis;
     max-width: 220px;
 }
+
+/* Coluna de categoria separada — centralizada */
+.rec-cat-td {
+    text-align: center;
+    padding: 8px 6px !important;
+    vertical-align: middle;
+}
 .rec-cat {
     display: inline-block;
-    font-size: 0.75em;
+    font-size: 0.68em;
     color: var(--text-dim);
-    font-weight: 400;
-    margin-left: 6px;
+    font-weight: 600;
     background: var(--s3);
-    padding: 1px 6px;
-    border-radius: 6px;
+    padding: 3px 8px;
+    border-radius: 8px;
     border: 1px solid var(--border-s);
-    vertical-align: middle;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
 }
 
 /* Data compacta */
