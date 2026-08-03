@@ -6455,9 +6455,9 @@ font-size: 1.1em;
     border: 1px solid rgba(46,204,113,0.2);
 }
 .rec-badge-pend {
-    background: var(--s3);
-    color: var(--text-dim);
-    border: 1px solid var(--border-s);
+    background: rgba(230,126,34,0.10);
+    color: #e67e22;
+    border: 1px solid rgba(230,126,34,0.22);
 }
 
 @media (max-width: 640px) {
