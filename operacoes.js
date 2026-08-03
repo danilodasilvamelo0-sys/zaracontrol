@@ -63,12 +63,13 @@ document.querySelectorAll('.modal-overlay').forEach(m => {
 let _tabAtual = 'operacoes';
 function showTab(tab, btn) {
     _tabAtual = tab;
-    ['operacoes','status','rede','favores'].forEach(t => {
+    ['operacoes','status','rede','favores','estrela'].forEach(t => {
         const el = document.getElementById('tab_'+t);
         if (el) el.style.display = t === tab ? '' : 'none';
     });
     document.querySelectorAll('.op-tab').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
+    if (tab === 'estrela') renderCalendario();
     atualizarContadores();
 }
 
@@ -524,12 +525,174 @@ function renderFavores() {
 }
 
 // ══════════════════════════════════════════════
+//  ESTRELA NEGRA — Calendário de Execuções
+// ══════════════════════════════════════════════
+let _calAno  = new Date().getFullYear();
+let _calMes  = new Date().getMonth(); // 0-11
+let _estrelaEditId = null;
+
+const MESES_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                  'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function navMes(delta) {
+    _calMes += delta;
+    if (_calMes > 11) { _calMes = 0;  _calAno++; }
+    if (_calMes <  0) { _calMes = 11; _calAno--; }
+    renderCalendario();
+}
+
+function abrirModalEstrela(id, dataPresel) {
+    _estrelaEditId = id || null;
+    if (id) {
+        const e = (dados.estrelas||[]).find(x => x.id === id);
+        if (!e) return;
+        document.getElementById('estrelaData').value  = e.data;
+        document.getElementById('estrelaNome').value  = e.nome;
+        document.getElementById('estrelaNotas').value = e.notas || '';
+    } else {
+        document.getElementById('estrelaData').value  = dataPresel || hoje();
+        document.getElementById('estrelaNome').value  = '';
+        document.getElementById('estrelaNotas').value = '';
+    }
+    abrirModal('modalEstrela');
+    setTimeout(() => document.getElementById('estrelaNome').focus(), 100);
+}
+
+function salvarEstrela() {
+    const data = document.getElementById('estrelaData').value;
+    const nome = document.getElementById('estrelaNome').value.trim();
+    if (!data) { toast('Escolha uma data.', 'error'); return; }
+    if (!nome) { toast('Informe o alvo ou meta.', 'error'); return; }
+    const obj = { data, nome, notas: document.getElementById('estrelaNotas').value.trim() };
+    if (!dados.estrelas) dados.estrelas = [];
+    if (_estrelaEditId) {
+        Object.assign(dados.estrelas.find(x => x.id === _estrelaEditId)||{}, obj);
+        toast('Atualizado.', 'success');
+    } else {
+        dados.estrelas.push({ id: gerarId(), ...obj, criadaEm: hoje() });
+        toast('Data marcada com Estrela Negra.', 'success');
+    }
+    salvar(); fecharModal('modalEstrela'); renderCalendario();
+}
+
+function excluirEstrela(id) {
+    dados.estrelas = (dados.estrelas||[]).filter(x => x.id !== id);
+    salvar(); renderCalendario();
+}
+
+function renderCalendario() {
+    if (!dados.estrelas) dados.estrelas = [];
+
+    // Título do mês
+    document.getElementById('calMesTitulo').textContent =
+        `${MESES_PT[_calMes]} ${_calAno}`;
+
+    // Primeiro dia da semana e total de dias
+    const primeiroDia = new Date(_calAno, _calMes, 1).getDay(); // 0=Dom
+    const totalDias   = new Date(_calAno, _calMes + 1, 0).getDate();
+    const hojeStr     = hoje();
+
+    // Mapear estrelas do mês por dia
+    const estrelasDia = {};
+    dados.estrelas.forEach(e => {
+        const [y,m,d] = e.data.split('-').map(Number);
+        if (y === _calAno && m-1 === _calMes) {
+            if (!estrelasDia[d]) estrelasDia[d] = [];
+            estrelasDia[d].push(e);
+        }
+    });
+
+    const grid = document.getElementById('calGrid');
+    let html = '';
+
+    // Células vazias antes do primeiro dia
+    for (let i = 0; i < primeiroDia; i++) {
+        html += `<div style="aspect-ratio:1;"></div>`;
+    }
+
+    // Dias do mês
+    for (let dia = 1; dia <= totalDias; dia++) {
+        const dataStr = `${_calAno}-${String(_calMes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+        const estrelasAqui = estrelasDia[dia] || [];
+        const isHoje = dataStr === hojeStr;
+        const temEstrela = estrelasAqui.length > 0;
+        const isPast = dataStr < hojeStr;
+
+        const bgColor = isHoje
+            ? 'background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);'
+            : temEstrela
+                ? 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);'
+                : 'background:transparent;border:1px solid transparent;';
+
+        const estrelaHtml = temEstrela
+            ? `<div style="font-size:0.9em;line-height:1;margin-top:2px;color:${isPast?'rgba(255,255,255,0.3)':'#ffffff'}" title="${estrelasAqui.map(e=>e.nome).join(', ')}">★</div>`
+            : '';
+
+        const badgeCount = estrelasAqui.length > 1
+            ? `<div style="position:absolute;top:2px;right:2px;background:var(--gold);color:#000;border-radius:50%;width:12px;height:12px;font-size:0.45em;font-weight:800;display:flex;align-items:center;justify-content:center;">${estrelasAqui.length}</div>`
+            : '';
+
+        html += `<div onclick="abrirModalEstrela(null,'${dataStr}')"
+            style="aspect-ratio:1;border-radius:8px;${bgColor}
+            display:flex;flex-direction:column;align-items:center;justify-content:center;
+            cursor:pointer;transition:all 0.15s;position:relative;
+            opacity:${isPast&&!temEstrela?'0.3':'1'};"
+            onmouseover="this.style.background='rgba(201,168,76,0.08)'"
+            onmouseout="this.style.background='${temEstrela?'rgba(255,255,255,0.04)':isHoje?'rgba(201,168,76,0.15)':'transparent'}'">
+            <div style="font-size:0.72em;font-weight:${isHoje?'800':temEstrela?'700':'500'};color:${isHoje?'var(--gold)':temEstrela?'var(--text)':'var(--text-dim)'};">${dia}</div>
+            ${estrelaHtml}
+            ${badgeCount}
+        </div>`;
+    }
+
+    grid.innerHTML = html;
+
+    // Lista de estrelas do mês
+    const lista = document.getElementById('estrelasLista');
+    const todasEstrelas = (dados.estrelas||[])
+        .filter(e => { const [y,m] = e.data.split('-').map(Number); return y===_calAno && m-1===_calMes; })
+        .sort((a,b) => a.data.localeCompare(b.data));
+
+    if (!todasEstrelas.length) {
+        lista.innerHTML = `<div style="font-size:0.75em;color:var(--text-dim);padding:8px 0;">Nenhuma data marcada neste mês.</div>`;
+        return;
+    }
+
+    lista.innerHTML = todasEstrelas.map(e => {
+        const [y,m,d] = e.data.split('-').map(Number);
+        const isPast = e.data < hojeStr;
+        return `<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;
+            background:var(--s3);border:1px solid var(--border-s);border-radius:10px;
+            opacity:${isPast?'0.5':'1'};">
+            <div style="font-size:1.2em;color:${isPast?'rgba(255,255,255,0.3)':'#ffffff'};flex-shrink:0;">★</div>
+            <div style="flex:1;min-width:0;">
+                <div style="font-size:0.82em;font-weight:700;color:var(--text);${isPast?'text-decoration:line-through;':''}">${e.nome}</div>
+                <div style="font-size:0.65em;color:var(--text-dim);margin-top:2px;">
+                    ${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${y}
+                    ${isPast ? '<span style="color:rgba(255,255,255,0.25);margin-left:8px;">Passado</span>' : ''}
+                    ${e.notas ? `<span style="margin-left:8px;font-style:italic;">${e.notas}</span>` : ''}
+                </div>
+            </div>
+            <div style="display:flex;gap:4px;flex-shrink:0;">
+                <button class="op-btn" onclick="abrirModalEstrela('${e.id}')" style="font-size:0.60em;padding:4px 7px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="op-btn descartar" onclick="excluirEstrela('${e.id}')" style="font-size:0.60em;padding:4px 7px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                </button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ══════════════════════════════════════════════
 //  BOOT
 // ══════════════════════════════════════════════
 if (!dados.poder)    dados.poder    = dadosVazios().poder;
 if (!dados.operacoes)dados.operacoes= [];
 if (!dados.aliados)  dados.aliados  = [];
 if (!dados.favores)  dados.favores  = [];
+if (!dados.estrelas) dados.estrelas = [];
 
 renderStatus();
 renderOperacoes();
