@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
     <title>ZARA | Operações</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="operacoes.css?v=1785720000">
+    <link rel="stylesheet" href="operacoes.css?v=1785756392">
 </head>
 <body>
 
@@ -102,6 +102,10 @@
         <button class="op-tab" onclick="showTab('favores',this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             Livro de Favores
+        </button>
+        <button class="op-tab" onclick="showTab('estrela',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg>
+            Estrela Negra
         </button>
     </div>
 
@@ -235,7 +239,84 @@
 
 </div>
 
-<!-- MODAL: NOVA OPERAÇÃO -->
+    <!-- ═══ TAB: ESTRELA NEGRA ═══ -->
+    <div id="tab_estrela" style="display:none">
+        <div class="op-section">
+            <div class="op-section-header">
+                <div>
+                    <div class="op-section-title">
+                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        Estrela Negra
+                    </div>
+                    <div class="op-section-sub">Marque o dia que vai executar um alvo ou meta</div>
+                </div>
+                <button class="btn-novo" onclick="abrirModalEstrela()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Marcar Data
+                </button>
+            </div>
+
+            <!-- Calendário -->
+            <div style="padding:20px 24px;">
+                <!-- Navegação do mês -->
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+                    <button class="op-btn" onclick="navMes(-1)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <div id="calMesTitulo" style="font-size:0.82em;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:2px;"></div>
+                    <button class="op-btn" onclick="navMes(1)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                </div>
+
+                <!-- Grid dos dias da semana -->
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">
+                    <div style="text-align:center;font-size:0.60em;font-weight:700;color:var(--text-dim);padding:4px;">DOM</div>
+                    <div style="text-align:center;font-size:0.60em;font-weight:700;color:var(--text-dim);padding:4px;">SEG</div>
+                    <div style="text-align:center;font-size:0.60em;font-weight:700;color:var(--text-dim);padding:4px;">TER</div>
+                    <div style="text-align:center;font-size:0.60em;font-weight:700;color:var(--text-dim);padding:4px;">QUA</div>
+                    <div style="text-align:center;font-size:0.60em;font-weight:700;color:var(--text-dim);padding:4px;">QUI</div>
+                    <div style="text-align:center;font-size:0.60em;font-weight:700;color:var(--text-dim);padding:4px;">SEX</div>
+                    <div style="text-align:center;font-size:0.60em;font-weight:700;color:var(--text-dim);padding:4px;">SÁB</div>
+                </div>
+
+                <!-- Dias -->
+                <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div>
+            </div>
+
+            <!-- Lista de datas marcadas -->
+            <div style="border-top:1px solid var(--border-s);padding:16px 24px;">
+                <div style="font-size:0.62em;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);margin-bottom:12px;">Datas Marcadas</div>
+                <div id="estrelasLista" style="display:flex;flex-direction:column;gap:6px;"></div>
+            </div>
+        </div>
+    </div>
+
+<!-- MODAL: ESTRELA NEGRA -->
+<div class="modal-overlay" id="modalEstrela">
+    <div class="modal-box">
+        <div class="modal-title">
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Marcar Execução
+        </div>
+        <div class="form-group">
+            <label>Data de execução</label>
+            <input type="date" id="estrelaData">
+        </div>
+        <div class="form-group">
+            <label>Alvo / Meta</label>
+            <input type="text" id="estrelaNome" placeholder="Ex: Fechar proposta com João, Lançar projeto X">
+        </div>
+        <div class="form-group">
+            <label>Nota confidencial (opcional)</label>
+            <textarea id="estrelaNotas" rows="2" placeholder="Detalhes da execução..."></textarea>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalEstrela')">Cancelar</button>
+            <button class="btn-save" onclick="salvarEstrela()">Marcar</button>
+        </div>
+    </div>
+</div>
 <div class="modal-overlay" id="modalOp">
     <div class="modal-box">
         <div class="modal-title">
@@ -368,6 +449,6 @@
 </div>
 
 <div id="opStatus"></div>
-<script src="operacoes.js?v=1785720000"></script>
+<script src="operacoes.js?v=1785756392"></script>
 </body>
 </html>
