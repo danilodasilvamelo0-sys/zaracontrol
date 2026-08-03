@@ -5251,7 +5251,15 @@ font-size: 1.1em;
 }
 .desp-badge.pago     { background: rgba(46,204,113,0.12);  color: var(--green); border: 1px solid rgba(46,204,113,0.25); }
 .desp-badge.vencido  { background: rgba(231,76,60,0.12);   color: var(--red);   border: 1px solid rgba(231,76,60,0.25); }
-.desp-badge.pendente { background: rgba(255,255,255,0.05); color: var(--text-dim); border: 1px solid var(--border-s); }
+.desp-badge.pendente { background: rgba(230,126,34,0.10);  color: #e67e22;      border: 1px solid rgba(230,126,34,0.22); }
+
+/* Tabelas de despesa — layout proporcional */
+.desp-table {
+    table-layout: auto;
+    width: 100%;
+}
+.desp-table th { white-space: nowrap; }
+.desp-table td { vertical-align: middle; }
 
 .desp-atraso-badge {
     margin-left: 6px;
