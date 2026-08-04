@@ -537,9 +537,7 @@ body {
 ::-webkit-scrollbar-thumb { background:rgba(201,168,76,0.2);border-radius:2px; }
 
 /* ── MOBILE ── */
-@media (max-width:768px) {
-    body { padding-left:0; }
-    .sidebar { display:none; }
+
     .mobile-nav { display:block; }
     .container { padding:16px 14px 32px; }
     .op-hero h1 { font-size:1.8em;letter-spacing:4px; }
@@ -578,3 +576,13 @@ body {
     background: var(--gold-dim) !important;
 }
 
+/* ── MOBILE: sidebar esconde, nav inferior aparece (padrão ZARA) ── */
+@media (max-width: 768px) {
+    body { padding-left: 10px !important; padding-bottom: 80px !important; }
+    .sidebar { display: none; }
+    .mobile-nav { display: block; }
+}
+@media (min-width: 769px) {
+    body { padding-left: 70px; }
+    .mobile-nav { display: none !important; }
+}
