@@ -368,9 +368,7 @@ body {
 }
 
 /* ── MOBILE ── */
-@media (max-width:768px) {
-    body { padding-left:0; }
-    .sidebar { display:none; }
+
     .mobile-nav { display:block; }
     .container { margin-left:0!important; padding:20px 14px 100px; }
     .notas-layout {
@@ -385,4 +383,15 @@ body {
     .col-editor { min-height:50vh; }
     .editor-area { padding:18px 16px; }
     .editor-titulo { font-size:1.15em; }
+}
+
+/* ── MOBILE: sidebar esconde, nav inferior aparece (padrão ZARA) ── */
+@media (max-width: 768px) {
+    body { padding-left: 10px !important; padding-bottom: 80px !important; }
+    .sidebar { display: none; }
+    .mobile-nav { display: block; }
+}
+@media (min-width: 769px) {
+    body { padding-left: 70px; }
+    .mobile-nav { display: none !important; }
 }
