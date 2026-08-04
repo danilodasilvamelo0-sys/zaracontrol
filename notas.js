@@ -312,11 +312,17 @@ function atualizarSub() {
 
 // ── BOOT ──
 (async () => {
+    // Tentar carregar do Supabase
     const ok = await syncLoad();
+    if (ok) {
+        toast('Dados carregados', 'success');
+    } else if (db.notas.length > 0 || db.cats.length > 3) {
+        // Tem dados locais que nunca foram para o Supabase — enviar agora
+        await syncSave();
+    }
     renderCats();
     renderNotas();
     renderCatSel();
     mostrarVazio();
     atualizarSub();
-    if (ok) toast('Dados carregados', 'success');
 })();
