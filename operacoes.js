@@ -224,16 +224,15 @@ function mudarStatusOp(id, novoStatus) {
     if (!op) return;
     op.status = novoStatus;
     op.atualizadaEm = hoje();
-    if (novoStatus === 'executada') { toast('Operação executada! Meta contabilizada.', 'success'); salvar(); renderStatus(); }
-    salvar(); renderOperacoes();
-    const label = {executada:'Operação concluída!',suspensa:'Operação suspensa.',descartada:'Operação descartada.',ativa:'Operação reativada.'};
+    salvar(); renderOperacoes(); renderStatus();
+    const label = {executada:'Operação executada! Meta contabilizada.',suspensa:'Operação suspensa.',descartada:'Operação descartada.',ativa:'Operação reativada.'};
     toast(label[novoStatus]||'Status atualizado.', novoStatus === 'executada' ? 'success' : 'info');
 }
 
 function excluirOp(id) {
     if (!confirm('Excluir esta operação permanentemente?')) return;
     dados.operacoes = dados.operacoes.filter(x => x.id !== id);
-    salvar(); renderOperacoes(); toast('Operação removida.', 'info');
+    salvar(); renderOperacoes(); renderStatus(); toast('Operação removida.', 'info');
 }
 
 function toggleEtapa(opId, etapaId) {
