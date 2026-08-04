@@ -103,6 +103,12 @@ function addMetaAtingida() {
     toast('Meta registrada!', 'success');
 }
 
+// Calcula metas: operações executadas + metas manuais
+function calcMetasAtingidas() {
+    const opExecutadas = dados.operacoes.filter(o => o.status === 'executada').length;
+    return opExecutadas + (dados.poder.metasAtingidas || 0);
+}
+
 const TEND_ICONS = {
     subindo:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
     parado:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
@@ -113,10 +119,14 @@ function renderStatus() {
     const p = dados.poder;
     const dias = diasDesde(p.inicioTendencia || hoje());
     const nivel = p.nivel || 5;
+    const metas = calcMetasAtingidas();
 
+    // Atualizar número, barra E o slider
     document.getElementById('statusNivel').textContent = nivel;
     document.getElementById('statusNivelBar').style.width = (nivel * 10) + '%';
     document.getElementById('statusNivelSub').textContent = `${nivel} / 10 — ${nivel >= 8 ? 'Alto impacto' : nivel >= 5 ? 'Em crescimento' : 'Construindo base'}`;
+    const slider = document.getElementById('nivelSlider');
+    if (slider) slider.value = nivel; // ← corrige o bug do slider sempre em 5
 
     const tEl = document.getElementById('statusTendencia');
     tEl.innerHTML = `
@@ -129,14 +139,14 @@ function renderStatus() {
         </div>`;
 
     document.getElementById('statusDias').innerHTML = `<div class="poder-tempo-val">${dias}d</div><div class="poder-tempo-sub">${p.tendencia === 'parado' ? 'sem se mover' : p.tendencia === 'subindo' ? 'em movimento' : 'recuando'}</div>`;
-    document.getElementById('statusMetas').innerHTML = `<div class="poder-metas-atingidas"><div class="poder-metas-num">${p.metasAtingidas||0}</div></div><div class="poder-kpi-label" style="font-size:0.62em;color:var(--text-dim);margin-top:4px;">metas atingidas</div>`;
+    document.getElementById('statusMetas').innerHTML = `<div class="poder-metas-atingidas"><div class="poder-metas-num">${metas}</div></div><div class="poder-kpi-label" style="font-size:0.62em;color:var(--text-dim);margin-top:4px;">metas atingidas</div>`;
 
     // Hero stats
     document.getElementById('heroNivel').textContent = nivel;
     document.getElementById('heroTendencia').textContent = {subindo:'↑ Subindo',parado:'→ Parado',recuando:'↓ Recuando'}[p.tendencia]||'—';
     document.getElementById('heroTendencia').className = 'op-kpi-val ' + p.tendencia;
     document.getElementById('heroDias').textContent = dias + 'd';
-    document.getElementById('heroMetas').textContent = p.metasAtingidas || 0;
+    document.getElementById('heroMetas').textContent = metas;
 }
 
 // ══════════════════════════════════════════════
@@ -214,7 +224,7 @@ function mudarStatusOp(id, novoStatus) {
     if (!op) return;
     op.status = novoStatus;
     op.atualizadaEm = hoje();
-    if (novoStatus === 'executada') { dados.poder.metasAtingidas = (dados.poder.metasAtingidas||0)+1; salvar(); renderStatus(); }
+    if (novoStatus === 'executada') { toast('Operação executada! Meta contabilizada.', 'success'); salvar(); renderStatus(); }
     salvar(); renderOperacoes();
     const label = {executada:'Operação concluída!',suspensa:'Operação suspensa.',descartada:'Operação descartada.',ativa:'Operação reativada.'};
     toast(label[novoStatus]||'Status atualizado.', novoStatus === 'executada' ? 'success' : 'info');
