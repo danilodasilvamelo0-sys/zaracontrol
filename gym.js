@@ -244,11 +244,12 @@ function toggleExercicio(treinoId, exId) {
 
 // Render
 function renderTreinos() {
-    const el = document.getElementById('treinosList');
+    const el  = document.getElementById('treinosList');
     const sub = document.getElementById('treinoSubtitle');
+    if (!el) return;
     sub.textContent = `${gym.treinos.length} treino${gym.treinos.length!==1?'s':''} cadastrado${gym.treinos.length!==1?'s':''}`;
 
-    if(!gym.treinos.length) {
+    if (!gym.treinos.length) {
         el.innerHTML = `<div class="empty-state">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 4v16M18 4v16M2 8h4M18 8h4M2 16h4M18 16h4M6 12h12"/></svg>
             Nenhum treino cadastrado.<br>Clique em <strong>Novo Treino</strong> para começar.
@@ -256,25 +257,38 @@ function renderTreinos() {
     }
 
     el.innerHTML = gym.treinos.map(t => {
-        const total = t.exercicios.length;
-        const feitos = t.exercicios.filter(e=>e.feito).length;
-        const pct = total > 0 ? Math.round((feitos/total)*100) : 0;
-        const series = t.exercicios.reduce((s,e)=>s+(parseInt(e.series)||0),0);
-        const vol = t.exercicios.reduce((s,e)=>s+(parseInt(e.series)||0)*(parseInt(e.reps)||0),0);
+        const total  = t.exercicios.length;
+        const feitos = t.exercicios.filter(e => e.feito).length;
+        const pct    = total > 0 ? Math.round((feitos / total) * 100) : 0;
+        const series = t.exercicios.reduce((s,e) => s + (parseInt(e.series)||0), 0);
+        const vol    = t.exercicios.reduce((s,e) => s + (parseInt(e.series)||0)*(parseInt(e.reps)||0), 0);
 
-        const exRows = t.exercicios.map(ex => `
+        const exCards = t.exercicios.map(ex => `
             <div class="ex-card ${ex.feito?'ex-card-feito':''}">
                 <div class="ex-card-left">
-                    <input type="checkbox" class="ex-check" ${ex.feito?'checked':''} onchange="toggleExercicio('${t.id}','${ex.id}')">
+                    <input type="checkbox" class="ex-check" ${ex.feito?'checked':''}
+                        onchange="toggleExercicio('${t.id}','${ex.id}')">
                 </div>
                 <div class="ex-card-info">
                     <div class="ex-nome-txt${ex.feito?' ex-nome-feito':''}">${ex.nome}</div>
-                    ${ex.obs?`<div class="ex-obs">${ex.obs}</div>`:''}
+                    ${ex.obs ? `<div class="ex-obs">${ex.obs}</div>` : ''}
                     <div class="ex-stats">
-                        <span class="ex-stat"><span class="ex-stat-label">S</span><span class="ex-stat-val">${ex.series}</span></span>
-                        <span class="ex-stat"><span class="ex-stat-label">R</span><span class="ex-stat-val">${ex.reps}</span></span>
-                        ${ex.metodo&&ex.metodo!=='-'?`<span class="ex-stat"><span class="ex-stat-label">${ex.metodo}</span></span>`:''}
-                        <span class="ex-stat"><span class="ex-stat-label">Desc</span><span class="ex-stat-val">${ex.descanso}min</span></span>
+                        <span class="ex-stat">
+                            <span class="ex-stat-label">Séries</span>
+                            <span class="ex-stat-val">${ex.series}</span>
+                        </span>
+                        <span class="ex-stat">
+                            <span class="ex-stat-label">Reps</span>
+                            <span class="ex-stat-val">${ex.reps}</span>
+                        </span>
+                        ${ex.metodo && ex.metodo !== '-' ? `<span class="ex-stat">
+                            <span class="ex-stat-label">Método</span>
+                            <span class="ex-stat-val">${ex.metodo}</span>
+                        </span>` : ''}
+                        <span class="ex-stat">
+                            <span class="ex-stat-label">Desc</span>
+                            <span class="ex-stat-val">${ex.descanso}min</span>
+                        </span>
                     </div>
                 </div>
                 <div class="ex-acoes">
@@ -286,26 +300,51 @@ function renderTreinos() {
                     </button>
                 </div>
             </div>`).join('');
-        const emptyEx = `<div class="empty-state" style="padding:20px">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:28px;height:28px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    Nenhum exercício. Adicione abaixo.
-                </div>`;
+
         return `
+        <div class="treino-card" data-id="${t.id}">
+            <div class="treino-card-header" onclick="toggleTreino('${t.id}')">
+                <div class="treino-card-info">
+                    <div class="treino-card-nome">${t.nome}</div>
+                    <div class="treino-card-meta">
+                        <span class="tc-grupo-badge">${t.grupo}</span>
+                        <span>${total} exercício${total!==1?'s':''}</span>
+                        <span>${feitos}/${total} feitos</span>
+                    </div>
+                </div>
+                <div class="treino-card-acoes" onclick="event.stopPropagation()">
+                    <button class="tc-btn" onclick="abrirModalTreino('${t.id}')" title="Editar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="tc-btn tc-del" onclick="excluirTreino('${t.id}')" title="Excluir">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                    </button>
+                    <button class="tc-btn tc-toggle" onclick="toggleTreino('${t.id}')" title="Expandir">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform 0.2s;transform:${t._aberto?'rotate(180deg)':'rotate(0deg)'}">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            ${pct > 0 ? `<div class="treino-prog-wrap"><div class="treino-prog-fill" style="width:${pct}%"></div></div>` : ''}
+            ${t._aberto ? `
+            <div class="treino-card-body">
+                <div class="exercicios-list">
+                    ${total > 0 ? exCards : '<div class="empty-state" style="padding:16px;font-size:0.78em">Nenhum exercício ainda.</div>'}
+                </div>
                 <button class="btn-add-ex" onclick="abrirModalExercicio('${t.id}')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Adicionar Exercício
                 </button>
-                ${series > 0 ? `<div class="treino-volume"><span>Séries: <strong>${series}</strong></span><span>Volume: <strong>${vol} reps</strong></span><span>Progresso: <strong>${pct}%</strong></span></div>` : ''}
-            </div>
+                ${series > 0 ? `<div class="treino-volume">
+                    <span>Séries totais: <strong>${series}</strong></span>
+                    <span>Volume: <strong>${vol} reps</strong></span>
+                    <span>Progresso: <strong>${pct}%</strong></span>
+                </div>` : ''}
+            </div>` : ''}
         </div>`;
     }).join('');
 }
-
-// ══════════════════════════════════════════
-//  DIETA
-// ══════════════════════════════════════════
-let _refEditandoId = null;
-let _alRefId = null;
 
 function abrirModalRefeicao(refId) {
     _refEditandoId = refId || null;
