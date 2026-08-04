@@ -586,3 +586,68 @@ body {
     body { padding-left: 70px; }
     .mobile-nav { display: none !important; }
 }
+
+/* ════════════════════════════════════════
+   OPERAÇÕES — MOBILE RESPONSIVO COMPLETO
+   ════════════════════════════════════════ */
+@media (max-width: 768px) {
+    body { padding-left: 10px !important; padding-bottom: 80px !important; }
+    .sidebar { display: none; }
+    .mobile-nav { display: block; }
+
+    .container { padding: 16px 14px 30px; }
+
+    /* Hero */
+    .op-hero { padding: 24px 0 20px; }
+    .op-hero h1 { font-size: 1.6em; letter-spacing: 4px; }
+    .op-hero::after { display: none; }
+    .op-hero-status { gap: 16px; flex-wrap: wrap; }
+    .op-kpi-val { font-size: 1.3em; }
+
+    /* Tabs: scroll horizontal */
+    .op-tabs { overflow-x: auto; flex-wrap: nowrap; gap: 3px; padding: 4px; -webkit-overflow-scrolling: touch; }
+    .op-tab  { flex-shrink: 0; font-size: 0.70em; padding: 8px 12px; white-space: nowrap; }
+
+    /* Seção */
+    .op-section { border-radius: 14px; margin-bottom: 14px; }
+    .op-section-header { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
+
+    /* Cards de operação */
+    .op-list { padding: 12px 14px; gap: 8px; }
+    .op-card-body { padding: 12px 14px; }
+    .op-card-top  { flex-wrap: wrap; gap: 8px; }
+    .op-card-badges { flex-wrap: wrap; }
+    .op-card-acoes  { flex-wrap: wrap; gap: 4px; }
+    .op-card-nome   { font-size: 0.85em; }
+
+    /* Status de Poder: 1 coluna */
+    .poder-grid { grid-template-columns: 1fr; gap: 10px; padding: 14px 16px; }
+    .poder-nivel-num { font-size: 2em; }
+
+    /* Filtros */
+    .filtro-status-btn { font-size: 0.60em; padding: 5px 8px; }
+
+    /* Rede de influência */
+    .rede-list   { padding: 12px 14px; }
+    .aliado-card { padding: 10px 12px; gap: 10px; }
+    .aliado-notas{ display: none; }
+
+    /* Favores */
+    .favores-list { padding: 10px 14px; }
+    .favor-item   { padding: 10px 12px; }
+    .favor-desc   { display: none; }
+
+    /* Calendário estrela negra */
+    .modal-box { padding: 20px 16px; }
+    .form-row  { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 420px) {
+    .op-hero h1  { font-size: 1.3em; }
+    .poder-grid  { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 769px) {
+    body { padding-left: 70px; }
+    .mobile-nav { display: none !important; }
+}
