@@ -18,6 +18,48 @@ function dadosVazios() {
         metas: { kcal: 2000, prot: 150, carb: 250, gord: 70 }
     };
 }
+
+// ══════════════════════════════════════════════
+//  SYNC SUPABASE
+// ══════════════════════════════════════════════
+const SUPABASE_URL = 'https://ltwamldgdwqzyssoukzl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0d2FtbGRnZHdxenlzc291a3psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NzEzMDUsImV4cCI6MjA4MjQ0NzMwNX0.UVyo0c0BHslB7mCU74Qx8rdo42HA0WPAyDQ6J-FIakE';
+const USER_ID = 'default_user';
+
+let _sb = null;
+let _useSync = false;
+try {
+    _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    _useSync = true;
+} catch(e) { console.warn('Supabase offline:', e); }
+
+async function syncSave() {
+    if (!_useSync) return;
+    try {
+        const { error } = await _sb.from('gym').upsert({
+            id: USER_ID, user_id: USER_ID,
+            dados: db,
+            updated_at: new Date().toISOString()
+        });
+        if (error) console.error('syncSave:', error);
+    } catch(e) { console.error('syncSave:', e); }
+}
+
+async function syncLoad() {
+    if (!_useSync) return;
+    try {
+        const { data, error } = await _sb.from('gym')
+            .select('*').eq('user_id', USER_ID).maybeSingle();
+        if (error || !data?.dados) return;
+        db = Object.assign(estruturaVazia(), data.dados);
+        localStorage.setItem('zara_gym_v1', JSON.stringify(db));
+        syncSave();
+        toast('Dados carregados', 'success');
+        syncLoad();
+renderTreinos ? renderTreinos() : null;
+    } catch(e) { console.error('syncLoad:', e); }
+}
+
 function salvarDados() {
     localStorage.setItem(GYM_KEY, JSON.stringify(gym));
 }
