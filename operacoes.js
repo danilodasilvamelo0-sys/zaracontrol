@@ -60,9 +60,8 @@ async function syncLoad() {
         const { data, error } = await _sb.from('operacoes')
             .select('dados').eq('user_id', USER_ID).maybeSingle();
         if (error || !data?.dados) return false;
-        db = Object.assign(estruturaVazia()(), data.dados);
+        db = Object.assign(estruturaVazia(), data.dados);
         localStorage.setItem('zara_op_v2', JSON.stringify(db));
-    syncSave();
         return true;
     } catch(e) { console.error('syncLoad:', e); return false; }
 }
