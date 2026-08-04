@@ -7,7 +7,7 @@ const OP_KEY = 'zara_operacoes_v1';
 function dadosVazios() {
     return {
         poder: {
-            nivel: 5,
+            nivel: 1,
             tendencia: 'parado',
             inicioTendencia: hoje(),
             metasAtingidas: 0,
@@ -95,6 +95,26 @@ function setNivel(n) {
     salvar();
     renderStatus();
 }
+function subirNivel() {
+    if ((dados.poder.nivel || 1) >= 10) { toast('Nível máximo atingido!', 'info'); return; }
+    dados.poder.nivel = (dados.poder.nivel || 1) + 1;
+    salvar();
+    renderStatus();
+    toast('Nível ' + dados.poder.nivel + ' — ' + getLevelLabel(dados.poder.nivel), 'success');
+}
+function descerNivel() {
+    if ((dados.poder.nivel || 1) <= 1) { toast('Nível mínimo.', 'info'); return; }
+    dados.poder.nivel = (dados.poder.nivel || 1) - 1;
+    salvar();
+    renderStatus();
+}
+function getLevelLabel(n) {
+    if (n >= 9) return 'Autoridade máxima';
+    if (n >= 7) return 'Alto impacto';
+    if (n >= 5) return 'Em crescimento';
+    if (n >= 3) return 'Construindo base';
+    return 'Ponto de partida';
+}
 
 function addMetaAtingida() {
     dados.poder.metasAtingidas = (dados.poder.metasAtingidas || 0) + 1;
@@ -118,15 +138,17 @@ const TEND_ICONS = {
 function renderStatus() {
     const p = dados.poder;
     const dias = diasDesde(p.inicioTendencia || hoje());
-    const nivel = p.nivel || 5;
+    const nivel = (p.nivel != null && p.nivel !== undefined) ? parseInt(p.nivel) : 1;
     const metas = calcMetasAtingidas();
 
-    // Atualizar número, barra E o slider
+    // Atualizar número, barra e número grande
     document.getElementById('statusNivel').textContent = nivel;
     document.getElementById('statusNivelBar').style.width = (nivel * 10) + '%';
-    document.getElementById('statusNivelSub').textContent = `${nivel} / 10 — ${nivel >= 8 ? 'Alto impacto' : nivel >= 5 ? 'Em crescimento' : 'Construindo base'}`;
+    document.getElementById('statusNivelSub').textContent = `${nivel} / 10 — ${getLevelLabel(nivel)}`;
+    const numGrande = document.getElementById('nivelNumGrande');
+    if (numGrande) numGrande.textContent = nivel;
     const slider = document.getElementById('nivelSlider');
-    if (slider) slider.value = nivel; // ← corrige o bug do slider sempre em 5
+    if (slider) slider.value = nivel;
 
     const tEl = document.getElementById('statusTendencia');
     tEl.innerHTML = `
@@ -721,7 +743,7 @@ if (!Array.isArray(dados.operacoes)) dados.operacoes = [];
 if (!Array.isArray(dados.aliados))   dados.aliados   = [];
 if (!Array.isArray(dados.favores))   dados.favores   = [];
 if (!Array.isArray(dados.estrelas))  dados.estrelas  = [];
-if (typeof dados.poder.nivel !== 'number') dados.poder.nivel = 5;
+if (typeof dados.poder.nivel !== 'number') dados.poder.nivel = 1;
 
 renderStatus();
 renderOperacoes();
