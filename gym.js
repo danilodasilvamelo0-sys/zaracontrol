@@ -303,13 +303,13 @@ function renderTreinos() {
 
         return `
         <div class="treino-card" data-id="${t.id}">
-            <div class="treino-card-header" onclick="toggleTreino('${t.id}')">
+            <div class="treino-card-header ${t.grupo ? t.grupo.toLowerCase().replace(/[^a-z]/g,'') : ''}" onclick="toggleTreino('${t.id}')">
                 <div class="treino-card-info">
                     <div class="treino-card-nome">${t.nome}</div>
                     <div class="treino-card-meta">
                         <span class="tc-grupo-badge">${t.grupo}</span>
                         <span>${total} exercício${total!==1?'s':''}</span>
-                        <span>${feitos}/${total} feitos</span>
+                        <span>· ${feitos}/${total} feitos</span>
                     </div>
                 </div>
                 <div class="treino-card-acoes" onclick="event.stopPropagation()">
@@ -319,7 +319,7 @@ function renderTreinos() {
                     <button class="tc-btn tc-del" onclick="excluirTreino('${t.id}')" title="Excluir">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
                     </button>
-                    <button class="tc-btn tc-toggle" onclick="toggleTreino('${t.id}')" title="Expandir">
+                    <button class="tc-btn tc-toggle" title="Expandir">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform 0.2s;transform:${t._aberto?'rotate(180deg)':'rotate(0deg)'}">
                             <polyline points="6 9 12 15 18 9"/>
                         </svg>
