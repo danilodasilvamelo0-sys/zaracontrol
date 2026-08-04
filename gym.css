@@ -189,86 +189,64 @@
         /* Lista de treinos */
         .treinos-list { display:flex; flex-direction:column; gap:12px; padding:20px 22px; }
 
-        /* ── TREINO CARD — compacto e mobile-first ── */
         .treino-card {
-            background: var(--s2);
-            border: 1px solid var(--border-s);
-            border-radius: 14px;
-            overflow: hidden;
-            transition: border-color 0.2s;
-            margin-bottom: 10px;
+            background:var(--s3); border:1px solid var(--border-s);
+            border-radius:14px; overflow:hidden;
+            transition:all 0.25s cubic-bezier(0.16,1,0.3,1);
         }
-        .treino-card:hover { border-color: var(--border); }
+        .treino-card:hover { border-color:var(--border); box-shadow:0 4px 20px rgba(0,0,0,0.4); }
 
         .treino-card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            background: var(--s1);
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-s);
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            display:flex; align-items:center; justify-content:space-between;
+            padding:14px 18px; cursor:pointer;
+            background:linear-gradient(135deg, #1a5276, #2471a3);
+            user-select:none; -webkit-user-select:none;
+            -webkit-tap-highlight-color:rgba(0,0,0,0) !important;
         }
+        .treino-card-header.peito   { background:linear-gradient(135deg,#1a7a40,#2ecc71); }
+        .treino-card-header.costas  { background:linear-gradient(135deg,#1a5276,#2471a3); }
+        .treino-card-header.pernas  { background:linear-gradient(135deg,#6c3483,#9b59b6); }
+        .treino-card-header.ombros  { background:linear-gradient(135deg,#a04000,#e67e22); }
+        .treino-card-header.bracos  { background:linear-gradient(135deg,#0e6655,#1abc9c); }
+        .treino-card-header.abdomen { background:linear-gradient(135deg,#922b21,#e74c3c); }
+        .treino-card-header.full    { background:linear-gradient(135deg,#1b2631,#34495e); }
+        .treino-card-header.cardio  { background:linear-gradient(135deg,#b7770d,#d4a017); }
 
-        .treino-card-info { flex: 1; min-width: 0; }
+        .treino-card-info { flex:1; }
         .treino-card-nome {
-            font-size: 0.88em;
-            font-weight: 700;
-            color: var(--text);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size:0.90em; font-weight:800; color:#fff;
+            text-transform:uppercase; letter-spacing:1.5px;
+            text-shadow:0 1px 3px rgba(0,0,0,0.4);
         }
-        .treino-card-meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 5px;
-            flex-wrap: wrap;
+        .treino-card-meta { font-size:0.65em; color:rgba(255,255,255,0.75); margin-top:3px; }
+        .treino-card-toggle {
+            width:28px; height:28px; border-radius:50%;
+            background:rgba(255,255,255,0.15); border:none;
+            color:#fff; display:flex; align-items:center; justify-content:center;
+            cursor:pointer; transition:all 0.25s; flex-shrink:0;
         }
-        .tc-grupo-badge {
-            font-size: 0.60em;
-            font-weight: 700;
-            padding: 2px 7px;
-            border-radius: 8px;
-            background: var(--gold-dim);
-            color: var(--gold);
-            border: 1px solid var(--border);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .treino-card-meta span {
-            font-size: 0.62em;
-            color: var(--text-dim);
-        }
+        .treino-card-toggle svg { width:14px; height:14px; transition:transform 0.3s; }
+        .treino-card.collapsed .treino-card-toggle svg { transform:rotate(-90deg); }
 
         /* Botões do header */
         .treino-card-acoes {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             flex-shrink: 0;
         }
         .tc-btn {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: 1px solid var(--border-s);
-            border-radius: 8px;
-            color: var(--text-dim);
-            cursor: pointer;
-            transition: all 0.15s;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px; color: #fff;
+            cursor: pointer; transition: all 0.15s;
             -webkit-tap-highlight-color: transparent;
         }
-        .tc-btn svg { width: 13px; height: 13px; }
-        .tc-btn:hover { border-color: var(--border); color: var(--gold); }
-        .tc-btn.tc-del:hover { color: var(--red); border-color: rgba(231,76,60,0.3); }
-        .tc-btn.tc-toggle { color: var(--text-dim); }
+        .tc-btn svg { width: 14px; height: 14px; }
+        .tc-btn:hover { background: rgba(255,255,255,0.25); }
+        .tc-btn.tc-del:hover { background: rgba(231,76,60,0.3); }
+        .tc-grupo-badge { display: none; }
 
         /* Barra de progresso */
         .treino-prog-wrap {
@@ -282,6 +260,42 @@
         }
 
         .treino-card-body { display: block; }
+        .treino-card.collapsed .treino-card-body { display:none; }
+
+        /* ── MOBILE: header compacto sem gradiente ── */
+        @media (max-width: 768px) {
+            .treino-card-header {
+                background: var(--s1) !important;
+                padding: 12px 14px;
+                gap: 10px;
+            }
+            .treino-card-nome {
+                font-size: 0.82em;
+                letter-spacing: 0.5px;
+                text-transform: none;
+                text-shadow: none;
+                color: var(--text);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .treino-card-meta { color: var(--text-dim); }
+            .tc-grupo-badge {
+                display: inline-flex;
+                font-size: 0.58em; font-weight: 700;
+                padding: 2px 6px; border-radius: 7px;
+                background: var(--gold-dim); color: var(--gold);
+                border: 1px solid var(--border);
+                text-transform: uppercase;
+            }
+            .tc-btn {
+                background: rgba(255,255,255,0.06);
+                border-color: var(--border-s);
+                color: var(--text-dim);
+                width: 30px; height: 30px;
+            }
+            .treino-card-toggle { display: none; }
+        }
 
         /* Progress bar */
         .treino-prog-wrap {
