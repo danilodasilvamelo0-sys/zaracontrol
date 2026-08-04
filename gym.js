@@ -320,14 +320,14 @@ function renderTreinos() {
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
                     </button>
                     <button class="tc-btn tc-toggle" title="Expandir">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform 0.2s;transform:${t._aberto?'rotate(180deg)':'rotate(0deg)'}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform 0.2s;transform:${!t.collapsed?'rotate(180deg)':'rotate(0deg)'}">
                             <polyline points="6 9 12 15 18 9"/>
                         </svg>
                     </button>
                 </div>
             </div>
             ${pct > 0 ? `<div class="treino-prog-wrap"><div class="treino-prog-fill" style="width:${pct}%"></div></div>` : ''}
-            ${t._aberto ? `
+            ${!t.collapsed ? `
             <div class="treino-card-body">
                 <div class="exercicios-list">
                     ${total > 0 ? exCards : '<div class="empty-state" style="padding:16px;font-size:0.78em">Nenhum exercício ainda.</div>'}
