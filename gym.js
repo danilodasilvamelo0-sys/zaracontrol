@@ -29,11 +29,11 @@ try {
 } catch(e) { console.warn('Supabase offline:', e); }
 
 async function syncSave() {
-    if (!_useSync || !db) return;
+    if (!_useSync) return;
     try {
         await _sb.from('gym').upsert({
             id: USER_ID, user_id: USER_ID,
-            dados: db, updated_at: new Date().toISOString()
+            dados: gym, updated_at: new Date().toISOString()
         });
     } catch(e) { console.error('syncSave:', e); }
 }
@@ -44,9 +44,13 @@ async function syncLoad() {
         const { data, error } = await _sb.from('gym')
             .select('dados').eq('user_id', USER_ID).maybeSingle();
         if (error || !data?.dados) return false;
-        db = Object.assign(dadosVazios(), data.dados);
-        localStorage.setItem('zara_gym_v1', JSON.stringify(db));
-    syncSave();
+        // Mesclar dados preservando estrutura do gym
+        const carregado = data.dados;
+        if (carregado.treinos)     gym.treinos     = carregado.treinos;
+        if (carregado.dieta)       gym.dieta       = carregado.dieta;
+        if (carregado.medicamentos)gym.medicamentos = carregado.medicamentos;
+        if (carregado.metas)       gym.metas       = carregado.metas;
+        localStorage.setItem(GYM_KEY, JSON.stringify(gym));
         return true;
     } catch(e) { console.error('syncLoad:', e); return false; }
 }
@@ -68,6 +72,7 @@ try {
 
 function salvarDados() {
     localStorage.setItem(GYM_KEY, JSON.stringify(gym));
+    syncSave();
 }
 function gerarId() { return Date.now() + Math.random().toString(36).slice(2,7); }
 
@@ -695,9 +700,19 @@ renderTreinos();
 renderDieta();
 renderMeds();
 
+// ── BOOT COM SYNC ──
+// ── BOOT COM SYNC ──
 (async () => {
+    // Tentar carregar do Supabase
     const ok = await syncLoad();
-    if(typeof renderTreinos==="function") renderTreinos(); if(typeof renderDieta==="function") renderDieta(); if(typeof renderMeds==="function") renderMeds();
-    
-    if (ok) toast('Dados carregados', 'success');
+    if (ok) {
+        const el = document.getElementById('gymStatus');
+        if (el) { el.textContent = '✓ Dados carregados'; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 3000); }
+    } else if (gym && (gym.treinos?.length > 0 || gym.dieta?.refeicoes?.length > 0 || gym.medicamentos?.length > 0)) {
+        // Tem dados locais — enviar ao Supabase agora
+        await syncSave();
+    }
+    if (typeof renderTreinos === 'function') renderTreinos();
+    if (typeof renderDieta   === 'function') renderDieta();
+    if (typeof renderMeds    === 'function') renderMeds();
 })();
