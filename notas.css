@@ -395,3 +395,60 @@ body {
     body { padding-left: 70px; }
     .mobile-nav { display: none !important; }
 }
+
+/* ════════════════════════════════════════
+   NOTAS — MOBILE RESPONSIVO COMPLETO
+   ════════════════════════════════════════ */
+@media (max-width: 768px) {
+    body { padding-left: 10px !important; padding-bottom: 80px !important; }
+    .sidebar { display: none; }
+    .mobile-nav { display: block; }
+
+    .container { padding: 16px 14px 30px; }
+
+    /* Header */
+    .page-header { flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 16px; }
+    .page-title  { font-size: 1.4em; letter-spacing: 4px; }
+
+    /* Layout 3 colunas → 1 coluna empilhada */
+    .notas-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: 0;
+        border-radius: 12px;
+    }
+
+    /* Categorias: compacto */
+    .col-cats { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .cats-list { max-height: 130px; overflow-y: auto; }
+    .cat-item  { padding: 8px 14px; }
+    .cat-nome  { font-size: 0.75em; }
+
+    /* Lista de notas */
+    .col-notas  { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .notas-lista{ max-height: 240px; overflow-y: auto; }
+    .nota-item  { padding: 10px 14px; }
+    .nota-titulo{ font-size: 0.78em; }
+
+    /* Editor */
+    .col-editor  { min-height: 55vh; }
+    .editor-area { padding: 18px 16px; }
+    .editor-titulo { font-size: 1.15em; }
+    .editor-toolbar { padding: 8px 14px; flex-wrap: wrap; gap: 6px; }
+    .editor-toolbar-right { flex-wrap: wrap; gap: 4px; }
+    .toolbar-btn { font-size: 0.65em; padding: 5px 9px; }
+
+    /* Modal */
+    .modal-box { padding: 20px 16px; }
+}
+
+@media (max-width: 420px) {
+    .page-title { font-size: 1.2em; }
+    .cats-list  { max-height: 100px; }
+}
+
+@media (min-width: 769px) {
+    body { padding-left: 70px; }
+    .mobile-nav { display: none !important; }
+    .notas-layout { height: calc(100vh - 160px); }
+}
