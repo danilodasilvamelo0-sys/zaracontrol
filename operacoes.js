@@ -19,11 +19,27 @@ function dadosVazios() {
 }
 
 let dados = (() => {
-    try { return JSON.parse(localStorage.getItem(OP_KEY)) || dadosVazios(); }
-    catch { return dadosVazios(); }
+    try {
+        const raw = localStorage.getItem(OP_KEY);
+        if (!raw) return dadosVazios();
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return dadosVazios();
+        return parsed;
+    } catch(e) {
+        console.error('ZARA: erro ao carregar', e);
+        return dadosVazios();
+    }
 })();
 
-function salvar() { localStorage.setItem(OP_KEY, JSON.stringify(dados)); }
+function salvar() {
+    try {
+        const json = JSON.stringify(dados);
+        localStorage.setItem(OP_KEY, json);
+    } catch(e) {
+        console.error('ZARA: erro ao salvar', e);
+        toast('Erro ao salvar dados.', 'error');
+    }
+}
 function gerarId() { return Date.now() + Math.random().toString(36).slice(2,6); }
 function hoje() { return new Date().toISOString().slice(0,10); }
 function diasDesde(data) {
@@ -383,30 +399,16 @@ function salvarAliado() {
         utilidade: document.getElementById('alUtil').value.trim(),
         notas:     document.getElementById('alNotes').value.trim(),
     };
-    // Garantir que o array existe antes de salvar
     if (!Array.isArray(dados.aliados)) dados.aliados = [];
-
     if (_aliadoEditId) {
         const idx = dados.aliados.findIndex(x => x.id === _aliadoEditId);
         if (idx >= 0) dados.aliados[idx] = { ...dados.aliados[idx], ...obj };
         toast('Aliado atualizado.', 'success');
     } else {
-        const novo = { id: gerarId(), ...obj };
-        dados.aliados.push(novo);
+        dados.aliados.push({ id: gerarId(), ...obj });
         toast('Aliado adicionado!', 'success');
     }
-
-    // Salvar e verificar
-    const chave = JSON.stringify(dados);
-    localStorage.setItem(OP_KEY, chave);
-
-    // Confirmar que salvou
-    const verificar = JSON.parse(localStorage.getItem(OP_KEY) || '{}');
-    if (!verificar.aliados || verificar.aliados.length !== dados.aliados.length) {
-        toast('Erro ao salvar. Tente novamente.', 'error');
-        return;
-    }
-
+    salvar();
     fecharModal('modalAliado');
     renderRede();
 }
