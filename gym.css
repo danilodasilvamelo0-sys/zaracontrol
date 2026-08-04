@@ -671,7 +671,7 @@
     .sidebar { display: none; }
     .mobile-nav { display: block; }
 
-    .container { padding: 16px 14px 30px; }
+    .container { padding: 12px 8px 30px; }
 
     /* Header */
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; padding-bottom: 16px; margin-bottom: 20px; }
@@ -692,10 +692,110 @@
     .macro-card  { padding: 14px 12px; }
     .macro-val   { font-size: 1.4em; }
 
-    /* Treinos */
-    .treino-card    { padding: 14px 16px; }
-    .exercicio-item { flex-wrap: wrap; gap: 6px; }
-    .ex-campo       { min-width: 0; width: 48%; }
+    /* Treinos — mobile premium */
+    .treino-card { margin: 0 0 10px; border-radius: 12px; }
+
+    /* Header do treino: compacto sem gradiente */
+    .treino-card-header {
+        background: var(--s2) !important;
+        padding: 12px 14px !important;
+        gap: 10px;
+        border-bottom: 1px solid var(--border-s);
+    }
+    .treino-card-nome {
+        font-size: 0.85em !important;
+        font-weight: 700 !important;
+        letter-spacing: 0 !important;
+        text-transform: none !important;
+        text-shadow: none !important;
+        color: var(--text) !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .treino-card-meta {
+        display: flex !important;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+        color: var(--text-dim) !important;
+    }
+    .tc-grupo-badge {
+        display: inline-flex !important;
+        font-size: 0.58em;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 7px;
+        background: var(--gold-dim);
+        color: var(--gold);
+        border: 1px solid var(--border);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .tc-btn {
+        background: rgba(255,255,255,0.06) !important;
+        border-color: var(--border-s) !important;
+        color: var(--text-dim) !important;
+        width: 30px !important;
+        height: 30px !important;
+    }
+
+    /* Lista de exercícios: padding zero nas laterais */
+    .exercicios-list {
+        padding: 8px 10px 4px !important;
+        gap: 6px !important;
+    }
+
+    /* Card de exercício: ocupa toda largura */
+    .ex-card {
+        padding: 10px 12px !important;
+        gap: 10px !important;
+        border-radius: 10px !important;
+    }
+    .ex-nome-txt {
+        font-size: 0.82em !important;
+        font-weight: 700 !important;
+    }
+    .ex-obs {
+        font-size: 0.66em !important;
+    }
+
+    /* Chips de stats: menores e compactos */
+    .ex-stats {
+        gap: 4px !important;
+        margin-top: 5px !important;
+    }
+    .ex-stat {
+        padding: 3px 7px !important;
+        gap: 3px !important;
+    }
+    .ex-stat-label {
+        font-size: 0.56em !important;
+    }
+    .ex-stat-val {
+        font-size: 0.68em !important;
+    }
+
+    /* Botões de ação do exercício */
+    .ex-acoes { gap: 3px !important; }
+    .ex-btn   { width: 26px !important; height: 26px !important; }
+    .ex-btn svg { width: 12px !important; height: 12px !important; }
+
+    /* Botão adicionar */
+    .btn-add-ex {
+        margin: 6px 10px 10px !important;
+        width: calc(100% - 20px) !important;
+        padding: 9px 14px !important;
+        font-size: 0.72em !important;
+    }
+
+    /* Volume */
+    .treino-volume {
+        padding: 6px 10px 10px !important;
+        gap: 10px !important;
+        font-size: 0.65em !important;
+    }
 
     /* Medicamentos */
     .med-card { padding: 14px 16px; }
