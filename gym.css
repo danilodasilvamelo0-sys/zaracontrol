@@ -537,9 +537,7 @@
         .app-del svg { width: 14px; height: 14px; }
 
         /* ── MOBILE ── */
-        @media (max-width: 768px) {
-            body { padding-left: 0; }
-            .sidebar { display: none; }
+        
             .mobile-nav { display: block; }
             .container { padding: 16px 14px 28px; }
             .page-header { margin-bottom: 20px; padding-bottom: 16px; }
@@ -587,3 +585,14 @@
             .gym-tab span { display: none; }
             .gym-tab { padding: 8px 12px; }
         }
+
+/* ── MOBILE: sidebar esconde, nav inferior aparece (padrão ZARA) ── */
+@media (max-width: 768px) {
+    body { padding-left: 10px !important; padding-bottom: 80px !important; }
+    .sidebar { display: none; }
+    .mobile-nav { display: block; }
+}
+@media (min-width: 769px) {
+    body { padding-left: 70px; }
+    .mobile-nav { display: none !important; }
+}
