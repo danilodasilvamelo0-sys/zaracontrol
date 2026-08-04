@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>ZARA | Notas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="notas.css?v=1785760000">
+</head>
+<body>
+
+<!-- Sidebar ZARA -->
+<nav class="zara-sidebar">
+    <a href="index.html" class="zara-sidebar-logo">Z</a>
+    <div class="zara-sidebar-menu">
+        <a href="index.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Início</span>
+        </a>
+        <a href="financeiro.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>Financeiro</span>
+        </a>
+        <a href="gym.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>GYM</span>
+        </a>
+        <a href="operacoes.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            <span>Operações</span>
+        </a>
+        <div class="sidebar-divider"></div>
+        <a href="notas.html" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <span>Notas</span>
+        </a>
+        <a href="comando.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Comando</span>
+        </a>
+    </div>
+    <div class="zara-sidebar-footer"><p><span class="instituto">ZARA</span>Private Access</p></div>
+</nav>
+
+<!-- App principal -->
+<div class="notas-app">
+
+    <!-- COLUNA 1: CATEGORIAS -->
+    <div class="col-cats">
+        <div class="col-cats-header">
+            <div class="col-cats-title">Categorias</div>
+        </div>
+        <div class="cats-list" id="catsList"></div>
+        <div class="cats-footer">
+            <button class="btn-nova-cat" onclick="abrirModalCat()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Nova categoria
+            </button>
+        </div>
+    </div>
+
+    <!-- COLUNA 2: LISTA DE NOTAS -->
+    <div class="col-notas">
+        <div class="col-notas-header">
+            <div class="col-notas-top">
+                <div class="col-notas-titulo" id="colNotasTitulo">Todas as Notas</div>
+                <button class="btn-nova-nota" onclick="novaNota()" title="Nova nota">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+            </div>
+            <div class="nota-busca-wrap">
+                <div class="nota-busca-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </div>
+                <input type="text" class="nota-busca" id="buscaInput" placeholder="Buscar notas...">
+            </div>
+        </div>
+        <div class="notas-lista" id="notasLista"></div>
+    </div>
+
+    <!-- COLUNA 3: EDITOR -->
+    <div class="col-editor">
+
+        <!-- Toolbar do editor -->
+        <div class="editor-toolbar">
+            <div class="editor-toolbar-left">
+                <select class="editor-cat-sel" id="editorCatSel" onchange="onCatChange(this)"></select>
+                <span class="editor-salvo" id="editorSalvo">✓ Salvo</span>
+            </div>
+            <div class="editor-toolbar-right">
+                <button class="toolbar-btn pin" id="btnPin" onclick="togglePin()" title="Fixar nota">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Fixar
+                </button>
+                <button class="toolbar-btn del" onclick="excluirNota(_notaAtiva)" title="Excluir nota">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    Excluir
+                </button>
+            </div>
+        </div>
+
+        <!-- Editor vazio -->
+        <div class="editor-vazio" id="editorVazio" style="display:flex">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <h3>Selecione uma nota</h3>
+            <p>Escolha uma nota à esquerda<br>ou clique em <strong>+</strong> para criar uma nova.</p>
+        </div>
+
+        <!-- Área de edição -->
+        <div class="editor-area" id="editorConteudo" style="display:none">
+            <input
+                type="text"
+                class="editor-titulo"
+                id="editorTitulo"
+                placeholder="Título"
+                autocomplete="off"
+                spellcheck="true"
+            >
+            <textarea
+                class="editor-conteudo"
+                id="editorTexto"
+                placeholder="Comece a escrever..."
+                spellcheck="true"
+            ></textarea>
+        </div>
+
+    </div>
+</div>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav">
+    <div class="mobile-nav-items">
+        <a href="index.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Início
+        </a>
+        <a href="financeiro.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Financeiro
+        </a>
+        <a href="gym.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>GYM
+        </a>
+        <a href="notas.html" class="mobile-nav-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Notas
+        </a>
+        <a href="operacoes.html" class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Operações
+        </a>
+    </div>
+</nav>
+
+<!-- MODAL: NOVA CATEGORIA -->
+<div class="modal-overlay" id="modalCat">
+    <div class="modal-box">
+        <div class="modal-title">Nova Categoria</div>
+        <div class="form-group">
+            <label>Nome</label>
+            <input type="text" id="catNome" placeholder="Ex: Estratégia, Pessoal, Projetos">
+        </div>
+        <div class="form-group">
+            <label>Cor</label>
+            <input type="color" id="catCor" value="#c9a84c" style="height:40px;padding:4px;cursor:pointer;">
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalCat')">Cancelar</button>
+            <button class="btn-save" onclick="salvarCat()">Criar</button>
+        </div>
+    </div>
+</div>
+
+<div id="notasStatus"></div>
+<script src="notas.js?v=1785760000"></script>
+</body>
+</html>
