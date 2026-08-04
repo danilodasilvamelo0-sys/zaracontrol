@@ -1,15 +1,16 @@
 // ══════════════════════════════════════════
-//  NOTAS — ZARA | Bloco de Anotações
+//  NOTAS — ZARA
 // ══════════════════════════════════════════
-
 const NOTAS_KEY = 'zara_notas_v1';
+
+const CORES = ['#c9a84c','#3498db','#9b59b6','#2ecc71','#e74c3c','#e67e22','#1abc9c','#e91e63','#f39c12','#16a085'];
 
 function dadosVazios() {
     return {
-        categorias: [
-            { id: 'geral',    nome: 'Geral',    cor: '#c9a84c' },
-            { id: 'trabalho', nome: 'Trabalho', cor: '#3498db' },
-            { id: 'ideias',   nome: 'Ideias',   cor: '#9b59b6' },
+        cats: [
+            { id:'geral',    nome:'Geral',    cor:'#c9a84c' },
+            { id:'trabalho', nome:'Trabalho', cor:'#3498db' },
+            { id:'ideias',   nome:'Ideias',   cor:'#9b59b6' },
         ],
         notas: [],
     };
@@ -19,119 +20,127 @@ let db = (() => {
     try { return JSON.parse(localStorage.getItem(NOTAS_KEY)) || dadosVazios(); }
     catch { return dadosVazios(); }
 })();
+if (!db.cats)  db.cats  = dadosVazios().cats;
+if (!db.notas) db.notas = [];
 
-function salvarDB() { localStorage.setItem(NOTAS_KEY, JSON.stringify(db)); }
-function gerarId()  { return Date.now() + Math.random().toString(36).slice(2,6); }
+function save() { localStorage.setItem(NOTAS_KEY, JSON.stringify(db)); }
+function uid()  { return Date.now() + Math.random().toString(36).slice(2,6); }
 
-function formatarData(iso) {
+function dataRelativa(iso) {
     if (!iso) return '';
-    const d = new Date(iso);
-    const hoje = new Date();
-    const diff = Math.floor((hoje - d) / 86400000);
-    if (diff === 0) return 'Hoje ' + d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+    const d = new Date(iso), h = new Date();
+    const diff = Math.floor((h - d) / 86400000);
+    if (diff === 0) return 'Hoje ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     if (diff === 1) return 'Ontem';
-    if (diff < 7)  return diff + ' dias atrás';
-    return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
+    if (diff < 7)  return diff + 'd atrás';
+    return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
 }
 
-// ── TOAST ──
+// Toast
 function toast(msg, tipo) {
-    const el = document.getElementById('notasStatus');
-    const cor = { success:'rgba(30,130,70,0.96)', error:'rgba(180,45,35,0.96)', info:'rgba(30,60,100,0.96)' };
-    el.textContent = msg;
+    const el = document.getElementById('notasToast');
+    const ic = {
+        success:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
+        error:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        info:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>',
+    };
+    const cor = {success:'rgba(30,130,70,0.96)',error:'rgba(180,45,35,0.96)',info:'rgba(30,60,100,0.96)'};
+    el.innerHTML = (ic[tipo||'info']||ic.info) + '<span>'+msg+'</span>';
     el.style.background = cor[tipo||'info'];
-    el.style.opacity = '1'; el.style.transform = 'translateY(0)';
+    el.style.opacity='1'; el.style.transform='translateY(0)';
     clearTimeout(el._t);
-    el._t = setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; }, 2500);
+    el._t = setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(8px)'; }, 2500);
 }
 
-// ── MODAIS ──
+// Modais
 function abrirModal(id) { document.getElementById(id).classList.add('active'); }
 function fecharModal(id) { document.getElementById(id).classList.remove('active'); }
 document.querySelectorAll('.modal-overlay').forEach(m => {
-    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); });
+    m.addEventListener('click', e => { if(e.target===m) m.classList.remove('active'); });
 });
 
-// ══════════════════════════════════════════
-//  ESTADO
-// ══════════════════════════════════════════
-let _catAtiva  = null; // null = todas
-let _notaAtiva = null; // id da nota aberta
+// ── ESTADO ──
+let _catAtiva  = null;
+let _notaAtiva = null;
 let _busca     = '';
-let _autoSaveTimer = null;
+let _corSel    = CORES[0];
+let _timer     = null;
 
 // ══════════════════════════════════════════
 //  CATEGORIAS
 // ══════════════════════════════════════════
-const CORES_CAT = ['#c9a84c','#3498db','#9b59b6','#2ecc71','#e74c3c','#e67e22','#1abc9c','#e91e63'];
-
 function abrirModalCat() {
     document.getElementById('catNome').value = '';
-    document.getElementById('catCor').value  = CORES_CAT[db.categorias.length % CORES_CAT.length];
+    _corSel = CORES[db.cats.length % CORES.length];
+    renderCoresGrid();
     abrirModal('modalCat');
     setTimeout(() => document.getElementById('catNome').focus(), 100);
 }
 
+function renderCoresGrid() {
+    document.getElementById('coresGrid').innerHTML = CORES.map(c =>
+        `<div class="cor-opt${_corSel===c?' selecionada':''}"
+            style="background:${c}"
+            onclick="_corSel='${c}';renderCoresGrid()"></div>`
+    ).join('');
+}
+
 function salvarCat() {
     const nome = document.getElementById('catNome').value.trim();
-    if (!nome) { toast('Informe o nome.', 'error'); return; }
-    const cor = document.getElementById('catCor').value || '#c9a84c';
-    db.categorias.push({ id: gerarId(), nome, cor });
-    salvarDB(); fecharModal('modalCat');
-    renderCats(); renderEditorCatSel();
-    toast('Categoria criada!', 'success');
+    if (!nome) { toast('Informe o nome.','error'); return; }
+    db.cats.push({ id: uid(), nome, cor: _corSel });
+    save(); fecharModal('modalCat');
+    renderCats(); renderCatSel();
+    toast('Categoria criada!','success');
 }
 
 function excluirCat(id) {
-    if (!confirm('Excluir categoria? As notas serão movidas para Geral.')) return;
-    db.notas.forEach(n => { if (n.categoriaId === id) n.categoriaId = 'geral'; });
-    db.categorias = db.categorias.filter(c => c.id !== id);
+    if (!confirm('Excluir categoria? As notas irão para Geral.')) return;
+    db.notas.forEach(n => { if(n.catId===id) n.catId='geral'; });
+    db.cats = db.cats.filter(c => c.id !== id);
     if (_catAtiva === id) _catAtiva = null;
-    salvarDB(); renderCats(); renderNotas(); renderEditorCatSel();
+    save(); renderCats(); renderNotas(); renderCatSel();
 }
 
 function selecionarCat(id) {
     _catAtiva = id;
-    renderCats();
-    renderNotas();
+    renderCats(); renderNotas();
 }
 
 function renderCats() {
     const el = document.getElementById('catsList');
+    const total = db.notas.length;
 
-    // "Todas" primeiro
-    const totalNotas = db.notas.length;
-    let html = `<div class="cat-item${_catAtiva === null ? ' active' : ''}" onclick="selecionarCat(null)">
-        <div class="cat-dot" style="background:var(--gold)"></div>
+    let html = `<div class="cat-item${_catAtiva===null?' active':''}" onclick="selecionarCat(null)">
+        <div class="cat-dot" style="background:#c9a84c"></div>
         <div class="cat-nome">Todas</div>
-        <div class="cat-count">${totalNotas}</div>
+        <div class="cat-count">${total}</div>
     </div>`;
 
-    db.categorias.forEach(c => {
-        const count = db.notas.filter(n => n.categoriaId === c.id).length;
-        html += `<div class="cat-item${_catAtiva === c.id ? ' active' : ''}" onclick="selecionarCat('${c.id}')">
+    db.cats.forEach(c => {
+        const n = db.notas.filter(x => x.catId===c.id).length;
+        html += `<div class="cat-item${_catAtiva===c.id?' active':''}" onclick="selecionarCat('${c.id}')">
             <div class="cat-dot" style="background:${c.cor}"></div>
             <div class="cat-nome">${c.nome}</div>
-            <div class="cat-count">${count}</div>
-            ${c.id !== 'geral' ? `<button class="cat-del" onclick="event.stopPropagation();excluirCat('${c.id}')">
+            <div class="cat-count">${n}</div>
+            ${c.id!=='geral'?`<button class="cat-del" onclick="event.stopPropagation();excluirCat('${c.id}')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>` : ''}
+            </button>`:''}
         </div>`;
     });
 
     el.innerHTML = html;
 }
 
-function renderEditorCatSel() {
+function renderCatSel() {
     const sel = document.getElementById('editorCatSel');
     if (!sel) return;
-    sel.innerHTML = db.categorias.map(c =>
+    sel.innerHTML = db.cats.map(c =>
         `<option value="${c.id}">${c.nome}</option>`
     ).join('');
-    // Setar categoria da nota ativa
     if (_notaAtiva) {
-        const nota = db.notas.find(n => n.id === _notaAtiva);
-        if (nota) sel.value = nota.categoriaId || 'geral';
+        const n = db.notas.find(x => x.id===_notaAtiva);
+        if (n) sel.value = n.catId || 'geral';
     }
 }
 
@@ -140,179 +149,167 @@ function renderEditorCatSel() {
 // ══════════════════════════════════════════
 function notasFiltradas() {
     let lista = [...db.notas];
-    // Filtrar por categoria
-    if (_catAtiva !== null) lista = lista.filter(n => n.categoriaId === _catAtiva);
-    // Filtrar por busca
+    if (_catAtiva !== null) lista = lista.filter(n => n.catId === _catAtiva);
     if (_busca.trim()) {
-        const q = _busca.trim().toLowerCase();
+        const q = _busca.toLowerCase();
         lista = lista.filter(n =>
             n.titulo.toLowerCase().includes(q) ||
-            n.conteudo.toLowerCase().includes(q)
+            n.texto.toLowerCase().includes(q)
         );
     }
-    // Pinadas primeiro, depois por data
-    lista.sort((a, b) => {
+    lista.sort((a,b) => {
         if (a.fixada && !b.fixada) return -1;
         if (!a.fixada && b.fixada) return 1;
-        return new Date(b.atualizadaEm) - new Date(a.atualizadaEm);
+        return new Date(b.updatedAt) - new Date(a.updatedAt);
     });
     return lista;
 }
 
 function novaNota() {
-    const catId = _catAtiva || 'geral';
     const nota = {
-        id:          gerarId(),
-        titulo:      '',
-        conteudo:    '',
-        categoriaId: catId,
-        fixada:      false,
-        criadaEm:    new Date().toISOString(),
-        atualizadaEm:new Date().toISOString(),
+        id:        uid(),
+        titulo:    '',
+        texto:     '',
+        catId:     _catAtiva || 'geral',
+        fixada:    false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
     };
     db.notas.unshift(nota);
-    salvarDB();
-    renderNotas();
+    save(); renderNotas(); renderCats();
     abrirNota(nota.id);
     setTimeout(() => document.getElementById('editorTitulo').focus(), 100);
+
+    // Atualizar contador no header
+    document.getElementById('notasSub').textContent = db.notas.length + ' nota' + (db.notas.length!==1?'s':'');
 }
 
 function abrirNota(id) {
     _notaAtiva = id;
-    renderNotas(); // atualizar selected
-    const nota = db.notas.find(n => n.id === id);
-    if (!nota) { mostrarEditorVazio(); return; }
+    renderNotas();
+    const nota = db.notas.find(n => n.id===id);
+    if (!nota) { mostrarVazio(); return; }
 
     document.getElementById('editorVazio').style.display = 'none';
-    document.getElementById('editorConteudo').style.display = 'flex';
+    document.getElementById('editorAtivo').style.display = 'flex';
 
-    document.getElementById('editorTitulo').value   = nota.titulo;
-    document.getElementById('editorTexto').value    = nota.conteudo;
-    document.getElementById('editorCatSel').value   = nota.categoriaId || 'geral';
+    document.getElementById('editorTitulo').value = nota.titulo;
+    document.getElementById('editorTexto').value  = nota.texto;
+    renderCatSel();
+    document.getElementById('editorCatSel').value = nota.catId || 'geral';
     document.getElementById('btnPin').classList.toggle('active', !!nota.fixada);
 }
 
-function mostrarEditorVazio() {
+function mostrarVazio() {
     document.getElementById('editorVazio').style.display = 'flex';
-    document.getElementById('editorConteudo').style.display = 'none';
+    document.getElementById('editorAtivo').style.display = 'none';
 }
 
-function excluirNota(id) {
+function excluirNotaAtiva() {
+    if (!_notaAtiva) return;
     if (!confirm('Excluir esta nota?')) return;
-    db.notas = db.notas.filter(n => n.id !== id);
-    salvarDB();
-    if (_notaAtiva === id) { _notaAtiva = null; mostrarEditorVazio(); }
-    renderNotas(); renderCats();
+    db.notas = db.notas.filter(n => n.id!==_notaAtiva);
+    _notaAtiva = null;
+    save(); renderNotas(); renderCats(); mostrarVazio();
+    document.getElementById('notasSub').textContent = db.notas.length + ' nota' + (db.notas.length!==1?'s':'');
+    toast('Nota excluída.','info');
 }
 
 function togglePin() {
     if (!_notaAtiva) return;
-    const nota = db.notas.find(n => n.id === _notaAtiva);
+    const nota = db.notas.find(n => n.id===_notaAtiva);
     if (!nota) return;
     nota.fixada = !nota.fixada;
-    salvarDB();
+    save(); renderNotas();
     document.getElementById('btnPin').classList.toggle('active', nota.fixada);
-    renderNotas();
 }
 
 function onCatChange(sel) {
     if (!_notaAtiva) return;
-    const nota = db.notas.find(n => n.id === _notaAtiva);
+    const nota = db.notas.find(n => n.id===_notaAtiva);
     if (!nota) return;
-    nota.categoriaId = sel.value;
-    nota.atualizadaEm = new Date().toISOString();
-    salvarDB();
-    renderNotas(); renderCats();
+    nota.catId = sel.value;
+    nota.updatedAt = new Date().toISOString();
+    save(); renderNotas(); renderCats();
 }
 
-// Auto-save enquanto digita
+// Auto-save
 function onEditorInput() {
     if (!_notaAtiva) return;
-    clearTimeout(_autoSaveTimer);
-    _autoSaveTimer = setTimeout(() => {
-        const nota = db.notas.find(n => n.id === _notaAtiva);
+    clearTimeout(_timer);
+    _timer = setTimeout(() => {
+        const nota = db.notas.find(n => n.id===_notaAtiva);
         if (!nota) return;
-        nota.titulo      = document.getElementById('editorTitulo').value;
-        nota.conteudo    = document.getElementById('editorTexto').value;
-        nota.atualizadaEm= new Date().toISOString();
-        salvarDB();
-        renderNotas(); renderCats();
-        // Mostrar "Salvo"
-        const salvoEl = document.getElementById('editorSalvo');
-        salvoEl.classList.add('show');
-        setTimeout(() => salvoEl.classList.remove('show'), 1500);
+        nota.titulo    = document.getElementById('editorTitulo').value;
+        nota.texto     = document.getElementById('editorTexto').value;
+        nota.updatedAt = new Date().toISOString();
+        save(); renderNotas(); renderCats();
+        document.getElementById('notasSub').textContent = db.notas.length + ' nota' + (db.notas.length!==1?'s':'');
+        const s = document.getElementById('editorSalvo');
+        s.classList.add('show');
+        setTimeout(() => s.classList.remove('show'), 1800);
     }, 600);
 }
 
-function renderNotas() {
-    const lista = notasFiltradas();
-    const el    = document.getElementById('notasLista');
-    const titulo = document.getElementById('colNotasTitulo');
-
-    // Título da coluna
-    if (_catAtiva === null) {
-        titulo.textContent = 'Todas as Notas';
-    } else {
-        const cat = db.categorias.find(c => c.id === _catAtiva);
-        titulo.textContent = cat ? cat.nome : 'Notas';
-    }
-
-    if (!lista.length) {
-        el.innerHTML = `<div class="notas-empty">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            <p>${_busca ? 'Nenhuma nota encontrada.' : 'Nenhuma nota aqui.<br>Clique em + para começar.'}</p>
-        </div>`;
-        return;
-    }
-
-    el.innerHTML = lista.map(n => {
-        const cat = db.categorias.find(c => c.id === n.categoriaId);
-        const cor = cat ? cat.cor : '#c9a84c';
-        const preview = n.conteudo.replace(/\n/g, ' ').trim();
-        return `<div class="nota-item${_notaAtiva === n.id ? ' active' : ''}" onclick="abrirNota('${n.id}')">
-            <div class="nota-item-topo">
-                ${n.fixada ? '<span class="nota-item-pin"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0" style="width:10px;height:10px;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></span>' : ''}
-                <div class="nota-item-titulo">${n.titulo || 'Sem título'}</div>
-            </div>
-            <div class="nota-item-data">${formatarData(n.atualizadaEm)}</div>
-            ${preview ? `<div class="nota-item-preview">${preview}</div>` : ''}
-            <div class="nota-item-cat-dot" style="background:${cor}"></div>
-        </div>`;
-    }).join('');
-}
-
-// ══════════════════════════════════════════
-//  BUSCA
-// ══════════════════════════════════════════
-document.getElementById('buscaInput').addEventListener('input', function() {
-    _busca = this.value;
-    renderNotas();
-});
-
-// ══════════════════════════════════════════
-//  EDITOR — eventos
-// ══════════════════════════════════════════
 document.getElementById('editorTitulo').addEventListener('input', onEditorInput);
 document.getElementById('editorTexto').addEventListener('input', onEditorInput);
-
-// Tab no textarea — inserir espaços em vez de mudar foco
 document.getElementById('editorTexto').addEventListener('keydown', function(e) {
     if (e.key === 'Tab') {
         e.preventDefault();
-        const s = this.selectionStart;
-        const v = this.value;
+        const s = this.selectionStart, v = this.value;
         this.value = v.slice(0,s) + '    ' + v.slice(this.selectionEnd);
         this.selectionStart = this.selectionEnd = s + 4;
     }
 });
 
-// ══════════════════════════════════════════
-//  BOOT
-// ══════════════════════════════════════════
-if (!db.categorias) db.categorias = dadosVazios().categorias;
-if (!db.notas)      db.notas      = [];
+document.getElementById('buscaInput').addEventListener('input', function() {
+    _busca = this.value; renderNotas();
+});
 
+// SVG de pin preenchido
+const SVG_PIN = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none" style="width:10px;height:10px;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>';
+
+function renderNotas() {
+    const lista = notasFiltradas();
+    const el    = document.getElementById('notasLista');
+    const tit   = document.getElementById('colListaTitulo');
+
+    // Título da coluna
+    if (_catAtiva === null) {
+        tit.textContent = 'Todas';
+    } else {
+        const c = db.cats.find(x => x.id===_catAtiva);
+        tit.textContent = c ? c.nome : 'Notas';
+    }
+
+    if (!lista.length) {
+        el.innerHTML = `<div class="lista-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            ${_busca ? 'Nenhuma nota encontrada.' : 'Nenhuma nota.<br>Clique em <strong>Nova Nota</strong>.'}
+        </div>`;
+        return;
+    }
+
+    el.innerHTML = lista.map(n => {
+        const cat = db.cats.find(c => c.id===n.catId);
+        const cor = cat ? cat.cor : '#c9a84c';
+        const prev = n.texto.replace(/\n/g,' ').trim();
+        return `<div class="nota-item${_notaAtiva===n.id?' active':''}" onclick="abrirNota('${n.id}')">
+            <div class="nota-item-topo">
+                ${n.fixada?`<span class="nota-pin">${SVG_PIN}</span>`:''}
+                <div class="nota-titulo">${n.titulo||'Sem título'}</div>
+            </div>
+            <div class="nota-data">${dataRelativa(n.updatedAt)}</div>
+            ${prev?`<div class="nota-preview">${prev}</div>`:''}
+            <div class="nota-cat-dot" style="background:${cor}"></div>
+        </div>`;
+    }).join('');
+}
+
+// ── BOOT ──
 renderCats();
 renderNotas();
-renderEditorCatSel();
-mostrarEditorVazio();
+renderCatSel();
+mostrarVazio();
+document.getElementById('notasSub').textContent =
+    db.notas.length + ' nota' + (db.notas.length!==1?'s':'');
