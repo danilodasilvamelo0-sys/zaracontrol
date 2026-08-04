@@ -263,60 +263,34 @@ function renderTreinos() {
         const vol = t.exercicios.reduce((s,e)=>s+(parseInt(e.series)||0)*(parseInt(e.reps)||0),0);
 
         const exRows = t.exercicios.map(ex => `
-            <tr class="${ex.feito?'exercicio-feito':''}">
-                <td><input type="checkbox" class="ex-check" ${ex.feito?'checked':''} onchange="toggleExercicio('${t.id}','${ex.id}')"></td>
-                <td>
-                    <div class="ex-nome-txt">${ex.nome}</div>
+            <div class="ex-card ${ex.feito?'ex-card-feito':''}">
+                <div class="ex-card-left">
+                    <input type="checkbox" class="ex-check" ${ex.feito?'checked':''} onchange="toggleExercicio('${t.id}','${ex.id}')">
+                </div>
+                <div class="ex-card-info">
+                    <div class="ex-nome-txt${ex.feito?' ex-nome-feito':''}">${ex.nome}</div>
                     ${ex.obs?`<div class="ex-obs">${ex.obs}</div>`:''}
-                </td>
-                <td>${ex.series}</td>
-                <td>${ex.reps}</td>
-                <td>${ex.metodo||'-'}</td>
-                <td>${ex.descanso}min</td>
-                <td>
-                    <div class="ex-acoes">
-                        <button class="ex-btn" onclick="abrirModalExercicio('${t.id}','${ex.id}')" title="Editar">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                        <button class="ex-btn del" onclick="excluirExercicio('${t.id}','${ex.id}')" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                        </button>
+                    <div class="ex-stats">
+                        <span class="ex-stat"><span class="ex-stat-label">S</span><span class="ex-stat-val">${ex.series}</span></span>
+                        <span class="ex-stat"><span class="ex-stat-label">R</span><span class="ex-stat-val">${ex.reps}</span></span>
+                        ${ex.metodo&&ex.metodo!=='-'?`<span class="ex-stat"><span class="ex-stat-label">${ex.metodo}</span></span>`:''}
+                        <span class="ex-stat"><span class="ex-stat-label">Desc</span><span class="ex-stat-val">${ex.descanso}min</span></span>
                     </div>
-                </td>
-            </tr>`).join('');
-
-        return `<div class="treino-card${t.collapsed?' collapsed':''}">
-            <div class="treino-card-header ${t.grupo}" onclick="toggleTreino('${t.id}')">
-                <div class="treino-card-info">
-                    <div class="treino-card-nome">${t.nome}</div>
-                    <div class="treino-card-meta">${t.grupo.charAt(0).toUpperCase()+t.grupo.slice(1)}${t.dia?' · '+t.dia:''} · ${total} exercício${total!==1?'s':''} · ${feitos}/${total} feitos</div>
                 </div>
-                <div style="display:flex;gap:8px;align-items:center">
-                    <button class="btn-sec" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:#fff;padding:5px 10px;font-size:0.70em;" onclick="event.stopPropagation();abrirModalTreino('${t.id}')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <div class="ex-acoes">
+                    <button class="ex-btn" onclick="abrirModalExercicio('${t.id}','${ex.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
-                    <button class="btn-sec" style="background:rgba(231,76,60,0.15);border-color:rgba(231,76,60,0.3);color:#e74c3c;padding:5px 10px;font-size:0.70em;" onclick="event.stopPropagation();excluirTreino('${t.id}')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
-                    </button>
-                    <button class="treino-card-toggle">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    <button class="ex-btn del" onclick="excluirExercicio('${t.id}','${ex.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
                     </button>
                 </div>
-            </div>
-            <div class="treino-prog-wrap"><div class="treino-prog-fill" style="width:${pct}%"></div></div>
-            <div class="treino-card-body">
-                ${total > 0 ? `
-                <table class="exercicio-table">
-                    <thead><tr>
-                        <th style="width:36px"></th>
-                        <th>Exercício</th>
-                        <th>S</th><th>R</th><th>Método</th><th>Desc</th><th></th>
-                    </tr></thead>
-                    <tbody>${exRows}</tbody>
-                </table>` : `<div class="empty-state" style="padding:20px">
+            </div>`).join('');
+        const emptyEx = `<div class="empty-state" style="padding:20px">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:28px;height:28px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Nenhum exercício. Adicione abaixo.
-                </div>`}
+                </div>`;
+        return `
                 <button class="btn-add-ex" onclick="abrirModalExercicio('${t.id}')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Adicionar Exercício
