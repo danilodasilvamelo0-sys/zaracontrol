@@ -361,14 +361,32 @@ function salvarAliado() {
         utilidade: document.getElementById('alUtil').value.trim(),
         notas:     document.getElementById('alNotes').value.trim(),
     };
+    // Garantir que o array existe antes de salvar
+    if (!Array.isArray(dados.aliados)) dados.aliados = [];
+
     if (_aliadoEditId) {
-        Object.assign(dados.aliados.find(x => x.id === _aliadoEditId)||{}, obj);
+        const idx = dados.aliados.findIndex(x => x.id === _aliadoEditId);
+        if (idx >= 0) dados.aliados[idx] = { ...dados.aliados[idx], ...obj };
         toast('Aliado atualizado.', 'success');
     } else {
-        dados.aliados.push({ id: gerarId(), ...obj });
+        const novo = { id: gerarId(), ...obj };
+        dados.aliados.push(novo);
         toast('Aliado adicionado!', 'success');
     }
-    salvar(); fecharModal('modalAliado'); renderRede();
+
+    // Salvar e verificar
+    const chave = JSON.stringify(dados);
+    localStorage.setItem(OP_KEY, chave);
+
+    // Confirmar que salvou
+    const verificar = JSON.parse(localStorage.getItem(OP_KEY) || '{}');
+    if (!verificar.aliados || verificar.aliados.length !== dados.aliados.length) {
+        toast('Erro ao salvar. Tente novamente.', 'error');
+        return;
+    }
+
+    fecharModal('modalAliado');
+    renderRede();
 }
 
 function excluirAliado(id) {
@@ -697,11 +715,13 @@ function renderCalendario() {
 // ══════════════════════════════════════════════
 //  BOOT
 // ══════════════════════════════════════════════
-if (!dados.poder)    dados.poder    = dadosVazios().poder;
-if (!dados.operacoes)dados.operacoes= [];
-if (!dados.aliados)  dados.aliados  = [];
-if (!dados.favores)  dados.favores  = [];
-if (!dados.estrelas) dados.estrelas = [];
+// Garantir estrutura completa mesmo com dados parciais do localStorage
+if (!dados.poder    || typeof dados.poder !== 'object') dados.poder    = dadosVazios().poder;
+if (!Array.isArray(dados.operacoes)) dados.operacoes = [];
+if (!Array.isArray(dados.aliados))   dados.aliados   = [];
+if (!Array.isArray(dados.favores))   dados.favores   = [];
+if (!Array.isArray(dados.estrelas))  dados.estrelas  = [];
+if (typeof dados.poder.nivel !== 'number') dados.poder.nivel = 5;
 
 renderStatus();
 renderOperacoes();
