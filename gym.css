@@ -671,7 +671,7 @@
     .sidebar { display: none; }
     .mobile-nav { display: block; }
 
-    .container { padding: 12px 8px 30px; }
+    .container { padding: 10px 4px 30px; }
 
     /* Header */
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; padding-bottom: 16px; margin-bottom: 20px; }
@@ -695,50 +695,24 @@
     /* Treinos — mobile premium */
     .treino-card { margin: 0 0 10px; border-radius: 12px; }
 
-    /* Header do treino: compacto sem gradiente */
+    /* Header do treino: compacto, mantém gradiente do desktop */
     .treino-card-header {
-        background: var(--s2) !important;
-        padding: 12px 14px !important;
+        padding: 11px 13px !important;
         gap: 10px;
-        border-bottom: 1px solid var(--border-s);
     }
     .treino-card-nome {
-        font-size: 0.85em !important;
-        font-weight: 700 !important;
-        letter-spacing: 0 !important;
-        text-transform: none !important;
-        text-shadow: none !important;
-        color: var(--text) !important;
+        font-size: 0.82em !important;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
     .treino-card-meta {
-        display: flex !important;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-        margin-top: 4px;
-        color: var(--text-dim) !important;
+        margin-top: 3px;
     }
-    .tc-grupo-badge {
-        display: inline-flex !important;
-        font-size: 0.58em;
-        font-weight: 700;
-        padding: 2px 7px;
-        border-radius: 7px;
-        background: var(--gold-dim);
-        color: var(--gold);
-        border: 1px solid var(--border);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
+    .tc-grupo-badge { display: none !important; }
     .tc-btn {
-        background: rgba(255,255,255,0.06) !important;
-        border-color: var(--border-s) !important;
-        color: var(--text-dim) !important;
-        width: 30px !important;
-        height: 30px !important;
+        width: 28px !important;
+        height: 28px !important;
     }
 
     /* Lista de exercícios: padding zero nas laterais */
