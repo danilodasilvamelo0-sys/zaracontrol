@@ -305,6 +305,9 @@ function renderTreinos() {
         </div>`; return;
     }
 
+    if (document.getElementById('gymDebug')) {
+        document.getElementById('gymDebug').textContent += ' | obsHtml.length=' + obsHtml.length + ' | treinos=' + gym.treinos.length;
+    }
     el.innerHTML = obsHtml + gym.treinos.map(t => {
         const total  = t.exercicios.length;
         const feitos = t.exercicios.filter(e => e.feito).length;
@@ -857,6 +860,12 @@ function cancelarEditObs(id) { renderTreinos(); }
 
 function renderObsCards() {
     const obs = gym.observacoes || [];
+    // Debug: mostrar estado
+    const dbgEl = document.getElementById('gymDebug');
+    if (dbgEl) {
+        dbgEl.textContent = 'renderObsCards: obs.length=' + obs.length + ' | gym keys=' + Object.keys(gym).join(',');
+        dbgEl.style.display = 'block';
+    }
     if (!obs.length) return '';
     return obs.map(o => `
         <div class="obs-card">
