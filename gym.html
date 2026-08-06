@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZARA | GYM</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="gym.css?v=1785985074">
+    <link rel="stylesheet" href="gym.css?v=1785985657">
 </head>
 <body>
 
@@ -227,7 +227,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Grupo Muscular</label>
-                <select id="treinoGrupo">
+                <select id="treinoGrupo" onchange="onGrupoChange(this.value)">
                     <option value="costas">Costas</option>
                     <option value="peito">Peito</option>
                     <option value="pernas">Pernas</option>
@@ -236,9 +236,10 @@
                     <option value="abdomen">Abdômen</option>
                     <option value="cardio">Cardio</option>
                     <option value="full">Full Body</option>
+                    <option value="obs">── Observação ──</option>
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="grupoDia">
                 <label>Dia da Semana</label>
                 <select id="treinoDia">
                     <option value="">Qualquer</option>
@@ -252,9 +253,9 @@
                 </select>
             </div>
         </div>
-        <div class="form-group">
-            <label>Observação (opcional)</label>
-            <input type="text" id="treinoObs" placeholder="Ex: Foco em hipertrofia">
+        <div class="form-group" id="grupoObsWrap">
+            <label id="grupoObsLabel">Observação <span id="grupoObsOpt" style="font-weight:400;opacity:0.5;">(opcional)</span></label>
+            <textarea id="treinoObs" rows="2" placeholder="Ex: Foco em hipertrofia" style="resize:none;transition:all 0.3s;"></textarea>
         </div>
         <div class="modal-btns">
             <button class="btn-cancel" onclick="fecharModal('modalTreino')">Cancelar</button>
@@ -535,6 +536,6 @@
 <div id="gymStatus"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="gym.js?v=1785985074"></script>
+<script src="gym.js?v=1785985657"></script>
 </body>
 </html>
