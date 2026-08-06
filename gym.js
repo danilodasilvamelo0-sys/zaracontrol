@@ -186,8 +186,8 @@ function salvarTreino() {
     // Se grupo = obs → salvar como OBS card e não como treino
     if (grupo === 'obs') {
         const obsTexto = document.getElementById('treinoObs').value.trim();
-        if (!nome) { mostrarStatus('Informe um título.','error'); return; }
-        if (!obsTexto) { mostrarStatus('Escreva a observação.','error'); return; }
+        if (!nome) { toast('Informe um título.','error'); return; }
+        if (!obsTexto) { toast('Escreva a observação.','error'); return; }
         if (!gym.observacoes) gym.observacoes = [];
         if (_treinoEditId) {
             // Se estava editando um treino normal, não tratar como obs
@@ -196,7 +196,7 @@ function salvarTreino() {
             salvarDados();
             fecharModal('modalTreino');
             renderTreinos();
-            mostrarStatus('OBS criada!','success');
+            toast('OBS criada!','success');
             return;
         }
     }
@@ -294,14 +294,15 @@ function renderTreinos() {
     if (!el) return;
     sub.textContent = `${gym.treinos.length} treino${gym.treinos.length!==1?'s':''} cadastrado${gym.treinos.length!==1?'s':''}`;
 
+    const obsHtml = renderObsCards();
     if (!gym.treinos.length) {
-        el.innerHTML = `<div class="empty-state">
+        el.innerHTML = obsHtml + `<div class="empty-state">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 4v16M18 4v16M2 8h4M18 8h4M2 16h4M18 16h4M6 12h12"/></svg>
             Nenhum treino cadastrado.<br>Clique em <strong>Novo Treino</strong> para começar.
         </div>`; return;
     }
 
-    el.innerHTML = renderObsCards() + gym.treinos.map(t => {
+    el.innerHTML = obsHtml + gym.treinos.map(t => {
         const total  = t.exercicios.length;
         const feitos = t.exercicios.filter(e => e.feito).length;
         const pct    = total > 0 ? Math.round((feitos / total) * 100) : 0;
