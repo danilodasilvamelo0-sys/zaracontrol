@@ -201,32 +201,14 @@ function novaNota() {
     atualizarSub();
 }
 
-function notasDebug(msg) {
-    let el = document.getElementById('notasDbg');
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'notasDbg';
-        el.style.cssText = 'position:fixed;bottom:75px;left:8px;right:8px;z-index:9999;' +
-            'background:rgba(201,168,76,0.95);color:#000;padding:8px 12px;border-radius:8px;' +
-            'font-size:0.68em;font-family:monospace;z-index:9999;';
-        document.body.appendChild(el);
-    }
-    el.textContent = msg;
-    el.style.display = 'block';
-    clearTimeout(el._t);
-    el._t = setTimeout(() => el.style.display = 'none', 3000);
-}
-
 function abrirNota(id) {
     // TOGGLE: se clicar na nota já ativa → recolhe
     if (_notaAtiva === id) {
-        notasDebug('Toggle: recolhendo nota ' + id.slice(-6));
         _notaAtiva = null;
         renderNotas();
         mostrarVazio();
         return;
     }
-    notasDebug('Abrindo nota ' + id.slice(-6) + ' | anterior: ' + (_notaAtiva ? _notaAtiva.slice(-6) : 'nenhuma'));
     _notaAtiva=id; renderNotas();
     const nota=db.notas.find(n=>n.id===id);
     if (!nota) { mostrarVazio(); return; }
