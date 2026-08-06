@@ -571,134 +571,40 @@ let _medEditandoId = null;
 let _appMedId = null;
 const hojeKey = () => new Date().toISOString().slice(0,10);
 
-function mostrarErro(msg) {
-    let el = document.getElementById('gymDebugErr');
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'gymDebugErr';
-        el.style.cssText = 'position:fixed;top:70px;left:8px;right:8px;z-index:9999;background:#c0392b;color:#fff;padding:12px;border-radius:8px;font-size:0.70em;font-family:monospace;word-break:break-all;line-height:1.5;';
-        document.body.appendChild(el);
-    }
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => el.style.display = 'none', 8000);
-}
-
-
-// ══════════════════════════════════════════════
-//  MEDICAMENTO — Frequência dinâmica e multi-horário
-// ══════════════════════════════════════════════
-const FREQ_HORARIOS = { 'diario':1, '2x_dia':2, '3x_dia':3, 'semanal':1, '2x_sem':1, '3x_sem':1, 'conforme':1 };
-const FREQ_SEMANAL  = ['semanal','2x_sem','3x_sem'];
-const FREQ_DIAS_MIN = { 'semanal':1, '2x_sem':2, '3x_sem':3 };
-
-function onMedFreqChange(freq) {
-    try {
-        const label = document.getElementById('medHorariosLabel');
-        const qtd   = FREQ_HORARIOS[freq] || 1;
-        if (label) label.textContent = qtd > 1 ? 'Horários (' + qtd + ' doses ao dia)' : 'Horário';
-        renderMedHorarios(qtd);
-        const diasWrap = document.getElementById('medDiasWrap');
-        if (!diasWrap) return;
-        if (FREQ_SEMANAL.includes(freq)) {
-            diasWrap.style.display = '';
-            const min = FREQ_DIAS_MIN[freq] || 1;
-            const lbl = diasWrap.querySelector('label');
-            if (lbl) lbl.textContent = 'Dias da semana (selecione ' + (min===1?'ao menos 1':min+' dias') + ')';
-        } else {
-            diasWrap.style.display = 'none';
-        }
-    } catch(e) { mostrarErro('onMedFreqChange: ' + e.message); }
-}
-
-function renderMedHorarios(qtd) {
-    const el = document.getElementById('medHorariosList');
-    if (!el) return;
-    const defaults = ['08:00','20:00','14:00'];
-    const atuais   = Array.from(el.querySelectorAll('input[type=time]')).map(i => i.value);
-    el.innerHTML   = Array.from({length: qtd}, function(_, i) {
-        var label = qtd > 1 ? (i+1) + 'ª dose' : '';
-        var val   = atuais[i] || defaults[i] || '08:00';
-        return '<div style="display:flex;align-items:center;gap:10px;">' +
-            (qtd > 1 ? '<span style="font-size:0.68em;color:var(--text-dim);min-width:44px;">' + label + '</span>' : '') +
-            '<input type="time" class="med-hora-input" value="' + val + '" ' +
-            'style="flex:1;padding:10px 14px;background:var(--s3);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:#fff;font-family:inherit;font-size:0.85em;outline:none;">' +
-            '</div>';
-    }).join('');
-}
-
-function toggleDiaMed(btn) {
-    btn.classList.toggle('dia-btn-ativo');
-}
-
-function getDiasMedSelecionados() {
-    return Array.from(document.querySelectorAll('#medDiasGrid .dia-btn-ativo')).map(function(b){ return b.dataset.dia; });
-}
-
-function getMedHorarios() {
-    return Array.from(document.querySelectorAll('.med-hora-input')).map(function(i){ return i.value; });
-}
-
-function setDiasMed(dias) {
-    document.querySelectorAll('#medDiasGrid .dia-btn').forEach(function(b){
-        b.classList.toggle('dia-btn-ativo', (dias||[]).includes(b.dataset.dia));
-    });
-}
-// ─────────────────────────────────────────────
 
 function abrirModalMed(medId) {
-    try {
     _medEditandoId = medId || null;
     document.getElementById('modalMedTitulo').textContent = medId ? 'Editar Medicamento' : 'Novo Medicamento';
     if(medId) {
         const m = gym.meds.find(x=>x.id===medId);
         if(m) {
             document.getElementById('medNome').value = m.nome;
-            document.getElementById('medDose').value = m.dose||'';
+            document.getElementById('medDose').value = m.dose;
+            document.getElementById('medFreq').value = m.freq;
+            document.getElementById('medHora').value = m.hora||'08:00';
             document.getElementById('medVia').value  = m.via||'oral';
             document.getElementById('medObs').value  = m.obs||'';
-            document.getElementById('medFreq').value = m.freq||'diario';
-            onMedFreqChange(m.freq||'diario');
-            setTimeout(() => {
-                const horarios = m.horarios || [m.hora||'08:00'];
-                const inputs = document.querySelectorAll('.med-hora-input');
-                horarios.forEach((h,i) => { if(inputs[i]) inputs[i].value = h; });
-                setDiasMed(m.dias||[]);
-            }, 50);
         }
     } else {
         ['medNome','medDose','medObs'].forEach(id=>document.getElementById(id).value='');
         document.getElementById('medFreq').value='diario';
+        document.getElementById('medHora').value='08:00';
         document.getElementById('medVia').value='oral';
-        onMedFreqChange('diario');
-        setDiasMed([]);
     }
     abrirModal('modalMed');
     setTimeout(()=>document.getElementById('medNome').focus(),100);
-    } catch(e) {
-        mostrarErro('abrirModalMed ERRO: ' + e.message + ' | ' + e.stack.split('\n')[0]);
-    }
 }
 
 function salvarMed() {
     const nome = document.getElementById('medNome').value.trim();
     const dose = document.getElementById('medDose').value.trim();
     if(!nome) { toast('Informe o nome do medicamento.','error'); return; }
-    const freq     = document.getElementById('medFreq').value;
-    const horarios = getMedHorarios();
-    const dias     = getDiasMedSelecionados();
-    const minDias  = FREQ_DIAS_MIN[freq];
-    if(minDias && dias.length < minDias) {
-        toast('Selecione ' + minDias + ' dia' + (minDias>1?'s':'') + ' da semana.','error'); return;
-    }
     const obj = {
         nome, dose,
-        freq,
-        hora:     horarios[0]||'08:00',
-        horarios,
-        dias,
-        via:      document.getElementById('medVia').value,
-        obs:      document.getElementById('medObs').value.trim(),
+        freq: document.getElementById('medFreq').value,
+        hora: document.getElementById('medHora').value,
+        via:  document.getElementById('medVia').value,
+        obs:  document.getElementById('medObs').value.trim(),
     };
     if(_medEditandoId) {
         const m = gym.meds.find(x=>x.id===_medEditandoId);
@@ -756,7 +662,7 @@ function limparAplicacoes() {
     salvarDados(); renderMeds(); toast('Aplicações limpas.','info');
 }
 
-const FREQ_LABEL = { diario:'Diário', '2x':'2x/dia', '3x':'3x/dia', semanal:'Semanal', conforme:'Conforme', '2x_dia':'2x ao dia', '3x_dia':'3x ao dia', '2x_sem':'2x/semana', '3x_sem':'3x/semana' };
+const FREQ_LABEL = { diario:'Diário', '2x':'2x/dia', '3x':'3x/dia', semanal:'Semanal', conforme:'Conforme necessário' };
 const VIA_LABEL  = { oral:'Oral', sublingual:'Sublingual', injetavel:'Injetável', topico:'Tópico', gotas:'Gotas' };
 const VIA_SVG = {
     oral:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:14px;height:14px;"><rect x="7" y="2" width="10" height="18" rx="5"/></svg>',
@@ -802,9 +708,8 @@ function renderMeds() {
                         <div class="med-nome">${m.nome}</div>
                         <div class="med-meta">
                             ${m.dose ? `<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><rect x="7" y="2" width="10" height="18" rx="5"/></svg>${m.dose}</span>` : ''}
-                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${(m.horarios&&m.horarios.length>1)?m.horarios.join(' · '):(m.hora||'--:--')}</span>
+                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${m.hora||'--:--'}</span>
                             <span>${FREQ_LABEL[m.freq]||m.freq}</span>
-                            ${(m.dias&&m.dias.length)?`<span style="color:var(--gold);font-size:0.85em;">${m.dias.join(', ')}</span>`:''} 
                             ${m.obs ? `<span style="color:var(--text-dim)">${m.obs}</span>` : ''}
                         </div>
                     </div>
