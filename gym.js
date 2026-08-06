@@ -187,10 +187,7 @@ function salvarTreino() {
     if (grupo === 'obs') {
         const taEl  = document.getElementById('treinoObs');
         const obsTexto = taEl ? taEl.value.trim() : '';
-        // Debug visual
-        const dbg = `DEBUG: nome="${nome}" | grupo="${grupo}" | obs="${obsTexto.slice(0,30)}" | observacoes=${JSON.stringify(gym.observacoes||[]).slice(0,50)}`;
-        document.getElementById('gymDebug').textContent = dbg;
-        document.getElementById('gymDebug').style.display = 'block';
+
         if (!nome) { toast('Informe um título.','error'); return; }
         if (!obsTexto) { toast('Escreva a observação.','error'); return; }
         if (!Array.isArray(gym.observacoes)) gym.observacoes = [];
@@ -200,7 +197,6 @@ function salvarTreino() {
         fecharModal('modalTreino');
         renderTreinos();
         toast('OBS criada! (' + gym.observacoes.length + ' total)','success');
-        document.getElementById('gymDebug').textContent = 'APÓS SAVE: obs=' + gym.observacoes.length + ' | LS=' + (localStorage.getItem('zara_gym_v1')||'').slice(0,80);
         return;
     }
     const dia   = document.getElementById('treinoDia').value;
@@ -305,9 +301,6 @@ function renderTreinos() {
         </div>`; return;
     }
 
-    if (document.getElementById('gymDebug')) {
-        document.getElementById('gymDebug').textContent += ' | obsHtml.length=' + obsHtml.length + ' | treinos=' + gym.treinos.length;
-    }
     el.innerHTML = obsHtml + gym.treinos.map(t => {
         const total  = t.exercicios.length;
         const feitos = t.exercicios.filter(e => e.feito).length;
@@ -860,37 +853,37 @@ function cancelarEditObs(id) { renderTreinos(); }
 
 function renderObsCards() {
     const obs = gym.observacoes || [];
-    // Debug: mostrar estado
-    const dbgEl = document.getElementById('gymDebug');
-    if (dbgEl) {
-        dbgEl.textContent = 'renderObsCards: obs.length=' + obs.length + ' | gym keys=' + Object.keys(gym).join(',');
-        dbgEl.style.display = 'block';
-    }
     if (!obs.length) return '';
     return obs.map(o => `
-        <div class="obs-card">
-            <div class="obs-card-header" onclick="toggleObs('${o.id}')">
-                <div class="obs-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <div class="treino-card obs-card-wrap">
+            <div class="treino-card-header obs-header" onclick="toggleObs('${o.id}')">
+                <div class="treino-card-info">
+                    <div class="treino-card-nome" style="text-transform:none;letter-spacing:0;font-size:0.88em;">
+                        <span style="color:var(--gold);margin-right:8px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        </span>
+                        ${o.titulo}
+                    </div>
+                    <div class="treino-card-meta" style="margin-top:4px;">
+                        <span style="font-size:0.62em;color:var(--text-dim);">Observação</span>
+                    </div>
                 </div>
-                <div class="obs-titulo">${o.titulo}</div>
-                <div class="obs-acoes" onclick="event.stopPropagation()">
-                    <button class="tc-btn" onclick="editarObsInline('${o.id}')" title="Editar">
+                <div class="treino-card-acoes" onclick="event.stopPropagation()">
+                    <button class="tc-btn" onclick="editarObsInline('${o.id}')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
-                    <button class="tc-btn tc-del" onclick="excluirObs('${o.id}')" title="Excluir">
+                    <button class="tc-btn tc-del" onclick="excluirObs('${o.id}')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
                     </button>
-                    <button class="tc-btn" title="${o.aberto?'Recolher':'Expandir'}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform 0.2s;transform:${o.aberto?'rotate(180deg)':'rotate(0)'}">
+                    <button class="tc-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform 0.25s;transform:${o.aberto?'rotate(180deg)':'rotate(0deg)'}">
                             <polyline points="6 9 12 15 18 9"/>
                         </svg>
                     </button>
                 </div>
             </div>
-            ${o.aberto ? `
-            <div class="obs-card-body" id="obs-body-${o.id}">
-                <div class="obs-conteudo" onclick="editarObsInline('${o.id}')">${(o.conteudo||'<em style=\'color:var(--text-dim);\'>Clique para escrever...</em>').replace(/\n/g,'<br>')}</div>
+            ${o.aberto ? `<div class="treino-card-body" style="padding:14px 18px;" id="obs-body-${o.id}">
+                <div class="obs-conteudo" onclick="editarObsInline('${o.id}')" style="white-space:pre-wrap;line-height:1.8;font-size:0.85em;color:var(--text-sub);min-height:36px;cursor:text;">${o.conteudo ? o.conteudo.replace(/</g,'&lt;') : '<em style="color:var(--text-dim);">Clique para escrever...</em>'}</div>
             </div>` : ''}
         </div>`).join('');
 }
