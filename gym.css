@@ -1022,3 +1022,41 @@
     .btn-obs-novo { padding: 8px 11px; font-size: 0.68em; }
     .obs-card-wrap .obs-header { padding: 11px 13px !important; }
 }
+
+/* ══════════════════════════════════════════
+   MEDICAMENTO — Dias da semana + multi-horário
+   ══════════════════════════════════════════ */
+.dias-semana-grid {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.dia-btn {
+    padding: 7px 10px;
+    background: var(--s3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 0.72em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+.dia-btn:hover { border-color: var(--border); color: var(--text-sub); }
+.dia-btn-ativo {
+    background: var(--gold-dim) !important;
+    border-color: var(--border) !important;
+    color: var(--gold) !important;
+    font-weight: 700;
+}
+
+.med-hora-input:focus {
+    border-color: rgba(201,168,76,0.35) !important;
+}
+
+@media (max-width: 480px) {
+    .dias-semana-grid { gap: 4px; }
+    .dia-btn { padding: 6px 8px; font-size: 0.68em; }
+}
