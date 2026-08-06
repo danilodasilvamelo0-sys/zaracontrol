@@ -584,6 +584,68 @@ function mostrarErro(msg) {
     setTimeout(() => el.style.display = 'none', 8000);
 }
 
+
+// ══════════════════════════════════════════════
+//  MEDICAMENTO — Frequência dinâmica e multi-horário
+// ══════════════════════════════════════════════
+const FREQ_HORARIOS = { 'diario':1, '2x_dia':2, '3x_dia':3, 'semanal':1, '2x_sem':1, '3x_sem':1, 'conforme':1 };
+const FREQ_SEMANAL  = ['semanal','2x_sem','3x_sem'];
+const FREQ_DIAS_MIN = { 'semanal':1, '2x_sem':2, '3x_sem':3 };
+
+function onMedFreqChange(freq) {
+    try {
+        const label = document.getElementById('medHorariosLabel');
+        const qtd   = FREQ_HORARIOS[freq] || 1;
+        if (label) label.textContent = qtd > 1 ? 'Horários (' + qtd + ' doses ao dia)' : 'Horário';
+        renderMedHorarios(qtd);
+        const diasWrap = document.getElementById('medDiasWrap');
+        if (!diasWrap) return;
+        if (FREQ_SEMANAL.includes(freq)) {
+            diasWrap.style.display = '';
+            const min = FREQ_DIAS_MIN[freq] || 1;
+            const lbl = diasWrap.querySelector('label');
+            if (lbl) lbl.textContent = 'Dias da semana (selecione ' + (min===1?'ao menos 1':min+' dias') + ')';
+        } else {
+            diasWrap.style.display = 'none';
+        }
+    } catch(e) { mostrarErro('onMedFreqChange: ' + e.message); }
+}
+
+function renderMedHorarios(qtd) {
+    const el = document.getElementById('medHorariosList');
+    if (!el) return;
+    const defaults = ['08:00','20:00','14:00'];
+    const atuais   = Array.from(el.querySelectorAll('input[type=time]')).map(i => i.value);
+    el.innerHTML   = Array.from({length: qtd}, function(_, i) {
+        var label = qtd > 1 ? (i+1) + 'ª dose' : '';
+        var val   = atuais[i] || defaults[i] || '08:00';
+        return '<div style="display:flex;align-items:center;gap:10px;">' +
+            (qtd > 1 ? '<span style="font-size:0.68em;color:var(--text-dim);min-width:44px;">' + label + '</span>' : '') +
+            '<input type="time" class="med-hora-input" value="' + val + '" ' +
+            'style="flex:1;padding:10px 14px;background:var(--s3);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:#fff;font-family:inherit;font-size:0.85em;outline:none;">' +
+            '</div>';
+    }).join('');
+}
+
+function toggleDiaMed(btn) {
+    btn.classList.toggle('dia-btn-ativo');
+}
+
+function getDiasMedSelecionados() {
+    return Array.from(document.querySelectorAll('#medDiasGrid .dia-btn-ativo')).map(function(b){ return b.dataset.dia; });
+}
+
+function getMedHorarios() {
+    return Array.from(document.querySelectorAll('.med-hora-input')).map(function(i){ return i.value; });
+}
+
+function setDiasMed(dias) {
+    document.querySelectorAll('#medDiasGrid .dia-btn').forEach(function(b){
+        b.classList.toggle('dia-btn-ativo', (dias||[]).includes(b.dataset.dia));
+    });
+}
+// ─────────────────────────────────────────────
+
 function abrirModalMed(medId) {
     try {
     _medEditandoId = medId || null;
