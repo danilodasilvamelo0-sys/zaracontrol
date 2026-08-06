@@ -185,20 +185,23 @@ function salvarTreino() {
 
     // Se grupo = obs → salvar como OBS card e não como treino
     if (grupo === 'obs') {
-        const obsTexto = document.getElementById('treinoObs').value.trim();
+        const taEl  = document.getElementById('treinoObs');
+        const obsTexto = taEl ? taEl.value.trim() : '';
+        // Debug visual
+        const dbg = `DEBUG: nome="${nome}" | grupo="${grupo}" | obs="${obsTexto.slice(0,30)}" | observacoes=${JSON.stringify(gym.observacoes||[]).slice(0,50)}`;
+        document.getElementById('gymDebug').textContent = dbg;
+        document.getElementById('gymDebug').style.display = 'block';
         if (!nome) { toast('Informe um título.','error'); return; }
         if (!obsTexto) { toast('Escreva a observação.','error'); return; }
-        if (!gym.observacoes) gym.observacoes = [];
-        if (_treinoEditId) {
-            // Se estava editando um treino normal, não tratar como obs
-        } else {
-            gym.observacoes.push({ id: gerarId(), titulo: nome, conteudo: obsTexto, aberto: true, createdAt: new Date().toISOString() });
-            salvarDados();
-            fecharModal('modalTreino');
-            renderTreinos();
-            toast('OBS criada!','success');
-            return;
-        }
+        if (!Array.isArray(gym.observacoes)) gym.observacoes = [];
+        const novaObs = { id: gerarId(), titulo: nome, conteudo: obsTexto, aberto: true, createdAt: new Date().toISOString() };
+        gym.observacoes.push(novaObs);
+        salvarDados();
+        fecharModal('modalTreino');
+        renderTreinos();
+        toast('OBS criada! (' + gym.observacoes.length + ' total)','success');
+        document.getElementById('gymDebug').textContent = 'APÓS SAVE: obs=' + gym.observacoes.length + ' | LS=' + (localStorage.getItem('zara_gym_v1')||'').slice(0,80);
+        return;
     }
     const dia   = document.getElementById('treinoDia').value;
     const obs   = document.getElementById('treinoObs').value.trim();
