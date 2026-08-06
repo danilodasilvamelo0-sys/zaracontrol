@@ -256,7 +256,7 @@ function renderTreinos() {
         </div>`; return;
     }
 
-    el.innerHTML = gym.treinos.map(t => {
+    el.innerHTML = renderObsCards() + gym.treinos.map(t => {
         const total  = t.exercicios.length;
         const feitos = t.exercicios.filter(e => e.feito).length;
         const pct    = total > 0 ? Math.round((feitos / total) * 100) : 0;
@@ -715,44 +715,127 @@ renderMeds();
 
 // ── BOOT COM SYNC ──
 
-// ── OBS ──────────────────────────────────
-let _obsTimer = null;
 
-function initObs() {
-    const ta = document.getElementById('obsTexto');
-    if (!ta) return;
-    ta.value = gym.obs || '';
-    atualizarObsChars();
+// ══════════════════════════════════════════════
+//  OBSERVAÇÕES — Cards no topo dos treinos
+// ══════════════════════════════════════════════
+let _obsEditId = null;
+
+function abrirModalObs(id) {
+    _obsEditId = id || null;
+    if (id) {
+        const obs = (gym.observacoes || []).find(o => o.id === id);
+        if (!obs) return;
+        document.getElementById('obsTitulo').value   = obs.titulo  || '';
+        document.getElementById('obsConteudo').value = obs.conteudo|| '';
+    } else {
+        document.getElementById('obsTitulo').value   = '';
+        document.getElementById('obsConteudo').value = '';
+    }
+    abrirModal('modalObs');
+    setTimeout(() => document.getElementById('obsTitulo').focus(), 100);
 }
 
-function onObsInput() {
-    atualizarObsChars();
-    clearTimeout(_obsTimer);
-    _obsTimer = setTimeout(() => {
-        const ta = document.getElementById('obsTexto');
-        if (!ta) return;
-        gym.obs = ta.value;
-        salvarDados();
-        const el = document.getElementById('obsSalvo');
-        if (el) { el.style.opacity='1'; setTimeout(()=>el.style.opacity='0',1800); }
-    }, 800);
-}
-
-function atualizarObsChars() {
-    const ta = document.getElementById('obsTexto');
-    const el = document.getElementById('obsChars');
-    if (ta && el) el.textContent = ta.value.length + ' caracteres';
-}
-
-function limparObs() {
-    if (!confirm('Limpar todas as observações?')) return;
-    const ta = document.getElementById('obsTexto');
-    if (ta) ta.value = '';
-    gym.obs = '';
+function salvarObs() {
+    const titulo   = document.getElementById('obsTitulo').value.trim();
+    const conteudo = document.getElementById('obsConteudo').value.trim();
+    if (!titulo) { mostrarStatus('Informe um título.', 'error'); return; }
+    if (!gym.observacoes) gym.observacoes = [];
+    if (_obsEditId) {
+        const obs = gym.observacoes.find(o => o.id === _obsEditId);
+        if (obs) { obs.titulo = titulo; obs.conteudo = conteudo; obs.updatedAt = new Date().toISOString(); }
+    } else {
+        gym.observacoes.push({
+            id: gerarId(), titulo, conteudo,
+            aberto: true, createdAt: new Date().toISOString()
+        });
+    }
     salvarDados();
-    atualizarObsChars();
+    fecharModal('modalObs');
+    renderTreinos();
+    mostrarStatus('OBS salva!', 'success');
 }
-// ─────────────────────────────────────────
+
+function excluirObs(id) {
+    if (!confirm('Excluir esta observação?')) return;
+    gym.observacoes = (gym.observacoes || []).filter(o => o.id !== id);
+    salvarDados();
+    renderTreinos();
+}
+
+function toggleObs(id) {
+    const obs = (gym.observacoes || []).find(o => o.id === id);
+    if (obs) { obs.aberto = !obs.aberto; salvarDados(); renderTreinos(); }
+}
+
+function editarObsInline(id) {
+    const obs = (gym.observacoes || []).find(o => o.id === id);
+    if (!obs) return;
+    const el = document.getElementById('obs-body-' + id);
+    if (!el) return;
+    const atual = obs.conteudo || '';
+    el.innerHTML = `
+        <textarea id="obs-edit-${id}" style="
+            width:100%;min-height:120px;
+            background:transparent;border:none;outline:none;
+            color:var(--text-sub);font-family:inherit;
+            font-size:0.85em;line-height:1.8;resize:none;padding:2px 0;
+        ">${atual}</textarea>
+        <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px;">
+            <button onclick="cancelarEditObs('${id}')" style="
+                background:transparent;border:1px solid var(--border-s);border-radius:8px;
+                color:var(--text-dim);font-family:inherit;font-size:0.68em;padding:5px 12px;cursor:pointer;">
+                Cancelar
+            </button>
+            <button onclick="confirmarEditObs('${id}')" style="
+                background:var(--gold);border:none;border-radius:8px;
+                color:#000;font-family:inherit;font-size:0.68em;font-weight:700;padding:5px 12px;cursor:pointer;">
+                Salvar
+            </button>
+        </div>`;
+    const ta = document.getElementById('obs-edit-' + id);
+    if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+}
+
+function confirmarEditObs(id) {
+    const obs = (gym.observacoes || []).find(o => o.id === id);
+    const ta  = document.getElementById('obs-edit-' + id);
+    if (obs && ta) { obs.conteudo = ta.value; obs.updatedAt = new Date().toISOString(); }
+    salvarDados(); renderTreinos();
+}
+
+function cancelarEditObs(id) { renderTreinos(); }
+
+function renderObsCards() {
+    const obs = gym.observacoes || [];
+    if (!obs.length) return '';
+    return obs.map(o => `
+        <div class="obs-card">
+            <div class="obs-card-header" onclick="toggleObs('${o.id}')">
+                <div class="obs-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <div class="obs-titulo">${o.titulo}</div>
+                <div class="obs-acoes" onclick="event.stopPropagation()">
+                    <button class="tc-btn" onclick="editarObsInline('${o.id}')" title="Editar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="tc-btn tc-del" onclick="excluirObs('${o.id}')" title="Excluir">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                    </button>
+                    <button class="tc-btn" title="${o.aberto?'Recolher':'Expandir'}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform 0.2s;transform:${o.aberto?'rotate(180deg)':'rotate(0)'}">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            ${o.aberto ? `
+            <div class="obs-card-body" id="obs-body-${o.id}">
+                <div class="obs-conteudo" onclick="editarObsInline('${o.id}')">${(o.conteudo||'<em style=\'color:var(--text-dim);\'>Clique para escrever...</em>').replace(/\n/g,'<br>')}</div>
+            </div>` : ''}
+        </div>`).join('');
+}
 // ── BOOT COM SYNC ──
 (async () => {
     // Tentar carregar do Supabase
@@ -767,5 +850,4 @@ function limparObs() {
     if (typeof renderTreinos === 'function') renderTreinos();
     if (typeof renderDieta   === 'function') renderDieta();
     if (typeof renderMeds    === 'function') renderMeds();
-    initObs();
 })();
