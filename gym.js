@@ -756,7 +756,7 @@ function limparAplicacoes() {
     salvarDados(); renderMeds(); toast('Aplicações limpas.','info');
 }
 
-const FREQ_LABEL = { diario:'Diário', '2x':'2x/dia', '3x':'3x/dia', semanal:'Semanal', conforme:'Conforme necessário' };
+const FREQ_LABEL = { diario:'Diário', '2x':'2x/dia', '3x':'3x/dia', semanal:'Semanal', conforme:'Conforme', '2x_dia':'2x ao dia', '3x_dia':'3x ao dia', '2x_sem':'2x/semana', '3x_sem':'3x/semana' };
 const VIA_LABEL  = { oral:'Oral', sublingual:'Sublingual', injetavel:'Injetável', topico:'Tópico', gotas:'Gotas' };
 const VIA_SVG = {
     oral:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:14px;height:14px;"><rect x="7" y="2" width="10" height="18" rx="5"/></svg>',
@@ -802,8 +802,9 @@ function renderMeds() {
                         <div class="med-nome">${m.nome}</div>
                         <div class="med-meta">
                             ${m.dose ? `<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><rect x="7" y="2" width="10" height="18" rx="5"/></svg>${m.dose}</span>` : ''}
-                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${m.hora||'--:--'}</span>
+                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${(m.horarios&&m.horarios.length>1)?m.horarios.join(' · '):(m.hora||'--:--')}</span>
                             <span>${FREQ_LABEL[m.freq]||m.freq}</span>
+                            ${(m.dias&&m.dias.length)?`<span style="color:var(--gold);font-size:0.85em;">${m.dias.join(', ')}</span>`:''} 
                             ${m.obs ? `<span style="color:var(--text-dim)">${m.obs}</span>` : ''}
                         </div>
                     </div>
