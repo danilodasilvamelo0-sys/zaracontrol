@@ -714,6 +714,45 @@ renderDieta();
 renderMeds();
 
 // ── BOOT COM SYNC ──
+
+// ── OBS ──────────────────────────────────
+let _obsTimer = null;
+
+function initObs() {
+    const ta = document.getElementById('obsTexto');
+    if (!ta) return;
+    ta.value = gym.obs || '';
+    atualizarObsChars();
+}
+
+function onObsInput() {
+    atualizarObsChars();
+    clearTimeout(_obsTimer);
+    _obsTimer = setTimeout(() => {
+        const ta = document.getElementById('obsTexto');
+        if (!ta) return;
+        gym.obs = ta.value;
+        salvarDados();
+        const el = document.getElementById('obsSalvo');
+        if (el) { el.style.opacity='1'; setTimeout(()=>el.style.opacity='0',1800); }
+    }, 800);
+}
+
+function atualizarObsChars() {
+    const ta = document.getElementById('obsTexto');
+    const el = document.getElementById('obsChars');
+    if (ta && el) el.textContent = ta.value.length + ' caracteres';
+}
+
+function limparObs() {
+    if (!confirm('Limpar todas as observações?')) return;
+    const ta = document.getElementById('obsTexto');
+    if (ta) ta.value = '';
+    gym.obs = '';
+    salvarDados();
+    atualizarObsChars();
+}
+// ─────────────────────────────────────────
 // ── BOOT COM SYNC ──
 (async () => {
     // Tentar carregar do Supabase
@@ -728,4 +767,5 @@ renderMeds();
     if (typeof renderTreinos === 'function') renderTreinos();
     if (typeof renderDieta   === 'function') renderDieta();
     if (typeof renderMeds    === 'function') renderMeds();
+    initObs();
 })();
