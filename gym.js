@@ -134,6 +134,33 @@ let _treinoEditandoId = null;
 let _exTreinoId = null;
 let _exEditandoId = null;
 
+
+function onGrupoChange(val) {
+    const isObs   = val === 'obs';
+    const diaWrap = document.getElementById('grupoDia');
+    const obsWrap = document.getElementById('grupoObsWrap');
+    const obsOpt  = document.getElementById('grupoObsOpt');
+    const obsTA   = document.getElementById('treinoObs');
+    const nomeInput = document.getElementById('treinoNome');
+
+    if (diaWrap) diaWrap.style.display = isObs ? 'none' : '';
+
+    if (isObs) {
+        if (obsOpt) obsOpt.style.display = 'none';
+        if (obsTA) {
+            obsTA.rows = 5;
+            obsTA.placeholder = 'Escreva livremente suas observações...';
+        }
+        if (nomeInput) nomeInput.placeholder = 'Ex: Técnica de agachamento, Dicas gerais...';
+    } else {
+        if (obsOpt) obsOpt.style.display = '';
+        if (obsTA) {
+            obsTA.rows = 2;
+            obsTA.placeholder = 'Ex: Foco em hipertrofia';
+        }
+        if (nomeInput) nomeInput.placeholder = 'Ex: Treino A — Peito e Tríceps';
+    }
+}
 function abrirModalTreino(treinoId) {
     _treinoEditandoId = treinoId || null;
     if(treinoId) {
@@ -155,6 +182,24 @@ function abrirModalTreino(treinoId) {
 function salvarTreino() {
     const nome  = document.getElementById('treinoNome').value.trim();
     const grupo = document.getElementById('treinoGrupo').value;
+
+    // Se grupo = obs → salvar como OBS card e não como treino
+    if (grupo === 'obs') {
+        const obsTexto = document.getElementById('treinoObs').value.trim();
+        if (!nome) { mostrarStatus('Informe um título.','error'); return; }
+        if (!obsTexto) { mostrarStatus('Escreva a observação.','error'); return; }
+        if (!gym.observacoes) gym.observacoes = [];
+        if (_treinoEditId) {
+            // Se estava editando um treino normal, não tratar como obs
+        } else {
+            gym.observacoes.push({ id: gerarId(), titulo: nome, conteudo: obsTexto, aberto: true, createdAt: new Date().toISOString() });
+            salvarDados();
+            fecharModal('modalTreino');
+            renderTreinos();
+            mostrarStatus('OBS criada!','success');
+            return;
+        }
+    }
     const dia   = document.getElementById('treinoDia').value;
     const obs   = document.getElementById('treinoObs').value.trim();
     if(!nome) { toast('Informe o nome do treino.','error'); return; }
