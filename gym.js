@@ -571,7 +571,21 @@ let _medEditandoId = null;
 let _appMedId = null;
 const hojeKey = () => new Date().toISOString().slice(0,10);
 
+function mostrarErro(msg) {
+    let el = document.getElementById('gymDebugErr');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'gymDebugErr';
+        el.style.cssText = 'position:fixed;top:70px;left:8px;right:8px;z-index:9999;background:#c0392b;color:#fff;padding:12px;border-radius:8px;font-size:0.70em;font-family:monospace;word-break:break-all;line-height:1.5;';
+        document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 8000);
+}
+
 function abrirModalMed(medId) {
+    try {
     _medEditandoId = medId || null;
     document.getElementById('modalMedTitulo').textContent = medId ? 'Editar Medicamento' : 'Novo Medicamento';
     if(medId) {
@@ -599,6 +613,9 @@ function abrirModalMed(medId) {
     }
     abrirModal('modalMed');
     setTimeout(()=>document.getElementById('medNome').focus(),100);
+    } catch(e) {
+        mostrarErro('abrirModalMed ERRO: ' + e.message + ' | ' + e.stack.split('\n')[0]);
+    }
 }
 
 function salvarMed() {
