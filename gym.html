@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZARA | GYM</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="gym.css?v=1785987302">
+    <link rel="stylesheet" href="gym.css?v=1785987636">
 </head>
 <body>
 
@@ -434,31 +434,55 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
             <span id="modalMedTitulo">Novo Medicamento</span>
         </div>
-        <div class="form-group">
-            <label>Nome</label>
-            <input type="text" id="medNome" placeholder="Ex: Vitamina D3">
-        </div>
+
+        <!-- Nome + Dosagem -->
         <div class="form-row">
+            <div class="form-group">
+                <label>Nome</label>
+                <input type="text" id="medNome" placeholder="Ex: Vitamina D3">
+            </div>
             <div class="form-group">
                 <label>Dosagem</label>
                 <input type="text" id="medDose" placeholder="Ex: 2000 UI">
             </div>
-            <div class="form-group">
-                <label>Frequência</label>
-                <select id="medFreq">
-                    <option value="diario">Diário</option>
-                    <option value="2x">2x ao dia</option>
-                    <option value="3x">3x ao dia</option>
-                    <option value="semanal">Semanal</option>
-                    <option value="conforme">Conforme necessário</option>
-                </select>
+        </div>
+
+        <!-- Frequência -->
+        <div class="form-group">
+            <label>Frequência</label>
+            <select id="medFreq" onchange="onMedFreqChange(this.value)">
+                <option value="diario">Diário</option>
+                <option value="2x_dia">2x ao dia</option>
+                <option value="3x_dia">3x ao dia</option>
+                <option value="semanal">1x por semana</option>
+                <option value="2x_sem">2x por semana</option>
+                <option value="3x_sem">3x por semana</option>
+                <option value="conforme">Conforme necessário</option>
+            </select>
+        </div>
+
+        <!-- Horários (dinâmico) -->
+        <div class="form-group" id="medHorariosWrap">
+            <label id="medHorariosLabel">Horário</label>
+            <div id="medHorariosList" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+
+        <!-- Dias da semana (aparece só em freq semanal) -->
+        <div class="form-group" id="medDiasWrap" style="display:none;">
+            <label>Dias da semana</label>
+            <div class="dias-semana-grid" id="medDiasGrid">
+                <button type="button" class="dia-btn" data-dia="Segunda" onclick="toggleDiaMed(this)">Seg</button>
+                <button type="button" class="dia-btn" data-dia="Terça" onclick="toggleDiaMed(this)">Ter</button>
+                <button type="button" class="dia-btn" data-dia="Quarta" onclick="toggleDiaMed(this)">Qua</button>
+                <button type="button" class="dia-btn" data-dia="Quinta" onclick="toggleDiaMed(this)">Qui</button>
+                <button type="button" class="dia-btn" data-dia="Sexta" onclick="toggleDiaMed(this)">Sex</button>
+                <button type="button" class="dia-btn" data-dia="Sábado" onclick="toggleDiaMed(this)">Sáb</button>
+                <button type="button" class="dia-btn" data-dia="Domingo" onclick="toggleDiaMed(this)">Dom</button>
             </div>
         </div>
+
+        <!-- Via + OBS -->
         <div class="form-row">
-            <div class="form-group">
-                <label>Horário</label>
-                <input type="time" id="medHora" value="08:00">
-            </div>
             <div class="form-group">
                 <label>Via</label>
                 <select id="medVia">
@@ -469,11 +493,12 @@
                     <option value="gotas">Gotas</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label>Observação</label>
+                <input type="text" id="medObs" placeholder="Ex: Após o almoço">
+            </div>
         </div>
-        <div class="form-group">
-            <label>Observação</label>
-            <input type="text" id="medObs" placeholder="Ex: Tomar após o almoço">
-        </div>
+
         <div class="modal-btns">
             <button class="btn-cancel" onclick="fecharModal('modalMed')">Cancelar</button>
             <button class="btn-save" onclick="salvarMed()">Salvar</button>
@@ -536,6 +561,6 @@
 <div id="gymStatus"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="gym.js?v=1785987302"></script>
+<script src="gym.js?v=1785987636"></script>
 </body>
 </html>
