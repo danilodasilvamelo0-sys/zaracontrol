@@ -262,39 +262,34 @@
         .treino-card-body { display: block; }
         .treino-card.collapsed .treino-card-body { display:none; }
 
-        /* ── MOBILE: header compacto sem gradiente ── */
+        /* ── MOBILE: treino-card — gradientes mantidos, nome truncado ── */
         @media (max-width: 768px) {
             .treino-card-header {
-                background: var(--s1) !important;
-                padding: 12px 14px;
-                gap: 10px;
+                padding: 11px 12px !important;
             }
             .treino-card-nome {
-                font-size: 0.82em;
-                letter-spacing: 0.5px;
-                text-transform: none;
-                text-shadow: none;
-                color: var(--text);
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+                font-size: 0.80em !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                max-width: 0;
+                flex: 1;
+                min-width: 0;
             }
-            .treino-card-meta { color: var(--text-dim); }
-            .tc-grupo-badge {
-                display: inline-flex;
-                font-size: 0.58em; font-weight: 700;
-                padding: 2px 6px; border-radius: 7px;
-                background: var(--gold-dim); color: var(--gold);
-                border: 1px solid var(--border);
-                text-transform: uppercase;
+            .treino-card-info {
+                min-width: 0;
+                flex: 1;
+                overflow: hidden;
+            }
+            .treino-card-acoes {
+                flex-shrink: 0 !important;
+                gap: 4px !important;
             }
             .tc-btn {
-                background: rgba(255,255,255,0.06);
-                border-color: var(--border-s);
-                color: var(--text-dim);
-                width: 30px; height: 30px;
+                width: 28px !important;
+                height: 28px !important;
             }
-            .treino-card-toggle { display: none; }
+            .tc-btn svg { width: 13px !important; height: 13px !important; }
         }
 
         /* Progress bar */
