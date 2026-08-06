@@ -577,18 +577,25 @@ function abrirModalMed(medId) {
     if(medId) {
         const m = gym.meds.find(x=>x.id===medId);
         if(m) {
-            document.getElementById('medNome').value  = m.nome;
-            document.getElementById('medDose').value  = m.dose;
-            document.getElementById('medFreq').value  = m.freq;
-            document.getElementById('medHora').value  = m.hora||'08:00';
-            document.getElementById('medVia').value   = m.via||'oral';
-            document.getElementById('medObs').value   = m.obs||'';
+            document.getElementById('medNome').value = m.nome;
+            document.getElementById('medDose').value = m.dose||'';
+            document.getElementById('medVia').value  = m.via||'oral';
+            document.getElementById('medObs').value  = m.obs||'';
+            document.getElementById('medFreq').value = m.freq||'diario';
+            onMedFreqChange(m.freq||'diario');
+            setTimeout(() => {
+                const horarios = m.horarios || [m.hora||'08:00'];
+                const inputs = document.querySelectorAll('.med-hora-input');
+                horarios.forEach((h,i) => { if(inputs[i]) inputs[i].value = h; });
+                setDiasMed(m.dias||[]);
+            }, 50);
         }
     } else {
         ['medNome','medDose','medObs'].forEach(id=>document.getElementById(id).value='');
         document.getElementById('medFreq').value='diario';
-        document.getElementById('medHora').value='08:00';
         document.getElementById('medVia').value='oral';
+        onMedFreqChange('diario');
+        setDiasMed([]);
     }
     abrirModal('modalMed');
     setTimeout(()=>document.getElementById('medNome').focus(),100);
@@ -598,12 +605,21 @@ function salvarMed() {
     const nome = document.getElementById('medNome').value.trim();
     const dose = document.getElementById('medDose').value.trim();
     if(!nome) { toast('Informe o nome do medicamento.','error'); return; }
+    const freq     = document.getElementById('medFreq').value;
+    const horarios = getMedHorarios();
+    const dias     = getDiasMedSelecionados();
+    const minDias  = FREQ_DIAS_MIN[freq];
+    if(minDias && dias.length < minDias) {
+        toast('Selecione ' + minDias + ' dia' + (minDias>1?'s':'') + ' da semana.','error'); return;
+    }
     const obj = {
         nome, dose,
-        freq: document.getElementById('medFreq').value,
-        hora: document.getElementById('medHora').value,
-        via:  document.getElementById('medVia').value,
-        obs:  document.getElementById('medObs').value.trim(),
+        freq,
+        hora:     horarios[0]||'08:00',
+        horarios,
+        dias,
+        via:      document.getElementById('medVia').value,
+        obs:      document.getElementById('medObs').value.trim(),
     };
     if(_medEditandoId) {
         const m = gym.meds.find(x=>x.id===_medEditandoId);
