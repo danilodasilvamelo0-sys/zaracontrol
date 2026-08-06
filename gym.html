@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZARA | GYM</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="gym.css?v=1785984854">
+    <link rel="stylesheet" href="gym.css?v=1785985074">
 </head>
 <body>
 
@@ -65,10 +65,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.5 20H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H20a2 2 0 0 1 2 2v3"/><circle cx="18" cy="18" r="4"/><path d="M18 16v4"/><path d="M16 18h4"/></svg>
             Medicamentos
         </button>
-        <button class="gym-tab" onclick="showTab('obs',this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            OBS
-        </button>
+
     </div>
 
     <!-- ═══════ TAB TREINO ═══════ -->
@@ -512,63 +509,32 @@
     </div>
 </div>
 
-    <!-- ═══════ TAB OBS ═══════ -->
-    <div id="tabObs" style="display:none">
-        <div class="section">
-            <div class="section-header">
-                <div class="section-header-left">
-                    <div class="section-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    </div>
-                    <div>
-                        <div class="section-title">Observações</div>
-                        <div class="section-sub">Anote dúvidas, técnicas e lembretes</div>
-                    </div>
-                </div>
-                <span id="obsSalvo" style="font-size:0.65em;color:var(--green);font-weight:700;opacity:0;transition:opacity 0.3s;">✓ Salvo</span>
-            </div>
-            <div class="section-content" style="padding:16px 20px;">
-                <textarea
-                    id="obsTexto"
-                    placeholder="Ex: No agachamento, descer até 90° mantendo joelho sobre o pé...&#10;No supino, retrair as escápulas antes de descer a barra...&#10;Descanso entre séries pesadas: 2-3 min..."
-                    oninput="onObsInput()"
-                    style="
-                        width:100%;
-                        min-height:320px;
-                        background:var(--s3);
-                        border:1px solid var(--border-s);
-                        border-radius:12px;
-                        padding:16px;
-                        color:var(--text);
-                        font-family:inherit;
-                        font-size:0.88em;
-                        line-height:1.8;
-                        resize:none;
-                        outline:none;
-                        transition:border-color 0.2s;
-                    "
-                    onfocus="this.style.borderColor='rgba(201,168,76,0.35)'"
-                    onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
-                ></textarea>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
-                    <span id="obsChars" style="font-size:0.62em;color:var(--text-dim);">0 caracteres</span>
-                    <button onclick="limparObs()" style="
-                        background:transparent;border:1px solid rgba(231,76,60,0.25);
-                        border-radius:8px;color:rgba(231,76,60,0.7);font-family:inherit;
-                        font-size:0.65em;font-weight:600;padding:5px 12px;cursor:pointer;
-                        transition:all 0.2s;"
-                        onmouseover="this.style.borderColor='rgba(231,76,60,0.5)'"
-                        onmouseout="this.style.borderColor='rgba(231,76,60,0.25)'"
-                    >Limpar</button>
-                </div>
-            </div>
+<!-- Modal OBS -->
+<div class="modal-overlay" id="modalObs">
+    <div class="modal-box">
+        <div class="modal-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Observação
+        </div>
+        <div class="form-group">
+            <label>Título</label>
+            <input type="text" id="obsTitulo" placeholder="Ex: Técnica de agachamento, Dicas de supino...">
+        </div>
+        <div class="form-group">
+            <label>Observações</label>
+            <textarea id="obsConteudo" rows="6" placeholder="Escreva livremente suas observações, técnicas, dúvidas..."></textarea>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="fecharModal('modalObs')">Cancelar</button>
+            <button class="btn-save" onclick="salvarObs()">Salvar</button>
         </div>
     </div>
+</div>
 
 <!-- Toast -->
 <div id="gymStatus"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="gym.js?v=1785984854"></script>
+<script src="gym.js?v=1785985074"></script>
 </body>
 </html>
