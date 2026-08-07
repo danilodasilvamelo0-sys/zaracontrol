@@ -198,125 +198,150 @@ body::after { bottom: 0; }
 }
 
 /* ── KPI CARDS PREMIUM ── */
-/* ══════════════════════════════════════════════
-   GLASS CARD EFFECT — estilo vidro físico premium
-   ══════════════════════════════════════════════ */
 .kpi-card {
     position: relative;
     overflow: hidden;
-    border-radius: 18px;
+    border-radius: 20px;
     padding: 22px 20px 18px;
     text-align: left;
     cursor: default;
-    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease;
 
-    /* Superfície escura em camadas — profundidade do vidro */
+    /* Fundo: vidro escuro com profundidade */
     background: linear-gradient(
-        160deg,
-        #1c1c1e 0%,
-        #131313 35%,
-        #0e0e0e 65%,
-        #161616 100%
+        155deg,
+        #222224 0%,
+        #161618 25%,
+        #0f0f10 55%,
+        #141416 80%,
+        #1a1a1c 100%
     );
 
-    /* Borda metálica: reflexo no topo, sombra embaixo */
-    border-top:    1px solid rgba(255,255,255,0.10);
-    border-left:   1px solid rgba(255,255,255,0.06);
-    border-right:  1px solid rgba(255,255,255,0.03);
-    border-bottom: 1px solid rgba(0,0,0,0.6);
+    /* Moldura física: borda que simula metal cromado */
+    border: none;
+    outline: none;
 
-    /* Sombra física — profundidade real */
+    /* Sombra em camadas: borda cromada + elevação + profundidade */
     box-shadow:
-        0 2px 0  rgba(255,255,255,0.04) inset,  /* reflexo superior interno */
-        0 -1px 0 rgba(0,0,0,0.8) inset,          /* sombra inferior interna */
-        0 8px 32px rgba(0,0,0,0.55),              /* sombra externa */
-        0 2px  8px rgba(0,0,0,0.4);
+        /* Borda superior brilhante (luz refletida no metal) */
+        0 1px 0 rgba(255,255,255,0.18),
+        /* Borda esquerda */
+        -1px 0 0 rgba(255,255,255,0.08),
+        /* Borda direita escura */
+        1px 0 0 rgba(0,0,0,0.5),
+        /* Borda inferior mais escura */
+        0 -1px 0 rgba(0,0,0,0.7),
+        /* Sombra interna superior (reflexo de luz dentro do vidro) */
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        /* Sombra interna inferior (profundidade) */
+        inset 0 -1px 0 rgba(0,0,0,0.6),
+        /* Elevação — objeto físico sobre a mesa */
+        0 4px 6px rgba(0,0,0,0.4),
+        0 12px 40px rgba(0,0,0,0.55),
+        0 24px 60px rgba(0,0,0,0.35);
 }
 
-/* Reflexo de luz superior — efeito espelho */
+/* Reflexo de luz — canto superior esquerdo como na imagem */
 .kpi-card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 45%;
-    border-radius: 18px 18px 0 0;
+    top: -1px; left: -1px; right: -1px;
+    height: 55%;
+    border-radius: 20px 20px 0 0;
     background: linear-gradient(
-        180deg,
-        rgba(255,255,255,0.045) 0%,
-        rgba(255,255,255,0.015) 40%,
+        160deg,
+        rgba(255,255,255,0.09) 0%,
+        rgba(255,255,255,0.04) 30%,
+        rgba(255,255,255,0.01) 60%,
         transparent 100%
     );
-    pointer-events: none;
+    pointer-events: none; z-index: 1;
 }
 
-/* Linha dourada no topo */
+/* Brilho pontual no canto superior esquerdo */
 .kpi-card::after {
     content: '';
     position: absolute;
-    top: 0; left: 10%; right: 10%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.5), transparent);
+    top: -20px; left: -20px;
+    width: 120px; height: 120px;
+    background: radial-gradient(
+        circle at 30% 30%,
+        rgba(255,255,255,0.07) 0%,
+        rgba(255,255,255,0.02) 40%,
+        transparent 70%
+    );
+    pointer-events: none; z-index: 1;
 }
 
 .kpi-card:hover {
     transform: translateY(-3px);
     box-shadow:
-        0 2px 0  rgba(255,255,255,0.06) inset,
-        0 -1px 0 rgba(0,0,0,0.8) inset,
-        0 16px 48px rgba(0,0,0,0.65),
-        0 0 0 1px rgba(201,168,76,0.18),
-        0 0 30px rgba(201,168,76,0.05);
-    border-top-color: rgba(255,255,255,0.13);
+        0 1px 0 rgba(255,255,255,0.22),
+        -1px 0 0 rgba(255,255,255,0.10),
+        1px 0 0 rgba(0,0,0,0.5),
+        0 -1px 0 rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -1px 0 rgba(0,0,0,0.6),
+        0 6px 10px rgba(0,0,0,0.45),
+        0 20px 60px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(201,168,76,0.15),
+        0 0 40px rgba(201,168,76,0.06);
 }
 
-/* ── SEÇÕES PREMIUM — mesmo efeito vidro ── */
 .section {
     position: relative;
     overflow: hidden;
-    border-radius: 18px;
-    margin-bottom: 24px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    transition: box-shadow 0.3s ease;
 
     background: linear-gradient(
-        160deg,
-        #1a1a1c 0%,
-        #121212 40%,
-        #0d0d0d 70%,
+        155deg,
+        #202022 0%,
+        #151517 30%,
+        #0f0f11 60%,
         #141416 100%
     );
 
-    border-top:    1px solid rgba(255,255,255,0.09);
-    border-left:   1px solid rgba(255,255,255,0.05);
-    border-right:  1px solid rgba(255,255,255,0.02);
-    border-bottom: 1px solid rgba(0,0,0,0.7);
+    border: none;
 
     box-shadow:
-        0 2px 0  rgba(255,255,255,0.035) inset,
-        0 -1px 0 rgba(0,0,0,0.7) inset,
-        0 8px 32px rgba(0,0,0,0.5),
-        0 2px  8px rgba(0,0,0,0.35);
+        0 1px 0 rgba(255,255,255,0.14),
+        -1px 0 0 rgba(255,255,255,0.06),
+        1px 0 0 rgba(0,0,0,0.45),
+        0 -1px 0 rgba(0,0,0,0.65),
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        inset 0 -1px 0 rgba(0,0,0,0.5),
+        0 4px 6px rgba(0,0,0,0.35),
+        0 12px 40px rgba(0,0,0,0.5),
+        0 24px 60px rgba(0,0,0,0.3);
 }
 
-/* Reflexo superior da seção */
 .section::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 40%;
-    pointer-events: none; z-index: 0;
+    height: 50%;
+    border-radius: 20px 20px 0 0;
     background: linear-gradient(
-        180deg,
-        rgba(255,255,255,0.03) 0%,
+        160deg,
+        rgba(255,255,255,0.06) 0%,
+        rgba(255,255,255,0.02) 40%,
         transparent 100%
     );
-    border-radius: 18px 18px 0 0;
+    pointer-events: none; z-index: 1;
 }
 
 .section:hover {
     box-shadow:
-        0 2px 0  rgba(255,255,255,0.05) inset,
-        0 -1px 0 rgba(0,0,0,0.8) inset,
-        0 12px 40px rgba(0,0,0,0.6),
+        0 1px 0 rgba(255,255,255,0.18),
+        -1px 0 0 rgba(255,255,255,0.08),
+        1px 0 0 rgba(0,0,0,0.45),
+        0 -1px 0 rgba(0,0,0,0.65),
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        inset 0 -1px 0 rgba(0,0,0,0.5),
+        0 6px 10px rgba(0,0,0,0.4),
+        0 16px 50px rgba(0,0,0,0.55),
         0 0 0 1px rgba(201,168,76,0.12);
 }
 .section-header {
