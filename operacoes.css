@@ -651,3 +651,63 @@ body {
     body { padding-left: 70px; }
     .mobile-nav { display: none !important; }
 }
+
+/* ══════════════════════════════════════════════════
+   GLASS EFFECT — idêntico ao Financeiro e GYM
+   ══════════════════════════════════════════════════ */
+.op-section,
+.op-card,
+.op-card-inner,
+.poder-card,
+.aliado-card,
+.favor-item {{
+    background: linear-gradient(
+        150deg,
+        #2a2a2d 0%,
+        #202022 20%,
+        #1a1a1c 50%,
+        #1e1e20 80%,
+        #242426 100%
+    ) !important;
+    border: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.22),
+        -1px 0 0 rgba(255,255,255,0.10),
+        1px 0 0 rgba(0,0,0,0.6),
+        0 -1px 0 rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        0 6px 12px rgba(0,0,0,0.5),
+        0 16px 48px rgba(0,0,0,0.6),
+        0 32px 80px rgba(0,0,0,0.4) !important;
+}}
+
+.op-section::before,
+.op-card::before,
+.op-card-inner::before,
+.poder-card::before,
+.aliado-card::before,
+.favor-item::before {{
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important; left: 0 !important; right: 0 !important;
+    height: 50% !important;
+    background: linear-gradient(
+        150deg,
+        rgba(255,255,255,0.09) 0%,
+        rgba(255,255,255,0.03) 35%,
+        transparent 100%
+    ) !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+    border-radius: inherit !important;
+}}
+
+.op-section,
+.op-card,
+.op-card-inner,
+.poder-card,
+.aliado-card,
+.favor-item { border-radius: 14px !important; }
