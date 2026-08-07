@@ -2,469 +2,408 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#080808">
-    <meta name="color-scheme" content="dark">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZARA | Private Access</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --black: #080808;
-            --black-rich: #0f0f0f;
-            --surface: #141414;
-            --surface2: #1a1a1a;
-            --gold: #c9a84c;
-            --gold-light: #e8c96a;
-            --gold-dark: #a07828;
-            --gold-glow: rgba(184, 151, 46, 0.07);
-            --gold-border: rgba(184, 151, 46, 0.15);
-            --text: #f5f2ec;
-            --text-dim: rgba(240,236,228,0.55);
-            --text-muted: rgba(240,236,228,0.30);
-        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --gold:     #c9a84c;
+            --gold-b:   #e8c160;
+            --gold-dim: rgba(201,168,76,0.08);
+            --gold-mid: rgba(201,168,76,0.18);
+            --border:   rgba(201,168,76,0.15);
+            --bg:       #060606;
+            --s1:       #0c0c0c;
+            --text:     #f5f0e8;
+            --text-dim: rgba(245,240,232,0.45);
         }
 
         html, body {
-            background: #080808;
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            color: var(--text);
+        /* ── FUNDO COM GRID FUTURISTA ── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0;
+            background-image:
+                linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed; inset: 0; z-index: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .page {
+            position: relative; z-index: 1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 30px;
+            padding: 60px 24px 48px;
+        }
+
+        /* ── TOPO ── */
+        .hero { text-align: center; margin-bottom: 56px; }
+
+        .logo-wrap {
             position: relative;
-            overflow-x: hidden;
+            width: 88px; height: 88px;
+            margin: 0 auto 32px;
         }
-
-        /* Subtle ambient glow */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, 
-                transparent 0%,
-                var(--gold-dark) 15%,
-                var(--gold) 35%,
-                var(--gold-light) 50%,
-                var(--gold) 65%,
-                var(--gold-dark) 85%,
-                transparent 100%
-            );
-            background-size: 200% 100%;
-            animation: goldShimmer 8s ease-in-out infinite;
-            z-index: 9999;
-        }
-
-        @keyframes goldShimmer {
-            0%, 100% { background-position: 200% 0; }
-            50% { background-position: -200% 0; }
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold-border), transparent);
-            z-index: 9999;
-        }
-
-        .container {
-            text-align: center;
-            max-width: 480px;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Logo */
-        .logo {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 40px;
-            border: 1px solid var(--gold-border);
+        .logo-ring {
+            position: absolute; inset: 0;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            background: #0f0f0f;
-            transition: all 0.5s ease;
+            border: 1px solid var(--border);
+            animation: spin 12s linear infinite;
         }
-
-        .logo:hover {
-            border-color: var(--gold);
-            box-shadow: 0 0 40px rgba(184,151,46,0.12);
-        }
-
-        .logo-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.4em;
-            color: var(--gold);
-            font-weight: 500;
-            letter-spacing: 2px;
-        }
-
-        /* Title */
-        h1 {
-            font-family: 'Playfair Display', serif;
-            color: #f0f0f0;
-            font-size: 2.8em;
-            font-weight: 500;
-            letter-spacing: 12px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .subtitle {
-            color: #d4af46;
-            font-size: 0.7em;
-            margin-bottom: 50px;
-            font-weight: 500;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-        }
-
-        /* Divider */
-        .divider {
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            margin: 0 auto 50px;
-        }
-
-        /* Menu */
-        .menu {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-            background: rgba(212,175,46,0.12);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(184,151,46,0.15);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            padding: 22px 28px;
-            background: var(--surface);
-            text-decoration: none;
-            color: var(--text);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            border-bottom: 1px solid rgba(184,151,46,0.06);
-        }
-
-        .menu-item::before {
+        .logo-ring::before {
             content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 2px;
+            position: absolute; top: -1px; left: 50%;
+            transform: translateX(-50%);
+            width: 6px; height: 6px;
             background: var(--gold);
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--gold);
         }
-
-        .menu-item:hover::before {
-            transform: scaleY(1);
+        .logo-inner {
+            position: absolute; inset: 8px;
+            background: var(--s1);
+            border-radius: 50%;
+            border: 1px solid rgba(201,168,76,0.1);
+            display: flex; align-items: center; justify-content: center;
         }
-
-        .menu-item:hover {
-            background: var(--surface);
-        }
-
-        .menu-item .icon {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--gold-border);
-            border-radius: 12px;
-            transition: all 0.4s ease;
-            background: #0f0f0f;
-        }
-
-        .menu-item .icon svg {
-            width: 22px;
-            height: 22px;
-            stroke: var(--gold);
-            opacity: 0.7;
-            transition: all 0.3s ease;
-        }
-
-        .menu-item:hover .icon {
-            border-color: var(--gold);
-            background: var(--gold-glow);
-        }
-
-        .menu-item:hover .icon svg {
-            opacity: 1;
-        }
-
-        .menu-item .text {
-            text-align: left;
-            flex: 1;
-        }
-
-        .menu-item h3 {
-            font-size: 0.95em;
-            font-weight: 500;
-            margin-bottom: 4px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .menu-item p {
-            font-size: 0.72em;
-            color: var(--text-muted);
-            font-weight: 400;
-            letter-spacing: 0.5px;
-        }
-
-        .menu-item .arrow {
-            color: var(--text-muted);
-            transition: all 0.4s ease;
-        }
-
-        .menu-item:hover .arrow {
-            transform: translateX(5px);
-            color: var(--gold);
-        }
-
-        .menu-item .arrow svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: 60px;
-            color: rgba(240,236,228,0.30);
-            font-size: 0.65em;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-
-        /* Badge */
-        .badge {
-            display: inline-block;
-            padding: 8px 20px;
-            background: var(--gold-glow);
-            border: 1px solid var(--gold-border);
-            border-radius: 30px;
-            font-size: 0.55em;
-            color: var(--gold);
-            letter-spacing: 4px;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            font-weight: 500;
-        }
-
-
-        /* ── LAYOUT PREMIUM INDEX ── */
-        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes shimmer {
-            0%   { background-position: -200% center; }
-            100% { background-position: 200% center; }
-        }
-
-        .logo { animation: fadeUp 0.5s ease both; }
         .logo-z {
-            font-size: 3.5em;
-            font-weight: 200;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2em;
+            font-weight: 600;
             color: var(--gold);
-            letter-spacing: 8px;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .subtitle {
-            font-size: 0.6em;
-            font-weight: 700;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-top: 6px;
+            letter-spacing: 2px;
+            line-height: 1;
         }
 
-        .menu { margin-top: 48px; display: flex; flex-direction: column; gap: 0; }
+        .brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.8em;
+            font-weight: 300;
+            letter-spacing: 18px;
+            text-transform: uppercase;
+            color: var(--text);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .brand-sub {
+            font-size: 0.60em;
+            font-weight: 700;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.8;
+        }
+
+        .divider {
+            display: flex; align-items: center; gap: 12px;
+            margin: 28px auto;
+            width: 180px;
+        }
+        .divider-line { flex: 1; height: 1px; background: var(--border); }
+        .divider-diamond {
+            width: 5px; height: 5px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+
+        .access-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 22px;
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            font-size: 0.62em;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gold);
+            background: var(--gold-dim);
+        }
+        .access-badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--gold);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* ── MENU CARDS ── */
+        .menu {
+            width: 100%; max-width: 480px;
+            display: flex; flex-direction: column;
+            gap: 10px;
+        }
 
         .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 22px 28px;
-            background: var(--surface);
-            text-decoration: none;
-            color: var(--text);
-            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
             position: relative;
-            border-bottom: 1px solid var(--gold-glow);
-        }
-        .menu-item::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 2px;
-            background: var(--gold);
-            transform: scaleY(0);
-            transition: transform 0.25s ease;
-        }
-        .menu-item:hover {
-            background: rgba(201,168,76,0.06);
-            padding-left: 36px;
-        }
-        .menu-item:hover::before { transform: scaleY(1); }
-        * { -webkit-tap-highlight-color: transparent; }
-        .menu-item:first-child { border-radius: 14px 14px 0 0; }
-        .menu-item:last-child  { border-radius: 0 0 14px 14px; border-bottom: none; }
-
-        .menu-item .icon {
-            width: 46px;
-            height: 46px;
-            border: 1px solid var(--gold-border);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--surface2);
-            flex-shrink: 0;
-            transition: all 0.25s;
-        }
-        .menu-item:hover .icon {
-            border-color: var(--gold);
-            background: rgba(201,168,76,0.1);
-        }
-        .menu-item .icon svg {
-            width: 20px;
-            height: 20px;
-            stroke: var(--gold);
-            fill: none;
-            stroke-width: 1.5;
-        }
-        .menu-item .info { flex: 1; }
-        .menu-item .info h2 {
-            font-size: 0.85em;
-            font-weight: 700;
-            color: var(--text);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-        .menu-item .info p {
-            font-size: 0.68em;
-            color: var(--text-dim);
-            margin-top: 3px;
-            letter-spacing: 0.3px;
-        }
-        .menu-item .arrow {
-            color: var(--gold-border);
-            transition: all 0.25s;
-            opacity: 0;
-        }
-        .menu-item:hover .arrow { opacity: 1; color: var(--gold); transform: translateX(4px); }
-
-        .menu-container {
-            background: var(--surface);
-            border: 1px solid var(--gold-border);
+            display: flex; align-items: center;
+            gap: 18px;
+            padding: 18px 22px;
+            text-decoration: none;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-            animation: fadeUp 0.5s ease 0.15s both;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(12,12,12,0.8);
+            border: 1px solid rgba(255,255,255,0.06);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
-        /* Animação escalonada dos itens */
-        .menu-item:nth-child(1) { animation: fadeUp 0.4s ease 0.1s both; }
-        .menu-item:nth-child(2) { animation: fadeUp 0.4s ease 0.15s both; }
-        .menu-item:nth-child(3) { animation: fadeUp 0.4s ease 0.2s both; }
-        .menu-item:nth-child(4) { animation: fadeUp 0.4s ease 0.25s both; }
-        .menu-item:nth-child(5) { animation: fadeUp 0.4s ease 0.3s both; }
+        /* Borda dourada animada no hover */
+        .menu-item::before {
+            content: '';
+            position: absolute; inset: 0;
+            border-radius: 16px;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--gold), transparent 50%, var(--gold));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
 
-        /* Responsive */
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2em;
-                letter-spacing: 8px;
-            }
+        /* Brilho lateral */
+        .menu-item::after {
+            content: '';
+            position: absolute;
+            left: 0; top: 20%; bottom: 20%;
+            width: 2px;
+            background: linear-gradient(transparent, var(--gold), transparent);
+            border-radius: 2px;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
 
-            .menu-item {
-                padding: 18px 22px;
-                gap: 18px;
-            }
+        .menu-item:hover,
+        .menu-item:active {
+            background: rgba(20,20,20,0.95);
+            transform: translateX(4px);
+            border-color: transparent;
+        }
+        .menu-item:hover::before,
+        .menu-item:active::before { opacity: 1; }
+        .menu-item:hover::after,
+        .menu-item:active::after   { opacity: 1; }
+        .menu-item:hover .icon,
+        .menu-item:active .icon    { background: var(--gold-mid); border-color: var(--border); }
+        .menu-item:hover .icon svg,
+        .menu-item:active .icon svg { stroke: var(--gold-b); }
+        .menu-item:hover .menu-title,
+        .menu-item:active .menu-title { color: var(--gold-b); }
+        .menu-item:hover .arrow,
+        .menu-item:active .arrow   { opacity: 1; transform: translateX(3px); }
 
-            .menu-item .icon {
-                width: 42px;
-                height: 42px;
-            }
+        /* Ícone */
+        .icon {
+            width: 46px; height: 46px;
+            border-radius: 13px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.35s ease;
+        }
+        .icon svg {
+            width: 20px; height: 20px;
+            stroke: rgba(245,240,232,0.55);
+            transition: stroke 0.35s ease;
+        }
 
-            .subtitle {
-                letter-spacing: 4px;
-            }
+        /* Texto */
+        .text { flex: 1; min-width: 0; }
+        .menu-title {
+            font-size: 0.78em;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--text);
+            transition: color 0.35s ease;
+            margin-bottom: 3px;
+        }
+        .menu-sub {
+            font-size: 0.60em;
+            color: var(--text-dim);
+            letter-spacing: 0.5px;
+            font-weight: 400;
+        }
+
+        /* Seta */
+        .arrow {
+            color: var(--gold);
+            opacity: 0;
+            transition: all 0.35s ease;
+            flex-shrink: 0;
+        }
+        .arrow svg { width: 16px; height: 16px; }
+
+        /* Número decorativo */
+        .item-num {
+            position: absolute;
+            right: 20px; bottom: 10px;
+            font-size: 0.45em;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: rgba(201,168,76,0.12);
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            margin-top: 52px;
+            text-align: center;
+        }
+        .footer-text {
+            font-size: 0.55em;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(245,240,232,0.2);
+        }
+        .footer-line {
+            width: 40px; height: 1px;
+            background: var(--border);
+            margin: 10px auto 0;
+        }
+
+        /* ── ANIMAÇÕES ── */
+        @keyframes spin  { from { transform: rotate(0deg); }   to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(20px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        .hero           { animation: fadeUp 0.6s ease both; }
+        .menu-item      { animation: fadeUp 0.5s ease both; }
+        .menu-item:nth-child(1) { animation-delay: 0.10s; }
+        .menu-item:nth-child(2) { animation-delay: 0.18s; }
+        .menu-item:nth-child(3) { animation-delay: 0.26s; }
+        .menu-item:nth-child(4) { animation-delay: 0.34s; }
+        .menu-item:nth-child(5) { animation-delay: 0.42s; }
+        .footer         { animation: fadeUp 0.5s ease 0.5s both; }
+
+        @media (max-width: 420px) {
+            .brand    { font-size: 3em; letter-spacing: 14px; }
+            .page     { padding: 48px 16px 40px; }
+            .menu-item{ padding: 16px 18px; }
+            .icon     { width: 42px; height: 42px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <span class="logo-text">Z</span>
+<div class="page">
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="logo-wrap">
+            <div class="logo-ring"></div>
+            <div class="logo-inner">
+                <div class="logo-z">Z</div>
+            </div>
         </div>
-        
-        <h1>ZARA</h1>
-        <p class="subtitle">Private Access</p>
-        
-        <div class="badge">Exclusive</div>
-        
-        <div class="divider"></div>
-        
-        <nav class="menu">
-            <a href="financeiro.html" class="menu-item">
-                <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-                <div class="text"><h3>Financeiro</h3><p>Gestão e planejamento</p></div>
-                <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-            </a>
-            <a href="gym.html" class="menu-item">
-                <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-                <div class="text"><h3>GYM</h3><p>Treino e nutrição</p></div>
-                <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-            </a>
-            <a href="operacoes.html" class="menu-item">
-                <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
-                <div class="text"><h3>Operações</h3><p>Jogadas, rede e favores</p></div>
-                <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-            </a>
-            <a href="notas.html" class="menu-item">
-                <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
-                <div class="text"><h3>Notas</h3><p>Bloco de anotações</p></div>
-                <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-            </a>
-            <a href="comando.html" class="menu-item">
-                <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-                <div class="text"><h3>Comando</h3><p>Centro de controle estratégico</p></div>
-                <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-            </a>
-        </nav>
-        
-        <div class="footer">
-            ZARA © 2024
+
+        <div class="brand">ZARA</div>
+        <div class="brand-sub">Private Access</div>
+
+        <div class="divider">
+            <div class="divider-line"></div>
+            <div class="divider-diamond"></div>
+            <div class="divider-line"></div>
         </div>
+
+        <div class="access-badge">Exclusive</div>
     </div>
+
+    <!-- MENU -->
+    <nav class="menu">
+
+        <a href="financeiro.html" class="menu-item">
+            <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="text">
+                <div class="menu-title">Financeiro</div>
+                <div class="menu-sub">Gestão e planejamento</div>
+            </div>
+            <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="item-num">01</div>
+        </a>
+
+        <a href="gym.html" class="menu-item">
+            <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="text">
+                <div class="menu-title">GYM</div>
+                <div class="menu-sub">Treino e nutrição</div>
+            </div>
+            <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="item-num">02</div>
+        </a>
+
+        <a href="operacoes.html" class="menu-item">
+            <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div class="text">
+                <div class="menu-title">Operações</div>
+                <div class="menu-sub">Jogadas, rede e favores</div>
+            </div>
+            <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="item-num">03</div>
+        </a>
+
+        <a href="notas.html" class="menu-item">
+            <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div class="text">
+                <div class="menu-title">Notas</div>
+                <div class="menu-sub">Bloco de anotações</div>
+            </div>
+            <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="item-num">04</div>
+        </a>
+
+        <a href="comando.html" class="menu-item">
+            <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="text">
+                <div class="menu-title">Comando</div>
+                <div class="menu-sub">Centro de controle estratégico</div>
+            </div>
+            <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="item-num">05</div>
+        </a>
+
+    </nav>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div class="footer-text">ZARA &copy; 2026</div>
+        <div class="footer-line"></div>
+    </div>
+
+</div>
 </body>
 </html>
