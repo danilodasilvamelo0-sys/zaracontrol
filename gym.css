@@ -666,7 +666,7 @@
     .sidebar { display: none; }
     .mobile-nav { display: block; }
 
-    .container { padding: 10px 4px 30px; }
+    .container { padding: 10px 2px 30px; }
 
     /* Header */
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; padding-bottom: 16px; margin-bottom: 20px; }
@@ -712,13 +712,13 @@
 
     /* Lista de exercícios: padding zero nas laterais */
     .exercicios-list {
-        padding: 8px 10px 4px !important;
+        padding: 6px 4px 4px !important;
         gap: 6px !important;
     }
 
     /* Card de exercício: ocupa toda largura */
     .ex-card {
-        padding: 10px 12px !important;
+        padding: 10px 8px !important;
         gap: 10px !important;
         border-radius: 10px !important;
     }
