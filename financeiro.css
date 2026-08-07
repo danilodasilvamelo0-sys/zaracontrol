@@ -6601,163 +6601,145 @@ font-size: 1.1em;
 }
 
 /* ══════════════════════════════════════════════════
-   GLASS CARD — idêntico à referência: moldura + bloom dourado
+   GLASS CARD — versão contraste real (sem dourado)
    ══════════════════════════════════════════════════ */
 .kpi-card {
-    border-radius: 18px !important;
+    background: linear-gradient(
+        150deg,
+        #2a2a2d 0%,
+        #202022 20%,
+        #1a1a1c 50%,
+        #1e1e20 80%,
+        #242426 100%
+    ) !important;
     border: none !important;
-    position: relative !important;
-    overflow: hidden !important;
-    padding: 22px 20px 18px !important;
-    text-align: left !important;
-    cursor: default !important;
-
-    /* Interior escuro puro — contraste máximo com bloom */
-    background: #0e0e0e !important;
-
-    /* Moldura física: camadas simulando metal */
+    border-radius: 20px !important;
     box-shadow:
-        /* Linha interna escura */
-        inset 0 0 0 1px rgba(255,255,255,0.03),
-        /* Borda externa — mais clara no topo */
-        0 0 0 1px rgba(255,255,255,0.16),
-        /* Segunda camada da moldura */
-        0 0 0 2px rgba(0,0,0,0.9),
-        /* Terceira camada — reflexo metálico */
-        0 0 0 3px rgba(255,255,255,0.06),
-        /* Sombra de elevação */
-        0 8px 24px rgba(0,0,0,0.7),
-        0 20px 60px rgba(0,0,0,0.6),
-        0 40px 80px rgba(0,0,0,0.4) !important;
-    transition: transform 0.35s ease, box-shadow 0.35s ease !important;
+        0 1px 0 rgba(255,255,255,0.22),
+        -1px 0 0 rgba(255,255,255,0.10),
+        1px 0 0 rgba(0,0,0,0.6),
+        0 -1px 0 rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        0 6px 12px rgba(0,0,0,0.5),
+        0 16px 48px rgba(0,0,0,0.6),
+        0 32px 80px rgba(0,0,0,0.4) !important;
 }
-
-/* Bloom dourado — canto superior esquerdo */
 .kpi-card::before {
     content: '' !important;
     position: absolute !important;
-    inset: 0 !important;
-    border-radius: 18px !important;
-    background: radial-gradient(
-        ellipse 70% 55% at 18% 22%,
-        rgba(201,162,60,0.22) 0%,
-        rgba(180,140,50,0.10) 35%,
-        rgba(140,100,30,0.04) 60%,
-        transparent 80%
+    top: 0 !important; left: 0 !important; right: 0 !important;
+    height: 55% !important;
+    border-radius: 20px 20px 0 0 !important;
+    background: linear-gradient(
+        150deg,
+        rgba(255,255,255,0.10) 0%,
+        rgba(255,255,255,0.04) 35%,
+        rgba(255,255,255,0.01) 60%,
+        transparent 100%
     ) !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
+    pointer-events: none !important; z-index: 1 !important;
 }
-
-/* Reflexo de vidro — linha brilhante no topo */
 .kpi-card::after {
     content: '' !important;
     position: absolute !important;
-    top: 0 !important; left: 5% !important; right: 5% !important;
-    height: 1px !important;
-    background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(201,168,76,0.5) 20%,
-        rgba(255,255,255,0.3) 50%,
-        rgba(201,168,76,0.5) 80%,
-        transparent 100%
+    top: -20px !important; left: -20px !important;
+    width: 160px !important; height: 160px !important;
+    background: radial-gradient(
+        circle at 20% 20%,
+        rgba(255,255,255,0.07) 0%,
+        rgba(255,255,255,0.02) 40%,
+        transparent 65%
     ) !important;
-    pointer-events: none !important;
-    z-index: 2 !important;
+    pointer-events: none !important; z-index: 1 !important;
 }
-
 .kpi-card:hover {
-    transform: translateY(-3px) !important;
+    transform: translateY(-4px) !important;
     box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.04),
-        0 0 0 1px rgba(201,168,76,0.35),
-        0 0 0 2px rgba(0,0,0,0.9),
-        0 0 0 3px rgba(201,168,76,0.12),
-        0 12px 32px rgba(0,0,0,0.75),
-        0 28px 70px rgba(0,0,0,0.65),
-        0 0 60px rgba(201,168,76,0.06) !important;
+        0 1px 0 rgba(255,255,255,0.28),
+        -1px 0 0 rgba(255,255,255,0.14),
+        1px 0 0 rgba(0,0,0,0.6),
+        0 -1px 0 rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        0 8px 16px rgba(0,0,0,0.55),
+        0 24px 64px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(201,168,76,0.25),
+        0 0 50px rgba(201,168,76,0.08) !important;
 }
 
-/* Seções — mesmo estilo */
 .section {
-    border-radius: 18px !important;
+    background: linear-gradient(
+        150deg,
+        #262628 0%,
+        #1c1c1e 25%,
+        #181819 55%,
+        #1c1c1e 80%,
+        #222224 100%
+    ) !important;
     border: none !important;
-    position: relative !important;
-    overflow: hidden !important;
-
-    background: #0e0e0e !important;
-
+    border-radius: 20px !important;
     box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.03),
-        0 0 0 1px rgba(255,255,255,0.14),
-        0 0 0 2px rgba(0,0,0,0.9),
-        0 0 0 3px rgba(255,255,255,0.05),
-        0 8px 24px rgba(0,0,0,0.65),
-        0 20px 60px rgba(0,0,0,0.55),
-        0 40px 80px rgba(0,0,0,0.35) !important;
-    transition: box-shadow 0.3s ease !important;
+        0 1px 0 rgba(255,255,255,0.20),
+        -1px 0 0 rgba(255,255,255,0.09),
+        1px 0 0 rgba(0,0,0,0.55),
+        0 -1px 0 rgba(0,0,0,0.75),
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        inset 0 -2px 4px rgba(0,0,0,0.35),
+        0 6px 12px rgba(0,0,0,0.45),
+        0 16px 48px rgba(0,0,0,0.55),
+        0 32px 80px rgba(0,0,0,0.35) !important;
 }
-
 .section::before {
     content: '' !important;
     position: absolute !important;
-    inset: 0 !important;
-    border-radius: 18px !important;
-    background: radial-gradient(
-        ellipse 65% 45% at 15% 20%,
-        rgba(201,162,60,0.16) 0%,
-        rgba(180,140,50,0.07) 35%,
-        transparent 65%
-    ) !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
-}
-
-.section::after {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important; left: 5% !important; right: 5% !important;
-    height: 1px !important;
+    top: 0 !important; left: 0 !important; right: 0 !important;
+    height: 50% !important;
+    border-radius: 20px 20px 0 0 !important;
     background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(201,168,76,0.4) 25%,
-        rgba(255,255,255,0.25) 50%,
-        rgba(201,168,76,0.4) 75%,
-        transparent
+        150deg,
+        rgba(255,255,255,0.08) 0%,
+        rgba(255,255,255,0.03) 40%,
+        transparent 100%
     ) !important;
-    pointer-events: none !important;
-    z-index: 2 !important;
+    pointer-events: none !important; z-index: 1 !important;
 }
-
 .section:hover {
     box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.04),
-        0 0 0 1px rgba(201,168,76,0.25),
-        0 0 0 2px rgba(0,0,0,0.9),
-        0 0 0 3px rgba(201,168,76,0.08),
-        0 12px 32px rgba(0,0,0,0.7),
-        0 28px 70px rgba(0,0,0,0.6) !important;
+        0 1px 0 rgba(255,255,255,0.24),
+        -1px 0 0 rgba(255,255,255,0.11),
+        1px 0 0 rgba(0,0,0,0.55),
+        0 -1px 0 rgba(0,0,0,0.75),
+        inset 0 1px 0 rgba(255,255,255,0.09),
+        inset 0 -2px 4px rgba(0,0,0,0.35),
+        0 8px 16px rgba(0,0,0,0.5),
+        0 20px 60px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(201,168,76,0.18) !important;
 }
 
-/* Outros cards — mesmo padrão */
 .emprestimo-card,
 .reserva-card,
 .card-resumo,
 .resumo-card {
-    background: #0e0e0e !important;
+    background: linear-gradient(
+        155deg,
+        #252527 0%,
+        #1c1c1e 30%,
+        #171719 60%,
+        #1c1c1e 100%
+    ) !important;
     border: none !important;
-    border-radius: 16px !important;
+    border-radius: 18px !important;
     position: relative !important;
     overflow: hidden !important;
     box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.03),
-        0 0 0 1px rgba(255,255,255,0.12),
-        0 0 0 2px rgba(0,0,0,0.9),
-        0 0 0 3px rgba(255,255,255,0.04),
-        0 6px 20px rgba(0,0,0,0.6),
-        0 16px 48px rgba(0,0,0,0.5) !important;
+        0 1px 0 rgba(255,255,255,0.16),
+        -1px 0 0 rgba(255,255,255,0.07),
+        1px 0 0 rgba(0,0,0,0.5),
+        0 -1px 0 rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 4px 12px rgba(0,0,0,0.45),
+        0 12px 40px rgba(0,0,0,0.5) !important;
 }
 .emprestimo-card::before,
 .reserva-card::before,
@@ -6765,12 +6747,9 @@ font-size: 1.1em;
 .resumo-card::before {
     content: '' !important;
     position: absolute !important;
-    inset: 0 !important;
-    background: radial-gradient(
-        ellipse 60% 50% at 15% 20%,
-        rgba(201,162,60,0.14) 0%,
-        rgba(180,140,50,0.06) 35%,
-        transparent 65%
-    ) !important;
+    top: 0 !important; left: 0 !important; right: 0 !important;
+    height: 45% !important;
+    border-radius: 18px 18px 0 0 !important;
+    background: linear-gradient(150deg, rgba(255,255,255,0.06) 0%, transparent 100%) !important;
     pointer-events: none !important; z-index: 1 !important;
 }
