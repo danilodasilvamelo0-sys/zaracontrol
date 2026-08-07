@@ -632,8 +632,8 @@
             .exercicio-table td:nth-child(5),
             .exercicio-table td:nth-child(6) { margin-left: 4px; }
             .exercicio-table td:nth-child(7) { margin-left: 34px; margin-top: 2px; }
-            .ex-nome-txt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100%; }
-            .ex-obs { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .ex-nome-txt { white-space: normal; overflow: visible; text-overflow: unset; display: block; }
+            .ex-obs { white-space: normal; overflow: visible; text-overflow: unset; }
             .ex-acoes { opacity: 1; }
             .treino-volume { flex-wrap: wrap; gap: 6px; padding: 8px 14px; }
             .modal-box { padding: 20px 16px; }
@@ -832,6 +832,7 @@
 .ex-nome-feito {
     text-decoration: line-through;
     color: var(--text-dim);
+    white-space: normal;
 }
 .ex-obs {
     font-size: 0.68em;
