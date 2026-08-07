@@ -774,3 +774,158 @@ body {
 @media (min-width: 769px) {
     .mobile-nav { display: none !important; }
 }
+
+/* ══════════════════════════════════════════════════
+   GLASS EFFECT — Operações: layout idêntico ao Financeiro
+   ══════════════════════════════════════════════════ */
+
+/* Seções principais */
+.op-section {
+    background: linear-gradient(
+        150deg,
+        #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%
+    ) !important;
+    border: none !important;
+    border-radius: 20px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.22),
+        -1px 0 0 rgba(255,255,255,0.10),
+        1px 0 0 rgba(0,0,0,0.6),
+        0 -1px 0 rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        0 6px 12px rgba(0,0,0,0.5),
+        0 16px 48px rgba(0,0,0,0.6),
+        0 32px 80px rgba(0,0,0,0.4) !important;
+}
+.op-section::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important; left: 0 !important; right: 0 !important;
+    height: 50% !important;
+    border-radius: 20px 20px 0 0 !important;
+    background: linear-gradient(150deg,
+        rgba(255,255,255,0.09) 0%,
+        rgba(255,255,255,0.03) 35%,
+        transparent 100%
+    ) !important;
+    pointer-events: none !important; z-index: 0 !important;
+}
+
+/* Cards de operação */
+.op-card, .op-card-inner {
+    background: linear-gradient(
+        150deg,
+        #262628 0%, #1e1e20 25%, #191919 55%, #1c1c1e 100%
+    ) !important;
+    border: none !important;
+    border-radius: 16px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.18),
+        -1px 0 0 rgba(255,255,255,0.08),
+        1px 0 0 rgba(0,0,0,0.55),
+        0 -1px 0 rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 4px 12px rgba(0,0,0,0.45),
+        0 12px 36px rgba(0,0,0,0.5) !important;
+}
+.op-card::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important; left: 0 !important; right: 0 !important;
+    height: 50% !important;
+    border-radius: 16px 16px 0 0 !important;
+    background: linear-gradient(150deg,
+        rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 40%, transparent 100%
+    ) !important;
+    pointer-events: none !important; z-index: 0 !important;
+}
+
+/* Cards de poder */
+.poder-card {
+    background: linear-gradient(
+        150deg,
+        #262628 0%, #1e1e20 25%, #191919 55%, #1c1c1e 100%
+    ) !important;
+    border: none !important;
+    border-radius: 16px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.18),
+        -1px 0 0 rgba(255,255,255,0.08),
+        1px 0 0 rgba(0,0,0,0.55),
+        0 -1px 0 rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 4px 12px rgba(0,0,0,0.45),
+        0 12px 36px rgba(0,0,0,0.5) !important;
+}
+.poder-card::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important; left: 0 !important; right: 0 !important;
+    height: 50% !important;
+    border-radius: 16px 16px 0 0 !important;
+    background: linear-gradient(150deg,
+        rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 40%, transparent 100%
+    ) !important;
+    pointer-events: none !important; z-index: 0 !important;
+}
+
+/* Aliados */
+.aliado-card {
+    background: linear-gradient(
+        150deg,
+        #262628 0%, #1e1e20 25%, #191919 55%, #1c1c1e 100%
+    ) !important;
+    border: none !important;
+    border-radius: 14px !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.16),
+        -1px 0 0 rgba(255,255,255,0.07),
+        1px 0 0 rgba(0,0,0,0.5),
+        0 -1px 0 rgba(0,0,0,0.65),
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 4px 12px rgba(0,0,0,0.4),
+        0 10px 28px rgba(0,0,0,0.45) !important;
+}
+
+/* Favores */
+.favor-item {
+    background: linear-gradient(
+        150deg,
+        #262628 0%, #1e1e20 25%, #191919 55%, #1c1c1e 100%
+    ) !important;
+    border: none !important;
+    border-radius: 14px !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.16),
+        -1px 0 0 rgba(255,255,255,0.07),
+        1px 0 0 rgba(0,0,0,0.5),
+        0 -1px 0 rgba(0,0,0,0.65),
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 4px 12px rgba(0,0,0,0.4),
+        0 10px 28px rgba(0,0,0,0.45) !important;
+}
+
+/* Tabs de operações */
+.op-tabs {
+    background: linear-gradient(
+        150deg,
+        #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%
+    ) !important;
+    border: none !important;
+    border-radius: 14px !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.20),
+        -1px 0 0 rgba(255,255,255,0.09),
+        1px 0 0 rgba(0,0,0,0.55),
+        0 -1px 0 rgba(0,0,0,0.75),
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        0 6px 20px rgba(0,0,0,0.5),
+        0 12px 36px rgba(0,0,0,0.45) !important;
+}
