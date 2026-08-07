@@ -46,10 +46,11 @@ async function syncLoad() {
         if (error || !data?.dados) return false;
         // Mesclar dados preservando estrutura do gym
         const carregado = data.dados;
-        if (carregado.treinos)     gym.treinos     = carregado.treinos;
-        if (carregado.dieta)       gym.dieta       = carregado.dieta;
-        if (carregado.medicamentos)gym.medicamentos = carregado.medicamentos;
-        if (carregado.metas)       gym.metas       = carregado.metas;
+        if (carregado.treinos)      gym.treinos      = carregado.treinos;
+        if (carregado.dieta)        gym.dieta        = carregado.dieta;
+        if (carregado.medicamentos) gym.medicamentos  = carregado.medicamentos;
+        if (carregado.metas)        gym.metas        = carregado.metas;
+        if (carregado.observacoes)  gym.observacoes  = carregado.observacoes;
         localStorage.setItem(GYM_KEY, JSON.stringify(gym));
         return true;
     } catch(e) { console.error('syncLoad:', e); return false; }
