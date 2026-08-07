@@ -5,7 +5,7 @@
 /* ── SIDEBAR (cópia do padrão do site) ── */
 .sidebar {
     position:fixed; top:0; left:0; width:70px; height:100vh;
-    background:#0e0e0e; border-right:1px solid rgba(201,168,76,0.12);
+    background: linear-gradient(150deg, #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%);border-right:none;
     display:flex; flex-direction:column; align-items:center;
     z-index:200; overflow:hidden; transition:width 0.3s ease;
 }
@@ -36,7 +36,7 @@
 /* ── CONTAINER (padrão do site) ── */
 body {
     font-family:'Montserrat',sans-serif;
-    background:#080808;
+    background: linear-gradient(150deg, #222224 0%, #1a1a1c 40%, #161618 100%);
     color:#ffffff;
     min-height:100vh;
     padding-left:70px;
@@ -182,7 +182,7 @@ body {
     border-radius: 12px;
     cursor:pointer; transition:all 0.2s; position:relative;
     -webkit-tap-highlight-color:transparent;
-    background: linear-gradient(150deg, #262628 0%, #1e1e20 30%, #191919 60%, #1c1c1e 100%);
+    background: linear-gradient(150deg, #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%);
     box-shadow:
         0 1px 0 rgba(255,255,255,0.16),
         -1px 0 0 rgba(255,255,255,0.07),
@@ -307,7 +307,7 @@ body {
 }
 .modal-overlay.active { display:flex; }
 .modal-box {
-    background:#141414; border:1px solid rgba(201,168,76,0.14);
+    background: linear-gradient(150deg, #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%);border:none;box-shadow:0 1px 0 rgba(255,255,255,0.22),-1px 0 0 rgba(255,255,255,0.10),1px 0 0 rgba(0,0,0,0.6),0 -1px 0 rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.08),0 8px 32px rgba(0,0,0,0.6);
     border-radius:16px; padding:26px 22px; width:100%; max-width:400px;
     box-shadow:0 24px 80px rgba(0,0,0,0.8); animation:fadeUp 0.2s ease;
 }
