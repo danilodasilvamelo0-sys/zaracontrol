@@ -610,7 +610,7 @@
             .gym-tab { font-size: 0.70em; padding: 8px 10px; gap: 4px; flex-shrink: 0; }
             .gym-tab svg { width: 14px; height: 14px; }
             .section-header { padding: 14px 16px; flex-wrap: wrap; gap: 8px; }
-            .section-body, .treinos-list, .refeicoes-list { padding: 14px 14px; }
+            .section-body, .treinos-list, .refeicoes-list { padding: 10px 0; }
             .exercicio-table thead { display: none; }
             .exercicio-table tbody tr {
                 display: flex; flex-wrap: wrap; padding: 10px 12px;
@@ -666,7 +666,7 @@
     .sidebar { display: none; }
     .mobile-nav { display: block; }
 
-    .container { padding: 10px 2px 30px; }
+    .container { padding: 10px 0 30px; }
 
     /* Header */
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; padding-bottom: 16px; margin-bottom: 20px; }
@@ -688,7 +688,7 @@
     .macro-val   { font-size: 1.4em; }
 
     /* Treinos — mobile premium */
-    .treino-card { margin: 0 0 10px; border-radius: 12px; }
+    .treino-card { margin: 0 0 8px; border-radius: 10px; }
 
     /* Header do treino: compacto, mantém gradiente do desktop */
     .treino-card-header {
@@ -712,8 +712,8 @@
 
     /* Lista de exercícios: padding zero nas laterais */
     .exercicios-list {
-        padding: 6px 4px 4px !important;
-        gap: 6px !important;
+        padding: 4px 0 4px !important;
+        gap: 5px !important;
     }
 
     /* Card de exercício: ocupa toda largura */
