@@ -349,32 +349,15 @@ body.war-mode #warBanner{transform:translateY(0)}
 .sidebar:hover .sidebar-footer p{opacity:1;}
 
 /* ========== MOBILE NAV (dark) ========== */
-.mobile-nav{
-    display:none;position:fixed;bottom:0;left:0;right:0;
-    background:linear-gradient(180deg,#141420 0%,#0f0f18 100%);
-    border-top:1px solid rgba(212,168,67,.12);
-    box-shadow:0 -2px 20px rgba(0,0,0,.4);
-    padding:8px 0;z-index:2000;
-}
-.mobile-nav-items{display:flex;justify-content:space-around;align-items:center;}
-.mobile-nav-item{
-    display:flex;flex-direction:column;align-items:center;gap:3px;
-    color:rgba(255,255,255,.4);text-decoration:none;font-size:.6em;
-    padding:5px 8px;transition:all .3s;font-weight:600;letter-spacing:.5px;
-    text-transform:uppercase;font-family:'Montserrat',sans-serif;
-}
-.mobile-nav-item svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.5;}
-.mobile-nav-item.active{color:#d4a843;}
-.mobile-nav-item:hover{color:rgba(212,168,67,.75);}
 
 @media(max-width:768px){
     body{padding-left:0!important;padding-bottom:80px!important;}
     .sidebar{display:none!important;}
-    .mobile-nav{display:block;}
+
 }
 @media(min-width:769px){
     body{padding-left:70px;}
-    .mobile-nav{display:none!important;}
+
     .sidebar:hover~* .wrap,.sidebar:hover~#app .wrap{margin-left:80px;}
 }
 
@@ -474,18 +457,35 @@ body.war-mode #warBanner{transform:translateY(0)}
 .rpt-card,
 .wb-card { border-radius: 14px !important; }
 
+/* Inativos: só ícone */
+
+/* Ativo: ícone + texto + pílula dourada */
+
+
+@media (max-width: 768px) {
+    body { padding-left: 10px !important; padding-bottom: 80px !important; }
+
+}
+ }
+
+@media (max-width: 768px) {
+    body { padding-left: 10px !important; padding-bottom: 90px !important; }
+
+}
+ }
+
+/* ══════════════════════════════════════════
+   MOBILE NAV — FLOATING PADRÃO ZARA
+   Financeiro · GYM · Início · Operações · Notas · Comando
+   ══════════════════════════════════════════ */
 .mobile-nav {
     display: none;
     position: fixed;
-    bottom: 14px;
-    left: 10px; right: 10px;
-    z-index: 1000;
+    bottom: 14px; left: 10px; right: 10px;
+    z-index: 9999;
     border-radius: 22px;
     padding: 7px 8px;
-    background: linear-gradient(
-        150deg,
-        #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%
-    );
+    background: linear-gradient(150deg, #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%);
     box-shadow:
         0 1px 0 rgba(255,255,255,0.18),
         -1px 0 0 rgba(255,255,255,0.08),
@@ -502,19 +502,19 @@ body.war-mode #warBanner{transform:translateY(0)}
     align-items: center;
     gap: 2px;
 }
-/* Inativos: só ícone */
 .mobile-nav-item {
     display: flex; flex-direction: column; align-items: center;
     gap: 0; color: rgba(245,240,232,0.38);
     text-decoration: none; font-size: 0;
-    padding: 8px 6px; border-radius: 14px;
+    padding: 8px 6px; border-radius: 14px; flex: 1;
     transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
     -webkit-tap-highlight-color: transparent;
-    flex: 1;
 }
-.mobile-nav-item svg { width: 22px; height: 22px; stroke: currentColor; flex-shrink: 0; }
-
-/* Ativo: ícone + texto + pílula dourada */
+.mobile-nav-item svg {
+    width: 22px; height: 22px;
+    stroke: currentColor; fill: none;
+    flex-shrink: 0;
+}
 .mobile-nav-item.active {
     color: #0a0a0a;
     font-size: 0.56em;
@@ -522,9 +522,9 @@ body.war-mode #warBanner{transform:translateY(0)}
     gap: 3px;
     letter-spacing: 0.3px;
     background: linear-gradient(135deg, #e8c160, #c9a84c);
-    box-shadow: 0 2px 10px rgba(201,168,76,0.45), 0 4px 16px rgba(201,168,76,0.2);
-    padding: 7px 12px;
     flex: none;
+    padding: 7px 12px;
+    box-shadow: 0 2px 10px rgba(201,168,76,0.45), 0 4px 16px rgba(201,168,76,0.2);
 }
 .mobile-nav-item:not(.active):hover {
     color: rgba(201,168,76,0.7);
@@ -532,12 +532,9 @@ body.war-mode #warBanner{transform:translateY(0)}
 }
 @media (max-width: 768px) {
     body { padding-left: 10px !important; padding-bottom: 80px !important; }
-    .sidebar { display: none; } .mobile-nav { display: block; }
+    .sidebar { display: none !important; }
+    .mobile-nav { display: block !important; }
 }
-@media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } }
-
-@media (max-width: 768px) {
-    body { padding-left: 10px !important; padding-bottom: 90px !important; }
-    .sidebar { display: none; } .mobile-nav { display: block; }
+@media (min-width: 769px) {
+    .mobile-nav { display: none !important; }
 }
-@media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } }
