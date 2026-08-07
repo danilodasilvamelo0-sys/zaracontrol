@@ -590,3 +590,45 @@ body {
 @media (min-width: 769px) {
     .mobile-nav { display: none !important; }
 }
+
+/* ══════════════════════════════════════════
+   NOTAS MOBILE — LARGURA MÁXIMA
+   ══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    body {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-bottom: 85px !important;
+    }
+    .container {
+        padding: 8px 0 30px !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+    /* Header da página */
+    .page-header {
+        padding: 0 10px 12px !important;
+    }
+    /* Layout das notas — largura total */
+    .notas-layout {
+        border-radius: 12px !important;
+        margin: 0 4px !important;
+    }
+    /* Itens de nota com margem mínima */
+    .nota-item {
+        margin: 3px 4px !important;
+        border-radius: 10px !important;
+    }
+    /* Col-cats e col-notas sem padding extra */
+    .col-cats,
+    .col-notas {
+        padding: 0 !important;
+    }
+    /* Busca ocupa toda a largura */
+    .busca-input-wrap {
+        margin: 6px 6px !important;
+    }
+    #buscaInput {
+        width: 100% !important;
+    }
+}
