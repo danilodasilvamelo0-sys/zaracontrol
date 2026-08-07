@@ -84,73 +84,84 @@
         .menu { width:100%; max-width:460px; display:flex; flex-direction:column; gap:12px; }
 
         .card {
-            position:relative;
-            display:flex; align-items:center; gap:16px;
-            padding:0;
-            text-decoration:none;
-            border-radius:20px;
-            overflow:hidden;
-            transition:transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease;
-
-            /* Fundo espelhado: gradiente escuro com reflexo */
-            background: linear-gradient(
-                160deg,
-                #1a1a1a 0%,
-                #111111 30%,
-                #0d0d0d 60%,
-                #141414 100%
-            );
-
-            /* Borda sutil */
-            border: 1px solid rgba(255,255,255,0.07);
-
-            /* Sombra com profundidade */
-            box-shadow:
-                0 4px 24px rgba(0,0,0,0.6),
-                0 1px 0 rgba(255,255,255,0.05) inset,
-                0 -1px 0 rgba(0,0,0,0.5) inset;
-
+            position: relative;
+            display: flex; align-items: center; gap: 16px;
+            padding: 0;
+            text-decoration: none;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease;
             animation: fadeUp 0.5s ease both;
+
+            /* Glass — idêntico ao financeiro */
+            background: linear-gradient(
+                150deg,
+                #2a2a2d 0%,
+                #202022 20%,
+                #1a1a1c 50%,
+                #1e1e20 80%,
+                #242426 100%
+            );
+            border: none;
+
+            /* Moldura cromada + elevação */
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.22),
+                -1px 0 0 rgba(255,255,255,0.10),
+                1px 0 0 rgba(0,0,0,0.6),
+                0 -1px 0 rgba(0,0,0,0.8),
+                inset 0 1px 0 rgba(255,255,255,0.08),
+                inset 0 -2px 4px rgba(0,0,0,0.4),
+                0 6px 12px rgba(0,0,0,0.5),
+                0 16px 48px rgba(0,0,0,0.6),
+                0 32px 80px rgba(0,0,0,0.4);
         }
 
-        /* Reflexo superior (efeito espelho/vidro) */
+        /* Reflexo de vidro superior */
         .card::before {
-            content:'';
-            position:absolute; top:0; left:0; right:0;
-            height:50%;
-            border-radius:20px 20px 0 0;
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 55%;
+            border-radius: 20px 20px 0 0;
             background: linear-gradient(
-                180deg,
-                rgba(255,255,255,0.04) 0%,
-                rgba(255,255,255,0.01) 50%,
+                150deg,
+                rgba(255,255,255,0.10) 0%,
+                rgba(255,255,255,0.04) 35%,
+                rgba(255,255,255,0.01) 60%,
                 transparent 100%
             );
-            pointer-events:none;
-            z-index:1;
+            pointer-events: none; z-index: 1;
         }
 
-        /* Borda dourada no hover */
+        /* Brilho pontual canto superior */
         .card::after {
-            content:'';
-            position:absolute; inset:0;
-            border-radius:20px;
-            border:1px solid transparent;
-            background:linear-gradient(#111,#111) padding-box,
-                        linear-gradient(135deg, rgba(201,168,76,0.6) 0%, transparent 50%, rgba(201,168,76,0.3) 100%) border-box;
-            opacity:0;
-            transition:opacity 0.3s ease;
-            pointer-events:none;
+            content: '';
+            position: absolute;
+            top: -20px; left: -20px;
+            width: 150px; height: 150px;
+            background: radial-gradient(
+                circle at 20% 20%,
+                rgba(255,255,255,0.07) 0%,
+                rgba(255,255,255,0.02) 40%,
+                transparent 65%
+            );
+            pointer-events: none; z-index: 1;
         }
 
         .card:hover, .card:active {
-            transform: translateY(-2px) scale(1.01);
+            transform: translateY(-3px);
             box-shadow:
-                0 8px 40px rgba(0,0,0,0.7),
-                0 0 0 1px rgba(201,168,76,0.2),
-                0 1px 0 rgba(255,255,255,0.08) inset,
-                inset 0 0 40px rgba(201,168,76,0.03);
+                0 1px 0 rgba(255,255,255,0.28),
+                -1px 0 0 rgba(255,255,255,0.14),
+                1px 0 0 rgba(0,0,0,0.6),
+                0 -1px 0 rgba(0,0,0,0.8),
+                inset 0 1px 0 rgba(255,255,255,0.10),
+                inset 0 -2px 4px rgba(0,0,0,0.4),
+                0 8px 16px rgba(0,0,0,0.55),
+                0 24px 64px rgba(0,0,0,0.65),
+                0 0 0 1px rgba(201,168,76,0.25),
+                0 0 50px rgba(201,168,76,0.08);
         }
-        .card:hover::after, .card:active::after { opacity:1; }
         .card:hover .card-icon, .card:active .card-icon { background:rgba(201,168,76,0.12); border-color:rgba(201,168,76,0.3); }
         .card:hover .card-icon svg, .card:active .card-icon svg { stroke:var(--gold-b); filter:drop-shadow(0 0 4px rgba(201,168,76,0.5)); }
         .card:hover .card-title, .card:active .card-title { color:var(--gold-b); }
