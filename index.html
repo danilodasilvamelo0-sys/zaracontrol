@@ -4,308 +4,230 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZARA | Private Access</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
         :root {
-            --gold:     #c9a84c;
-            --gold-b:   #e8c160;
-            --gold-dim: rgba(201,168,76,0.08);
-            --gold-mid: rgba(201,168,76,0.18);
-            --border:   rgba(201,168,76,0.15);
-            --bg:       #060606;
-            --s1:       #0c0c0c;
-            --text:     #f5f0e8;
-            --text-dim: rgba(245,240,232,0.45);
+            --gold:    #c9a84c;
+            --gold-b:  #e8c160;
+            --bg:      #050505;
+            --text:    #f5f0e8;
+            --text-dim:rgba(245,240,232,0.4);
         }
 
-        html, body {
-            height: 100%;
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Montserrat', sans-serif;
-            overflow-x: hidden;
-        }
+        html, body { min-height:100%; background:var(--bg); color:var(--text); font-family:'Montserrat',sans-serif; overflow-x:hidden; }
 
-        /* ── FUNDO COM GRID FUTURISTA ── */
+        /* Grade de fundo */
         body::before {
-            content: '';
-            position: fixed; inset: 0; z-index: 0;
+            content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
             background-image:
-                linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
+                linear-gradient(rgba(201,168,76,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201,168,76,0.025) 1px, transparent 1px);
+            background-size: 72px 72px;
         }
+        /* Brilho radial topo */
         body::after {
-            content: '';
-            position: fixed; inset: 0; z-index: 0;
-            background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 65%);
-            pointer-events: none;
+            content:''; position:fixed; top:0; left:0; right:0; height:50vh; z-index:0; pointer-events:none;
+            background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 100%);
         }
 
         .page {
-            position: relative; z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 60px 24px 48px;
+            position:relative; z-index:1;
+            min-height:100vh;
+            display:flex; flex-direction:column; align-items:center;
+            padding: 56px 20px 52px;
         }
 
-        /* ── TOPO ── */
-        .hero { text-align: center; margin-bottom: 56px; }
+        /* ── HERO ── */
+        .hero { text-align:center; margin-bottom:48px; animation: fadeUp 0.7s ease both; }
 
-        .logo-wrap {
-            position: relative;
-            width: 88px; height: 88px;
-            margin: 0 auto 32px;
-        }
+        .logo-wrap { position:relative; width:84px; height:84px; margin:0 auto 28px; }
         .logo-ring {
-            position: absolute; inset: 0;
-            border-radius: 50%;
-            border: 1px solid var(--border);
-            animation: spin 12s linear infinite;
+            position:absolute; inset:0; border-radius:50%;
+            border:1px solid rgba(201,168,76,0.2);
+            animation:spin 14s linear infinite;
         }
         .logo-ring::before {
-            content: '';
-            position: absolute; top: -1px; left: 50%;
-            transform: translateX(-50%);
-            width: 6px; height: 6px;
-            background: var(--gold);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--gold);
+            content:''; position:absolute; top:-2px; left:50%; transform:translateX(-50%);
+            width:5px; height:5px; background:var(--gold); border-radius:50%;
+            box-shadow:0 0 10px 2px rgba(201,168,76,0.6);
         }
         .logo-inner {
-            position: absolute; inset: 8px;
-            background: var(--s1);
-            border-radius: 50%;
-            border: 1px solid rgba(201,168,76,0.1);
-            display: flex; align-items: center; justify-content: center;
+            position:absolute; inset:9px; border-radius:50%;
+            background:linear-gradient(145deg, #141414, #0a0a0a);
+            border:1px solid rgba(201,168,76,0.12);
+            display:flex; align-items:center; justify-content:center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 0 20px rgba(0,0,0,0.8);
         }
-        .logo-z {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.2em;
-            font-weight: 600;
-            color: var(--gold);
-            letter-spacing: 2px;
-            line-height: 1;
-        }
+        .logo-z { font-family:'Cormorant Garamond',serif; font-size:2em; font-weight:600; color:var(--gold); }
 
-        .brand {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 3.8em;
-            font-weight: 300;
-            letter-spacing: 18px;
-            text-transform: uppercase;
-            color: var(--text);
-            line-height: 1;
-            margin-bottom: 10px;
-        }
-        .brand-sub {
-            font-size: 0.60em;
-            font-weight: 700;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            color: var(--gold);
-            opacity: 0.8;
-        }
+        .brand { font-family:'Cormorant Garamond',serif; font-size:3.6em; font-weight:300; letter-spacing:16px; text-transform:uppercase; margin-bottom:8px; }
+        .brand-sub { font-size:0.58em; font-weight:700; letter-spacing:7px; text-transform:uppercase; color:var(--gold); opacity:0.75; }
 
-        .divider {
-            display: flex; align-items: center; gap: 12px;
-            margin: 28px auto;
-            width: 180px;
-        }
-        .divider-line { flex: 1; height: 1px; background: var(--border); }
-        .divider-diamond {
-            width: 5px; height: 5px;
-            background: var(--gold);
-            transform: rotate(45deg);
-            flex-shrink: 0;
-        }
+        .divider { display:flex; align-items:center; gap:10px; margin:24px auto; width:160px; }
+        .divider-line { flex:1; height:1px; background:rgba(201,168,76,0.2); }
+        .divider-dot { width:4px; height:4px; background:var(--gold); transform:rotate(45deg); }
 
-        .access-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 22px;
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            font-size: 0.62em;
-            font-weight: 700;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--gold);
-            background: var(--gold-dim);
+        .badge {
+            display:inline-flex; align-items:center; gap:7px;
+            padding:7px 20px; border-radius:40px;
+            border:1px solid rgba(201,168,76,0.2);
+            background:rgba(201,168,76,0.06);
+            font-size:0.60em; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:var(--gold);
         }
-        .access-badge::before {
-            content: '';
-            width: 6px; height: 6px;
-            background: var(--gold);
-            border-radius: 50%;
-            box-shadow: 0 0 6px var(--gold);
-            animation: pulse 2s ease-in-out infinite;
-        }
+        .badge-dot { width:5px; height:5px; background:var(--gold); border-radius:50%; box-shadow:0 0 5px var(--gold); animation:pulse 2s ease-in-out infinite; }
 
-        /* ── MENU CARDS ── */
-        .menu {
-            width: 100%; max-width: 480px;
-            display: flex; flex-direction: column;
-            gap: 10px;
-        }
+        /* ══════════════════════════════════════
+           CARDS ESPELHADOS / GLASS PREMIUM
+        ══════════════════════════════════════ */
+        .menu { width:100%; max-width:460px; display:flex; flex-direction:column; gap:12px; }
 
-        .menu-item {
-            position: relative;
-            display: flex; align-items: center;
-            gap: 18px;
-            padding: 18px 22px;
-            text-decoration: none;
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            background: rgba(12,12,12,0.8);
-            border: 1px solid rgba(255,255,255,0.06);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
+        .card {
+            position:relative;
+            display:flex; align-items:center; gap:16px;
+            padding:0;
+            text-decoration:none;
+            border-radius:20px;
+            overflow:hidden;
+            transition:transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease;
 
-        /* Borda dourada animada no hover */
-        .menu-item::before {
-            content: '';
-            position: absolute; inset: 0;
-            border-radius: 16px;
-            padding: 1px;
-            background: linear-gradient(135deg, var(--gold), transparent 50%, var(--gold));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.35s ease;
-        }
+            /* Fundo espelhado: gradiente escuro com reflexo */
+            background: linear-gradient(
+                160deg,
+                #1a1a1a 0%,
+                #111111 30%,
+                #0d0d0d 60%,
+                #141414 100%
+            );
 
-        /* Brilho lateral */
-        .menu-item::after {
-            content: '';
-            position: absolute;
-            left: 0; top: 20%; bottom: 20%;
-            width: 2px;
-            background: linear-gradient(transparent, var(--gold), transparent);
-            border-radius: 2px;
-            opacity: 0;
-            transition: opacity 0.35s ease;
-        }
-
-        .menu-item:hover,
-        .menu-item:active {
-            background: rgba(20,20,20,0.95);
-            transform: translateX(4px);
-            border-color: transparent;
-        }
-        .menu-item:hover::before,
-        .menu-item:active::before { opacity: 1; }
-        .menu-item:hover::after,
-        .menu-item:active::after   { opacity: 1; }
-        .menu-item:hover .icon,
-        .menu-item:active .icon    { background: var(--gold-mid); border-color: var(--border); }
-        .menu-item:hover .icon svg,
-        .menu-item:active .icon svg { stroke: var(--gold-b); }
-        .menu-item:hover .menu-title,
-        .menu-item:active .menu-title { color: var(--gold-b); }
-        .menu-item:hover .arrow,
-        .menu-item:active .arrow   { opacity: 1; transform: translateX(3px); }
-
-        /* Ícone */
-        .icon {
-            width: 46px; height: 46px;
-            border-radius: 13px;
-            background: rgba(255,255,255,0.04);
+            /* Borda sutil */
             border: 1px solid rgba(255,255,255,0.07);
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.35s ease;
-        }
-        .icon svg {
-            width: 20px; height: 20px;
-            stroke: rgba(245,240,232,0.55);
-            transition: stroke 0.35s ease;
+
+            /* Sombra com profundidade */
+            box-shadow:
+                0 4px 24px rgba(0,0,0,0.6),
+                0 1px 0 rgba(255,255,255,0.05) inset,
+                0 -1px 0 rgba(0,0,0,0.5) inset;
+
+            animation: fadeUp 0.5s ease both;
         }
 
-        /* Texto */
-        .text { flex: 1; min-width: 0; }
-        .menu-title {
-            font-size: 0.78em;
-            font-weight: 700;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            color: var(--text);
-            transition: color 0.35s ease;
-            margin-bottom: 3px;
-        }
-        .menu-sub {
-            font-size: 0.60em;
-            color: var(--text-dim);
-            letter-spacing: 0.5px;
-            font-weight: 400;
+        /* Reflexo superior (efeito espelho/vidro) */
+        .card::before {
+            content:'';
+            position:absolute; top:0; left:0; right:0;
+            height:50%;
+            border-radius:20px 20px 0 0;
+            background: linear-gradient(
+                180deg,
+                rgba(255,255,255,0.04) 0%,
+                rgba(255,255,255,0.01) 50%,
+                transparent 100%
+            );
+            pointer-events:none;
+            z-index:1;
         }
 
-        /* Seta */
-        .arrow {
-            color: var(--gold);
-            opacity: 0;
-            transition: all 0.35s ease;
-            flex-shrink: 0;
+        /* Borda dourada no hover */
+        .card::after {
+            content:'';
+            position:absolute; inset:0;
+            border-radius:20px;
+            border:1px solid transparent;
+            background:linear-gradient(#111,#111) padding-box,
+                        linear-gradient(135deg, rgba(201,168,76,0.6) 0%, transparent 50%, rgba(201,168,76,0.3) 100%) border-box;
+            opacity:0;
+            transition:opacity 0.3s ease;
+            pointer-events:none;
         }
-        .arrow svg { width: 16px; height: 16px; }
 
-        /* Número decorativo */
-        .item-num {
-            position: absolute;
-            right: 20px; bottom: 10px;
-            font-size: 0.45em;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: rgba(201,168,76,0.12);
-            font-family: 'Cormorant Garamond', serif;
+        .card:hover, .card:active {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow:
+                0 8px 40px rgba(0,0,0,0.7),
+                0 0 0 1px rgba(201,168,76,0.2),
+                0 1px 0 rgba(255,255,255,0.08) inset,
+                inset 0 0 40px rgba(201,168,76,0.03);
         }
+        .card:hover::after, .card:active::after { opacity:1; }
+        .card:hover .card-icon, .card:active .card-icon { background:rgba(201,168,76,0.12); border-color:rgba(201,168,76,0.3); }
+        .card:hover .card-icon svg, .card:active .card-icon svg { stroke:var(--gold-b); filter:drop-shadow(0 0 4px rgba(201,168,76,0.5)); }
+        .card:hover .card-title, .card:active .card-title { color:var(--gold-b); }
+        .card:hover .card-arrow, .card:active .card-arrow { opacity:1; transform:translateX(2px); }
+
+        /* Conteúdo do card */
+        .card-inner {
+            position:relative; z-index:2;
+            display:flex; align-items:center; gap:16px;
+            width:100%; padding:17px 18px;
+        }
+
+        .card-icon {
+            width:46px; height:46px; flex-shrink:0;
+            border-radius:13px;
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08);
+            display:flex; align-items:center; justify-content:center;
+            transition:all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+        .card-icon svg { width:19px; height:19px; stroke:rgba(245,240,232,0.5); transition:all 0.3s ease; }
+
+        .card-text { flex:1; min-width:0; }
+        .card-title {
+            font-size:0.75em; font-weight:700; letter-spacing:2.5px; text-transform:uppercase;
+            color:rgba(245,240,232,0.9); margin-bottom:4px;
+            transition:color 0.3s ease;
+        }
+        .card-sub { font-size:0.58em; color:var(--text-dim); letter-spacing:0.3px; }
+
+        .card-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+
+        .card-num {
+            font-family:'Cormorant Garamond',serif;
+            font-size:0.65em; font-weight:300;
+            color:rgba(201,168,76,0.25); letter-spacing:1px;
+        }
+
+        .card-arrow {
+            color:rgba(201,168,76,0.7); opacity:0;
+            transition:all 0.3s ease;
+        }
+        .card-arrow svg { width:14px; height:14px; }
+
+        /* Linha dourada esquerda no hover */
+        .card-accent {
+            position:absolute; left:0; top:20%; bottom:20%; z-index:3;
+            width:2px;
+            background:linear-gradient(transparent, var(--gold), transparent);
+            border-radius:2px;
+            opacity:0;
+            transition:opacity 0.3s ease;
+        }
+        .card:hover .card-accent, .card:active .card-accent { opacity:1; }
+
+        /* Delays das animações */
+        .card:nth-child(1) { animation-delay:0.08s; }
+        .card:nth-child(2) { animation-delay:0.16s; }
+        .card:nth-child(3) { animation-delay:0.24s; }
+        .card:nth-child(4) { animation-delay:0.32s; }
+        .card:nth-child(5) { animation-delay:0.40s; }
 
         /* ── FOOTER ── */
-        .footer {
-            margin-top: 52px;
-            text-align: center;
-        }
-        .footer-text {
-            font-size: 0.55em;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: rgba(245,240,232,0.2);
-        }
-        .footer-line {
-            width: 40px; height: 1px;
-            background: var(--border);
-            margin: 10px auto 0;
-        }
+        .footer { margin-top:48px; text-align:center; animation:fadeUp 0.5s 0.5s ease both; }
+        .footer-txt { font-size:0.52em; letter-spacing:4px; text-transform:uppercase; color:rgba(245,240,232,0.18); }
+        .footer-hr { width:36px; height:1px; background:rgba(201,168,76,0.2); margin:8px auto 0; }
 
         /* ── ANIMAÇÕES ── */
-        @keyframes spin  { from { transform: rotate(0deg); }   to { transform: rotate(360deg); } }
-        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-        @keyframes fadeUp {
-            from { opacity:0; transform:translateY(20px); }
-            to   { opacity:1; transform:translateY(0); }
-        }
+        @keyframes spin    { to { transform:rotate(360deg); } }
+        @keyframes pulse   { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+        @keyframes fadeUp  { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
 
-        .hero           { animation: fadeUp 0.6s ease both; }
-        .menu-item      { animation: fadeUp 0.5s ease both; }
-        .menu-item:nth-child(1) { animation-delay: 0.10s; }
-        .menu-item:nth-child(2) { animation-delay: 0.18s; }
-        .menu-item:nth-child(3) { animation-delay: 0.26s; }
-        .menu-item:nth-child(4) { animation-delay: 0.34s; }
-        .menu-item:nth-child(5) { animation-delay: 0.42s; }
-        .footer         { animation: fadeUp 0.5s ease 0.5s both; }
-
-        @media (max-width: 420px) {
-            .brand    { font-size: 3em; letter-spacing: 14px; }
-            .page     { padding: 48px 16px 40px; }
-            .menu-item{ padding: 16px 18px; }
-            .icon     { width: 42px; height: 42px; }
+        @media (max-width:400px) {
+            .brand { font-size:3em; letter-spacing:12px; }
+            .page  { padding:44px 14px 44px; }
+            .card-inner { padding:15px 14px; }
         }
     </style>
 </head>
@@ -316,92 +238,107 @@
     <div class="hero">
         <div class="logo-wrap">
             <div class="logo-ring"></div>
-            <div class="logo-inner">
-                <div class="logo-z">Z</div>
-            </div>
+            <div class="logo-inner"><div class="logo-z">Z</div></div>
         </div>
-
         <div class="brand">ZARA</div>
         <div class="brand-sub">Private Access</div>
-
-        <div class="divider">
-            <div class="divider-line"></div>
-            <div class="divider-diamond"></div>
-            <div class="divider-line"></div>
-        </div>
-
-        <div class="access-badge">Exclusive</div>
+        <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+        <div class="badge"><div class="badge-dot"></div>Exclusive</div>
     </div>
 
     <!-- MENU -->
     <nav class="menu">
 
-        <a href="financeiro.html" class="menu-item">
-            <div class="icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <a href="financeiro.html" class="card">
+            <div class="card-accent"></div>
+            <div class="card-inner">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="card-text">
+                    <div class="card-title">Financeiro</div>
+                    <div class="card-sub">Gestão e planejamento</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-num">01</div>
+                    <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
             </div>
-            <div class="text">
-                <div class="menu-title">Financeiro</div>
-                <div class="menu-sub">Gestão e planejamento</div>
-            </div>
-            <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
-            <div class="item-num">01</div>
         </a>
 
-        <a href="gym.html" class="menu-item">
-            <div class="icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <a href="gym.html" class="card">
+            <div class="card-accent"></div>
+            <div class="card-inner">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div class="card-text">
+                    <div class="card-title">GYM</div>
+                    <div class="card-sub">Treino e nutrição</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-num">02</div>
+                    <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
             </div>
-            <div class="text">
-                <div class="menu-title">GYM</div>
-                <div class="menu-sub">Treino e nutrição</div>
-            </div>
-            <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
-            <div class="item-num">02</div>
         </a>
 
-        <a href="operacoes.html" class="menu-item">
-            <div class="icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <a href="operacoes.html" class="card">
+            <div class="card-accent"></div>
+            <div class="card-inner">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                </div>
+                <div class="card-text">
+                    <div class="card-title">Operações</div>
+                    <div class="card-sub">Jogadas, rede e favores</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-num">03</div>
+                    <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
             </div>
-            <div class="text">
-                <div class="menu-title">Operações</div>
-                <div class="menu-sub">Jogadas, rede e favores</div>
-            </div>
-            <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
-            <div class="item-num">03</div>
         </a>
 
-        <a href="notas.html" class="menu-item">
-            <div class="icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <a href="notas.html" class="card">
+            <div class="card-accent"></div>
+            <div class="card-inner">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <div class="card-text">
+                    <div class="card-title">Notas</div>
+                    <div class="card-sub">Bloco de anotações</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-num">04</div>
+                    <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
             </div>
-            <div class="text">
-                <div class="menu-title">Notas</div>
-                <div class="menu-sub">Bloco de anotações</div>
-            </div>
-            <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
-            <div class="item-num">04</div>
         </a>
 
-        <a href="comando.html" class="menu-item">
-            <div class="icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <a href="comando.html" class="card">
+            <div class="card-accent"></div>
+            <div class="card-inner">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div class="card-text">
+                    <div class="card-title">Comando</div>
+                    <div class="card-sub">Centro de controle estratégico</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-num">05</div>
+                    <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
             </div>
-            <div class="text">
-                <div class="menu-title">Comando</div>
-                <div class="menu-sub">Centro de controle estratégico</div>
-            </div>
-            <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
-            <div class="item-num">05</div>
         </a>
 
     </nav>
 
-    <!-- FOOTER -->
     <div class="footer">
-        <div class="footer-text">ZARA &copy; 2026</div>
-        <div class="footer-line"></div>
+        <div class="footer-txt">ZARA &copy; 2026</div>
+        <div class="footer-hr"></div>
     </div>
 
 </div>
