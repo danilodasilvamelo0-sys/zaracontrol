@@ -207,6 +207,12 @@ function abrirNota(id) {
         _notaAtiva = null;
         renderNotas();
         mostrarVazio();
+        fecharNotaFullscreen();
+        return;
+    }
+    // Mobile: fullscreen
+    if (window.innerWidth <= 768) {
+        abrirNotaFullscreen(id);
         return;
     }
     _notaAtiva=id; renderNotas();
@@ -318,6 +324,174 @@ function atualizarSub() {
 }
 
 // ── BOOT ──
+
+// ── FULLSCREEN DA NOTA ──────────────────────
+function abrirNotaFullscreen(id) {
+    const nota = db.notas.find(n => n.id === id);
+    if (!nota) return;
+
+    // Criar overlay fullscreen
+    let fs = document.getElementById('notaFullscreen');
+    if (!fs) {
+        fs = document.createElement('div');
+        fs.id = 'notaFullscreen';
+        fs.style.cssText = `
+            position:fixed; inset:0; z-index:9998;
+            background: linear-gradient(150deg, #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%);
+            display:flex; flex-direction:column;
+            animation: fsIn 0.28s cubic-bezier(0.16,1,0.3,1) both;
+        `;
+        // Injetar animação
+        if (!document.getElementById('fsStyle')) {
+            const s = document.createElement('style');
+            s.id = 'fsStyle';
+            s.textContent = `
+                @keyframes fsIn { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+                @keyframes fsOut { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(24px); } }
+                #notaFullscreen { padding-top: env(safe-area-inset-top, 0px); }
+            `;
+            document.head.appendChild(s);
+        }
+        document.body.appendChild(fs);
+    }
+
+    // Construir categorias
+    const catSel = db.cats.map(c =>
+        `<option value="${c.id}" ${nota.catId===c.id?'selected':''}>${c.nome}</option>`
+    ).join('');
+
+    fs.style.display = 'flex';
+    fs.innerHTML = `
+        <!-- Header -->
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px 12px;
+            border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+            <button onclick="fecharNotaFullscreen()" style="
+                width:32px;height:32px;border-radius:50%;
+                background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+                color:rgba(245,240,232,0.7);cursor:pointer;display:flex;
+                align-items:center;justify-content:center;flex-shrink:0;">
+                <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'
+                    style='width:15px;height:15px;'>
+                    <polyline points='15 18 9 12 15 6'/>
+                </svg>
+            </button>
+            <div style="flex:1;min-width:0;">
+                <select id="fsNotaCat" onchange="onFsCatChange()"
+                    style="background:transparent;border:none;color:var(--gold);
+                    font-family:inherit;font-size:0.70em;font-weight:700;
+                    letter-spacing:1px;cursor:pointer;outline:none;width:100%;">
+                    ${catSel}
+                </select>
+            </div>
+            <button onclick="togglePinFS()" id="fsPinBtn" style="
+                width:32px;height:32px;border-radius:50%;
+                background:${nota.fixada?'rgba(201,168,76,0.2)':'rgba(255,255,255,0.06)'};
+                border:1px solid ${nota.fixada?'rgba(201,168,76,0.4)':'rgba(255,255,255,0.1)'};
+                color:${nota.fixada?'var(--gold)':'rgba(245,240,232,0.5)'};
+                cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                <svg viewBox='0 0 24 24' fill='${nota.fixada?'var(--gold)':'none'}' stroke='currentColor'
+                    stroke-width='2' style='width:14px;height:14px;'>
+                    <path d='M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z'/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Título -->
+        <input id="fsTitulo" type="text" value="${(nota.titulo||'').replace(/"/g,'&quot;')}"
+            placeholder="Título"
+            oninput="onFsInput()"
+            style="padding:18px 20px 8px;background:transparent;border:none;outline:none;
+            color:#fff;font-family:inherit;font-size:1.3em;font-weight:700;
+            border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;" />
+
+        <!-- Conteúdo -->
+        <textarea id="fsTexto"
+            placeholder="Comece a escrever..."
+            oninput="onFsInput()"
+            style="flex:1;padding:16px 20px;background:transparent;border:none;outline:none;
+            color:rgba(245,240,232,0.9);font-family:inherit;font-size:0.95em;
+            line-height:1.85;resize:none;overflow-y:auto;"
+        >${(nota.texto||'').replace(/</g,'&lt;')}</textarea>
+
+        <!-- Footer -->
+        <div style="display:flex;align-items:center;justify-content:space-between;
+            padding:10px 18px 20px;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0;">
+            <span id="fsSalvo" style="font-size:0.62em;color:var(--green);opacity:0;transition:opacity 0.3s;">✓ Salvo</span>
+            <button onclick="excluirNotaFS()" style="
+                background:transparent;border:1px solid rgba(231,76,60,0.25);
+                border-radius:8px;color:rgba(231,76,60,0.7);font-family:inherit;
+                font-size:0.65em;font-weight:600;padding:6px 14px;cursor:pointer;">
+                Excluir
+            </button>
+        </div>
+    `;
+
+    // Focar no texto
+    setTimeout(() => {
+        const ta = document.getElementById('fsTexto');
+        if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+    }, 300);
+
+    _notaAtiva = id;
+}
+
+let _fsTimer = null;
+
+function onFsInput() {
+    clearTimeout(_fsTimer);
+    _fsTimer = setTimeout(() => {
+        const nota = db.notas.find(n => n.id === _notaAtiva);
+        if (!nota) return;
+        const titulo = document.getElementById('fsTitulo');
+        const texto  = document.getElementById('fsTexto');
+        if (titulo) nota.titulo  = titulo.value;
+        if (texto)  nota.texto   = texto.value;
+        nota.updatedAt = new Date().toISOString();
+        save();
+        renderNotas(); renderCats(); atualizarSub();
+        const el = document.getElementById('fsSalvo');
+        if (el) { el.style.opacity='1'; setTimeout(()=>el.style.opacity='0',1800); }
+    }, 600);
+}
+
+function onFsCatChange() {
+    const nota = db.notas.find(n => n.id === _notaAtiva);
+    const sel  = document.getElementById('fsNotaCat');
+    if (nota && sel) { nota.catId = sel.value; nota.updatedAt = new Date().toISOString(); save(); }
+}
+
+function togglePinFS() {
+    const nota = db.notas.find(n => n.id === _notaAtiva);
+    if (!nota) return;
+    nota.fixada = !nota.fixada;
+    save(); renderNotas();
+    // Atualizar botão
+    const btn = document.getElementById('fsPinBtn');
+    if (btn) {
+        btn.style.background = nota.fixada ? 'rgba(201,168,76,0.2)' : 'rgba(255,255,255,0.06)';
+        btn.style.borderColor = nota.fixada ? 'rgba(201,168,76,0.4)' : 'rgba(255,255,255,0.1)';
+        btn.style.color = nota.fixada ? 'var(--gold)' : 'rgba(245,240,232,0.5)';
+    }
+}
+
+function excluirNotaFS() {
+    if (!_notaAtiva || !confirm('Excluir esta nota?')) return;
+    db.notas = db.notas.filter(n => n.id !== _notaAtiva);
+    _notaAtiva = null;
+    save(); renderNotas(); renderCats(); atualizarSub();
+    fecharNotaFullscreen();
+    toast('Nota excluída.','info');
+}
+
+function fecharNotaFullscreen() {
+    const fs = document.getElementById('notaFullscreen');
+    if (!fs) return;
+    fs.style.animation = 'fsOut 0.22s ease both';
+    setTimeout(() => { fs.style.display = 'none'; }, 220);
+    mostrarVazio();
+    renderNotas();
+}
+// ────────────────────────────────────────────
 (async () => {
     // Tentar carregar do Supabase
     const ok = await syncLoad();
