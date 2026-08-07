@@ -4,8 +4,8 @@
    Fundo: #080808 | Dourado: #c9a84c
    ════════════════════════════════════════════ */
 :root {
-  --bg:       #080808;
-  --s1:       #0e0e0e;
+  --bg:       #030303;
+  --s1:       #0a0a0a;
   --s2:       #141414;
   --s3:       #1c1c1c;
   --s4:       #242424;
@@ -6602,128 +6602,128 @@ font-size: 1.1em;
 
 
 /* ══════════════════════════════════════════════════
-   GLASS CARD FINAL — sobrescreve tudo, prioridade max
+   GLASS CARD FINAL — contraste máximo com fundo escuro
    ══════════════════════════════════════════════════ */
 .kpi-card {
+    /* Card mais claro que o fundo para contraste real */
     background: linear-gradient(
-        155deg,
-        #222224 0%,
-        #161618 25%,
-        #0f0f10 55%,
-        #141416 80%,
-        #1a1a1c 100%
+        150deg,
+        #2a2a2d 0%,
+        #202022 20%,
+        #1a1a1c 50%,
+        #1e1e20 80%,
+        #242426 100%
     ) !important;
     border: none !important;
     border-radius: 20px !important;
     box-shadow:
-        /* Borda cromada superior */
-        0 1px 0 rgba(255,255,255,0.18),
-        /* Borda esquerda */
-        -1px 0 0 rgba(255,255,255,0.08),
-        /* Borda direita escura */
-        1px 0 0 rgba(0,0,0,0.5),
-        /* Borda inferior */
-        0 -1px 0 rgba(0,0,0,0.7),
-        /* Reflexo interno superior */
-        inset 0 1px 0 rgba(255,255,255,0.06),
-        /* Sombra interna inferior */
-        inset 0 -1px 0 rgba(0,0,0,0.5),
-        /* Elevação física */
-        0 4px 8px rgba(0,0,0,0.45),
-        0 12px 40px rgba(0,0,0,0.55),
-        0 24px 60px rgba(0,0,0,0.3) !important;
+        /* Borda superior brilhante — reflexo de luz */
+        0 1px 0 rgba(255,255,255,0.22),
+        /* Lateral esquerda */
+        -1px 0 0 rgba(255,255,255,0.10),
+        /* Lateral direita escura */
+        1px 0 0 rgba(0,0,0,0.6),
+        /* Base */
+        0 -1px 0 rgba(0,0,0,0.8),
+        /* Brilho interno topo */
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        /* Sombra interna base */
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        /* Elevação */
+        0 6px 12px rgba(0,0,0,0.5),
+        0 16px 48px rgba(0,0,0,0.6),
+        0 32px 80px rgba(0,0,0,0.4) !important;
 }
 .kpi-card::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important; left: 0 !important; right: 0 !important;
+    height: 55% !important;
+    border-radius: 20px 20px 0 0 !important;
+    background: linear-gradient(
+        150deg,
+        rgba(255,255,255,0.10) 0%,
+        rgba(255,255,255,0.04) 35%,
+        rgba(255,255,255,0.01) 60%,
+        transparent 100%
+    ) !important;
+    pointer-events: none !important; z-index: 1 !important;
+}
+.kpi-card::after {
+    content: '' !important;
+    position: absolute !important;
+    top: -20px !important; left: -20px !important;
+    width: 160px !important; height: 160px !important;
+    background: radial-gradient(
+        circle at 20% 20%,
+        rgba(255,255,255,0.07) 0%,
+        rgba(255,255,255,0.02) 40%,
+        transparent 65%
+    ) !important;
+    pointer-events: none !important; z-index: 1 !important;
+}
+.kpi-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.28),
+        -1px 0 0 rgba(255,255,255,0.14),
+        1px 0 0 rgba(0,0,0,0.6),
+        0 -1px 0 rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        0 8px 16px rgba(0,0,0,0.55),
+        0 24px 64px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(201,168,76,0.25),
+        0 0 50px rgba(201,168,76,0.08) !important;
+}
+
+.section {
+    background: linear-gradient(
+        150deg,
+        #262628 0%,
+        #1c1c1e 25%,
+        #181819 55%,
+        #1c1c1e 80%,
+        #222224 100%
+    ) !important;
+    border: none !important;
+    border-radius: 20px !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.20),
+        -1px 0 0 rgba(255,255,255,0.09),
+        1px 0 0 rgba(0,0,0,0.55),
+        0 -1px 0 rgba(0,0,0,0.75),
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        inset 0 -2px 4px rgba(0,0,0,0.35),
+        0 6px 12px rgba(0,0,0,0.45),
+        0 16px 48px rgba(0,0,0,0.55),
+        0 32px 80px rgba(0,0,0,0.35) !important;
+}
+.section::before {
     content: '' !important;
     position: absolute !important;
     top: 0 !important; left: 0 !important; right: 0 !important;
     height: 50% !important;
     border-radius: 20px 20px 0 0 !important;
     background: linear-gradient(
-        155deg,
-        rgba(255,255,255,0.07) 0%,
-        rgba(255,255,255,0.025) 40%,
+        150deg,
+        rgba(255,255,255,0.08) 0%,
+        rgba(255,255,255,0.03) 40%,
         transparent 100%
     ) !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
-}
-.kpi-card::after {
-    content: '' !important;
-    position: absolute !important;
-    top: -30px !important; left: -30px !important;
-    width: 140px !important; height: 140px !important;
-    background: radial-gradient(
-        circle at 25% 25%,
-        rgba(255,255,255,0.055) 0%,
-        transparent 65%
-    ) !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
-}
-.kpi-card:hover {
-    transform: translateY(-3px) !important;
-    box-shadow:
-        0 1px 0 rgba(255,255,255,0.22),
-        -1px 0 0 rgba(255,255,255,0.10),
-        1px 0 0 rgba(0,0,0,0.5),
-        0 -1px 0 rgba(0,0,0,0.7),
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        inset 0 -1px 0 rgba(0,0,0,0.5),
-        0 6px 12px rgba(0,0,0,0.5),
-        0 20px 60px rgba(0,0,0,0.6),
-        0 0 0 1px rgba(201,168,76,0.2),
-        0 0 40px rgba(201,168,76,0.07) !important;
-}
-
-/* Seções também */
-.section {
-    background: linear-gradient(
-        155deg,
-        #1e1e20 0%,
-        #141416 30%,
-        #0f0f11 60%,
-        #141416 100%
-    ) !important;
-    border: none !important;
-    border-radius: 20px !important;
-    box-shadow:
-        0 1px 0 rgba(255,255,255,0.14),
-        -1px 0 0 rgba(255,255,255,0.06),
-        1px 0 0 rgba(0,0,0,0.45),
-        0 -1px 0 rgba(0,0,0,0.65),
-        inset 0 1px 0 rgba(255,255,255,0.045),
-        inset 0 -1px 0 rgba(0,0,0,0.45),
-        0 4px 8px rgba(0,0,0,0.4),
-        0 12px 40px rgba(0,0,0,0.5),
-        0 24px 60px rgba(0,0,0,0.28) !important;
-}
-.section::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important; left: 0 !important; right: 0 !important;
-    height: 45% !important;
-    border-radius: 20px 20px 0 0 !important;
-    background: linear-gradient(
-        155deg,
-        rgba(255,255,255,0.05) 0%,
-        rgba(255,255,255,0.015) 40%,
-        transparent 100%
-    ) !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
+    pointer-events: none !important; z-index: 1 !important;
 }
 .section:hover {
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.18),
-        -1px 0 0 rgba(255,255,255,0.08),
-        1px 0 0 rgba(0,0,0,0.45),
-        0 -1px 0 rgba(0,0,0,0.65),
-        inset 0 1px 0 rgba(255,255,255,0.06),
-        inset 0 -1px 0 rgba(0,0,0,0.45),
-        0 6px 12px rgba(0,0,0,0.45),
-        0 16px 50px rgba(0,0,0,0.55),
-        0 0 0 1px rgba(201,168,76,0.12) !important;
+        0 1px 0 rgba(255,255,255,0.24),
+        -1px 0 0 rgba(255,255,255,0.11),
+        1px 0 0 rgba(0,0,0,0.55),
+        0 -1px 0 rgba(0,0,0,0.75),
+        inset 0 1px 0 rgba(255,255,255,0.09),
+        inset 0 -2px 4px rgba(0,0,0,0.35),
+        0 8px 16px rgba(0,0,0,0.5),
+        0 20px 60px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(201,168,76,0.18) !important;
 }
 
 
@@ -6741,10 +6741,10 @@ font-size: 1.1em;
 .interest-card {
     background: linear-gradient(
         155deg,
-        #1e1e20 0%,
-        #141416 30%,
-        #0f0f11 60%,
-        #141416 100%
+        #252527 0%,
+        #1c1c1e 30%,
+        #171719 60%,
+        #1c1c1e 100%
     ) !important;
     border: none !important;
     border-radius: 18px !important;
