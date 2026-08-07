@@ -1165,3 +1165,63 @@
 
 /* Header da seção mantém fundo escuro */
 .section-header { background: rgba(255,255,255,0.03) !important; position: relative; z-index: 1; }
+
+.mobile-nav {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 10px 12px 16px;
+
+    /* Glass effect igual aos cards */
+    background: linear-gradient(
+        150deg,
+        #2a2a2d 0%,
+        #202022 20%,
+        #1a1a1c 50%,
+        #1e1e20 80%,
+        #242426 100%
+    );
+    box-shadow:
+        0 -1px 0 rgba(255,255,255,0.12),
+        0 -8px 32px rgba(0,0,0,0.6),
+        0 -2px 8px rgba(0,0,0,0.4);
+    border-top: none;
+}
+.mobile-nav-items {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 4px;
+}
+.mobile-nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    color: rgba(245,240,232,0.4);
+    text-decoration: none;
+    font-size: 0.58em;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    padding: 8px 14px;
+    border-radius: 50px;
+    transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+}
+.mobile-nav-item svg { width: 21px; height: 21px; stroke: currentColor; }
+
+/* Pill ativo — destaque dourado */
+.mobile-nav-item.active {
+    color: #0a0a0a;
+    background: linear-gradient(135deg, #e8c160, #c9a84c);
+    box-shadow:
+        0 2px 12px rgba(201,168,76,0.4),
+        0 4px 20px rgba(201,168,76,0.2);
+}
+.mobile-nav-item:not(.active):hover {
+    color: var(--gold);
+    background: rgba(201,168,76,0.08);
+}
+@media (max-width: 768px) {
+    body { padding-left: 10px !important; padding-bottom: 90px !important; }
+    .sidebar { display: none; } .mobile-nav { display: block; }
+}
+@media (min-width: 769px) { body { padding-left: 80px; } .mobile-nav { display: none !important; } }
