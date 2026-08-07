@@ -1061,3 +1061,75 @@
     .dias-semana-grid { gap: 4px; }
     .dia-btn { padding: 6px 8px; font-size: 0.68em; }
 }
+
+
+/* ══════════════════════════════════════════════════
+   GLASS EFFECT — GYM: todos os cards e seções
+   Mesmo estilo do Financeiro
+   ══════════════════════════════════════════════════ */
+
+.section,
+.treino-card,
+.obs-card-wrap,
+.macro-card,
+.med-card,
+.refeicao-card,
+.ex-card {
+    background: linear-gradient(
+        150deg,
+        #2a2a2d 0%,
+        #202022 20%,
+        #1a1a1c 50%,
+        #1e1e20 80%,
+        #242426 100%
+    ) !important;
+    border: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.22),
+        -1px 0 0 rgba(255,255,255,0.10),
+        1px 0 0 rgba(0,0,0,0.6),
+        0 -1px 0 rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        0 6px 12px rgba(0,0,0,0.5),
+        0 16px 48px rgba(0,0,0,0.6),
+        0 32px 80px rgba(0,0,0,0.4) !important;
+}
+
+/* Reflexo de vidro superior */
+.section::before,
+.treino-card::before,
+.macro-card::before,
+.med-card::before,
+.refeicao-card::before,
+.ex-card::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important; left: 0 !important; right: 0 !important;
+    height: 50% !important;
+    background: linear-gradient(
+        150deg,
+        rgba(255,255,255,0.09) 0%,
+        rgba(255,255,255,0.03) 35%,
+        transparent 100%
+    ) !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+    border-radius: inherit !important;
+}
+
+/* Gradientes coloridos do header dos treinos mantidos */
+.treino-card-header.peito   { background: linear-gradient(135deg,#1a7a40,#2ecc71) !important; }
+.treino-card-header.costas  { background: linear-gradient(135deg,#1a5276,#2471a3) !important; }
+.treino-card-header.pernas  { background: linear-gradient(135deg,#6c3483,#9b59b6) !important; }
+.treino-card-header.ombros  { background: linear-gradient(135deg,#a04000,#e67e22) !important; }
+.treino-card-header.bracos  { background: linear-gradient(135deg,#0e6655,#1abc9c) !important; }
+.treino-card-header.abdomen { background: linear-gradient(135deg,#922b21,#e74c3c) !important; }
+.treino-card-header.full    { background: linear-gradient(135deg,#1b2631,#34495e) !important; }
+.treino-card-header.cardio  { background: linear-gradient(135deg,#b7770d,#d4a017) !important; }
+.obs-card-wrap .obs-header  { background: var(--s1) !important; }
+
+/* Header da seção mantém fundo escuro */
+.section-header { background: rgba(255,255,255,0.03) !important; position: relative; z-index: 1; }
