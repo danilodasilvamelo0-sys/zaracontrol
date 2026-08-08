@@ -5813,16 +5813,6 @@
         return [...dividas].sort((a, b) => a.saldo - b.saldo || b.taxaMensal - a.taxaMensal);
     }
 
-    // Ordenação "Impacto Máximo": custo mensal absoluto maior primeiro (taxa × saldo)
-    // Elimina primeiro a dívida que sangra mais dinheiro todo mês
-    function pa_ordenarImpactoMaximo(dividas) {
-        return [...dividas].sort((a, b) => {
-            const custoA = a.saldo * a.taxaMensal;
-            const custoB = b.saldo * b.taxaMensal;
-            return custoB - custoA;
-        });
-    }
-
     // Ordenação "Híbrida Inteligente": pontuação composta considerando
     // taxa, prazo estimado de quitação e custo acumulado
     function pa_ordenarHibrida(dividas, extraMensal) {
@@ -5976,22 +5966,21 @@
 
         const simAvalanche  = pa_simularQuitacao(dividas, ordemAvalanche.map(d => d.id), extra);
         const simBolaDeNeve = pa_simularQuitacao(dividas, ordemBolaDeNeve.map(d => d.id), extra);
-        const simHibrida    = pa_simularQuitacao(dividas, ordemHibrida.map(d => d.id), extra);
 
         // Validar estratégia
-        const estrategiasValidas = ['avalanche', 'bolaDeNeve', 'hibrida'];
+        const estrategiasValidas = ['avalanche', 'bolaDeNeve'];
         if (!estrategiasValidas.includes(estrategia)) estrategia = 'avalanche';
 
         const mapaEscolha = {
             avalanche:  { sim: simAvalanche,  ordem: ordemAvalanche  },
             bolaDeNeve: { sim: simBolaDeNeve, ordem: ordemBolaDeNeve },
-            hibrida:    { sim: simHibrida,    ordem: ordemHibrida    },
+
         };
         const escolha = mapaEscolha[estrategia];
 
         return {
             dividas, resumo, capacidade, reserva, extra, estrategia,
-            avalanche: simAvalanche, bolaDeNeve: simBolaDeNeve, hibrida: simHibrida,
+            avalanche: simAvalanche, bolaDeNeve: simBolaDeNeve,
             ordem: escolha.ordem.map(d => ({ id: d.id, descricao: d.descricao, saldo: d.saldo, taxaMensal: d.taxaMensal })),
             plano: escolha.sim
         };
@@ -6327,7 +6316,7 @@
         // ── Comparativo das 3 estratégias ──
         let comparacaoHtml = '';
         if (dividas.length >= 1) {
-            const av = plano.avalanche, bn = plano.bolaDeNeve, hb = plano.hibrida;
+            const av = plano.avalanche, bn = plano.bolaDeNeve;
 
             const estrategias = [
                 {
@@ -6341,12 +6330,6 @@
                     cor: '#3498db',
                     icone: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:11px;height:11px;vertical-align:-1px;margin-right:4px"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 7l-5-5-5 5"/><path d="M7 17l5 5 5-5"/><line x1="2" y1="12" x2="22" y2="12"/></svg>`,
                     explicacao: 'Ataca a dívida com menor saldo primeiro. Cada dívida quitada libera dinheiro e gera motivação para continuar.'
-                },
-                {
-                    id: 'hibrida', nome: 'Impacto Máximo', desc: 'Libera fluxo de caixa rápido', sim: hb,
-                    cor: '#e74c3c',
-                    icone: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:11px;height:11px;vertical-align:-1px;margin-right:4px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
-                    explicacao: 'Ataca a dívida que consome mais juros por mês (taxa × saldo). Alivia o orçamento mensal mais rapidamente.'
                 }
             ];
 
@@ -6378,15 +6361,12 @@
                 const economiaSobreBn = bn?.convergiu && av?.convergiu ? bn.totalJuros - av.totalJuros : 0;
                 const mesesPrimAv = av?.ordemFinal?.[0]?.mesQuitacao || 999;
                 const mesesPrimBn = bn?.ordemFinal?.[0]?.mesQuitacao || 999;
-                const mesesPrimHb = hb?.ordemFinal?.[0]?.mesQuitacao || 999;
                 const txMedia = dividas.reduce((s,d)=>s+d.taxaMensal,0)/dividas.length;
 
                 if (txMedia > 0.08) {
                     recomendacao = `<strong>💡 Recomendação:</strong> Com taxas médias acima de ${(txMedia*100).toFixed(0)}% a.m., cada mês sem pagar é dinheiro perdido. A <strong>Avalanche</strong> é a escolha mais inteligente — economiza ${formatarMoeda(Math.max(0,economiaSobreBn))} em juros vs Bola de Neve.`;
                 } else if (dividas.length >= 4 && mesesPrimBn < mesesPrimAv) {
                     recomendacao = `<strong>💡 Recomendação:</strong> Com várias dívidas, a <strong>Bola de Neve</strong> quita a primeira ${mesesPrimAv - mesesPrimBn} meses antes. Menos dívidas = menos estresse e mais foco.`;
-                } else if (mesesPrimHb <= Math.min(mesesPrimAv, mesesPrimBn)) {
-                    recomendacao = `<strong>💡 Recomendação:</strong> O <strong>Impacto Máximo</strong> é ideal aqui — ataca a dívida que mais pesa no orçamento e libera fluxo de caixa mais rápido para acelerar as demais.`;
                 } else {
                     recomendacao = `<strong>💡 Recomendação:</strong> A diferença entre as estratégias é pequena para seu caso. Escolha pela <strong>motivação</strong>: prefere pagar menos juros (Avalanche) ou eliminar dívidas logo (Bola de Neve)?`;
                 }
