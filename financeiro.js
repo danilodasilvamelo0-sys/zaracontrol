@@ -4100,23 +4100,17 @@
                 document.body.appendChild(el);
             }
             const todas = (financeiro.despesasVariaveis || []);
-            const parc = todas.filter(d => d.grupoParcelaId);
-            const parcNaoPagas = parc.filter(d => !d.pago);
-            const parcAtraso = parcNaoPagas.filter(d => d.data && d.data.substring(0,7) < keyAtual);
-            const fixas = financeiro.despesasFixasMes || {};
-            const fixasChaves = Object.keys(fixas);
-            const fixasAtraso = fixasChaves.filter(k => k < keyAtual)
-                .flatMap(k => fixas[k].filter(d => !d.pago && !d.atrasada));
+            const naoParc = todas.filter(d => !d.grupoParcelaId);
+            // Mostrar TODAS as não parceladas com data e pago
+            const linhas = naoParc.map(d => 
+                d.data + ' | ' + (d.descricao||'').slice(0,12) + ' | pago:' + d.pago + ' | pausado:' + (d.pausado||false)
+            );
             el.innerHTML = 
                 'keyAtual: ' + keyAtual + '<br>' +
-                'Parceladas total: ' + parc.length + '<br>' +
-                'Parceladas não pagas: ' + parcNaoPagas.length + '<br>' +
-                'Parceladas ATRASADAS (data < atual): ' + parcAtraso.length + '<br>' +
-                'Fixas com chaves anteriores: ' + fixasChaves.filter(k=>k<keyAtual).join(', ') + '<br>' +
-                'Fixas não pagas anteriores: ' + fixasAtraso.length + '<br>' +
-                (parcAtraso.slice(0,2).map(d => d.data + ' ' + d.descricao.slice(0,15)).join('<br>'));
+                'Nao parceladas (' + naoParc.length + '):<br>' +
+                linhas.join('<br>');
             el.style.display = 'block';
-            setTimeout(() => { if(el) el.style.display = 'none'; }, 15000);
+            setTimeout(() => { if(el) el.style.display = 'none'; }, 20000);
         })();
         // ── FIM DEBUG ──
 
