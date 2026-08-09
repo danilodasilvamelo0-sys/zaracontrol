@@ -4078,14 +4078,17 @@
         // Cálculos do mês (excluindo parcelas pausadas)
         const variaveisAtivas = variaveisMes.filter(d => d.pausado !== true);
 
-        // Parcelas em atraso (meses anteriores, não pagas, não pausadas)
-        // Aparecem na tabela mas NÃO entram nos cálculos do mês
+        // Despesas variáveis em atraso (meses anteriores, não pagas, não pausadas)
+        // Aparecem na tabela mas NÃO entram nos cálculos do mês atual
         const keyAtual = getMesAnoKey();
-        const parcelasEmAtraso = (financeiro.despesasVariaveis || []).filter(d => {
+        const todasVariaveisAtraso = (financeiro.despesasVariaveis || []).filter(d => {
             if (!d.data || d.pago || d.pausado) return false;
-            const mesParcela = d.data.substring(0, 7);
-            return mesParcela < keyAtual;
+            const mesDespesa = d.data.substring(0, 7);
+            return mesDespesa < keyAtual;
         });
+        // Separar: parceladas em atraso (accordion) e simples em atraso (linha simples)
+        const parcelasEmAtraso    = todasVariaveisAtraso.filter(d => d.grupoParcelaId);
+        const variaveisNaoPagasAtraso = todasVariaveisAtraso.filter(d => !d.grupoParcelaId);
         
         // === CÁLCULOS PARA OS KPIs ===
         
@@ -4598,7 +4601,7 @@
 
         // === TABELA DESPESAS VARIÁVEIS ===
         const variaveisTable = document.getElementById('despesasVariaveisTable');
-        const temConteudoVariaveis = variaveisMes.length > 0 || parcelasEmAtraso.some(d => d.grupoParcelaId);
+        const temConteudoVariaveis = variaveisMes.length > 0 || parcelasEmAtraso.some(d => d.grupoParcelaId) || variaveisNaoPagasAtraso.length > 0;
         document.getElementById('emptyDespesasVariaveis').style.display = temConteudoVariaveis ? 'none' : 'block';
 
         // Separar despesas parceladas de não parceladas
@@ -4622,6 +4625,30 @@
         });
 
         let htmlVariaveis = '';
+
+        // Renderizar variáveis não parceladas ATRASADAS (meses anteriores, não pagas)
+        variaveisNaoPagasAtraso.forEach(d => {
+            const status = getStatusVencimento(d.data, d.pago);
+            htmlVariaveis += `
+                <tr class="acc-row" style="opacity:0.85;">
+                    <td></td>
+                    <td class="acc-descricao">
+                        ${d.descricao}
+                        <span style="margin-left:6px;font-size:0.62em;font-weight:700;color:#e74c3c;background:rgba(231,76,60,0.12);padding:1px 5px;border-radius:4px;letter-spacing:0.5px;">ATRASADA</span>
+                    </td>
+                    <td class="acc-condicao acc-mobile-meta">${formatarData(d.data)}</td>
+                    <td class="acc-mobile-meta">—</td>
+                    <td class="valor-negativo acc-mobile-valor" style="text-align:right;">${formatarMoeda(d.valor)}</td>
+                    <td>
+                        <button class="acc-delete-btn" onclick="deletarDespesaVariavel(${d.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                            </svg>
+                        </button>
+                    </td>
+                </tr>`;
+        });
 
         // Renderizar despesas não parceladas (linha simples, sem accordion)
         naoParceladas.forEach(d => {
