@@ -4764,6 +4764,30 @@
         const mobileVar = document.getElementById('despesasVariaveisMobile');
         if (mobileVar) {
             let htmlMobVar = '<div class="desp-cards-wrap">';
+
+            // ── Atrasadas de meses anteriores (não parceladas) ──
+            variaveisNaoPagasAtraso.forEach(d => {
+                const icon = getCategIcon(d.categoria || 'Outros');
+                htmlMobVar += `<div class="desp-card desp-card-vencida" style="border-left:3px solid var(--red)">
+                    <div class="desp-card-top">
+                        <div class="desp-card-icon">${icon}</div>
+                        <div class="desp-card-info">
+                            <div class="desp-card-nome">${d.descricao} <span class="desp-atraso-badge">ATRASADA</span></div>
+                            <div class="desp-card-meta">${d.categoria||'Outros'} · ${formatarData(d.data)}</div>
+                        </div>
+                        <div class="desp-card-right">
+                            <div class="desp-card-valor" style="color:var(--red);">${formatarMoeda(d.valor)}</div>
+                            <span class="desp-badge pendente">Pendente</span>
+                        </div>
+                    </div>
+                    <div class="desp-card-acoes">
+                        <button class="acc-delete-btn" onclick="deletarDespesaVariavel(${d.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>`;
+            });
+
             // Não parceladas
             naoParceladas.forEach(d => {
                 const status = getStatusVencimento(d.data, d.pago);
