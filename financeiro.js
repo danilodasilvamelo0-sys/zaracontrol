@@ -4078,6 +4078,39 @@
             .filter(k => k < keyAtualFixed)
             .flatMap(k => (financeiro.despesasFixasMes[k] || []).filter(d => !d.pago && !d.atrasada));
         const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis);
+
+        // ── DEBUG: onde estão Equatorial e Consa? ──
+        setTimeout(() => {
+            const nomes = ['equatorial','consa','energia','luz','agua','gas'];
+            const resultados = [];
+            // despesasVariaveis
+            (financeiro.despesasVariaveis||[]).forEach(d => {
+                if (nomes.some(n => (d.descricao||'').toLowerCase().includes(n))) {
+                    resultados.push('VAR: ' + d.descricao + ' | ' + d.data + ' | pago:' + d.pago + ' | grupo:' + (d.grupoParcelaId||'N'));
+                }
+            });
+            // despesasAvulsas
+            (financeiro.despesasAvulsas||[]).forEach(d => {
+                if (nomes.some(n => (d.descricao||'').toLowerCase().includes(n))) {
+                    resultados.push('AVU: ' + d.descricao + ' | ' + d.data + ' | pago:' + d.pago);
+                }
+            });
+            // despesasFixasMes - julho
+            Object.keys(financeiro.despesasFixasMes||{}).filter(k=>k<getMesAnoKey()).forEach(k => {
+                (financeiro.despesasFixasMes[k]||[]).forEach(d => {
+                    if (nomes.some(n => (d.descricao||'').toLowerCase().includes(n))) {
+                        resultados.push('FIXA-'+k+': ' + d.descricao + ' | pago:' + d.pago);
+                    }
+                });
+            });
+            if (resultados.length === 0) resultados.push('NAO ENCONTRADO em nenhuma estrutura');
+
+            let el = document.getElementById('dbgEq');
+            if (!el) { el = document.createElement('div'); el.id='dbgEq'; document.body.appendChild(el); }
+            el.style.cssText = 'position:fixed;top:70px;left:8px;right:8px;z-index:9999;background:#2c3e50;color:#fff;padding:10px;border-radius:8px;font-size:0.63em;font-family:monospace;line-height:1.6;';
+            el.innerHTML = 'Buscando: equatorial/consa/energia<br>' + resultados.join('<br>');
+        }, 1500);
+        // ── FIM DEBUG ──
         const avulsasMes = filtrarPorMes(financeiro.despesasAvulsas);
         const emprestimosAtivos = financeiro.emprestimos.filter(e => !e.arquivado);
 
