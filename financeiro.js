@@ -4096,22 +4096,27 @@
             if (!el) {
                 el = document.createElement('div');
                 el.id = 'dbgVarAtraso';
-                el.style.cssText = 'position:fixed;top:70px;left:8px;right:8px;z-index:9999;background:#c0392b;color:#fff;padding:10px;border-radius:8px;font-size:0.65em;font-family:monospace;line-height:1.5;word-break:break-all;';
+                el.style.cssText = 'position:fixed;top:70px;left:8px;right:8px;z-index:9999;background:#1a3a6b;color:#fff;padding:10px;border-radius:8px;font-size:0.65em;font-family:monospace;line-height:1.5;word-break:break-all;';
                 document.body.appendChild(el);
             }
             const todas = (financeiro.despesasVariaveis || []);
-            const naoParc = todas.filter(d => !d.grupoParcelaId);
-            const naoParcNaoPagas = naoParc.filter(d => !d.pago);
+            const parc = todas.filter(d => d.grupoParcelaId);
+            const parcNaoPagas = parc.filter(d => !d.pago);
+            const parcAtraso = parcNaoPagas.filter(d => d.data && d.data.substring(0,7) < keyAtual);
+            const fixas = financeiro.despesasFixasMes || {};
+            const fixasChaves = Object.keys(fixas);
+            const fixasAtraso = fixasChaves.filter(k => k < keyAtual)
+                .flatMap(k => fixas[k].filter(d => !d.pago && !d.atrasada));
             el.innerHTML = 
-                'Total variáveis: ' + todas.length + '<br>' +
-                'Não parceladas: ' + naoParc.length + '<br>' +
-                'Não parceladas não pagas: ' + naoParcNaoPagas.length + '<br>' +
                 'keyAtual: ' + keyAtual + '<br>' +
-                'todasVariaveisAtraso: ' + todasVariaveisAtraso.length + '<br>' +
-                'variaveisNaoPagasAtraso: ' + variaveisNaoPagasAtraso.length + '<br>' +
-                (naoParcNaoPagas.slice(0,3).map(d => d.data + ' | ' + d.descricao.slice(0,20) + ' | pago:' + d.pago).join('<br>'));
+                'Parceladas total: ' + parc.length + '<br>' +
+                'Parceladas não pagas: ' + parcNaoPagas.length + '<br>' +
+                'Parceladas ATRASADAS (data < atual): ' + parcAtraso.length + '<br>' +
+                'Fixas com chaves anteriores: ' + fixasChaves.filter(k=>k<keyAtual).join(', ') + '<br>' +
+                'Fixas não pagas anteriores: ' + fixasAtraso.length + '<br>' +
+                (parcAtraso.slice(0,2).map(d => d.data + ' ' + d.descricao.slice(0,15)).join('<br>'));
             el.style.display = 'block';
-            setTimeout(() => { if(el) el.style.display = 'none'; }, 10000);
+            setTimeout(() => { if(el) el.style.display = 'none'; }, 15000);
         })();
         // ── FIM DEBUG ──
 
