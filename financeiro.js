@@ -4071,6 +4071,12 @@
         const receitasFixasMesArr = getReceitasFixasMes();
         const receitasVariaveisMesArr = getReceitasVariaveisMes();
         const fixasMes = getDespesasFixasMes();
+
+        // Despesas FIXAS não pagas de meses anteriores
+        const keyAtualFixed = getMesAnoKey();
+        const fixasAtrasadasAnteriores = Object.keys(financeiro.despesasFixasMes || {})
+            .filter(k => k < keyAtualFixed)
+            .flatMap(k => (financeiro.despesasFixasMes[k] || []).filter(d => !d.pago && !d.atrasada));
         const variaveisMes = filtrarPorMes(financeiro.despesasVariaveis);
         const avulsasMes = filtrarPorMes(financeiro.despesasAvulsas);
         const emprestimosAtivos = financeiro.emprestimos.filter(e => !e.arquivado);
@@ -4089,30 +4095,6 @@
         // Separar: parceladas em atraso (accordion) e simples em atraso (linha simples)
         const parcelasEmAtraso    = todasVariaveisAtraso.filter(d => d.grupoParcelaId);
         const variaveisNaoPagasAtraso = todasVariaveisAtraso.filter(d => !d.grupoParcelaId);
-
-        // ── DEBUG TEMPORÁRIO ──
-        (() => {
-            let el = document.getElementById('dbgVarAtraso');
-            if (!el) {
-                el = document.createElement('div');
-                el.id = 'dbgVarAtraso';
-                el.style.cssText = 'position:fixed;top:70px;left:8px;right:8px;z-index:9999;background:#1a3a6b;color:#fff;padding:10px;border-radius:8px;font-size:0.65em;font-family:monospace;line-height:1.5;word-break:break-all;';
-                document.body.appendChild(el);
-            }
-            const todas = (financeiro.despesasVariaveis || []);
-            const naoParc = todas.filter(d => !d.grupoParcelaId);
-            // Mostrar TODAS as não parceladas com data e pago
-            const linhas = naoParc.map(d => 
-                d.data + ' | ' + (d.descricao||'').slice(0,12) + ' | pago:' + d.pago + ' | pausado:' + (d.pausado||false)
-            );
-            el.innerHTML = 
-                'keyAtual: ' + keyAtual + '<br>' +
-                'Nao parceladas (' + naoParc.length + '):<br>' +
-                linhas.join('<br>');
-            el.style.display = 'block';
-            setTimeout(() => { if(el) el.style.display = 'none'; }, 20000);
-        })();
-        // ── FIM DEBUG ──
 
         // === CÁLCULOS PARA OS KPIs ===
         
@@ -4619,9 +4601,34 @@
         htmlMobileFixas += '</div>';
         fixasTable.innerHTML = htmlFixas;
 
+        // Adicionar fixas atrasadas de meses anteriores no mobile
+        let htmlFixasAtraso = '';
+        fixasAtrasadasAnteriores.forEach(d => {
+            const modelo = financeiro.despesasFixas.find(df => String(df.id) === String(d.modeloId));
+            if (!modelo || modelo.ativa === false) return;
+            const icon = getCategIcon(d.categoria || 'Outros');
+            const mesRef = d.data ? d.data.substring(0,7) : '?';
+            const [ano,mes] = mesRef.split('-');
+            const nomesMes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const mesNome = nomesMes[parseInt(mes)-1] || mes;
+            htmlFixasAtraso += `<div class="desp-card desp-card-vencida" style="border-left:3px solid var(--red)">
+                <div class="desp-card-top">
+                    <div class="desp-card-icon">${icon}</div>
+                    <div class="desp-card-info">
+                        <div class="desp-card-nome">${d.descricao} <span class="desp-atraso-badge">${mesNome}/${ano}</span></div>
+                        <div class="desp-card-meta">${d.categoria||'Outros'} · Vencida em ${formatarData(d.data)}</div>
+                    </div>
+                    <div class="desp-card-right">
+                        <div class="desp-card-valor" style="color:var(--red);">${formatarMoeda(d.valor)}</div>
+                        <span class="desp-badge pendente">Atrasada</span>
+                    </div>
+                </div>
+            </div>`;
+        });
+
         // Injetar cards mobile
         const mobileWrap = document.getElementById('despesasFixasMobile');
-        if (mobileWrap) mobileWrap.innerHTML = htmlMobileFixas;
+        if (mobileWrap) mobileWrap.innerHTML = htmlFixasAtraso + htmlMobileFixas;
 
         // === TABELA DESPESAS VARIÁVEIS ===
         const variaveisTable = document.getElementById('despesasVariaveisTable');
