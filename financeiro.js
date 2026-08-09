@@ -4089,7 +4089,32 @@
         // Separar: parceladas em atraso (accordion) e simples em atraso (linha simples)
         const parcelasEmAtraso    = todasVariaveisAtraso.filter(d => d.grupoParcelaId);
         const variaveisNaoPagasAtraso = todasVariaveisAtraso.filter(d => !d.grupoParcelaId);
-        
+
+        // ── DEBUG TEMPORÁRIO ──
+        (() => {
+            let el = document.getElementById('dbgVarAtraso');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'dbgVarAtraso';
+                el.style.cssText = 'position:fixed;top:70px;left:8px;right:8px;z-index:9999;background:#c0392b;color:#fff;padding:10px;border-radius:8px;font-size:0.65em;font-family:monospace;line-height:1.5;word-break:break-all;';
+                document.body.appendChild(el);
+            }
+            const todas = (financeiro.despesasVariaveis || []);
+            const naoParc = todas.filter(d => !d.grupoParcelaId);
+            const naoParcNaoPagas = naoParc.filter(d => !d.pago);
+            el.innerHTML = 
+                'Total variáveis: ' + todas.length + '<br>' +
+                'Não parceladas: ' + naoParc.length + '<br>' +
+                'Não parceladas não pagas: ' + naoParcNaoPagas.length + '<br>' +
+                'keyAtual: ' + keyAtual + '<br>' +
+                'todasVariaveisAtraso: ' + todasVariaveisAtraso.length + '<br>' +
+                'variaveisNaoPagasAtraso: ' + variaveisNaoPagasAtraso.length + '<br>' +
+                (naoParcNaoPagas.slice(0,3).map(d => d.data + ' | ' + d.descricao.slice(0,20) + ' | pago:' + d.pago).join('<br>'));
+            el.style.display = 'block';
+            setTimeout(() => { if(el) el.style.display = 'none'; }, 10000);
+        })();
+        // ── FIM DEBUG ──
+
         // === CÁLCULOS PARA OS KPIs ===
         
         // KPI 1: Receita Total (fixas + variáveis)
