@@ -4,6 +4,36 @@
         const mobileAvulsas = document.getElementById('despesasAvulsasMobile');
         if (mobileAvulsas) {
             let htmlMobAvulsas = '<div class="desp-cards-wrap">';
+
+            // ── Avulsas atrasadas de meses anteriores ──
+            variaveisNaoPagasAtraso.forEach(d => {
+                const icon = getCategIcon(d.categoria || 'Outros');
+                const [ano, mes] = d.data.substring(0,7).split('-');
+                const nomesMes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+                const mesNome = nomesMes[parseInt(mes)-1] || mes;
+                htmlMobAvulsas += `<div class="desp-card desp-card-vencida" style="border-left:3px solid var(--red)">
+                    <div class="desp-card-top">
+                        <div class="desp-card-icon">${icon}</div>
+                        <div class="desp-card-info">
+                            <div class="desp-card-nome">${d.descricao} <span class="desp-atraso-badge">${mesNome}/${ano}</span></div>
+                            <div class="desp-card-meta">${d.categoria||'Outros'} · ${formatarData(d.data)}</div>
+                        </div>
+                        <div class="desp-card-right">
+                            <div class="desp-card-valor" style="color:var(--red);">${formatarMoeda(d.valor)}</div>
+                            <span class="desp-badge pendente">Atrasada</span>
+                        </div>
+                    </div>
+                    <div class="desp-card-acoes">
+                        <button class="acc-delete-btn" onclick="marcarPagoAvulsa(${d.id})" style="color:rgba(46,204,113,0.8);" title="Marcar pago">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><polyline points="20 6 9 17 4 12"/></svg>
+                        </button>
+                        <button class="acc-delete-btn" onclick="deletarDespesaAvulsa(${d.id})" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>`;
+            });
+
             avulsasMes.forEach(d => {
                 const hj = new Date(); hj.setHours(0,0,0,0);
                 const dv = d.data ? new Date(d.data+'T00:00:00') : null;
