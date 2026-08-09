@@ -4937,9 +4937,38 @@
 
         // === TABELA DESPESAS AVULSAS ===
         const avulsasTable = document.getElementById('despesasAvulsasTable');
-        document.getElementById('emptyDespesasAvulsas').style.display = avulsasMes.length ? 'none' : 'block';
+        const temAvulsasVisiveis2 = avulsasMes.length > 0 || variaveisNaoPagasAtraso.length > 0;
+        document.getElementById('emptyDespesasAvulsas').style.display = temAvulsasVisiveis2 ? 'none' : 'block';
 
-        avulsasTable.innerHTML = avulsasMes.map(d => {
+        // Linhas das ATRASADAS de meses anteriores
+        const htmlAtrasadasRows = variaveisNaoPagasAtraso.map(d => {
+            const [ano, mes] = d.data.substring(0,7).split('-');
+            const nomesMes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const mesNome = nomesMes[parseInt(mes)-1] || mes;
+            return `<tr style="background:rgba(231,76,60,0.06);border-left:3px solid #e74c3c;">
+                <td>
+                    <span class="acc-chevron" style="cursor:pointer;background:rgba(46,204,113,0.1);"
+                          onclick="togglePagoAvulsa(${d.id})" title="Marcar pago">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(46,204,113,0.5)" stroke-width="2" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>
+                    </span>
+                </td>
+                <td class="acc-descricao">
+                    ${d.descricao}
+                    <span style="margin-left:6px;font-size:0.62em;font-weight:700;color:#e74c3c;background:rgba(231,76,60,0.12);padding:1px 6px;border-radius:4px;">${mesNome}/${ano}</span>
+                </td>
+                <td>${d.categoria||'—'}</td>
+                <td>${formatarData(d.data)}</td>
+                <td><span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Atrasada</span></td>
+                <td style="text-align:right;color:#e74c3c;">${formatarMoeda(d.valor)}</td>
+                <td>
+                    <button class="acc-delete-btn" onclick="deletarDespesaAvulsa(${d.id})" title="Excluir">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                </td>
+            </tr>`;
+        }).join('');
+
+        avulsasTable.innerHTML = htmlAtrasadasRows + avulsasMes.map(d => {
             const hoje = new Date(); hoje.setHours(0,0,0,0);
             const dv = d.data ? new Date(d.data + 'T00:00:00') : null;
             const vencida = dv && dv < hoje && !d.pago;
