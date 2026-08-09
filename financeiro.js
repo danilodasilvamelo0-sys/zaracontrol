@@ -4141,7 +4141,9 @@
         // KPI 2: Despesas Totais (fixas + parceladas + avulsas + empréstimos pagos no mês)
         const totalFixasMes = fixasMes.reduce((s, d) => s + d.valor, 0);
         const totalParceladasMes = variaveisAtivas.reduce((s, d) => s + d.valor, 0);
-        const totalAvulsasMes = avulsasMes.reduce((s, d) => s + d.valor, 0);
+        // Atrasadas não pagas de meses anteriores entram no total
+        const totalAtrasadasAtraso = variaveisNaoPagasAtraso.reduce((s, d) => s + (d.valor || 0), 0);
+        const totalAvulsasMes = avulsasMes.reduce((s, d) => s + d.valor, 0) + totalAtrasadasAtraso;
         
         // Empréstimos: somar juros pagos + amortizações feitas no mês atual
         const mesAnoAtual = getMesAnoKey();
