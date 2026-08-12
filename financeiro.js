@@ -4075,18 +4075,7 @@
             ...filtrarPorMes(financeiro.despesasVariaveis||[]),
             ...filtrarPorMes(financeiro.despesasAvulsas||[])
         ].reduce((s, d) => s + (d.valor||0), 0);
-        const _saldoLiq = _recTotal - _despTotal;
-        const _elSaldo  = document.getElementById('headerSaldoLiquido');
-        const _elSub    = document.getElementById('headerSaldoSub');
-        if (_elSaldo) {
-            _elSaldo.textContent = formatarMoeda(Math.abs(_saldoLiq));
-            _elSaldo.className   = 'header-saldo-valor ' + (_saldoLiq >= 0 ? 'positivo' : 'negativo');
-        }
-        if (_elSub) {
-            _elSub.textContent = _saldoLiq >= 0
-                ? `↑ ${formatarMoeda(_recTotal)} rec. − ${formatarMoeda(_despTotal)} desp.`
-                : `↓ Déficit de ${formatarMoeda(Math.abs(_saldoLiq))}`;
-        }
+// header atualizado mais abaixo com previsaoFechamento
 
         // Restaurar exibição normal (caso venha do modo arquivados)
         const empTableWrapperNormal = document.querySelector('#sectionEmprestimos .table-container');
@@ -4198,6 +4187,19 @@
         
         // KPI 6: Previsão Fechamento (receita total - despesas totais)
         const previsaoFechamento = receitaTotalMes - despesasTotaisMes;
+
+        // Atualizar header com Previsão de Fechamento (mais realista que saldo snapshot)
+        const _elSaldoFinal = document.getElementById('headerSaldoLiquido');
+        const _elSubFinal   = document.getElementById('headerSaldoSub');
+        if (_elSaldoFinal) {
+            _elSaldoFinal.textContent = formatarMoeda(Math.abs(previsaoFechamento));
+            _elSaldoFinal.className   = 'header-saldo-valor ' + (previsaoFechamento >= 0 ? 'positivo' : 'negativo');
+        }
+        if (_elSubFinal) {
+            _elSubFinal.textContent = previsaoFechamento >= 0
+                ? `+ ${formatarMoeda(receitaTotalMes)} rec. − ${formatarMoeda(despesasTotaisMes)} desp.`
+                : `− R$ ${formatarMoeda(Math.abs(previsaoFechamento))} de déficit previsto`;
+        }
         
         // === ATUALIZAR DASHBOARD KPIs ===
         
