@@ -4188,17 +4188,18 @@
         // KPI 6: Previsão Fechamento (receita total - despesas totais)
         const previsaoFechamento = receitaTotalMes - despesasTotaisMes;
 
-        // Atualizar header com Previsão de Fechamento (mais realista que saldo snapshot)
+        // Header: Saldo Disponível = Receita recebida − Total pago (muda ao marcar pagamentos)
         const _elSaldoFinal = document.getElementById('headerSaldoLiquido');
         const _elSubFinal   = document.getElementById('headerSaldoSub');
         if (_elSaldoFinal) {
-            _elSaldoFinal.textContent = formatarMoeda(Math.abs(previsaoFechamento));
-            _elSaldoFinal.className   = 'header-saldo-valor ' + (previsaoFechamento >= 0 ? 'positivo' : 'negativo');
+            _elSaldoFinal.textContent = formatarMoeda(Math.abs(saldoDisponivel));
+            _elSaldoFinal.className   = 'header-saldo-valor ' + (saldoDisponivel >= 0 ? 'positivo' : 'negativo');
         }
         if (_elSubFinal) {
-            _elSubFinal.textContent = previsaoFechamento >= 0
-                ? `+ ${formatarMoeda(receitaTotalMes)} rec. − ${formatarMoeda(despesasTotaisMes)} desp.`
-                : `− R$ ${formatarMoeda(Math.abs(previsaoFechamento))} de déficit previsto`;
+            const sinalPrevisao = previsaoFechamento >= 0 ? '+' : '−';
+            _elSubFinal.textContent = saldoDisponivel >= 0
+                ? `+ ${formatarMoeda(receitaRecebida)} rec. − ${formatarMoeda(totalPago)} pago · Previsão: ${sinalPrevisao}${formatarMoeda(Math.abs(previsaoFechamento))}`
+                : `Pago: ${formatarMoeda(totalPago)} · Recebido: ${formatarMoeda(receitaRecebida)} · Previsão: ${sinalPrevisao}${formatarMoeda(Math.abs(previsaoFechamento))}`;
         }
         
         // === ATUALIZAR DASHBOARD KPIs ===
