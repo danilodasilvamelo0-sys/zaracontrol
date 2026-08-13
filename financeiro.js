@@ -4203,6 +4203,33 @@
         
         // === ATUALIZAR DASHBOARD KPIs ===
         
+        // ── Progress bars dos KPIs ──
+        const _pctRecebido = receitaTotalMes > 0 ? Math.min(100, Math.round(receitaRecebida/receitaTotalMes*100)) : 0;
+        const _pctPago     = despesasTotaisMes > 0 ? Math.min(100, Math.round(totalPago/despesasTotaisMes*100)) : 0;
+        const _pctComp     = Math.min(100, percentComprometido);
+
+        const _elRP = document.getElementById('kpiReceitaProgress');
+        const _elRL = document.getElementById('kpiReceitaProgressLabel');
+        if (_elRP) _elRP.style.width = _pctRecebido + '%';
+        if (_elRL) _elRL.textContent = _pctRecebido + '% recebido';
+
+        const _elDP = document.getElementById('kpiDespesasProgress');
+        const _elDL = document.getElementById('kpiDespesasProgressLabel');
+        if (_elDP) _elDP.style.width = _pctPago + '%';
+        if (_elDL) _elDL.textContent = _pctPago + '% pago';
+
+        const _elCP = document.getElementById('kpiComprometidoProgress');
+        if (_elCP) {
+            _elCP.style.width = _pctComp + '%';
+            _elCP.style.background = _pctComp <= 60 ? 'var(--green)' : _pctComp <= 80 ? '#e67e22' : 'var(--red)';
+        }
+
+        // Atualizar cor do valor de receita e despesas
+        const _elKpiRec = document.getElementById('kpiReceita');
+        if (_elKpiRec) _elKpiRec.className = 'kpi-valor positivo';
+        const _elKpiDesp = document.getElementById('kpiDespesas');
+        if (_elKpiDesp) _elKpiDesp.className = 'kpi-valor negativo';
+
         // KPI 1: Receita Total — detalhes por fonte
         document.getElementById('kpiReceita').textContent = formatarMoeda(receitaTotalMes);
         const receitaDetalhe = document.getElementById('kpiReceitaDetalhe');
@@ -4312,10 +4339,10 @@
         comprometidoCard.classList.remove('atencao', 'critico');
         if (percentComprometido <= 60) {
             badgeComprometido.textContent = 'Saudável';
-            badgeComprometido.className = 'kpi-badge saudavel';
+            badgeComprometido.className = 'kpi-status-badge verde';
         } else if (percentComprometido <= 80) {
             badgeComprometido.textContent = 'Atenção';
-            badgeComprometido.className = 'kpi-badge atencao';
+            badgeComprometido.className = 'kpi-status-badge amarelo';
             comprometidoCard.classList.add('atencao');
         } else {
             badgeComprometido.textContent = 'Crítico';
