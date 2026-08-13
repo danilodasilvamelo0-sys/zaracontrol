@@ -4246,9 +4246,17 @@
                 <span>Variáveis ${pctAvulsas>0?`<small>(${pctAvulsas}%)</small>`:''}</span>
                 <span style="font-weight:600;">${formatarMoeda(totalAvulsasMes)}</span>
             </span>` : ''}
-            ${(totalEmpPagoMes+totalParcelasPendentesMes) > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+            ${totalParcelasPendentesMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
                 <span>Empréstimos ${pctEmp>0?`<small>(${pctEmp}%)</small>`:''}</span>
-                <span style="font-weight:600;">${formatarMoeda(totalEmpPagoMes+totalParcelasPendentesMes)}</span>
+                <span style="font-weight:600;">${formatarMoeda(totalParcelasPendentesMes)}</span>
+            </span>` : ''}
+            ${empAmortizadoMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;color:#2ecc71;">
+                <span>Amortização</span>
+                <span style="font-weight:600;">${formatarMoeda(empAmortizadoMes)}</span>
+            </span>` : ''}
+            ${empJurosPagosMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
+                <span>Juros pagos</span>
+                <span style="font-weight:600;">${formatarMoeda(empJurosPagosMes)}</span>
             </span>` : ''}
             ${jurosAcumuladosTotal > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;color:#e74c3c;">
                 <span>Juros pendentes</span>
