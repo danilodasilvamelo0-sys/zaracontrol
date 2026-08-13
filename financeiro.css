@@ -6803,3 +6803,116 @@ font-size: 1.1em;
 @media (min-width: 769px) {
     .mobile-nav { display: none !important; }
 }
+
+
+/* ══════════════════════════════════════
+   KPI CARDS REDESIGN
+   ══════════════════════════════════════ */
+
+/* Header do card */
+.kpi-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+/* Ícone colorido */
+.kpi-icon-box {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.kpi-icon-box svg { width: 17px; height: 17px; stroke: currentColor; fill: none; }
+.kpi-icon-green  { background: rgba(46,204,113,0.15);  color: #2ecc71; }
+.kpi-icon-red    { background: rgba(231,76,60,0.15);   color: #e74c3c; }
+.kpi-icon-gold   { background: rgba(201,168,76,0.15);  color: #c9a84c; }
+.kpi-icon-orange { background: rgba(230,126,34,0.15);  color: #e67e22; }
+.kpi-icon-purple { background: rgba(155,89,182,0.15);  color: #9b59b6; }
+.kpi-icon-teal   { background: rgba(26,188,156,0.15);  color: #1abc9c; }
+
+/* Label */
+.kpi-label {
+    font-size: 0.68em;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+/* Valor principal */
+.kpi-valor {
+    font-size: 1.55em;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.1;
+}
+.kpi-valor.positivo { color: var(--green); }
+.kpi-valor.negativo { color: var(--red); }
+
+/* Barra de progresso */
+.kpi-progress-wrap {
+    margin-bottom: 12px;
+}
+.kpi-progress-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+.kpi-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+    background: var(--gold);
+}
+.kpi-progress-fill.green  { background: var(--green); }
+.kpi-progress-fill.red    { background: var(--red); }
+.kpi-progress-fill.orange { background: #e67e22; }
+.kpi-progress-label {
+    font-size: 0.60em;
+    color: var(--text-dim);
+    font-weight: 600;
+}
+
+/* Detalhes */
+.kpi-detalhe {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.72em;
+    color: var(--text-sub);
+}
+.kpi-detalhe-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+.kpi-detalhe-row span:last-child {
+    font-weight: 700;
+    text-align: right;
+}
+.kpi-detalhe-row.green span:last-child { color: var(--green); }
+.kpi-detalhe-row.red span:last-child   { color: var(--red); }
+.kpi-detalhe-row.gold span:last-child  { color: var(--gold); }
+.kpi-detalhe-row.dim { opacity: 0.6; font-size: 0.92em; }
+
+/* Badge de status */
+.kpi-status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+.kpi-status-badge.verde   { background: rgba(46,204,113,0.15);  color: #2ecc71; }
+.kpi-status-badge.amarelo { background: rgba(201,168,76,0.15);  color: #c9a84c; }
+.kpi-status-badge.laranja { background: rgba(230,126,34,0.15);  color: #e67e22; }
+.kpi-status-badge.vermelho{ background: rgba(231,76,60,0.15);   color: #e74c3c; }
