@@ -4702,30 +4702,6 @@
 
         let htmlVariaveis = '';
 
-        // Renderizar variáveis não parceladas ATRASADAS (meses anteriores, não pagas)
-        variaveisNaoPagasAtraso.forEach(d => {
-            const status = getStatusVencimento(d.data, d.pago);
-            htmlVariaveis += `
-                <tr class="acc-row" style="opacity:0.85;">
-                    <td></td>
-                    <td class="acc-descricao">
-                        ${d.descricao}
-                        <span style="margin-left:6px;font-size:0.62em;font-weight:700;color:#e74c3c;background:rgba(231,76,60,0.12);padding:1px 5px;border-radius:4px;letter-spacing:0.5px;">ATRASADA</span>
-                    </td>
-                    <td class="acc-condicao acc-mobile-meta">${formatarData(d.data)}</td>
-                    <td class="acc-mobile-meta">—</td>
-                    <td class="valor-negativo acc-mobile-valor" style="text-align:right;">${formatarMoeda(d.valor)}</td>
-                    <td>
-                        <button class="acc-delete-btn" onclick="deletarDespesaVariavel(${d.id})" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
-                            </svg>
-                        </button>
-                    </td>
-                </tr>`;
-        });
-
         // Renderizar despesas não parceladas (linha simples, sem accordion)
         naoParceladas.forEach(d => {
             const status = getStatusVencimento(d.data, d.pago);
@@ -4841,28 +4817,6 @@
         if (mobileVar) {
             let htmlMobVar = '<div class="desp-cards-wrap">';
 
-            // ── Atrasadas de meses anteriores (não parceladas) ──
-            variaveisNaoPagasAtraso.forEach(d => {
-                const icon = getCategIcon(d.categoria || 'Outros');
-                htmlMobVar += `<div class="desp-card desp-card-vencida" style="border-left:3px solid var(--red)">
-                    <div class="desp-card-top">
-                        <div class="desp-card-icon">${icon}</div>
-                        <div class="desp-card-info">
-                            <div class="desp-card-nome">${d.descricao} <span class="desp-atraso-badge">ATRASADA</span></div>
-                            <div class="desp-card-meta">${d.categoria||'Outros'} · ${formatarData(d.data)}</div>
-                        </div>
-                        <div class="desp-card-right">
-                            <div class="desp-card-valor" style="color:var(--red);">${formatarMoeda(d.valor)}</div>
-                            <span class="desp-badge pendente">Pendente</span>
-                        </div>
-                    </div>
-                    <div class="desp-card-acoes">
-                        <button class="acc-delete-btn" onclick="deletarDespesaVariavel(${d.id})" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                        </button>
-                    </div>
-                </div>`;
-            });
 
             // Não parceladas
             naoParceladas.forEach(d => {
