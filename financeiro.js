@@ -24,8 +24,11 @@
                         </div>
                     </div>
                     <div class="desp-card-acoes">
-                        <button class="acc-delete-btn" onclick="marcarPagoAvulsa(${d.id})" style="color:rgba(46,204,113,0.8);" title="Marcar pago">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><polyline points="20 6 9 17 4 12"/></svg>
+                        <button onclick="marcarPagoAvulsa(${d.id})"
+                            style="background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.5);
+                                   border-radius:8px;color:#2ecc71;font-size:0.72em;font-weight:800;
+                                   padding:5px 14px;cursor:pointer;font-family:inherit;">
+                            PAGAR
                         </button>
                         <button class="acc-delete-btn" onclick="deletarDespesaAvulsa(${d.id})" title="Excluir">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -55,8 +58,11 @@
                         </div>
                     </div>
                     <div class="desp-card-acoes">
-                        <button class="acc-delete-btn" onclick="marcarPagoAvulsa(${d.id})" style="color:rgba(46,204,113,0.8);" title="Marcar pago">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><polyline points="20 6 9 17 4 12"/></svg>
+                        <button onclick="marcarPagoAvulsa(${d.id})"
+                            style="background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.5);
+                                   border-radius:8px;color:#2ecc71;font-size:0.72em;font-weight:800;
+                                   padding:5px 14px;cursor:pointer;font-family:inherit;">
+                            PAGAR
                         </button>
                         <button class="acc-delete-btn" onclick="deletarDespesaAvulsa(${d.id})" title="Excluir">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -4918,11 +4924,13 @@
             const mesNome = nomesMes[parseInt(mes)-1] || mes;
             return `<tr style="background:rgba(231,76,60,0.06);border-left:3px solid #e74c3c;">
                 <td>
-                    <span class="acc-chevron" style="cursor:pointer;background:rgba(46,204,113,0.1);"
-                          onclick="marcarPagoAvulsa(${d.id})" title="Marcar pago"
-                        style="background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3);border-radius:50%;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"/></svg>
-                    </span>
+                    <button onclick="marcarPagoAvulsa(${d.id})" title="Marcar como pago"
+                        style="background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.5);
+                               border-radius:6px;padding:4px 10px;cursor:pointer;
+                               color:#2ecc71;font-size:0.65em;font-weight:800;
+                               font-family:inherit;letter-spacing:0.5px;">
+                        PAGAR
+                    </button>
                 </td>
                 <td class="acc-descricao">
                     ${d.descricao}
