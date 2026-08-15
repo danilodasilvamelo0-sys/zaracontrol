@@ -4964,11 +4964,16 @@
             return `
                 <tr>
                     <td>
-                        <span class="acc-chevron" style="cursor:pointer;background:${d.pago ? 'rgba(46,204,113,0.15)' : 'rgba(26, 26, 26, 0.07)'};"
-                              onclick="togglePagoAvulsa(${d.id})" title="Marcar pago">
-                            ${d.pago ? '<svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-                                     : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26, 26, 26, 0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>'}
-                        </span>
+                        <button onclick="togglePagoAvulsa(${d.id})" title="${d.pago ? 'Desmarcar' : 'Marcar como pago'}"
+                            style="background:${d.pago ? '#2ecc71' : 'transparent'};
+                                   border:1.5px solid #2ecc71;border-radius:6px;
+                                   padding:3px 8px;cursor:pointer;
+                                   color:${d.pago ? '#0a0a0a' : '#2ecc71'};
+                                   font-size:0.62em;font-weight:800;
+                                   font-family:inherit;letter-spacing:0.5px;
+                                   white-space:nowrap;">
+                            ${d.pago ? 'PAGO' : 'PAGAR'}
+                        </button>
                     </td>
                     <td class="acc-descricao">${d.descricao}</td>
                     <td class="acc-mobile-meta" style="text-align:center;"><span class="rec-cat">${d.categoria}</span></td>
