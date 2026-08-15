@@ -4935,9 +4935,17 @@
                             const dP=p.data?new Date(p.data+'T00:00:00'):null;
                             const hj=new Date();hj.setHours(0,0,0,0);
                             const isV=dP&&dP<hj&&!isPago;
-                            return `<div class="parcela-item${isPago?' pago':''}${isV?' vencida':''}" onclick="togglePagoVariavel(${p.id})">
-                                <div class="parcela-check${isPago?' checked':''}"></div>
-                                <div class="parcela-info-box"><div class="parcela-nome">Parcela ${p.parcelaAtual}/${p.totalParcelas}</div><div class="parcela-data-txt">${p.data?p.data.split('-').reverse().join('/'):'—'}</div></div>
+                            return `<div class="parcela-item${isPago?' pago':''}${isV?' vencida':''}" style="display:flex;align-items:center;gap:10px;">
+                                <button onclick="event.stopPropagation();togglePagoVariavel(${p.id}, this)"
+                                    style="background:${isPago ? '#2ecc71' : 'transparent'};
+                                           border:1.5px solid ${isV && !isPago ? '#e74c3c' : '#2ecc71'};
+                                           border-radius:6px;padding:3px 8px;cursor:pointer;
+                                           color:${isPago ? '#0a0a0a' : isV ? '#e74c3c' : '#2ecc71'};
+                                           font-size:0.60em;font-weight:800;font-family:inherit;
+                                           letter-spacing:0.5px;white-space:nowrap;flex-shrink:0;">
+                                    ${isPago ? 'PAGO' : 'PAGAR'}
+                                </button>
+                                <div class="parcela-info-box" style="flex:1;"><div class="parcela-nome">Parcela ${p.parcelaAtual}/${p.totalParcelas}</div><div class="parcela-data-txt">${p.data?p.data.split('-').reverse().join('/'):'—'}</div></div>
                                 <div class="parcela-valor-txt">${formatarMoeda(p.valor)}</div>
                             </div>`;
                         }).join('')}
