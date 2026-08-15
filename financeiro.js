@@ -3944,7 +3944,7 @@
         const bordaL  = opts.vencido ? '3px solid var(--red)' : opts.pago ? '3px solid var(--green)' : '3px solid transparent';
         const progBar = opts.progresso !== undefined ? `
             <div class="desp-prog-wrap">
-                <div class="desp-prog-bar" style="width:${opts.progresso}%;background:${opts.progresso===100?'var(--green)':'var(--gold)'}"></div>
+                <div class="desp-prog-bar" style="width:${opts.progresso}%;background:#2ecc71"></div>
             </div>` : '';
 
         // ── LINHA DESKTOP ──
