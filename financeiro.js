@@ -4173,15 +4173,9 @@
         const fixasPendentes = totalFixasMes - fixasPagas;
         const parceladasPagas = variaveisAtivas.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
         const parceladasPendentes = totalParceladasMes - parceladasPagas;
-        // Avulsas pagas do mês atual
-        const avulsasPagasMes = avulsasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
-        // Avulsas atrasadas pagas com dataPagamento no mês atual
-        const avulsasAtrasosPagas = (financeiro.despesasAvulsas || [])
-            .filter(d => d.pago && d.data && d.data.substring(0,7) < keyAtual
-                      && d.dataPagamento && d.dataPagamento.substring(0,7) === keyAtual)
-            .reduce((s, d) => s + d.valor, 0);
-        const avulsasPagas = avulsasPagasMes + avulsasAtrasosPagas;
-        const avulsasPendentes = totalAvulsasMes - avulsasPagasMes; // pendente = só do mês
+        // Avulsas pagas — apenas do mês atual (atrasadas não inflam totalPago)
+        const avulsasPagas = avulsasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+        const avulsasPendentes = totalAvulsasMes - avulsasPagas;
         const totalPago = fixasPagas + parceladasPagas + avulsasPagas + totalEmpPagoMes;
         
         // KPI 3: Saldo Disponível (receita recebida - tudo que foi pago incluindo empréstimos)
