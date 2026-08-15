@@ -3621,18 +3621,15 @@
     function confirmarExclusaoEmprestimo() {
         const checkbox = document.getElementById('checkConfirmaExclusao');
         if (!checkbox || !checkbox.checked) {
-            console.log('Checkbox não marcado');
-            return;
+                        return;
         }
 
         if (!itemEditando || !itemEditando.id) {
-            console.log('itemEditando não definido');
-            return;
+                        return;
         }
 
         const idExcluir = itemEditando.id;
-        console.log('Excluindo empréstimo ID:', idExcluir);
-        
+                
         financeiro.emprestimos = financeiro.emprestimos.filter(e => String(e.id) !== String(idExcluir));
         
         salvarDados();
@@ -4170,8 +4167,14 @@
         const fixasPendentes = totalFixasMes - fixasPagas;
         const parceladasPagas = variaveisAtivas.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
         const parceladasPendentes = totalParceladasMes - parceladasPagas;
-        const avulsasPagas = avulsasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
-        const avulsasPendentes = totalAvulsasMes - avulsasPagas;
+        // Avulsas pagas do mês atual
+        const avulsasPagasMes = avulsasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
+        // Avulsas atrasadas (meses anteriores) que foram pagas — saíram do bolso
+        const avulsasAtrasosPagas = (financeiro.despesasAvulsas || [])
+            .filter(d => d.pago && d.data && d.data.substring(0,7) < keyAtual)
+            .reduce((s, d) => s + d.valor, 0);
+        const avulsasPagas = avulsasPagasMes + avulsasAtrasosPagas;
+        const avulsasPendentes = totalAvulsasMes - avulsasPagasMes; // pendente = só do mês
         const totalPago = fixasPagas + parceladasPagas + avulsasPagas + totalEmpPagoMes;
         
         // KPI 3: Saldo Disponível (receita recebida - tudo que foi pago incluindo empréstimos)
