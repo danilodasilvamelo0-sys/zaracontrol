@@ -6803,3 +6803,15 @@ font-size: 1.1em;
 @media (min-width: 769px) {
     .mobile-nav { display: none !important; }
 }
+@media (max-width: 768px) {
+    /* Esconder tabela desktop das parceladas no mobile — mostrar só cards */
+    #despesasVariaveisTable,
+    #despesasVariaveisTable + * { display: none !important; }
+
+    /* Esconder tabela desktop de avulsas — mostrar só cards */
+    #despesasAvulsasTable { display: none !important; }
+    #despesaAvulsasTable { display: none !important; }
+
+    /* Esconder tabela desktop de fixas — mostrar só cards */
+    #despesasFixasTable { display: none !important; }
+}
