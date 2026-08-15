@@ -4177,9 +4177,11 @@
         // KPI 3: Saldo Disponível (receita recebida - tudo que foi pago incluindo empréstimos)
         const saldoDisponivel = receitaRecebida - totalPago;
         
-        // KPI 4: % Comprometido (despesas totais / receita total)
-        const percentComprometido = receitaTotalMes > 0 
-            ? Math.round((despesasTotaisMes / receitaTotalMes) * 100) 
+        // KPI 4: % Comprometido — só mês atual (sem atrasadas de meses anteriores)
+        const despesasMesAtual = totalFixasMes + totalParceladasMes +
+            avulsasMes.reduce((s, d) => s + d.valor, 0) + totalEmprestimosMes;
+        const percentComprometido = receitaTotalMes > 0
+            ? Math.round((despesasMesAtual / receitaTotalMes) * 100)
             : 0;
         
         // KPI 5: Economizado (total em reservas)
@@ -4914,8 +4916,9 @@
             return `<tr style="background:rgba(231,76,60,0.06);border-left:3px solid #e74c3c;">
                 <td>
                     <span class="acc-chevron" style="cursor:pointer;background:rgba(46,204,113,0.1);"
-                          onclick="togglePagoAvulsa(${d.id})" title="Marcar pago">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(46,204,113,0.5)" stroke-width="2" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"></circle></svg>
+                          onclick="marcarPagoAvulsa(${d.id})" title="Marcar pago"
+                        style="background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3);border-radius:50%;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"/></svg>
                     </span>
                 </td>
                 <td class="acc-descricao">
@@ -6911,4 +6914,15 @@ ${corpo.innerHTML}
         { texto: "O preguiçoso deseja e nada consegue, mas os desejos do diligente são plenamente satisfeitos.", fonte: "Provérbios 13:4", livro: "salomao" },
         { texto: "Riquezas obtidas com língua mentirosa são vapor fugaz, armadilha mortal.", fonte: "Provérbios 21:6", livro: "salomao" }
     ];
+
+// Marcar avulsa/atrasada como paga
+function marcarPagoAvulsa(id) {
+    const d = (financeiro.despesasAvulsas || []).find(x => x.id == id);
+    if (!d) return;
+    d.pago = true;
+    d.dataPagamento = new Date().toISOString().split('T')[0];
+    salvarDados();
+    renderFinanceiro();
+    mostrarStatus('Despesa marcada como paga!', 'success');
+}
 
