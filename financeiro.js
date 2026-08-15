@@ -2216,10 +2216,20 @@
         mostrarStatus('Compra parcelada atualizada', 'success');
     }
 
-    function togglePagoVariavel(id) {
+    function togglePagoVariavel(id, btn) {
         id = isNaN(id) ? id : Number(id);
         const item = financeiro.despesasVariaveis.find(d => String(d.id) === String(id));
         if (!item) return;
+        // Feedback instantâneo
+        if (btn) {
+            const viraPago = !item.pago;
+            btn.textContent = viraPago ? 'PAGO' : 'PAGAR';
+            btn.style.background = viraPago ? '#2ecc71' : 'transparent';
+            btn.style.color = viraPago ? '#0a0a0a' : '#2ecc71';
+            btn.style.borderColor = '#2ecc71';
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => { btn.style.transform = ''; }, 150);
+        }
 
         if (!item.pago) {
             itemEditando = { tipo: 'despesaVariavel', id: id };
@@ -4824,8 +4834,17 @@
                                     const isVencida = dataP && dataP < hoje2 && !isPago;
                                     return `
                                         <div class="parcela-item${isPago ? ' pago' : ''}${isVencida ? ' vencida' : ''}">
-                                            <div class="parcela-check${isPago ? ' checked' : ''}" onclick="event.stopPropagation();togglePagoVariavel(${p.id})" style="cursor:pointer;"></div>
-                                            <div class="parcela-info-box" onclick="event.stopPropagation();togglePagoVariavel(${p.id})" style="cursor:pointer;flex:1;">
+                                            <button onclick="event.stopPropagation();togglePagoVariavel(${p.id}, this)"
+                                                style="background:${isPago ? '#2ecc71' : 'transparent'};
+                                                       border:1.5px solid ${isVencida && !isPago ? '#e74c3c' : '#2ecc71'};
+                                                       border-radius:6px;padding:3px 8px;cursor:pointer;
+                                                       color:${isPago ? '#0a0a0a' : isVencida ? '#e74c3c' : '#2ecc71'};
+                                                       font-size:0.60em;font-weight:800;font-family:inherit;
+                                                       letter-spacing:0.5px;white-space:nowrap;flex-shrink:0;
+                                                       transition:all 0.15s ease;">
+                                                ${isPago ? 'PAGO' : 'PAGAR'}
+                                            </button>
+                                            <div class="parcela-info-box" style="flex:1;">
                                                 <div class="parcela-nome">Parcela ${p.parcelaAtual}/${p.totalParcelas}</div>
                                                 <div class="parcela-data-txt">${p.data ? p.data.split('-').reverse().join('/') : '—'}</div>
                                                 ${p.notaParcela ? `<div class="parcela-nota-txt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ${p.notaParcela}</div>` : ''}
