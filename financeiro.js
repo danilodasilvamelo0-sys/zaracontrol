@@ -5425,6 +5425,8 @@
     // ==========================================
     
     function salvarDados() {
+        // Timestamp local para resolver conflito com Supabase
+        financeiro._localUpdatedAt = new Date().toISOString();
         localStorage.setItem('financeiro_v5', JSON.stringify(financeiro));
         salvarSupabase();
     }
@@ -5432,11 +5434,12 @@
     async function salvarSupabase() {
         if (!useSupabase) return;
         try {
+            const _ts = financeiro._localUpdatedAt || new Date().toISOString();
             const { error } = await supabaseClient.from('financeiro').upsert({
                 id: USER_ID,
                 user_id: USER_ID,
                 dados: financeiro,
-                updated_at: new Date().toISOString()
+                updated_at: _ts
             });
             if (error) {
                 console.error('Erro Supabase:', error);
@@ -5464,14 +5467,25 @@
             }
 
             if (data?.dados) {
-                // Mesclar dados preservando estrutura
-                financeiro = {
-                    ...dadosVazios,
-                    ...data.dados,
-                    arquivados: { ...dadosVazios.arquivados, ...data.dados.arquivados }
-                };
-                localStorage.setItem('financeiro_v5', JSON.stringify(financeiro));
-                mostrarStatus('Dados carregados', 'success');
+                // Comparar timestamps: só sobrescreve se Supabase for mais novo que local
+                const localData = JSON.parse(localStorage.getItem('financeiro_v5') || '{}');
+                const localTs   = localData._localUpdatedAt || '0';
+                const remotoTs  = data.updated_at || data.dados._localUpdatedAt || '0';
+
+                if (remotoTs >= localTs) {
+                    // Supabase é mais novo ou igual — aceitar
+                    financeiro = {
+                        ...dadosVazios,
+                        ...data.dados,
+                        arquivados: { ...dadosVazios.arquivados, ...data.dados.arquivados }
+                    };
+                    localStorage.setItem('financeiro_v5', JSON.stringify(financeiro));
+                    mostrarStatus('Dados carregados', 'success');
+                } else {
+                    // Local é mais novo — manter local e sincronizar para Supabase
+                    mostrarStatus('Dados locais mais recentes — sincronizando...', 'info');
+                    await salvarSupabase();
+                }
                 return true;
             }
             return false;
