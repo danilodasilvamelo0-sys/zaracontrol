@@ -1184,19 +1184,25 @@
         return filtrarPorMes(financeiro.receitasAvulsas);
     }
 
-    function toggleRecebido(id) {
+    function toggleRecebido(id, btn) {
         id = Number(id);
+        // Feedback instantâneo
+        if (btn) {
+            const vaiReceber = btn.textContent.trim() === 'RECEBER';
+            btn.textContent = vaiReceber ? 'RECEBIDO' : 'RECEBER';
+            btn.style.background = vaiReceber ? '#2ecc71' : 'transparent';
+            btn.style.color = vaiReceber ? '#0a0a0a' : '#2ecc71';
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => { btn.style.transform = ''; }, 150);
+        }
         let item = financeiro.receitas.find(r => Number(r.id) === id);
-        if (item) { item.recebido = !item.recebido; salvarDados(); renderizar(); return; }
-
-        // Buscar em todos os meses
+        if (item) { item.recebido = !item.recebido; salvarDados(); setTimeout(() => renderizar(), 300); return; }
         for (const key of Object.keys(financeiro.receitasMes || {})) {
             item = (financeiro.receitasMes[key] || []).find(r => Number(r.id) === id);
-            if (item) { item.recebido = !item.recebido; salvarDados(); renderizar(); return; }
+            if (item) { item.recebido = !item.recebido; salvarDados(); setTimeout(() => renderizar(), 300); return; }
         }
-
         item = financeiro.receitasAvulsas.find(r => Number(r.id) === id);
-        if (item) { item.recebido = !item.recebido; salvarDados(); renderizar(); }
+        if (item) { item.recebido = !item.recebido; salvarDados(); setTimeout(() => renderizar(), 300); }
     }
 
     function deletarReceita(id) {
@@ -2816,9 +2822,18 @@
         renderizar();
     }
 
-    function togglePagoAvulsa(id) {
+    function togglePagoAvulsa(id, btn) {
         const item = financeiro.despesasAvulsas.find(d => String(d.id) === String(id));
         if (!item) return;
+        // Feedback instantâneo no botão
+        if (btn) {
+            const viraPago = !item.pago;
+            btn.textContent = viraPago ? 'PAGO' : 'PAGAR';
+            btn.style.background = viraPago ? '#2ecc71' : 'transparent';
+            btn.style.color = viraPago ? '#0a0a0a' : '#2ecc71';
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => { btn.style.transform = ''; }, 150);
+        }
 
         if (!item.pago) {
             itemEditando = { tipo: 'despesaAvulsa', id: id };
@@ -4464,12 +4479,17 @@
                 ? `<span class="rec-badge rec-badge-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 17 4 12"/></svg>Recebido</span>`
                 : `<span class="rec-badge rec-badge-pend">Pendente</span>`;
             return `<tr class="rec-row${r.recebido?' rec-row-ok':''}">
-                <td class="rec-check-td" onclick="toggleRecebido(${r.id})" title="Marcar recebido">
-                    <div class="rec-check${r.recebido?' rec-check-ativo':''}">
-                        ${r.recebido
-                            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="20 6 9 17 4 12"/></svg>'
-                            : ''}
-                    </div>
+                <td class="rec-check-td">
+                    <button onclick="toggleRecebido(${r.id}, this)" title="${r.recebido ? 'Desmarcar' : 'Marcar recebido'}"
+                        style="background:${r.recebido ? '#2ecc71' : 'transparent'};
+                               border:1.5px solid #2ecc71;border-radius:6px;
+                               padding:3px 8px;cursor:pointer;
+                               color:${r.recebido ? '#0a0a0a' : '#2ecc71'};
+                               font-size:0.62em;font-weight:800;
+                               font-family:inherit;letter-spacing:0.5px;
+                               white-space:nowrap;transition:all 0.15s ease;">
+                        ${r.recebido ? 'RECEBIDO' : 'RECEBER'}
+                    </button>
                 </td>
                 <td class="rec-nome">${r.descricao}</td>
                 <td class="rec-cat-td"><span class="rec-cat">${r.categoria}</span></td>
@@ -4495,12 +4515,17 @@
                 ? `<span class="rec-badge rec-badge-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 17 4 12"/></svg>Recebido</span>`
                 : `<span class="rec-badge rec-badge-pend">Pendente</span>`;
             return `<tr class="rec-row${r.recebido?' rec-row-ok':''}">
-                <td class="rec-check-td" onclick="toggleRecebido(${r.id})" title="Marcar recebido">
-                    <div class="rec-check${r.recebido?' rec-check-ativo':''}">
-                        ${r.recebido
-                            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="20 6 9 17 4 12"/></svg>'
-                            : ''}
-                    </div>
+                <td class="rec-check-td">
+                    <button onclick="toggleRecebido(${r.id}, this)" title="${r.recebido ? 'Desmarcar' : 'Marcar recebido'}"
+                        style="background:${r.recebido ? '#2ecc71' : 'transparent'};
+                               border:1.5px solid #2ecc71;border-radius:6px;
+                               padding:3px 8px;cursor:pointer;
+                               color:${r.recebido ? '#0a0a0a' : '#2ecc71'};
+                               font-size:0.62em;font-weight:800;
+                               font-family:inherit;letter-spacing:0.5px;
+                               white-space:nowrap;transition:all 0.15s ease;">
+                        ${r.recebido ? 'RECEBIDO' : 'RECEBER'}
+                    </button>
                 </td>
                 <td class="rec-nome">${r.descricao}</td>
                 <td class="rec-cat-td"><span class="rec-cat">${r.categoria}</span></td>
@@ -4931,7 +4956,7 @@
             const mesNome = nomesMes[parseInt(mes)-1] || mes;
             return `<tr style="background:rgba(231,76,60,0.06);border-left:3px solid #e74c3c;">
                 <td>
-                    <button onclick="marcarPagoAvulsa(${d.id})" title="${d.pago ? 'Desmarcar pagamento' : 'Marcar como pago'}"
+                    <button onclick="marcarPagoAvulsa(${d.id}, this)" title="${d.pago ? 'Desmarcar pagamento' : 'Marcar como pago'}"
                         style="background:${d.pago ? '#2ecc71' : 'transparent'};
                                border:1.5px solid #2ecc71;
                                border-radius:6px;padding:4px 10px;cursor:pointer;
@@ -4969,7 +4994,7 @@
             return `
                 <tr>
                     <td>
-                        <button onclick="togglePagoAvulsa(${d.id})" title="${d.pago ? 'Desmarcar' : 'Marcar como pago'}"
+                        <button onclick="togglePagoAvulsa(${d.id}, this)" title="${d.pago ? 'Desmarcar' : 'Marcar como pago'}"
                             style="background:${d.pago ? '#2ecc71' : 'transparent'};
                                    border:1.5px solid #2ecc71;border-radius:6px;
                                    padding:3px 8px;cursor:pointer;
