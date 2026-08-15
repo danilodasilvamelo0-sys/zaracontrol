@@ -4175,9 +4175,10 @@
         const parceladasPendentes = totalParceladasMes - parceladasPagas;
         // Avulsas pagas do mês atual
         const avulsasPagasMes = avulsasMes.filter(d => d.pago).reduce((s, d) => s + d.valor, 0);
-        // Avulsas atrasadas (meses anteriores) que foram pagas — saíram do bolso
+        // Avulsas atrasadas pagas com dataPagamento no mês atual
         const avulsasAtrasosPagas = (financeiro.despesasAvulsas || [])
-            .filter(d => d.pago && d.data && d.data.substring(0,7) < keyAtual)
+            .filter(d => d.pago && d.data && d.data.substring(0,7) < keyAtual
+                      && d.dataPagamento && d.dataPagamento.substring(0,7) === keyAtual)
             .reduce((s, d) => s + d.valor, 0);
         const avulsasPagas = avulsasPagasMes + avulsasAtrasosPagas;
         const avulsasPendentes = totalAvulsasMes - avulsasPagasMes; // pendente = só do mês
@@ -4918,18 +4919,27 @@
         document.getElementById('emptyDespesasAvulsas').style.display = temAvulsasVisiveis2 ? 'none' : 'block';
 
         // Linhas das ATRASADAS de meses anteriores
-        const htmlAtrasadasRows = variaveisNaoPagasAtraso.map(d => {
+        // Incluir também atrasadas PAGAS no mês atual (para mostrar botão PAGO)
+        const atrasadasPagasNoMes = (financeiro.despesasAvulsas || []).filter(d =>
+            d.pago && d.data && d.data.substring(0,7) < keyAtual &&
+            d.dataPagamento && d.dataPagamento.substring(0,7) === keyAtual
+        );
+        const todasAtrasadasVisiveis = [...variaveisNaoPagasAtraso, ...atrasadasPagasNoMes];
+
+        const htmlAtrasadasRows = todasAtrasadasVisiveis.map(d => {
             const [ano, mes] = d.data.substring(0,7).split('-');
             const nomesMes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             const mesNome = nomesMes[parseInt(mes)-1] || mes;
             return `<tr style="background:rgba(231,76,60,0.06);border-left:3px solid #e74c3c;">
                 <td>
-                    <button onclick="marcarPagoAvulsa(${d.id})" title="Marcar como pago"
-                        style="background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.5);
+                    <button onclick="marcarPagoAvulsa(${d.id})" title="${d.pago ? 'Desmarcar pagamento' : 'Marcar como pago'}"
+                        style="background:${d.pago ? '#2ecc71' : 'transparent'};
+                               border:1.5px solid #2ecc71;
                                border-radius:6px;padding:4px 10px;cursor:pointer;
-                               color:#2ecc71;font-size:0.65em;font-weight:800;
+                               color:${d.pago ? '#0a0a0a' : '#2ecc71'};
+                               font-size:0.65em;font-weight:800;
                                font-family:inherit;letter-spacing:0.5px;">
-                        PAGAR
+                        ${d.pago ? 'PAGO' : 'PAGAR'}
                     </button>
                 </td>
                 <td class="acc-descricao">
@@ -6940,14 +6950,24 @@ ${corpo.innerHTML}
         { texto: "Riquezas obtidas com língua mentirosa são vapor fugaz, armadilha mortal.", fonte: "Provérbios 21:6", livro: "salomao" }
     ];
 
-// Marcar avulsa/atrasada como paga
+// Marcar/desmarcar avulsa atrasada como paga (toggle)
 function marcarPagoAvulsa(id) {
     const d = (financeiro.despesasAvulsas || []).find(x => x.id == id);
     if (!d) return;
-    d.pago = true;
-    d.dataPagamento = new Date().toISOString().split('T')[0];
-    salvarDados();
-    renderFinanceiro();
-    mostrarStatus('Despesa marcada como paga!', 'success');
+    if (d.pago) {
+        // Desmarcar
+        d.pago = false;
+        d.dataPagamento = null;
+        salvarDados();
+        renderFinanceiro();
+        mostrarStatus('Pagamento desmarcado.', 'info');
+    } else {
+        // Marcar como pago
+        d.pago = true;
+        d.dataPagamento = new Date().toISOString().split('T')[0];
+        salvarDados();
+        renderFinanceiro();
+        mostrarStatus('Despesa marcada como paga!', 'success');
+    }
 }
 
