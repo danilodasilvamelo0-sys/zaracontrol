@@ -4135,7 +4135,12 @@
         const totalParceladasMes = variaveisAtivas.reduce((s, d) => s + d.valor, 0);
         // Atrasadas não pagas de meses anteriores entram no total
         const totalAtrasadasAtraso = variaveisNaoPagasAtraso.reduce((s, d) => s + (d.valor || 0), 0);
-        const totalAvulsasMes = avulsasMes.reduce((s, d) => s + d.valor, 0) + totalAtrasadasAtraso;
+        // Atrasadas pagas neste mês via botão PAGAR também entram no total
+        const _atrasadasPagasEsteMes = (financeiro.despesasAvulsas || [])
+            .filter(d => d.pago && d.pagamentoAtrasadaMes === keyAtual
+                      && d.data && d.data.substring(0,7) < keyAtual)
+            .reduce((s, d) => s + d.valor, 0);
+        const totalAvulsasMes = avulsasMes.reduce((s, d) => s + d.valor, 0) + totalAtrasadasAtraso + _atrasadasPagasEsteMes;
         
         // Empréstimos: somar juros pagos + amortizações feitas no mês atual
         const mesAnoAtual = getMesAnoKey();
