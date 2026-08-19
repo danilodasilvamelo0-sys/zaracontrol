@@ -7079,3 +7079,4 @@ function editarDataJuros(empId, histIdx, dataAtual) {
     mostrarStatus('Data atualizada!', 'success');
 }
 0
+<!-- cache-bust 1787119922 -->
