@@ -136,7 +136,7 @@ body {
 .op-section {
     border-radius:18px;margin-bottom:20px;overflow:hidden;
     position:relative;
-    background: linear-gradient(150deg, #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%);
+    background: linear-gradient(150deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.02) 65%, rgba(255,255,255,0.07) 100%);backdrop-filter: blur(22px) saturate(160%);-webkit-backdrop-filter: blur(22px) saturate(160%);
     border: none;
     box-shadow:
         0 1px 0 rgba(255,255,255,0.22),
@@ -658,14 +658,7 @@ body {
 .poder-card,
 .aliado-card,
 .favor-item {{
-    background: linear-gradient(
-        150deg,
-        #2a2a2d 0%,
-        #202022 20%,
-        #1a1a1c 50%,
-        #1e1e20 80%,
-        #242426 100%
-    ) !important;
+    background: linear-gradient(150deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.02) 65%, rgba(255,255,255,0.07) 100%) !important;backdrop-filter: blur(22px) saturate(160%) !important;-webkit-backdrop-filter: blur(22px) saturate(160%) !important;
     border: none !important;
     position: relative !important;
     overflow: hidden !important;
@@ -791,10 +784,7 @@ body {
 
 /* Seções principais */
 .op-section {
-    background: linear-gradient(
-        150deg,
-        #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%
-    ) !important;
+    background: linear-gradient(150deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.02) 65%, rgba(255,255,255,0.07) 100%) !important;backdrop-filter: blur(22px) saturate(160%) !important;-webkit-backdrop-filter: blur(22px) saturate(160%) !important;
     border: none !important;
     border-radius: 20px !important;
     position: relative !important;
@@ -924,10 +914,7 @@ body {
 
 /* Tabs de operações */
 .op-tabs {
-    background: linear-gradient(
-        150deg,
-        #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%
-    ) !important;
+    background: linear-gradient(150deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.02) 65%, rgba(255,255,255,0.07) 100%) !important;backdrop-filter: blur(22px) saturate(160%) !important;-webkit-backdrop-filter: blur(22px) saturate(160%) !important;
     border: none !important;
     border-radius: 14px !important;
     box-shadow:
