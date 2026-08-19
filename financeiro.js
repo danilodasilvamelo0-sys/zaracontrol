@@ -5196,8 +5196,12 @@
                             ${badge}
                             ${saldoApos}
                         </div>
-                        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
                             <span class="emp-hist-valor ${isJurosGer ? 'emp-hist-valor-pend' : isJuros ? 'emp-hist-valor-juros' : 'emp-hist-valor-amort'}">${formatarMoeda(h.valor)}</span>
+                            ${isJurosGer ? `
+                            <button class="emp-hist-del" onclick="event.stopPropagation();editarDataJuros('${e.id}',${e.historicoPagamentos.length - 1 - i},'${h.data}')" title="Editar data" style="color:#c9a84c;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>` : ''}
                             <button class="emp-hist-del" onclick="event.stopPropagation();removerHistorico('${e.id}',${e.historicoPagamentos.length - 1 - i})" title="Remover esta entrada">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                             </button>
@@ -7045,4 +7049,33 @@ function marcarPagoAvulsa(id) {
         mostrarStatus('Despesa marcada como paga!', 'success');
     }
 }
-// cache-ts:1786763450
+// cache-ts:178676345
+// Editar data de um registro de juros gerado no histórico
+function editarDataJuros(empId, histIdx, dataAtual) {
+    const emp = financeiro.emprestimos.find(e => String(e.id) === String(empId));
+    if (!emp || !emp.historicoPagamentos) return;
+
+    const novaData = prompt('Editar data do registro de juros:\n(formato: AAAA-MM-DD)', dataAtual || '');
+    if (!novaData) return;
+
+    // Validar formato
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(novaData)) {
+        alert('Formato inválido. Use: AAAA-MM-DD\nExemplo: 2026-08-01');
+        return;
+    }
+
+    emp.historicoPagamentos[histIdx].data = novaData;
+    // Atualizar também no histórico geral se existir
+    if (emp.historico) {
+        const hGeral = emp.historico.find((h, i) =>
+            h.tipo === 'juros_gerado' && h.data &&
+            h.data.startsWith(dataAtual)
+        );
+        if (hGeral) hGeral.data = novaData + 'T00:00:00.000Z';
+    }
+
+    salvarDados();
+    renderizar();
+    mostrarStatus('Data atualizada!', 'success');
+}
+0
