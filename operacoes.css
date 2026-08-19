@@ -30,9 +30,15 @@ body {
     font-family:'Montserrat',sans-serif;
     background-color: var(--bg);
     background-image:
+        radial-gradient(ellipse 500px 400px at 15% 10%, rgba(232,193,96,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 600px 500px at 90% 25%, rgba(201,168,76,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 550px 450px at 20% 70%, rgba(184,151,46,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 500px 400px at 85% 90%, rgba(232,193,96,0.04) 0%, transparent 60%),
         linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
-    background-size: 72px 72px;
+    background-attachment: fixed, fixed, fixed, fixed, scroll, scroll;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 72px 72px, 72px 72px;
     color:var(--text);
     min-height:100vh;
     padding-left:70px;
@@ -140,8 +146,7 @@ body {
 .op-section {
     border-radius:18px;margin-bottom:20px;overflow:hidden;
     position:relative;
-    background: linear-gradient(150deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 35%, rgba(255,255,255,0.03) 65%, rgba(255,255,255,0.10) 100%);backdrop-filter: blur(28px) saturate(190%);-webkit-backdrop-filter: blur(28px) saturate(190%);
-    border: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(50,38,16,0.55) 0%, rgba(28,20,10,0.62) 35%, rgba(16,12,6,0.70) 65%, rgba(46,34,14,0.50) 100%);backdrop-filter: blur(14px) saturate(150%);-webkit-backdrop-filter: blur(14px) saturate(150%);border: 1px solid rgba(232,193,96,0.22);
     box-shadow:
         0 1px 0 rgba(255,255,255,0.22),
         -1px 0 0 rgba(255,255,255,0.10),
@@ -662,8 +667,7 @@ body {
 .poder-card,
 .aliado-card,
 .favor-item {{
-    background: linear-gradient(150deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 35%, rgba(255,255,255,0.03) 65%, rgba(255,255,255,0.10) 100%) !important;backdrop-filter: blur(28px) saturate(190%) !important;-webkit-backdrop-filter: blur(28px) saturate(190%) !important;
-    border: none !important;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(50,38,16,0.55) 0%, rgba(28,20,10,0.62) 35%, rgba(16,12,6,0.70) 65%, rgba(46,34,14,0.50) 100%) !important;backdrop-filter: blur(14px) saturate(150%) !important;-webkit-backdrop-filter: blur(14px) saturate(150%) !important;border: 1px solid rgba(232,193,96,0.22) !important;
     position: relative !important;
     overflow: hidden !important;
     box-shadow:
@@ -788,8 +792,7 @@ body {
 
 /* Seções principais */
 .op-section {
-    background: linear-gradient(150deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 35%, rgba(255,255,255,0.03) 65%, rgba(255,255,255,0.10) 100%) !important;backdrop-filter: blur(28px) saturate(190%) !important;-webkit-backdrop-filter: blur(28px) saturate(190%) !important;
-    border: none !important;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(50,38,16,0.55) 0%, rgba(28,20,10,0.62) 35%, rgba(16,12,6,0.70) 65%, rgba(46,34,14,0.50) 100%) !important;backdrop-filter: blur(14px) saturate(150%) !important;-webkit-backdrop-filter: blur(14px) saturate(150%) !important;border: 1px solid rgba(232,193,96,0.22) !important;
     border-radius: 20px !important;
     position: relative !important;
     overflow: hidden !important;
@@ -889,7 +892,7 @@ body {
     border: none !important;
     border-radius: 14px !important;
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.16),
+        0 1px 0 rgba(255,220,150,0.18),
         -1px 0 0 rgba(255,255,255,0.07),
         1px 0 0 rgba(0,0,0,0.5),
         0 -1px 0 rgba(0,0,0,0.65),
@@ -907,7 +910,7 @@ body {
     border: none !important;
     border-radius: 14px !important;
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.16),
+        0 1px 0 rgba(255,220,150,0.18),
         -1px 0 0 rgba(255,255,255,0.07),
         1px 0 0 rgba(0,0,0,0.5),
         0 -1px 0 rgba(0,0,0,0.65),
@@ -918,8 +921,7 @@ body {
 
 /* Tabs de operações */
 .op-tabs {
-    background: linear-gradient(150deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 35%, rgba(255,255,255,0.03) 65%, rgba(255,255,255,0.10) 100%) !important;backdrop-filter: blur(28px) saturate(190%) !important;-webkit-backdrop-filter: blur(28px) saturate(190%) !important;
-    border: none !important;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(50,38,16,0.55) 0%, rgba(28,20,10,0.62) 35%, rgba(16,12,6,0.70) 65%, rgba(46,34,14,0.50) 100%) !important;backdrop-filter: blur(14px) saturate(150%) !important;-webkit-backdrop-filter: blur(14px) saturate(150%) !important;border: 1px solid rgba(232,193,96,0.22) !important;
     border-radius: 14px !important;
     box-shadow:
         0 1px 0 rgba(255,255,255,0.20),
