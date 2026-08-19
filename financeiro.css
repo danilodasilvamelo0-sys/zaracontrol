@@ -2305,7 +2305,7 @@ font-size: 0.82em;
 .emp-hist-data { color: var(--text-sub); }
 .emp-hist-tipo { color: rgba(255,255,255,0.88); font-weight: 500; }
 .emp-hist-valor-amort { color: #2ecc71; }
-.emp-hist-valor-juros { color: #f39c12; }
+.emp-hist-valor-juros { color: #2ecc71; }
 
 /* Botão adicionar novo estilo */
 .btn-add-novo {
@@ -6015,9 +6015,9 @@ font-size: 1.1em;
     width: fit-content;
 }
 .emp-hist-badge.juros {
-    background: rgba(243,156,18,0.15);
-    color: #f39c12;
-    border: 1px solid rgba(243,156,18,0.3);
+    background: rgba(46,204,113,0.12);
+    color: #2ecc71;
+    border: 1px solid rgba(46,204,113,0.3);
 }
 .emp-hist-badge.parcela {
     background: rgba(52,152,219,0.15);
@@ -6045,7 +6045,7 @@ font-size: 1.1em;
     flex-shrink: 0;
 }
 .emp-hist-valor-amort { color: #2ecc71; }
-.emp-hist-valor-juros { color: #f39c12; }
+.emp-hist-valor-juros { color: #2ecc71; }
 .emp-hist-valor-pend  { color: #e74c3c; font-weight: 800; }
 .emp-hist-del {
     background: transparent;
