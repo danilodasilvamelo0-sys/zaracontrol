@@ -82,9 +82,15 @@ body {
     line-height: 1.5;
     background-color: var(--bg);
     background-image:
+        radial-gradient(ellipse 500px 400px at 15% 10%, rgba(232,193,96,0.16) 0%, transparent 60%),
+        radial-gradient(ellipse 600px 500px at 90% 25%, rgba(201,168,76,0.13) 0%, transparent 60%),
+        radial-gradient(ellipse 550px 450px at 20% 70%, rgba(184,151,46,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 500px 400px at 85% 90%, rgba(232,193,96,0.11) 0%, transparent 60%),
         linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
-    background-size: 72px 72px;
+    background-attachment: fixed, fixed, fixed, fixed, scroll, scroll;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 72px 72px, 72px 72px;
     min-height: 100vh;
     padding: 20px;
     padding-left: 80px;
