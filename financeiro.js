@@ -5241,6 +5241,25 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                             </button>
                         </div>
+                        <!-- Botões rápidos mobile — sempre visíveis -->
+                        <div class="emp-quick-btns">
+                            ${(e.taxaJuros || 0) > 0 && e.principal > 0 ? `
+                            <button onclick="event.stopPropagation();gerarJurosMes('${e.id}')"
+                                style="background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.35);
+                                       border-radius:8px;padding:6px 12px;cursor:pointer;
+                                       color:#c9a84c;font-size:0.68em;font-weight:700;
+                                       font-family:inherit;letter-spacing:0.5px;">
+                                $ Gerar Juros
+                            </button>` : ''}
+                            ${(e.jurosAcumulados || 0) > 0 ? `
+                            <button onclick="event.stopPropagation();abrirModalPagarJuros('${e.id}')"
+                                style="background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.35);
+                                       border-radius:8px;padding:6px 12px;cursor:pointer;
+                                       color:#e74c3c;font-size:0.68em;font-weight:700;
+                                       font-family:inherit;letter-spacing:0.5px;">
+                                Pagar Juros (${formatarMoeda(e.jurosAcumulados)})
+                            </button>` : ''}
+                        </div>
                     </td>
                 </tr>
                 <tr class="acc-detail-row" id="${detailId}" style="display:none;">
