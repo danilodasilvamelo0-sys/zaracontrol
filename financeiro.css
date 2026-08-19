@@ -6808,3 +6808,14 @@ font-size: 1.1em;
     #despesasVariaveisTable { display: none !important; }
 }
 /* cache-ts:1786763450 */
+
+/* Botões rápidos de juros — sempre visíveis no card mobile */
+.emp-quick-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 8px 14px 12px;
+}
+@media (min-width: 769px) {
+    .emp-quick-btns { display: none; }
+}
