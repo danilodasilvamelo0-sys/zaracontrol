@@ -208,14 +208,7 @@ body::after { bottom: 0; }
     transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease;
 
     /* Fundo: vidro escuro com profundidade */
-    background: linear-gradient(
-        150deg,
-        #2a2a2d 0%,
-        #202022 20%,
-        #1a1a1c 50%,
-        #141416 80%,
-        #1a1a1c 100%
-    );
+    background: linear-gradient(150deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.02) 65%, rgba(255,255,255,0.07) 100%);backdrop-filter: blur(22px) saturate(160%);-webkit-backdrop-filter: blur(22px) saturate(160%);
 
     /* Moldura física: borda que simula metal cromado */
     border: none;
@@ -295,10 +288,7 @@ body::after { bottom: 0; }
     margin-bottom: 20px;
     transition: box-shadow 0.3s ease;
 
-    background: linear-gradient(
-        150deg,
-        #2a2a2d 0%, #202022 20%, #1a1a1c 50%, #1e1e20 80%, #242426 100%
-    );
+    background: linear-gradient(150deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.02) 65%, rgba(255,255,255,0.07) 100%);backdrop-filter: blur(22px) saturate(160%);-webkit-backdrop-filter: blur(22px) saturate(160%);
 
     border: none;
 
@@ -6573,14 +6563,7 @@ font-size: 1.1em;
    GLASS CARD — versão contraste real (sem dourado)
    ══════════════════════════════════════════════════ */
 .kpi-card {
-    background: linear-gradient(
-        150deg,
-        #2a2a2d 0%,
-        #202022 20%,
-        #1a1a1c 50%,
-        #1e1e20 80%,
-        #242426 100%
-    ) !important;
+    background: linear-gradient(150deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.02) 65%, rgba(255,255,255,0.07) 100%) !important;backdrop-filter: blur(22px) saturate(160%) !important;-webkit-backdrop-filter: blur(22px) saturate(160%) !important;
     border: none !important;
     border-radius: 20px !important;
     box-shadow:
@@ -6690,13 +6673,9 @@ font-size: 1.1em;
 .reserva-card,
 .card-resumo,
 .resumo-card {
-    background: linear-gradient(
-        155deg,
-        #252527 0%,
-        #1c1c1e 30%,
-        #171719 60%,
-        #1c1c1e 100%
-    ) !important;
+    background: linear-gradient(155deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.02) 65%, rgba(255,255,255,0.07) 100%) !important;
+    backdrop-filter: blur(22px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(160%) !important;
     border: none !important;
     border-radius: 18px !important;
     position: relative !important;
