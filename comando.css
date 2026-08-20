@@ -29,7 +29,7 @@
   --warg:     rgba(200,0,0,0.4);
 }
 html{background:var(--bg);scroll-behavior:smooth}
-body{font-family:'Montserrat',sans-serif;background-color:var(--bg);background-image:linear-gradient(rgba(70,240,210,0.03) 1px, transparent 1px),linear-gradient(90deg, rgba(70,240,210,0.03) 1px, transparent 1px);background-attachment:scroll,scroll;background-repeat:repeat,repeat;background-size:72px 72px,72px 72px;color:var(--text);min-height:100vh;overflow-x:hidden;transition:background 1.5s;padding-left:70px;-webkit-font-smoothing:antialiased}
+body{font-family:'Montserrat',sans-serif;background-color:var(--bg);background-image:radial-gradient(ellipse 55% 45% at 12% 8%, rgba(70,240,210,0.24) 0%, transparent 62%),radial-gradient(ellipse 55% 45% at 92% 22%, rgba(46,200,190,0.22) 0%, transparent 62%),radial-gradient(ellipse 55% 45% at 18% 66%, rgba(70,240,210,0.18) 0%, transparent 62%),radial-gradient(ellipse 55% 45% at 88% 88%, rgba(46,200,190,0.20) 0%, transparent 62%),linear-gradient(rgba(70,240,210,0.03) 1px, transparent 1px),linear-gradient(90deg, rgba(70,240,210,0.03) 1px, transparent 1px);background-attachment:fixed,fixed,fixed,fixed,scroll,scroll;background-repeat:no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat;background-size:100% 100%,100% 100%,100% 100%,100% 100%,72px 72px,72px 72px;color:var(--text);min-height:100vh;overflow-x:hidden;transition:background 1.5s;padding-left:70px;-webkit-font-smoothing:antialiased}
 body.war-mode{background:#0d0000}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(201,165,90,.15)}
 
