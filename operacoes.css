@@ -30,10 +30,10 @@ body {
     font-family:'Montserrat',sans-serif;
     background-color: var(--bg);
     background-image:
-        radial-gradient(ellipse 620px 520px at 12% 8%, rgba(70,240,210,0.30) 0%, transparent 62%),
-        radial-gradient(ellipse 700px 600px at 92% 22%, rgba(64,150,255,0.26) 0%, transparent 62%),
-        radial-gradient(ellipse 660px 560px at 18% 66%, rgba(126,90,255,0.24) 0%, transparent 62%),
-        radial-gradient(ellipse 640px 520px at 88% 88%, rgba(70,240,210,0.22) 0%, transparent 62%),
+        radial-gradient(ellipse 55% 45% at 12% 8%, rgba(70,240,210,0.30) 0%, transparent 62%),
+        radial-gradient(ellipse 55% 45% at 92% 22%, rgba(64,150,255,0.26) 0%, transparent 62%),
+        radial-gradient(ellipse 55% 45% at 18% 66%, rgba(126,90,255,0.24) 0%, transparent 62%),
+        radial-gradient(ellipse 55% 45% at 88% 88%, rgba(70,240,210,0.22) 0%, transparent 62%),
         linear-gradient(rgba(70,240,210,0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(70,240,210,0.03) 1px, transparent 1px);
     background-attachment: fixed, fixed, fixed, fixed, scroll, scroll;
@@ -48,7 +48,7 @@ body {
 /* ── SIDEBAR ── */
 .sidebar {
     position:fixed;top:0;left:0;width:70px;height:100vh;
-    background:var(--s1);border-right:1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.07) 100%);backdrop-filter: blur(30px) saturate(200%);-webkit-backdrop-filter: blur(30px) saturate(200%);border-right:1px solid var(--border);
     display:flex;flex-direction:column;align-items:center;
     z-index:200;overflow:hidden;transition:width 0.3s ease;
 }
