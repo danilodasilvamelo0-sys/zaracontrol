@@ -82,10 +82,10 @@ body {
     line-height: 1.5;
     background-color: var(--bg);
     background-image:
-        radial-gradient(ellipse 500px 400px at 15% 10%, rgba(70,240,210,0.06) 0%, transparent 60%),
-        radial-gradient(ellipse 600px 500px at 90% 25%, rgba(70,240,210,0.05) 0%, transparent 60%),
-        radial-gradient(ellipse 550px 450px at 20% 70%, rgba(70,240,210,0.05) 0%, transparent 60%),
-        radial-gradient(ellipse 500px 400px at 85% 90%, rgba(70,240,210,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 620px 520px at 12% 8%,  rgba(70,240,210,0.30) 0%, transparent 62%),
+        radial-gradient(ellipse 700px 600px at 92% 22%, rgba(64,150,255,0.26) 0%, transparent 62%),
+        radial-gradient(ellipse 660px 560px at 18% 66%, rgba(126,90,255,0.24) 0%, transparent 62%),
+        radial-gradient(ellipse 640px 520px at 88% 88%, rgba(70,240,210,0.22) 0%, transparent 62%),
         linear-gradient(rgba(70,240,210,0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(70,240,210,0.03) 1px, transparent 1px);
     background-attachment: fixed, fixed, fixed, fixed, scroll, scroll;
@@ -218,7 +218,7 @@ body::after { bottom: 0; }
     transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease;
 
     /* Fundo: vidro escuro dourado */
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(38,52,66,0.55) 0%, rgba(26,30,46,0.62) 35%, rgba(18,20,34,0.70) 65%, rgba(34,48,62,0.50) 100%);backdrop-filter: blur(14px) saturate(150%);-webkit-backdrop-filter: blur(14px) saturate(150%);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.03) 70%, rgba(255,255,255,0.10) 100%);backdrop-filter: blur(30px) saturate(200%);-webkit-backdrop-filter: blur(30px) saturate(200%);
 
     /* Moldura física: borda dourada brilhante */
     border: 1px solid rgba(70,240,210,0.22);
@@ -227,7 +227,7 @@ body::after { bottom: 0; }
     /* Sombra em camadas: brilho dourado + elevação + profundidade */
     box-shadow:
         /* Borda superior brilhante (luz refletida no vidro) */
-        0 1px 0 rgba(170,255,240,0.22),
+        0 1px 0 rgba(255,255,255,0.28),
         /* Borda esquerda */
         -1px 0 0 rgba(170,255,240,0.10),
         /* Borda direita escura */
@@ -235,7 +235,7 @@ body::after { bottom: 0; }
         /* Borda inferior mais escura */
         0 -1px 0 rgba(0,0,0,0.7),
         /* Sombra interna superior (reflexo de luz dentro do vidro) */
-        inset 0 1px 0 rgba(170,255,240,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.30),
         /* Sombra interna inferior (profundidade) */
         inset 0 -1px 0 rgba(0,0,0,0.6),
         /* Brilho externo dourado sutil */
@@ -300,16 +300,16 @@ body::after { bottom: 0; }
     margin-bottom: 20px;
     transition: box-shadow 0.3s ease;
 
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(38,52,66,0.55) 0%, rgba(26,30,46,0.62) 35%, rgba(18,20,34,0.70) 65%, rgba(34,48,62,0.50) 100%);backdrop-filter: blur(14px) saturate(150%);-webkit-backdrop-filter: blur(14px) saturate(150%);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.03) 70%, rgba(255,255,255,0.10) 100%);backdrop-filter: blur(30px) saturate(200%);-webkit-backdrop-filter: blur(30px) saturate(200%);
 
     border: 1px solid rgba(70,240,210,0.22);
 
     box-shadow:
-        0 1px 0 rgba(170,255,240,0.22),
+        0 1px 0 rgba(255,255,255,0.28),
         -1px 0 0 rgba(170,255,240,0.10),
         1px 0 0 rgba(0,0,0,0.6),
         0 -1px 0 rgba(0,0,0,0.8),
-        inset 0 1px 0 rgba(170,255,240,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.30),
         inset 0 -2px 4px rgba(0,0,0,0.4),
         0 0 10px rgba(70,240,210,0.08),
         0 6px 12px rgba(0,0,0,0.5),
@@ -758,14 +758,14 @@ body::after { bottom: 0; }
 display: flex;
 align-items: center;
 justify-content: space-between;
-background: linear-gradient(150deg, rgba(38,52,66,0.45) 0%, rgba(26,30,46,0.50) 35%, rgba(18,20,34,0.58) 65%, rgba(34,48,62,0.42) 100%);
-backdrop-filter: blur(22px) saturate(160%);
--webkit-backdrop-filter: blur(22px) saturate(160%);
+background: linear-gradient(150deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.025) 70%, rgba(255,255,255,0.08) 100%);
+backdrop-filter: blur(30px) saturate(200%);
+-webkit-backdrop-filter: blur(30px) saturate(200%);
 border: 1px solid rgba(70,240,210,0.16);
 border-radius: 12px;
 box-shadow:
-    0 1px 0 rgba(170,255,240,0.10),
-    inset 0 1px 0 rgba(170,255,240,0.05),
+    0 1px 0 rgba(255,255,255,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.24),
     0 4px 16px rgba(0,0,0,0.35);
 padding: 15px 20px;
 margin-bottom: 25px;
@@ -2599,9 +2599,9 @@ color: #ff6b5b;
 }
 
 .reserva-card {
-background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(38,52,66,0.55) 0%, rgba(26,30,46,0.62) 35%, rgba(18,20,34,0.70) 65%, rgba(34,48,62,0.50) 100%);
-backdrop-filter: blur(14px) saturate(150%);
--webkit-backdrop-filter: blur(14px) saturate(150%);
+background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.03) 70%, rgba(255,255,255,0.10) 100%);
+backdrop-filter: blur(30px) saturate(200%);
+-webkit-backdrop-filter: blur(30px) saturate(200%);
 border: 1px solid rgba(95,224,138, 0.25);
 box-shadow: 0 0 8px rgba(70,240,210,0.06), 0 8px 24px rgba(0,0,0,0.35);
 border-radius: 15px;
@@ -3479,7 +3479,7 @@ display: flex;
 }
 
 .modal-content {
-background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(38,52,66,0.92) 0%, rgba(26,30,46,0.95) 35%, rgba(18,20,34,0.97) 65%, rgba(34,48,62,0.90) 100%);
+background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(255,255,255,0.13) 0%, rgba(30,36,54,0.72) 40%, rgba(24,28,44,0.78) 70%, rgba(255,255,255,0.09) 100%);
 backdrop-filter: blur(24px) saturate(160%);
 -webkit-backdrop-filter: blur(24px) saturate(160%);
 border: 1px solid rgba(70,240,210,0.28);
@@ -3492,8 +3492,8 @@ overflow: hidden;
 display: flex;
 flex-direction: column;
 box-shadow:
-    0 1px 0 rgba(170,255,240,0.16),
-    inset 0 1px 0 rgba(170,255,240,0.08),
+    0 1px 0 rgba(255,255,255,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.30),
     0 0 12px rgba(70,240,210,0.08),
     0 20px 60px rgba(0,0,0,0.7);
 }
@@ -5422,9 +5422,9 @@ font-size: 1.1em;
     padding: 14px 4px 6px;
 }
 .desp-card {
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(38,52,66,0.45) 0%, rgba(26,30,46,0.50) 35%, rgba(18,20,34,0.58) 65%, rgba(34,48,62,0.42) 100%);
-    backdrop-filter: blur(10px) saturate(140%);
-    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.025) 70%, rgba(255,255,255,0.08) 100%);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid rgba(70,240,210,0.16);
     border-radius: 12px;
     overflow: hidden;
@@ -6592,15 +6592,15 @@ font-size: 1.1em;
    GLASS CARD — versão contraste real (sem dourado)
    ══════════════════════════════════════════════════ */
 .kpi-card {
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(38,52,66,0.55) 0%, rgba(26,30,46,0.62) 35%, rgba(18,20,34,0.70) 65%, rgba(34,48,62,0.50) 100%) !important;backdrop-filter: blur(14px) saturate(150%) !important;-webkit-backdrop-filter: blur(14px) saturate(150%) !important;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.03) 70%, rgba(255,255,255,0.10) 100%) !important;backdrop-filter: blur(30px) saturate(200%) !important;-webkit-backdrop-filter: blur(30px) saturate(200%) !important;
     border: 1px solid rgba(70,240,210,0.22) !important;
     border-radius: 20px !important;
     box-shadow:
-        0 1px 0 rgba(170,255,240,0.22),
+        0 1px 0 rgba(255,255,255,0.28),
         -1px 0 0 rgba(170,255,240,0.10),
         1px 0 0 rgba(0,0,0,0.6),
         0 -1px 0 rgba(0,0,0,0.8),
-        inset 0 1px 0 rgba(170,255,240,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.30),
         inset 0 -2px 4px rgba(0,0,0,0.4),
         0 0 10px rgba(70,240,210,0.08),
         0 6px 12px rgba(0,0,0,0.5),
@@ -6703,19 +6703,19 @@ font-size: 1.1em;
 .reserva-card,
 .card-resumo,
 .resumo-card {
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(38,52,66,0.55) 0%, rgba(26,30,46,0.62) 35%, rgba(18,20,34,0.70) 65%, rgba(34,48,62,0.50) 100%) !important;
-    backdrop-filter: blur(14px) saturate(150%) !important;
-    -webkit-backdrop-filter: blur(14px) saturate(150%) !important;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E"), linear-gradient(150deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.03) 70%, rgba(255,255,255,0.10) 100%) !important;
+    backdrop-filter: blur(30px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
     border: 1px solid rgba(70,240,210,0.22) !important;
     border-radius: 18px !important;
     position: relative !important;
     overflow: hidden !important;
     box-shadow:
-        0 1px 0 rgba(170,255,240,0.16),
+        0 1px 0 rgba(255,255,255,0.22),
         -1px 0 0 rgba(170,255,240,0.07),
         1px 0 0 rgba(0,0,0,0.5),
         0 -1px 0 rgba(0,0,0,0.7),
-        inset 0 1px 0 rgba(170,255,240,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.24),
         0 0 8px rgba(70,240,210,0.06),
         0 4px 12px rgba(0,0,0,0.45),
         0 12px 40px rgba(0,0,0,0.5) !important;
