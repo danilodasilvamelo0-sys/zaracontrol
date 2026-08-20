@@ -758,10 +758,15 @@ body::after { bottom: 0; }
 display: flex;
 align-items: center;
 justify-content: space-between;
-background: var(--s2);
-border: 1px solid rgba(70,240,210,0.2);
+background: linear-gradient(150deg, rgba(38,52,66,0.45) 0%, rgba(26,30,46,0.50) 35%, rgba(18,20,34,0.58) 65%, rgba(34,48,62,0.42) 100%);
+backdrop-filter: blur(22px) saturate(160%);
+-webkit-backdrop-filter: blur(22px) saturate(160%);
+border: 1px solid rgba(70,240,210,0.16);
 border-radius: 12px;
-box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+box-shadow:
+    0 1px 0 rgba(170,255,240,0.10),
+    inset 0 1px 0 rgba(170,255,240,0.05),
+    0 4px 16px rgba(0,0,0,0.35);
 padding: 15px 20px;
 margin-bottom: 25px;
 }
