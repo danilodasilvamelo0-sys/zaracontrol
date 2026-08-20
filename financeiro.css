@@ -82,10 +82,10 @@ body {
     line-height: 1.5;
     background-color: var(--bg);
     background-image:
-        radial-gradient(ellipse 620px 520px at 12% 8%,  rgba(70,240,210,0.30) 0%, transparent 62%),
-        radial-gradient(ellipse 700px 600px at 92% 22%, rgba(64,150,255,0.26) 0%, transparent 62%),
-        radial-gradient(ellipse 660px 560px at 18% 66%, rgba(126,90,255,0.24) 0%, transparent 62%),
-        radial-gradient(ellipse 640px 520px at 88% 88%, rgba(70,240,210,0.22) 0%, transparent 62%),
+        radial-gradient(ellipse 55% 45% at 12% 8%, rgba(70,240,210,0.30) 0%, transparent 62%),
+        radial-gradient(ellipse 55% 45% at 92% 22%, rgba(64,150,255,0.26) 0%, transparent 62%),
+        radial-gradient(ellipse 55% 45% at 18% 66%, rgba(126,90,255,0.24) 0%, transparent 62%),
+        radial-gradient(ellipse 55% 45% at 88% 88%, rgba(70,240,210,0.22) 0%, transparent 62%),
         linear-gradient(rgba(70,240,210,0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(70,240,210,0.03) 1px, transparent 1px);
     background-attachment: fixed, fixed, fixed, fixed, scroll, scroll;
@@ -1084,7 +1084,7 @@ margin-bottom: 0;
 }
 .sections-grid .section-header {
 padding: 15px 18px;
-background: linear-gradient(135deg, #141414 0%, #0f0f0f 100%);
+background: linear-gradient(135deg, #1a1a2b 0%, #131321 100%);
 }
 .sections-grid .section-header h2 {
 font-size: var(--font-lg);
@@ -1565,7 +1565,7 @@ border-color: var(--gold);
 .checkbox-label input[type="checkbox"]:checked::after {
 content: '✓';
 position: absolute;
-color: #0a0a0a;
+color: #131321;
 font-size: 12px;
 font-weight: bold;
 top: 50%;
@@ -4230,7 +4230,7 @@ body {
 /* ========== SIDEBAR & MOBILE NAV ========== */
 .sidebar {
     position: fixed; top: 0; left: 0; width: 60px; height: 100vh;
-    background: linear-gradient(180deg, #141414 0%, #0f0f0f 100%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.07) 100%);backdrop-filter: blur(30px) saturate(200%);-webkit-backdrop-filter: blur(30px) saturate(200%);
     border-right: 1px solid rgba(70,240,210,0.12);
     z-index: 1000; box-shadow: 4px 0 20px rgba(0,0,0,0.06);
     display: flex; flex-direction: column; align-items: center;
