@@ -127,7 +127,7 @@
         /* ══════════════════════════════════════
            CARDS ESPELHADOS / GLASS PREMIUM
         ══════════════════════════════════════ */
-        .menu { width:100%; max-width:430px; display:grid; grid-template-columns:1fr 1fr; gap:34px 12px; }
+        .menu { width:100%; max-width:430px; display:grid; grid-template-columns:1fr 1fr; gap:30px 12px; }
 
         .card {
             position: relative;
@@ -158,7 +158,7 @@
                 -1px 0 0 rgba(255,255,255,0.06),
                 1px 0 0 rgba(0,0,0,0.6),
                 0 -1px 0 rgba(0,0,0,0.8),
-                inset 0 1px 0 rgba(255,255,255,0.16),
+                inset 0 1px 0 rgba(255,255,255,0.26),
                 inset 0 -2px 4px rgba(0,0,0,0.4),
                 0 6px 12px rgba(0,0,0,0.5),
                 0 16px 48px rgba(0,0,0,0.6),
@@ -217,7 +217,7 @@
 
         /* Conteúdo do card */
         .card-inner {
-            position:relative; z-index:2;
+            position:relative; z-index:3;
             display:flex; flex-direction:column; align-items:flex-start;
             width:100%; padding:15px 14px 14px;
         }
@@ -255,20 +255,20 @@
         /* Aba da pasta — corte diagonal fluindo para o corpo */
         .card-accent {
             position:absolute;
-            top:-21px; left:0; z-index:1;
-            width:74%; height:24px;
+            top:-19px; left:0; z-index:0;
+            width:66%; height:21px;
             border-radius:12px 0 0 0;
 
             /* o corte: sobe reto, corre no topo e desce em diagonal */
-            -webkit-clip-path: polygon(0 0, 60% 0, 64% 2%, 67% 8%, 68.5% 18%, 69.5% 40%, 70.5% 62%, 72% 78%, 75% 90%, 80% 97%, 88% 100%, 0 100%);
-                    clip-path: polygon(0 0, 60% 0, 64% 2%, 67% 8%, 68.5% 18%, 69.5% 40%, 70.5% 62%, 72% 78%, 75% 90%, 80% 97%, 88% 100%, 0 100%);
+            -webkit-clip-path: polygon(0 0, 68% 0, 73% 3%, 77% 11%, 79% 24%, 80% 46%, 81% 64%, 83% 79%, 87% 91%, 93% 98%, 100% 100%, 0 100%);
+                    clip-path: polygon(0 0, 68% 0, 73% 3%, 77% 11%, 79% 24%, 80% 46%, 81% 64%, 83% 79%, 87% 91%, 93% 98%, 100% 100%, 0 100%);
 
             /* fio de luz no topo embutido no gradiente (borda seria cortada) */
             background: linear-gradient(
                 to bottom,
-                rgba(255,255,255,0.18) 0px,
-                rgba(255,255,255,0.075) 1px,
-                rgba(255,255,255,0.055) 100%
+                rgba(255,255,255,0.075) 0px,
+                rgba(255,255,255,0.045) 1px,
+                rgba(255,255,255,0.022) 100%
             );
             backdrop-filter: blur(26px) saturate(170%);
             -webkit-backdrop-filter: blur(26px) saturate(170%);
@@ -277,9 +277,9 @@
         .card:hover .card-accent, .card:active .card-accent {
             background: linear-gradient(
                 to bottom,
-                rgba(94,240,155,0.42) 0px,
-                rgba(94,240,155,0.10) 1px,
-                rgba(255,255,255,0.075) 100%
+                rgba(94,240,155,0.20) 0px,
+                rgba(94,240,155,0.07) 1px,
+                rgba(255,255,255,0.035) 100%
             );
         }
 
@@ -315,7 +315,7 @@
         @media (max-width:400px) {
             .page  { padding:44px 14px 44px; }
             .card-inner { padding:13px 12px 12px; }
-            .menu { gap:32px 10px; }
+            .menu { gap:28px 10px; }
         }
     </style>
 </head>
