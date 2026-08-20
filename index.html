@@ -127,7 +127,7 @@
         /* ══════════════════════════════════════
            CARDS ESPELHADOS / GLASS PREMIUM
         ══════════════════════════════════════ */
-        .menu { width:100%; max-width:430px; display:grid; grid-template-columns:1fr 1fr; gap:28px 12px; }
+        .menu { width:100%; max-width:430px; display:grid; grid-template-columns:1fr 1fr; gap:34px 12px; }
 
         .card {
             position: relative;
@@ -255,13 +255,13 @@
         /* Aba da pasta — corte diagonal fluindo para o corpo */
         .card-accent {
             position:absolute;
-            top:-15px; left:0; z-index:1;
-            width:64%; height:18px;
+            top:-21px; left:0; z-index:1;
+            width:74%; height:24px;
             border-radius:12px 0 0 0;
 
             /* o corte: sobe reto, corre no topo e desce em diagonal */
-            -webkit-clip-path: polygon(0 0, 68% 0, 78% 45%, 88% 82%, 100% 100%, 0 100%);
-                    clip-path: polygon(0 0, 68% 0, 78% 45%, 88% 82%, 100% 100%, 0 100%);
+            -webkit-clip-path: polygon(0 0, 60% 0, 64% 2%, 67% 8%, 68.5% 18%, 69.5% 40%, 70.5% 62%, 72% 78%, 75% 90%, 80% 97%, 88% 100%, 0 100%);
+                    clip-path: polygon(0 0, 60% 0, 64% 2%, 67% 8%, 68.5% 18%, 69.5% 40%, 70.5% 62%, 72% 78%, 75% 90%, 80% 97%, 88% 100%, 0 100%);
 
             /* fio de luz no topo embutido no gradiente (borda seria cortada) */
             background: linear-gradient(
@@ -315,7 +315,7 @@
         @media (max-width:400px) {
             .page  { padding:44px 14px 44px; }
             .card-inner { padding:13px 12px 12px; }
-            .menu { gap:26px 10px; }
+            .menu { gap:32px 10px; }
         }
     </style>
 </head>
