@@ -7096,10 +7096,10 @@ function editarDataJuros(empId, histIdx, dataAtual) {
    ========================================================== */
 
 const CONTA_TIPOS = {
-    corrente:  { label: 'Conta corrente', icone: '🏦' },
-    poupanca:  { label: 'Poupança',       icone: '🐖' },
-    dinheiro:  { label: 'Dinheiro',       icone: '💵' },
-    cartao:    { label: 'Cartão',         icone: '💳' }
+    corrente: { label: 'Conta corrente', icone: '<svg class="conta-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V10"/><path d="M19 21V10"/><path d="M9 21v-6h6v6"/><path d="M2 10l10-7 10 7z"/></svg>' },
+    poupanca: { label: 'Poupança', icone: '<svg class="conta-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M4 11a8 8 0 0 1 16 0v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M9 19v2"/><path d="M15 19v2"/><circle cx="15.5" cy="11" r="1"/></svg>' },
+    dinheiro: { label: 'Dinheiro', icone: '<svg class="conta-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01"/><path d="M18 12h.01"/></svg>' },
+    cartao: { label: 'Cartão', icone: '<svg class="conta-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>' }
 };
 
 /* Cria a estrutura na primeira execução e adota os lançamentos antigos.
