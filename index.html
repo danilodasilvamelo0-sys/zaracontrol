@@ -127,15 +127,15 @@
         /* ══════════════════════════════════════
            CARDS ESPELHADOS / GLASS PREMIUM
         ══════════════════════════════════════ */
-        .menu { width:100%; max-width:460px; display:flex; flex-direction:column; gap:12px; }
+        .menu { width:100%; max-width:460px; display:flex; flex-direction:column; gap:30px; }
 
         .card {
             position: relative;
             display: flex; align-items: center; gap: 16px;
             padding: 0;
             text-decoration: none;
-            border-radius: 20px;
-            overflow: hidden;
+            border-radius: 0 20px 20px 20px;
+            overflow: visible;
             transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease;
             animation: fadeUp 0.85s cubic-bezier(0.16,1,0.3,1) both;
 
@@ -169,7 +169,7 @@
             content: '';
             position: absolute; top: 0; left: 0; right: 0;
             height: 55%;
-            border-radius: 20px 20px 0 0;
+            border-radius: 0 20px 0 0;
             background: linear-gradient(
                 150deg,
                 rgba(255,255,255,0.10) 0%,
@@ -184,10 +184,11 @@
         .card::after {
             content: '';
             position: absolute;
-            top: -20px; left: -20px;
+            top: 0; left: 0;
             width: 150px; height: 150px;
+            border-radius: 0 0 70% 0;
             background: radial-gradient(
-                circle at 20% 20%,
+                circle at 12% 12%,
                 rgba(255,255,255,0.07) 0%,
                 rgba(255,255,255,0.02) 40%,
                 transparent 65%
@@ -255,15 +256,34 @@
         .card-arrow svg { width:14px; height:14px; }
 
         /* Linha dourada esquerda no hover */
+        /* Aba da pasta — encaixa no topo esquerdo do card */
         .card-accent {
-            position:absolute; left:0; top:20%; bottom:20%; z-index:3;
-            width:2px;
-            background:linear-gradient(transparent, var(--gold), transparent);
-            border-radius:2px;
-            opacity:0;
-            transition:opacity 0.3s ease;
+            position:absolute;
+            top:-16px; left:0; z-index:1;
+            width:98px; height:19px;
+            border-radius:14px 14px 0 0;
+            background: linear-gradient(
+                160deg,
+                rgba(255,255,255,0.15) 0%,
+                rgba(255,255,255,0.07) 60%,
+                rgba(255,255,255,0.05) 100%
+            );
+            backdrop-filter: blur(28px) saturate(200%);
+            -webkit-backdrop-filter: blur(28px) saturate(200%);
+            border:1px solid rgba(94,240,155,0.16);
+            border-bottom:none;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.28),
+                0 -3px 10px rgba(0,0,0,0.35);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        .card:hover .card-accent, .card:active .card-accent { opacity:1; }
+        .card:hover .card-accent, .card:active .card-accent {
+            border-color: rgba(52,209,122,0.42);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.34),
+                0 -3px 10px rgba(0,0,0,0.35),
+                0 -6px 22px rgba(52,209,122,0.20);
+        }
 
         /* Delays das animações */
         .card:nth-child(1) { animation-delay:0.30s; }
