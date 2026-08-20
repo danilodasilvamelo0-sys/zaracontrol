@@ -127,12 +127,13 @@
         /* ══════════════════════════════════════
            CARDS ESPELHADOS / GLASS PREMIUM
         ══════════════════════════════════════ */
-        .menu { width:100%; max-width:460px; display:flex; flex-direction:column; gap:30px; }
+        .menu { width:100%; max-width:430px; display:grid; grid-template-columns:1fr 1fr; gap:28px 12px; }
 
         .card {
             position: relative;
-            display: flex; align-items: center; gap: 16px;
+            display: flex;
             padding: 0;
+            min-height: 132px;
             text-decoration: none;
             border-radius: 0 20px 20px 20px;
             overflow: visible;
@@ -218,36 +219,32 @@
         /* Conteúdo do card */
         .card-inner {
             position:relative; z-index:2;
-            display:flex; align-items:center; gap:16px;
-            width:100%; padding:17px 18px;
+            display:flex; flex-direction:column; align-items:flex-start;
+            width:100%; padding:15px 14px 14px;
         }
 
         .card-icon {
-            width:46px; height:46px; flex-shrink:0;
-            border-radius:13px;
+            width:38px; height:38px; flex-shrink:0;
+            border-radius:11px;
             background:rgba(255,255,255,0.04);
             border:1px solid rgba(255,255,255,0.08);
             display:flex; align-items:center; justify-content:center;
             transition:all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
         }
-        .card-icon svg { width:19px; height:19px; stroke:rgba(238,247,241,0.55); transition:all 0.3s ease; }
+        .card-icon svg { width:17px; height:17px; stroke:rgba(238,247,241,0.55); transition:all 0.3s ease; }
 
-        .card-text { flex:1; min-width:0; }
+        .card-text { margin-top:auto; padding-top:14px; min-width:0; width:100%; }
         .card-title {
-            font-size:0.75em; font-weight:700; letter-spacing:2.5px; text-transform:uppercase;
+            font-size:0.68em; font-weight:700; letter-spacing:1.6px; text-transform:uppercase;
             color:rgba(238,247,241,0.92); margin-bottom:4px;
             transition:color 0.3s ease;
         }
-        .card-sub { font-size:0.58em; color:var(--text-dim); letter-spacing:0.3px; }
+        .card-sub { font-size:0.53em; color:var(--text-dim); letter-spacing:0.3px; }
 
-        .card-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+        .card-right { position:absolute; top:15px; right:13px; display:flex; align-items:center; z-index:3; }
 
-        .card-num {
-            font-family:'Cormorant Garamond',serif;
-            font-size:0.65em; font-weight:300;
-            color:rgba(94,240,155,0.28); letter-spacing:1px;
-        }
+        .card-num { display:none; }
 
         .card-arrow {
             color:rgba(94,240,155,0.75); opacity:0;
@@ -259,9 +256,9 @@
         /* Aba da pasta — encaixa no topo esquerdo do card */
         .card-accent {
             position:absolute;
-            top:-16px; left:0; z-index:1;
-            width:98px; height:19px;
-            border-radius:14px 14px 0 0;
+            top:-14px; left:0; z-index:1;
+            width:64px; height:17px;
+            border-radius:12px 12px 0 0;
             background: linear-gradient(
                 160deg,
                 rgba(255,255,255,0.15) 0%,
@@ -316,7 +313,8 @@
 
         @media (max-width:400px) {
             .page  { padding:44px 14px 44px; }
-            .card-inner { padding:15px 14px; }
+            .card-inner { padding:13px 12px 12px; }
+            .menu { gap:26px 10px; }
         }
     </style>
 </head>
