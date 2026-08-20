@@ -252,32 +252,35 @@
         .card-arrow svg { width:14px; height:14px; }
 
         /* Linha dourada esquerda no hover */
-        /* Aba da pasta — encaixa no topo esquerdo do card */
+        /* Aba da pasta — corte diagonal fluindo para o corpo */
         .card-accent {
             position:absolute;
-            top:-14px; left:0; z-index:1;
-            width:60%; height:16px;
-            border-radius:12px 12px 0 0;
+            top:-15px; left:0; z-index:1;
+            width:64%; height:18px;
+            border-radius:12px 0 0 0;
+
+            /* o corte: sobe reto, corre no topo e desce em diagonal */
+            -webkit-clip-path: polygon(0 0, 68% 0, 78% 45%, 88% 82%, 100% 100%, 0 100%);
+                    clip-path: polygon(0 0, 68% 0, 78% 45%, 88% 82%, 100% 100%, 0 100%);
+
+            /* fio de luz no topo embutido no gradiente (borda seria cortada) */
             background: linear-gradient(
-                158deg,
-                rgba(255,255,255,0.085) 0%,
+                to bottom,
+                rgba(255,255,255,0.18) 0px,
+                rgba(255,255,255,0.075) 1px,
                 rgba(255,255,255,0.055) 100%
             );
             backdrop-filter: blur(26px) saturate(170%);
             -webkit-backdrop-filter: blur(26px) saturate(170%);
-            border:1px solid rgba(94,240,155,0.10);
-            border-bottom:none;
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.14),
-                0 -3px 10px rgba(0,0,0,0.45);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: background 0.3s ease;
         }
         .card:hover .card-accent, .card:active .card-accent {
-            border-color: rgba(52,209,122,0.42);
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.20),
-                0 -3px 10px rgba(0,0,0,0.45),
-                0 -6px 20px rgba(52,209,122,0.16);
+            background: linear-gradient(
+                to bottom,
+                rgba(94,240,155,0.42) 0px,
+                rgba(94,240,155,0.10) 1px,
+                rgba(255,255,255,0.075) 100%
+            );
         }
 
         /* Delays das animações */
