@@ -782,8 +782,8 @@ letter-spacing: 0.3px;
 .mes-selector select {
 background: var(--s3);
 border: 1px solid rgba(70,240,210,0.25);
-color: #5a4a10;
-font-weight: var(--fw-medium);
+color: var(--gold);
+font-weight: var(--fw-semi);
 font-family: 'Montserrat', sans-serif;
 padding: 10px 15px;
 border-radius: 8px;
@@ -6829,3 +6829,34 @@ font-size: 1.1em;
     .emp-quick-btns { display: none; }
 }
 
+
+/* ── HEADER CENTRALIZADO ── */
+.header {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 18px !important;
+}
+.header-title,
+.header-title h1,
+.header-title p {
+    text-align: center !important;
+    width: 100%;
+}
+.header-saldo {
+    align-items: center !important;
+    text-align: center !important;
+    width: 100%;
+}
+.header-saldo-label,
+.header-saldo-valor,
+.header-saldo-sub {
+    text-align: center !important;
+}
+
+/* Barra de período centralizada (após remoção do botão Ativos) */
+.mes-controls {
+    justify-content: center !important;
+    flex-wrap: wrap;
+}
