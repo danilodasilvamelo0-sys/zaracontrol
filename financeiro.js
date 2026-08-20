@@ -7417,3 +7417,41 @@ window.addEventListener('load', function () {
         if (tentativas > 12) clearInterval(t);
     }, 500);
 });
+
+/* Remoção única da conta "Carteira" criada automaticamente.
+   Antes de apagar, carimba os lançamentos sem conta na conta que fica,
+   para que nada mude de lugar sem registro. */
+(function removerCarteiraAuto() {
+    if (!financeiro || financeiro._carteiraRemovida) return;
+    if (!Array.isArray(financeiro.contas)) return;
+
+    const carteira = financeiro.contas.find(c => c.nome === 'Carteira' && c.tipo === 'dinheiro');
+    const destino  = financeiro.contas.find(c => c !== carteira && !c.arquivada);
+    if (!carteira) { financeiro._carteiraRemovida = true; return; }
+    if (!destino)  return;   // seria a única conta — não remove
+
+    const idAntigo = carteira.id;
+    let migrados = 0;
+
+    function carimbar(lista) {
+        (lista || []).forEach(l => {
+            if (!l.contaId || l.contaId === idAntigo) { l.contaId = destino.id; migrados++; }
+        });
+    }
+    carimbar(financeiro.receitasAvulsas);
+    carimbar(financeiro.despesasAvulsas);
+    carimbar(financeiro.despesasVariaveis);
+    Object.values(financeiro.receitasMes || {}).forEach(carimbar);
+    Object.values(financeiro.despesasFixasMes || {}).forEach(carimbar);
+
+    // o saldo inicial da Carteira não se perde: soma ao destino
+    destino.saldoInicial = (Number(destino.saldoInicial) || 0) + (Number(carteira.saldoInicial) || 0);
+    destino.padrao = true;
+
+    financeiro.contas = financeiro.contas.filter(c => c.id !== idAntigo);
+    financeiro._carteiraRemovida = true;
+
+    salvarDados();
+    try { renderContas(); } catch (e) {}
+    console.log('Carteira removida. Lançamentos migrados:', migrados, '→', destino.nome);
+})();
