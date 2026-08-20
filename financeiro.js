@@ -7266,11 +7266,11 @@ function abrirModalConta(id) {
     document.getElementById('contaTipo').value = c ? c.tipo : 'corrente';
     document.getElementById('contaSaldoInicial').value = c ? c.saldoInicial : '';
     document.getElementById('contaPadraoChk').checked = c ? !!c.padrao : false;
-    m.classList.add('ativo');
+    m.classList.add('active');
 }
 
 function fecharModalConta() {
-    document.getElementById('modalConta')?.classList.remove('ativo');
+    document.getElementById('modalConta')?.classList.remove('active');
 }
 
 function salvarConta() {
