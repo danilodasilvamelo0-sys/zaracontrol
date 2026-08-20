@@ -4105,7 +4105,7 @@
 
 
     function renderizar() {
-        try { renderContas(); } catch(e) { console.error('contas:', e); }
+        try { renderContas(); preencherSelectsConta(); } catch(e) { console.error('contas:', e); }
         if (viewMode === 'arquivados') {
             renderizarArquivados();
             return;
@@ -7400,56 +7400,20 @@ function valorSelectConta(elId) {
     return p ? p.id : null;
 }
 
-
-/* ===== DEBUG TEMPORÁRIO — CONTAS ===== */
+/* Garante que a seção Contas seja desenhada mesmo se renderizar()
+   rodar antes do módulo estar pronto ou antes dos dados chegarem. */
 window.addEventListener('load', function () {
-    setTimeout(function () {
-        var L = [];
-        function chk(nome, fn) {
-            try { L.push([nome, String(fn())]); }
-            catch (e) { L.push([nome, 'ERRO: ' + e.message]); }
-        }
-        chk('#sectionContas existe', () => !!document.getElementById('sectionContas'));
-        chk('#contasLista existe',   () => !!document.getElementById('contasLista'));
-        chk('#modalConta existe',    () => !!document.getElementById('modalConta'));
-        chk('secao visivel',         () => {
-            var s = document.getElementById('sectionContas');
-            if (!s) return 'sem secao';
-            var cs = getComputedStyle(s);
-            return 'display=' + cs.display + ' vis=' + cs.visibility + ' h=' + s.offsetHeight;
-        });
-        chk('conteudo visivel', () => {
-            var c = document.getElementById('contasLista');
-            if (!c) return 'sem lista';
-            var cs = getComputedStyle(c);
-            return 'display=' + cs.display + ' h=' + c.offsetHeight + ' filhos=' + c.children.length;
-        });
-        chk('typeof renderContas',   () => typeof renderContas);
-        chk('typeof abrirModalConta',() => typeof abrirModalConta);
-        chk('typeof migrarContas',   () => typeof migrarContas);
-        chk('financeiro.contas',     () => JSON.stringify(financeiro.contas));
-        chk('roda renderContas()',   () => { renderContas(); return 'ok, filhos=' +
-            (document.getElementById('contasLista')||{children:[]}).children.length; });
-        chk('modal classe',          () => {
-            var m = document.getElementById('modalConta');
-            return m ? m.className + ' | display=' + getComputedStyle(m).display : 'sem modal';
-        });
-
-        var d = document.createElement('div');
-        d.style.cssText = 'position:fixed;left:8px;right:8px;bottom:90px;z-index:99999;' +
-            'background:#0b0f14;border:2px solid #46f0d2;border-radius:10px;padding:12px;' +
-            'font:11px/1.45 monospace;color:#dfe;max-height:52vh;overflow:auto;';
-        var html = '<b style="color:#46f0d2">DEBUG CONTAS</b>' +
-            '<button onclick="this.parentNode.remove()" style="float:right;background:#46f0d2;' +
-            'border:0;border-radius:5px;padding:2px 9px;font-weight:700;">fechar</button><br><br>';
-        L.forEach(function (r) {
-            var cor = /ERRO|false|undefined/.test(r[1]) ? '#ff6b5b' : '#5fe08a';
-            html += '<span style="color:#8fa">' + r[0] + ':</span> <span style="color:' + cor + '">' + r[1] + '</span><br>';
-        });
-        html += '<br><button onclick="try{abrirModalConta(\'\')}catch(e){alert(e.message)}" ' +
-            'style="background:#46f0d2;border:0;border-radius:6px;padding:7px 14px;font-weight:700;">' +
-            'testar abrir modal</button>';
-        d.innerHTML = html;
-        document.body.appendChild(d);
-    }, 1200);
+    var tentativas = 0;
+    var t = setInterval(function () {
+        tentativas++;
+        try {
+            var box = document.getElementById('contasLista');
+            if (box) {
+                renderContas();
+                preencherSelectsConta();
+                if (box.children.length > 0) { clearInterval(t); return; }
+            }
+        } catch (e) { console.error('contas:', e); }
+        if (tentativas > 12) clearInterval(t);
+    }, 500);
 });
