@@ -9,11 +9,11 @@
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
         :root {
-            --gold:    #c9a84c;
-            --gold-b:  #e8c160;
-            --bg:      #050505;
-            --text:    #f5f0e8;
-            --text-dim:rgba(245,240,232,0.4);
+            --gold:    #34d17a;
+            --gold-b:  #5ef09b;
+            --bg:      #060b08;
+            --text:    #eef7f1;
+            --text-dim:rgba(238,247,241,0.42);
         }
 
         html, body { min-height:100%; background:var(--bg); color:var(--text); font-family:'Montserrat',sans-serif; overflow-x:hidden; }
@@ -22,14 +22,22 @@
         body::before {
             content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
             background-image:
-                linear-gradient(rgba(201,168,76,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(201,168,76,0.025) 1px, transparent 1px);
+                linear-gradient(rgba(52,209,122,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(52,209,122,0.03) 1px, transparent 1px);
             background-size: 72px 72px;
         }
         /* Brilho radial topo */
         body::after {
-            content:''; position:fixed; top:0; left:0; right:0; height:50vh; z-index:0; pointer-events:none;
-            background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 100%);
+            content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+            background:
+                /* key light — foco cênico vindo de cima */
+                radial-gradient(ellipse 70% 45% at 50% -5%,  rgba(52,209,122,0.30) 0%, transparent 65%),
+                /* fill light lateral */
+                radial-gradient(ellipse 55% 50% at 8% 32%,   rgba(28,180,140,0.20) 0%, transparent 62%),
+                /* rim light oposto */
+                radial-gradient(ellipse 55% 50% at 95% 68%,  rgba(94,240,155,0.18) 0%, transparent 62%),
+                /* vinheta — escurece as bordas, foco no centro */
+                radial-gradient(ellipse 95% 80% at 50% 45%,  transparent 40%, rgba(0,0,0,0.55) 100%);
         }
 
         .page {
@@ -40,12 +48,12 @@
         }
 
         /* ── HERO ── */
-        .hero { text-align:center; margin-bottom:48px; animation: fadeUp 0.7s ease both; }
+        .hero { text-align:center; margin-bottom:56px; animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) both; }
 
         .logo-wrap {
             position: relative;
-            width: 92px; height: 92px;
-            margin: 0 auto 32px;
+            width: 116px; height: 116px;
+            margin: 0 auto;
         }
 
         /* Círculo espelhado dourado — igual aos cards mas circular */
@@ -57,23 +65,23 @@
             /* Gradiente dourado espelhado */
             background: linear-gradient(
                 150deg,
-                rgba(201,168,76,0.22) 0%,
-                rgba(160,130,55,0.12) 30%,
-                rgba(10,10,10,0.95)   55%,
-                rgba(20,18,12,0.98)   100%
+                rgba(255,255,255,0.20) 0%,
+                rgba(255,255,255,0.07) 35%,
+                rgba(255,255,255,0.03) 65%,
+                rgba(255,255,255,0.12) 100%
             );
+            backdrop-filter: blur(24px) saturate(200%);
+            -webkit-backdrop-filter: blur(24px) saturate(200%);
 
             /* Moldura cromada dourada */
+            border: 1px solid rgba(94,240,155,0.30);
             box-shadow:
-                0 1px 0 rgba(232,193,96,0.55),
-                -1px 0 0 rgba(201,168,76,0.25),
-                1px 0 0 rgba(0,0,0,0.6),
-                0 -1px 0 rgba(0,0,0,0.8),
-                inset 0 1px 0 rgba(201,168,76,0.15),
-                inset 0 -2px 6px rgba(0,0,0,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.35),
+                inset 0 -2px 6px rgba(0,0,0,0.4),
                 0 6px 20px rgba(0,0,0,0.6),
-                0 16px 40px rgba(0,0,0,0.5),
-                0 0 30px rgba(201,168,76,0.08);
+                0 16px 44px rgba(0,0,0,0.55),
+                0 0 44px rgba(52,209,122,0.22);
+            animation: breathe 4.5s ease-in-out infinite;
 
             display: flex; align-items: center; justify-content: center;
         }
@@ -85,8 +93,8 @@
             border-radius: 50%;
             background: linear-gradient(
                 150deg,
-                rgba(232,193,96,0.18) 0%,
-                rgba(201,168,76,0.07) 30%,
+                rgba(255,255,255,0.22) 0%,
+                rgba(94,240,155,0.08) 30%,
                 transparent 60%
             );
             pointer-events: none;
@@ -101,8 +109,8 @@
             border-radius: 50%;
             background: radial-gradient(
                 circle at 30% 30%,
-                rgba(232,193,96,0.20) 0%,
-                rgba(201,168,76,0.06) 40%,
+                rgba(255,255,255,0.28) 0%,
+                rgba(94,240,155,0.08) 40%,
                 transparent 70%
             );
             pointer-events: none;
@@ -110,27 +118,11 @@
 
         .logo-z {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 2.2em; font-weight: 600;
-            color: var(--gold);
-            text-shadow: 0 0 12px rgba(201,168,76,0.3);
+            font-size: 2.9em; font-weight: 600;
+            color: var(--gold-b);
+            text-shadow: 0 0 18px rgba(52,209,122,0.55), 0 0 40px rgba(52,209,122,0.25);
             position: relative; z-index: 1;
         }
-
-        .brand { font-family:'Cormorant Garamond',serif; font-size:3.6em; font-weight:300; letter-spacing:16px; text-transform:uppercase; margin-bottom:8px; }
-        .brand-sub { font-size:0.58em; font-weight:700; letter-spacing:7px; text-transform:uppercase; color:var(--gold); opacity:0.75; }
-
-        .divider { display:flex; align-items:center; gap:10px; margin:24px auto; width:160px; }
-        .divider-line { flex:1; height:1px; background:rgba(201,168,76,0.2); }
-        .divider-dot { width:4px; height:4px; background:var(--gold); transform:rotate(45deg); }
-
-        .badge {
-            display:inline-flex; align-items:center; gap:7px;
-            padding:7px 20px; border-radius:40px;
-            border:1px solid rgba(201,168,76,0.2);
-            background:rgba(201,168,76,0.06);
-            font-size:0.60em; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:var(--gold);
-        }
-        .badge-dot { width:5px; height:5px; background:var(--gold); border-radius:50%; box-shadow:0 0 5px var(--gold); animation:pulse 2s ease-in-out infinite; }
 
         /* ══════════════════════════════════════
            CARDS ESPELHADOS / GLASS PREMIUM
@@ -145,26 +137,27 @@
             border-radius: 20px;
             overflow: hidden;
             transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease;
-            animation: fadeUp 0.5s ease both;
+            animation: fadeUp 0.85s cubic-bezier(0.16,1,0.3,1) both;
 
             /* Glass — idêntico ao financeiro */
             background: linear-gradient(
                 150deg,
-                #2a2a2d 0%,
-                #202022 20%,
-                #1a1a1c 50%,
-                #1e1e20 80%,
-                #242426 100%
+                rgba(255,255,255,0.14) 0%,
+                rgba(255,255,255,0.05) 40%,
+                rgba(255,255,255,0.03) 70%,
+                rgba(255,255,255,0.10) 100%
             );
-            border: none;
+            backdrop-filter: blur(28px) saturate(200%);
+            -webkit-backdrop-filter: blur(28px) saturate(200%);
+            border: 1px solid rgba(94,240,155,0.16);
 
             /* Moldura cromada + elevação */
             box-shadow:
-                0 1px 0 rgba(255,255,255,0.22),
-                -1px 0 0 rgba(255,255,255,0.10),
+                0 1px 0 rgba(255,255,255,0.28),
+                -1px 0 0 rgba(255,255,255,0.12),
                 1px 0 0 rgba(0,0,0,0.6),
                 0 -1px 0 rgba(0,0,0,0.8),
-                inset 0 1px 0 rgba(255,255,255,0.08),
+                inset 0 1px 0 rgba(255,255,255,0.30),
                 inset 0 -2px 4px rgba(0,0,0,0.4),
                 0 6px 12px rgba(0,0,0,0.5),
                 0 16px 48px rgba(0,0,0,0.6),
@@ -213,11 +206,11 @@
                 inset 0 -2px 4px rgba(0,0,0,0.4),
                 0 8px 16px rgba(0,0,0,0.55),
                 0 24px 64px rgba(0,0,0,0.65),
-                0 0 0 1px rgba(201,168,76,0.25),
-                0 0 50px rgba(201,168,76,0.08);
+                0 0 0 1px rgba(52,209,122,0.35),
+                0 0 55px rgba(52,209,122,0.16);
         }
-        .card:hover .card-icon, .card:active .card-icon { background:rgba(201,168,76,0.12); border-color:rgba(201,168,76,0.3); }
-        .card:hover .card-icon svg, .card:active .card-icon svg { stroke:var(--gold-b); filter:drop-shadow(0 0 4px rgba(201,168,76,0.5)); }
+        .card:hover .card-icon, .card:active .card-icon { background:rgba(52,209,122,0.14); border-color:rgba(94,240,155,0.35); }
+        .card:hover .card-icon svg, .card:active .card-icon svg { stroke:var(--gold-b); filter:drop-shadow(0 0 6px rgba(52,209,122,0.6)); }
         .card:hover .card-title, .card:active .card-title { color:var(--gold-b); }
         .card:hover .card-arrow, .card:active .card-arrow { opacity:1; transform:translateX(2px); }
 
@@ -237,12 +230,12 @@
             transition:all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
         }
-        .card-icon svg { width:19px; height:19px; stroke:rgba(245,240,232,0.5); transition:all 0.3s ease; }
+        .card-icon svg { width:19px; height:19px; stroke:rgba(238,247,241,0.55); transition:all 0.3s ease; }
 
         .card-text { flex:1; min-width:0; }
         .card-title {
             font-size:0.75em; font-weight:700; letter-spacing:2.5px; text-transform:uppercase;
-            color:rgba(245,240,232,0.9); margin-bottom:4px;
+            color:rgba(238,247,241,0.92); margin-bottom:4px;
             transition:color 0.3s ease;
         }
         .card-sub { font-size:0.58em; color:var(--text-dim); letter-spacing:0.3px; }
@@ -252,11 +245,11 @@
         .card-num {
             font-family:'Cormorant Garamond',serif;
             font-size:0.65em; font-weight:300;
-            color:rgba(201,168,76,0.25); letter-spacing:1px;
+            color:rgba(94,240,155,0.28); letter-spacing:1px;
         }
 
         .card-arrow {
-            color:rgba(201,168,76,0.7); opacity:0;
+            color:rgba(94,240,155,0.75); opacity:0;
             transition:all 0.3s ease;
         }
         .card-arrow svg { width:14px; height:14px; }
@@ -273,23 +266,35 @@
         .card:hover .card-accent, .card:active .card-accent { opacity:1; }
 
         /* Delays das animações */
-        .card:nth-child(1) { animation-delay:0.08s; }
-        .card:nth-child(2) { animation-delay:0.16s; }
-        .card:nth-child(3) { animation-delay:0.24s; }
-        .card:nth-child(4) { animation-delay:0.32s; }
-        .card:nth-child(5) { animation-delay:0.40s; }
+        .card:nth-child(1) { animation-delay:0.30s; }
+        .card:nth-child(2) { animation-delay:0.41s; }
+        .card:nth-child(3) { animation-delay:0.52s; }
+        .card:nth-child(4) { animation-delay:0.63s; }
+        .card:nth-child(5) { animation-delay:0.74s; }
 
         /* ── FOOTER ── */
-        .footer { margin-top:48px; text-align:center; animation:fadeUp 0.5s 0.5s ease both; }
-        .footer-txt { font-size:0.52em; letter-spacing:4px; text-transform:uppercase; color:rgba(245,240,232,0.18); }
-        .footer-hr { width:36px; height:1px; background:rgba(201,168,76,0.2); margin:8px auto 0; }
+        .footer { margin-top:48px; text-align:center; animation:fadeUp 0.85s 0.95s cubic-bezier(0.16,1,0.3,1) both; }
+        .footer-txt { font-size:0.52em; letter-spacing:4px; text-transform:uppercase; color:rgba(238,247,241,0.20); }
+        .footer-hr { width:36px; height:1px; background:rgba(52,209,122,0.22); margin:8px auto 0; }
 
         /* ── ANIMAÇÕES ── */
         @keyframes pulse   { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
-        @keyframes fadeUp  { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+        /* entrada com leve escala — sensação de câmera aproximando */
+        @keyframes fadeUp  {
+            from { opacity:0; transform:translateY(22px) scale(0.985); filter:blur(6px); }
+            to   { opacity:1; transform:translateY(0)    scale(1);     filter:blur(0); }
+        }
+        /* logo respirando */
+        @keyframes breathe {
+            0%,100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 6px rgba(0,0,0,0.4),
+                                  0 6px 20px rgba(0,0,0,0.6), 0 16px 44px rgba(0,0,0,0.55),
+                                  0 0 44px rgba(52,209,122,0.22); }
+            50%     { box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 6px rgba(0,0,0,0.4),
+                                  0 6px 20px rgba(0,0,0,0.6), 0 16px 44px rgba(0,0,0,0.55),
+                                  0 0 66px rgba(52,209,122,0.38); }
+        }
 
         @media (max-width:400px) {
-            .brand { font-size:3em; letter-spacing:12px; }
             .page  { padding:44px 14px 44px; }
             .card-inner { padding:15px 14px; }
         }
@@ -303,10 +308,6 @@
         <div class="logo-wrap">
             <div class="logo-inner"><div class="logo-z">Z</div></div>
         </div>
-        <div class="brand">ZARA</div>
-        <div class="brand-sub">Private Access</div>
-        <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
-        <div class="badge"><div class="badge-dot"></div>Exclusive</div>
     </div>
 
     <!-- MENU -->
