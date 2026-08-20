@@ -6884,7 +6884,12 @@ font-size: 1.1em;
 .conta-card.cartao { border-color: rgba(255,107,91,0.22); }
 .conta-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
 .conta-id { display:flex; gap:10px; align-items:center; min-width:0; }
-.conta-icone { font-size:1.25em; line-height:1; }
+.conta-icone { display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    width:34px; height:34px; border-radius:10px;
+    background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07);
+    color:#46f0d2; }
+.conta-svg { width:17px; height:17px; }
+.conta-card.cartao .conta-icone { color:#ff6b5b; }
 .conta-nome { font-size:0.9em; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
 .conta-padrao {
     font-size:0.62em; font-weight:700; letter-spacing:0.5px; text-transform:uppercase;
