@@ -1488,10 +1488,10 @@ height: 12px;
 .badge.recorrente { background: rgba(155, 89, 182, 0.15); color: #9b59b6; }
 .badge.parcela { background: rgba(90,169,240, 0.15); color: #5aa9f0; }
 .badge.vencido { background: rgba(224,82,68, 0.15); color: #e05244; }
-.badge.proximo { background: rgba(241, 196, 15, 0.15); color: #d4a307; }
+.badge.proximo { background: rgba(241, 196, 15, 0.15); color: #ffc857; }
 .badge.arquivado { background: rgba(149, 165, 166, 0.15); color: #95a5a6; }
 .badge.comprovante { background: rgba(95,224,138, 0.15); color: #4bc978; }
-.badge.juros-pendente { background: rgba(251,226,180, 0.15); color: #d68910; }
+.badge.juros-pendente { background: rgba(251,226,180, 0.15); color: #ffc857; }
 
 /* ========== CHECKBOX STATUS (igual Medicamentos) ========== */
 .checkbox-status {
@@ -3261,8 +3261,8 @@ box-shadow: 0 4px 15px rgba(255,107,91, 0.3);
 }
 
 .btn-juros {
-background: rgba(251,226,180, 0.15);
-color: #fbe2b4;
+background: rgba(255,200,87, 0.15);
+color: #ffc857;
 border: 1px solid rgba(251,226,180, 0.3) !important;
 }
 .btn-juros:hover { background: rgba(251,226,180, 0.25); }
@@ -4824,7 +4824,7 @@ font-weight: 700;
 color: var(--text);
 }
 .emp-resumo-valor.negativo { color: #ff6b5b; }
-.emp-resumo-valor.atencao  { color: #fbe2b4; }
+.emp-resumo-valor.atencao  { color: #ffc857; }
 
 /* ===== EMPRÉSTIMOS: ALERTAS ===== */
 .emp-alert {
@@ -4838,7 +4838,7 @@ letter-spacing: 0.3px;
 }
 .emp-alert.vencida  { background: rgba(255,107,91,.15); color: #ff6b5b; }
 .emp-alert.proxima  { background: rgba(90,169,240,.12); color: #3d8fd6; }
-.emp-alert.juros    { background: rgba(251,226,180,.12); color: #d68910; }
+.emp-alert.juros    { background: rgba(251,226,180,.12); color: #ffc857; }
 .emp-alert.taxa-alta{ background: rgba(255,107,91,.1); color: #e05244; }
 .emp-alertas-row    { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
 
