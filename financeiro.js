@@ -5709,12 +5709,7 @@
         renderizar();
     }
 
-    document.getElementById('btnAtivos').addEventListener('click', function() {
-        viewMode = 'ativos';
-        this.classList.add('active');
-        
-        renderizar();
-    });
+    // Botão "Ativos" removido — viewMode permanece 'ativos' por padrão.
 
 
 
