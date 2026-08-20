@@ -25,8 +25,8 @@
                     </div>
                     <div class="desp-card-acoes">
                         <button onclick="marcarPagoAvulsa(${d.id})"
-                            style="background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.5);
-                                   border-radius:8px;color:#2ecc71;font-size:0.72em;font-weight:800;
+                            style="background:rgba(95,224,138,0.15);border:1px solid rgba(95,224,138,0.5);
+                                   border-radius:8px;color:#5fe08a;font-size:0.72em;font-weight:800;
                                    padding:5px 14px;cursor:pointer;font-family:inherit;">
                             PAGAR
                         </button>
@@ -59,8 +59,8 @@
                     </div>
                     <div class="desp-card-acoes">
                         <button onclick="marcarPagoAvulsa(${d.id})"
-                            style="background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.5);
-                                   border-radius:8px;color:#2ecc71;font-size:0.72em;font-weight:800;
+                            style="background:rgba(95,224,138,0.15);border:1px solid rgba(95,224,138,0.5);
+                                   border-radius:8px;color:#5fe08a;font-size:0.72em;font-weight:800;
                                    padding:5px 14px;cursor:pointer;font-family:inherit;">
                             PAGAR
                         </button>
@@ -483,7 +483,7 @@
     // ==========================================
     let _confirmCallback = null;
 
-    function confirmar(mensagem, callback, titulo = 'Confirmar exclusão', okLabel = 'Excluir', okColor = '#e74c3c') {
+    function confirmar(mensagem, callback, titulo = 'Confirmar exclusão', okLabel = 'Excluir', okColor = '#ff6b5b') {
         document.getElementById('modalConfirmMsg').textContent = mensagem;
         document.getElementById('modalConfirmTitle').textContent = titulo;
         const btn  = document.getElementById('modalConfirmOkBtn');
@@ -491,25 +491,25 @@
         btn.textContent = okLabel;
         btn.style.background = okColor;
         // Ícone e cor conforme tipo
-        if (okColor === '#3498db') {
-            icon.style.background = 'rgba(52,152,219,0.12)';
-            icon.style.borderColor = 'rgba(52,152,219,0.25)';
-            icon.style.color = '#3498db';
+        if (okColor === '#5aa9f0') {
+            icon.style.background = 'rgba(90,169,240,0.12)';
+            icon.style.borderColor = 'rgba(90,169,240,0.25)';
+            icon.style.color = '#5aa9f0';
             icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><polyline points="9 18 15 12 9 6"/><polyline points="15 18 21 12 15 6"/></svg>';
         } else if (okColor === '#e67e22') {
             icon.style.background = 'rgba(230,126,34,0.12)';
             icon.style.borderColor = 'rgba(230,126,34,0.25)';
             icon.style.color = '#e67e22';
             icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
-        } else if (okColor === '#27ae60' || okColor === '#2ecc71') {
-            icon.style.background = 'rgba(46,204,113,0.12)';
-            icon.style.borderColor = 'rgba(46,204,113,0.25)';
-            icon.style.color = '#2ecc71';
+        } else if (okColor === '#4bc978' || okColor === '#5fe08a') {
+            icon.style.background = 'rgba(95,224,138,0.12)';
+            icon.style.borderColor = 'rgba(95,224,138,0.25)';
+            icon.style.color = '#5fe08a';
             icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><polyline points="20 6 9 17 4 12"/></svg>';
         } else {
-            icon.style.background = 'rgba(231,76,60,0.12)';
-            icon.style.borderColor = 'rgba(231,76,60,0.25)';
-            icon.style.color = '#e74c3c';
+            icon.style.background = 'rgba(255,107,91,0.12)';
+            icon.style.borderColor = 'rgba(255,107,91,0.25)';
+            icon.style.color = '#ff6b5b';
             icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
         }
         _confirmCallback = callback;
@@ -942,11 +942,11 @@
         if (totalTopEl) totalTopEl.textContent = formatarMoeda(total);
         if (statusEl) {
             if (Math.abs(diferenca) < 0.01) {
-                statusEl.innerHTML = '<span class="soma-ok" style="font-size:12px;color:#2ecc71;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Valores corretos</span>';
-                if (somaTopEl) { somaTopEl.style.color = '#2ecc71'; }
+                statusEl.innerHTML = '<span class="soma-ok" style="font-size:12px;color:#5fe08a;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Valores corretos</span>';
+                if (somaTopEl) { somaTopEl.style.color = '#5fe08a'; }
             } else {
-                statusEl.innerHTML = `<span style="color:#e74c3c;font-size:12px;">Diferença: ${formatarMoeda(diferenca)}</span>`;
-                if (somaTopEl) { somaTopEl.style.color = '#e74c3c'; }
+                statusEl.innerHTML = `<span style="color:#ff6b5b;font-size:12px;">Diferença: ${formatarMoeda(diferenca)}</span>`;
+                if (somaTopEl) { somaTopEl.style.color = '#ff6b5b'; }
             }
         }
     }
@@ -1190,8 +1190,8 @@
         if (btn) {
             const vaiReceber = btn.textContent.trim() === 'RECEBER';
             btn.textContent = vaiReceber ? 'RECEBIDO' : 'RECEBER';
-            btn.style.background = vaiReceber ? '#2ecc71' : 'transparent';
-            btn.style.color = vaiReceber ? '#0a0a0a' : '#2ecc71';
+            btn.style.background = vaiReceber ? '#5fe08a' : 'transparent';
+            btn.style.color = vaiReceber ? '#0a0a0a' : '#5fe08a';
             btn.style.transform = 'scale(0.95)';
             setTimeout(() => { btn.style.transform = ''; }, 150);
         }
@@ -1522,7 +1522,7 @@
                 salvarDados();
                 renderizar();
             },
-            'Adiar Despesa', 'Adiar', '#3498db'
+            'Adiar Despesa', 'Adiar', '#5aa9f0'
         );
     }
 
@@ -1560,13 +1560,13 @@
 
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
-            <div class="info-box" style="background:rgba(46,204,113,0.08);border-color:rgba(46,204,113,0.3)">
+            <div class="info-box" style="background:rgba(95,224,138,0.08);border-color:rgba(95,224,138,0.3)">
                 Este valor vale <strong>só para este mês</strong>. Os outros meses (passados e futuros) não são alterados.
             </div>
             <div class="info-box">
                 <strong>${item.descricao}</strong><br>
                 <small>Valor padrão: ${formatarMoeda(valorOriginal)}</small>
-                ${diferenca !== 0 ? `<br><small style="color: ${diferenca > 0 ? '#e74c3c' : '#2ecc71'};">Diferença atual: ${diferenca > 0 ? '+' : ''}${formatarMoeda(diferenca)}</small>` : ''}
+                ${diferenca !== 0 ? `<br><small style="color: ${diferenca > 0 ? '#ff6b5b' : '#5fe08a'};">Diferença atual: ${diferenca > 0 ? '+' : ''}${formatarMoeda(diferenca)}</small>` : ''}
             </div>
             <div class="form-group">
                 <label>Novo Valor (apenas para este mês)</label>
@@ -2009,7 +2009,7 @@
 
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
-            <div style="background:#f8f6f0;border:1px solid rgba(184,151,46,0.15);border-radius:10px;padding:14px;margin-bottom:18px;">
+            <div style="background:#f8f6f0;border:1px solid rgba(47,199,173,0.15);border-radius:10px;padding:14px;margin-bottom:18px;">
                 <div style="font-size:0.78em;color:rgba(255,255,255,0.60);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Editando</div>
                 <div style="font-weight:600;color:var(--text,#fff);font-size:0.95em;">${parcela.descricao} — Parcela ${parcela.parcelaAtual}/${parcela.totalParcelas}</div>
                 <div style="font-size:0.8em;color:rgba(255,255,255,0.65);margin-top:3px;">
@@ -2037,7 +2037,7 @@
                     placeholder="Ex: Acréscimo de R$50 por atraso, juros de 2%...">
             </div>
 
-            <div id="previewParcela" style="background:#f0ede6;border:1px solid rgba(184,151,46,0.2);border-radius:10px;padding:12px;margin-bottom:16px;font-size:0.82em;color:rgba(26,26,26,0.7);display:none;">
+            <div id="previewParcela" style="background:#f0ede6;border:1px solid rgba(47,199,173,0.2);border-radius:10px;padding:12px;margin-bottom:16px;font-size:0.82em;color:rgba(26,26,26,0.7);display:none;">
                 <div style="font-weight:600;color:var(--text,#fff);margin-bottom:4px;">Impacto no total</div>
                 <div id="previewParcelaTexto"></div>
             </div>
@@ -2224,9 +2224,9 @@
         if (btn) {
             const viraPago = !item.pago;
             btn.textContent = viraPago ? 'PAGO' : 'PAGAR';
-            btn.style.background = viraPago ? '#2ecc71' : 'transparent';
-            btn.style.color = viraPago ? '#0a0a0a' : '#2ecc71';
-            btn.style.borderColor = '#2ecc71';
+            btn.style.background = viraPago ? '#5fe08a' : 'transparent';
+            btn.style.color = viraPago ? '#0a0a0a' : '#5fe08a';
+            btn.style.borderColor = '#5fe08a';
             btn.style.transform = 'scale(0.95)';
             setTimeout(() => { btn.style.transform = ''; }, 150);
         }
@@ -2374,7 +2374,7 @@
         confirmar(
             `Quitar "${nome}"? ${parcelasDoGrupo.length} parcelas pendentes. Total: ${formatarMoeda(totalRestante)}. Todas serão marcadas como pagas.`,
             () => { _doQuitarParcelas(parcelasDoGrupo); },
-            'Quitar Dívida', 'Quitar', '#27ae60'
+            'Quitar Dívida', 'Quitar', '#4bc978'
         ); return;
 
         // (bloco movido para _doQuitarParcelas)
@@ -2422,20 +2422,20 @@
             const valorRestante = parcelasPendentes.reduce((sum, p) => sum + p.valor, 0);
             
             body.innerHTML = `
-                <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 10px; border-left: 3px solid #3498db;">
+                <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(90,169,240, 0.1); border-radius: 10px; border-left: 3px solid #5aa9f0;">
                     <strong style="font-size: 1.1em;">${item.descricao}</strong>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px;">
                         <div style="text-align: center;">
                             <div style="color: rgba(26, 26, 26, 0.65); font-size: 0.75em; text-transform: uppercase;">Total</div>
-                            <div style="color: #3498db; font-weight: 600;">${formatarMoeda(valorTotalAtual)}</div>
+                            <div style="color: #5aa9f0; font-weight: 600;">${formatarMoeda(valorTotalAtual)}</div>
                         </div>
                         <div style="text-align: center;">
                             <div style="color: rgba(26, 26, 26, 0.65); font-size: 0.75em; text-transform: uppercase;">Pago</div>
-                            <div style="color: #27ae60; font-weight: 600;">${formatarMoeda(valorJaPago)}</div>
+                            <div style="color: #4bc978; font-weight: 600;">${formatarMoeda(valorJaPago)}</div>
                         </div>
                         <div style="text-align: center;">
                             <div style="color: rgba(26, 26, 26, 0.65); font-size: 0.75em; text-transform: uppercase;">Restante</div>
-                            <div style="color: #e74c3c; font-weight: 600;">${formatarMoeda(valorRestante)}</div>
+                            <div style="color: #ff6b5b; font-weight: 600;">${formatarMoeda(valorRestante)}</div>
                         </div>
                     </div>
                     <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(26, 26, 26, 0.1);">
@@ -2547,7 +2547,7 @@
         const qtdPendentes = novoTotalParcelas - qtdPagas;
         
         if (valorRestante <= 0 || qtdPendentes <= 0) {
-            previewContainer.innerHTML = '<div style="color: #27ae60; text-align: center; padding: 10px;">Dívida quitada!</div>';
+            previewContainer.innerHTML = '<div style="color: #4bc978; text-align: center; padding: 10px;">Dívida quitada!</div>';
             previewContainer.style.display = 'block';
             return;
         }
@@ -2839,8 +2839,8 @@
         if (btn) {
             const viraPago = !item.pago;
             btn.textContent = viraPago ? 'PAGO' : 'PAGAR';
-            btn.style.background = viraPago ? '#2ecc71' : 'transparent';
-            btn.style.color = viraPago ? '#0a0a0a' : '#2ecc71';
+            btn.style.background = viraPago ? '#5fe08a' : 'transparent';
+            btn.style.color = viraPago ? '#0a0a0a' : '#5fe08a';
             btn.style.transform = 'scale(0.95)';
             setTimeout(() => { btn.style.transform = ''; }, 150);
         }
@@ -3062,7 +3062,7 @@
                 renderizar();
                 mostrarStatus('Entrada removida e saldo revertido.', 'success');
             },
-            'Remover Entrada', 'Remover', '#e74c3c'
+            'Remover Entrada', 'Remover', '#ff6b5b'
         );
     }
 
@@ -3106,7 +3106,7 @@
             <div class="info-box warning">
                 Este pagamento <strong>NÃO</strong> reduz a dívida principal. Apenas quita os juros acumulados.
             </div>
-            <div class="info-box" style="background:rgba(243,156,18,0.1);border-color:rgba(243,156,18,0.3)">
+            <div class="info-box" style="background:rgba(251,226,180,0.1);border-color:rgba(251,226,180,0.3)">
                 <strong>Juros Acumulados:</strong> ${formatarMoeda(emp.jurosAcumulados || 0)}
             </div>
             <div class="form-row">
@@ -3188,7 +3188,7 @@
             <div class="info-box info">
                 Este pagamento <strong>REDUZ</strong> o valor da dívida principal.
             </div>
-            <div class="info-box" style="background:rgba(52,152,219,0.1);border-color:rgba(52,152,219,0.3)">
+            <div class="info-box" style="background:rgba(90,169,240,0.1);border-color:rgba(90,169,240,0.3)">
                 <strong>Saldo Devedor:</strong> ${formatarMoeda(emp.principal)}
             </div>
             <div class="form-row">
@@ -3290,7 +3290,7 @@
                 Registra o pagamento da parcela <strong>${numeroParcela}/${emp.totalParcelas}</strong>.
                 O valor é abatido do saldo devedor e a próxima parcela é avançada automaticamente.
             </div>
-            <div class="info-box" style="background:rgba(52,152,219,0.1);border-color:rgba(52,152,219,0.3)">
+            <div class="info-box" style="background:rgba(90,169,240,0.1);border-color:rgba(90,169,240,0.3)">
                 <strong>Saldo Devedor:</strong> ${formatarMoeda(emp.principal)}
             </div>
             <div class="form-row">
@@ -3681,7 +3681,7 @@
                 salvarDados(); renderizar();
                 mostrarStatus('Dívida restaurada para lista ativa', 'success');
             },
-            'Restaurar Dívida', 'Restaurar', '#27ae60'
+            'Restaurar Dívida', 'Restaurar', '#4bc978'
         );
     }
 
@@ -3788,9 +3788,9 @@
         itemEditando = { tipo: 'depositarReserva', id: id };
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
-            <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; text-align: center;">
+            <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(95,224,138, 0.1); border-radius: 10px; text-align: center;">
                 <div style="font-size: 0.8em; color: rgba(26, 26, 26, 0.65); text-transform: uppercase;">Saldo Atual</div>
-                <div style="font-size: 1.8em; font-weight: 600; color: #2ecc71;">${formatarMoeda(reserva.saldo || 0)}</div>
+                <div style="font-size: 1.8em; font-weight: 600; color: #5fe08a;">${formatarMoeda(reserva.saldo || 0)}</div>
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -3804,7 +3804,7 @@
             </div>
             <div class="form-buttons">
                 <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
-                <button class="btn-salvar" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);" onclick="confirmarDeposito()">Depositar</button>
+                <button class="btn-salvar" style="background: linear-gradient(135deg, #4bc978 0%, #5fe08a 100%);" onclick="confirmarDeposito()">Depositar</button>
             </div>
         `;
         document.querySelector('#modalEditar .modal-header h3').textContent = 'Depositar em ' + reserva.descricao;
@@ -3847,9 +3847,9 @@
         itemEditando = { tipo: 'retirarReserva', id: id };
         const body = document.getElementById('modalEditarBody');
         body.innerHTML = `
-            <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; text-align: center;">
+            <div class="info-box" style="margin-bottom: 15px; padding: 15px; background: rgba(95,224,138, 0.1); border-radius: 10px; text-align: center;">
                 <div style="font-size: 0.8em; color: rgba(26, 26, 26, 0.65); text-transform: uppercase;">Saldo Disponível</div>
-                <div style="font-size: 1.8em; font-weight: 600; color: #2ecc71;">${formatarMoeda(reserva.saldo || 0)}</div>
+                <div style="font-size: 1.8em; font-weight: 600; color: #5fe08a;">${formatarMoeda(reserva.saldo || 0)}</div>
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -3863,7 +3863,7 @@
             </div>
             <div class="form-buttons">
                 <button class="btn-cancelar" onclick="fecharModal('modalEditar')">Cancelar</button>
-                <button class="btn-salvar" style="background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);" onclick="confirmarRetirada()">Retirar</button>
+                <button class="btn-salvar" style="background: linear-gradient(135deg, #e05244 0%, #ff6b5b 100%);" onclick="confirmarRetirada()">Retirar</button>
             </div>
         `;
         document.querySelector('#modalEditar .modal-header h3').textContent = 'Retirar de ' + reserva.descricao;
@@ -3954,7 +3954,7 @@
         const bordaL  = opts.vencido ? '3px solid var(--red)' : opts.pago ? '3px solid var(--green)' : '3px solid transparent';
         const progBar = opts.progresso !== undefined ? `
             <div class="desp-prog-wrap">
-                <div class="desp-prog-bar" style="width:${opts.progresso}%;background:#2ecc71"></div>
+                <div class="desp-prog-bar" style="width:${opts.progresso}%;background:#5fe08a"></div>
             </div>` : '';
 
         // ── LINHA DESKTOP ──
@@ -4062,7 +4062,7 @@
             : _erros.map((e,i) => `
                 <div style="border-bottom:1px solid rgba(255,255,255,0.06);padding:12px 0;">
                     <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                        <span style="background:rgba(231,76,60,0.15);color:#ff6b6b;padding:2px 8px;border-radius:6px;font-size:0.7em;font-weight:700;">#${_erros.length - i}</span>
+                        <span style="background:rgba(255,107,91,0.15);color:#ff6b6b;padding:2px 8px;border-radius:6px;font-size:0.7em;font-weight:700;">#${_erros.length - i}</span>
                         <span style="color:rgba(255,255,255,0.4);font-size:0.7em;">${e.ts} ${e.local ? '· ' + e.local : ''} ${e.linha ? 'L' + e.linha : ''}</span>
                     </div>
                     <div style="color:#ffffff;font-size:0.85em;font-weight:600;margin-bottom:4px;">${e.msg}</div>
@@ -4070,10 +4070,10 @@
                 </div>`).join('');
 
         modal.innerHTML = `
-            <div style="background:#0e0e0e;border:1px solid rgba(231,76,60,0.3);border-radius:16px;max-width:720px;margin:0 auto;padding:24px;">
+            <div style="background:#0e0e0e;border:1px solid rgba(255,107,91,0.3);border-radius:16px;max-width:720px;margin:0 auto;padding:24px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
                     <div>
-                        <h2 style="color:#e74c3c;font-size:0.9em;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin:0;">
+                        <h2 style="color:#ff6b5b;font-size:0.9em;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin:0;">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:-2px;margin-right:6px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                             Log de Erros ZARA
                         </h2>
@@ -4081,7 +4081,7 @@
                     </div>
                     <div style="display:flex;gap:8px;">
                         <button onclick="_erros.length=0;_atualizarBadgeErros();abrirLogErros();" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);padding:6px 12px;border-radius:8px;font-size:0.75em;cursor:pointer;">Limpar</button>
-                        <button onclick="document.getElementById('zara-log-modal').style.display='none'" style="background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;padding:6px 12px;border-radius:8px;font-size:0.75em;cursor:pointer;">Fechar</button>
+                        <button onclick="document.getElementById('zara-log-modal').style.display='none'" style="background:rgba(255,107,91,0.1);border:1px solid rgba(255,107,91,0.3);color:#ff6b5b;padding:6px 12px;border-radius:8px;font-size:0.75em;cursor:pointer;">Fechar</button>
                     </div>
                 </div>
                 <div style="max-height:60vh;overflow-y:auto;">${rows}</div>
@@ -4244,13 +4244,13 @@
         const receitaDetalhe = document.getElementById('kpiReceitaDetalhe');
         const recFixasList = receitasMes.map(r =>
             `<span style="display:flex;justify-content:space-between;gap:8px;">
-                <span style="color:${r.recebido?'#2ecc71':'inherit'}">${r.descricao || 'Receita'}</span>
+                <span style="color:${r.recebido?'#5fe08a':'inherit'}">${r.descricao || 'Receita'}</span>
                 <span style="font-weight:600;">${formatarMoeda(r.valor)}</span>
             </span>`
         ).join('');
         const recVarList = receitasVariaveisMesArr.map(r =>
             `<span style="display:flex;justify-content:space-between;gap:8px;">
-                <span style="color:${r.recebido?'#2ecc71':'inherit'}">${r.descricao || 'Variável'}</span>
+                <span style="color:${r.recebido?'#5fe08a':'inherit'}">${r.descricao || 'Variável'}</span>
                 <span style="font-weight:600;">${formatarMoeda(r.valor)}</span>
             </span>`
         ).join('');
@@ -4260,7 +4260,7 @@
                 : '<span>Sem receitas no mês</span>') +
             (receitaPendente > 0
                 ? `<span style="color:#e67e22;margin-top:4px;display:block;">A receber: ${formatarMoeda(receitaPendente)}</span>`
-                : `<span style="color:#2ecc71;margin-top:4px;display:block;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg> Tudo recebido</span>`);
+                : `<span style="color:#5fe08a;margin-top:4px;display:block;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg> Tudo recebido</span>`);
 
         // KPI 2: Despesas Totais — breakdown por tipo com pago/pendente
         document.getElementById('kpiDespesas').textContent = formatarMoeda(despesasTotaisMes);
@@ -4285,7 +4285,7 @@
                 <span>Empréstimos ${pctEmp>0?`<small>(${pctEmp}%)</small>`:''}</span>
                 <span style="font-weight:600;">${formatarMoeda(totalParcelasPendentesMes)}</span>
             </span>` : ''}
-            ${empAmortizadoMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;color:#2ecc71;">
+            ${empAmortizadoMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;color:#5fe08a;">
                 <span>Amortização</span>
                 <span style="font-weight:600;">${formatarMoeda(empAmortizadoMes)}</span>
             </span>` : ''}
@@ -4293,13 +4293,13 @@
                 <span>Juros pagos</span>
                 <span style="font-weight:600;">${formatarMoeda(empJurosPagosMes)}</span>
             </span>` : ''}
-            ${jurosAcumuladosTotal > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;color:#e74c3c;">
+            ${jurosAcumuladosTotal > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;color:#ff6b5b;">
                 <span>Juros pendentes</span>
                 <span style="font-weight:600;">${formatarMoeda(jurosAcumuladosTotal)}</span>
             </span>` : ''}
             <span style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;padding-top:4px;border-top:1px solid rgba(0,0,0,.08);">
-                <span style="color:#2ecc71;">Pago</span>
-                <span style="color:#2ecc71;font-weight:600;">${formatarMoeda(fixasPagas+parceladasPagas+avulsasPagas+totalEmpPagoMes)}</span>
+                <span style="color:#5fe08a;">Pago</span>
+                <span style="color:#5fe08a;font-weight:600;">${formatarMoeda(fixasPagas+parceladasPagas+avulsasPagas+totalEmpPagoMes)}</span>
             </span>
             ${(fixasPendentes+parceladasPendentes+avulsasPendentes+totalParcelasPendentesMes) > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
                 <span style="color:#e67e22;">Pendente</span>
@@ -4316,11 +4316,11 @@
             saldoDetalhe.innerHTML = `
                 <span style="display:flex;justify-content:space-between;gap:8px;">
                     <span>Receita recebida</span>
-                    <span style="font-weight:600;color:#2ecc71;">${formatarMoeda(receitaRecebida)}</span>
+                    <span style="font-weight:600;color:#5fe08a;">${formatarMoeda(receitaRecebida)}</span>
                 </span>
                 <span style="display:flex;justify-content:space-between;gap:8px;">
                     <span>Total pago</span>
-                    <span style="font-weight:600;color:#e74c3c;">-${formatarMoeda(totalPago)}</span>
+                    <span style="font-weight:600;color:#ff6b5b;">-${formatarMoeda(totalPago)}</span>
                 </span>
                 ${receitaPendente > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;padding-top:4px;border-top:1px solid rgba(0,0,0,.08);">
                     <span style="color:#e67e22;">A receber</span>
@@ -4404,7 +4404,7 @@
                         <span style="font-weight:600;">${formatarMoeda(parceladasPendentes)}</span>
                     </span>` : ''}
                     ${totalParcelasPendentesMes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
-                        <span style="color:${temParcelaAtrasada?'#e74c3c':'#e67e22'};">Parcelas empréstimo${temParcelaAtrasada?' (atrasadas)':''}</span>
+                        <span style="color:${temParcelaAtrasada?'#ff6b5b':'#e67e22'};">Parcelas empréstimo${temParcelaAtrasada?' (atrasadas)':''}</span>
                         <span style="font-weight:600;">${formatarMoeda(totalParcelasPendentesMes)}</span>
                     </span>` : ''}
                     ${avulsasPendentes > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
@@ -4412,7 +4412,7 @@
                         <span style="font-weight:600;">${formatarMoeda(avulsasPendentes)}</span>
                     </span>` : ''}
                     ${jurosAcumuladosTotal > 0 ? `<span style="display:flex;justify-content:space-between;gap:8px;">
-                        <span style="color:#e74c3c;">Juros pendentes</span>
+                        <span style="color:#ff6b5b;">Juros pendentes</span>
                         <span style="font-weight:600;">${formatarMoeda(jurosAcumuladosTotal)}</span>
                     </span>` : ''}
                     <span style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;padding-top:4px;border-top:1px solid rgba(0,0,0,.08);font-weight:600;">
@@ -4433,11 +4433,11 @@
                 </span>
                 <span style="display:flex;justify-content:space-between;gap:8px;">
                     <span>Despesas totais</span>
-                    <span style="font-weight:600;color:#e74c3c;">${formatarMoeda(despesasTotaisMes)}</span>
+                    <span style="font-weight:600;color:#ff6b5b;">${formatarMoeda(despesasTotaisMes)}</span>
                 </span>
                 <span style="display:flex;justify-content:space-between;gap:8px;">
                     <span>Déficit</span>
-                    <span style="font-weight:600;color:#e74c3c;">${formatarMoeda(previsaoFechamento)}</span>
+                    <span style="font-weight:600;color:#ff6b5b;">${formatarMoeda(previsaoFechamento)}</span>
                 </span>
             `;
         }
@@ -4491,10 +4491,10 @@
             return `<tr class="rec-row${r.recebido?' rec-row-ok':''}">
                 <td class="rec-check-td">
                     <button onclick="toggleRecebido(${r.id}, this)" title="${r.recebido ? 'Desmarcar' : 'Marcar recebido'}"
-                        style="background:${r.recebido ? '#2ecc71' : 'transparent'};
-                               border:1.5px solid #2ecc71;border-radius:6px;
+                        style="background:${r.recebido ? '#5fe08a' : 'transparent'};
+                               border:1.5px solid #5fe08a;border-radius:6px;
                                padding:3px 8px;cursor:pointer;
-                               color:${r.recebido ? '#0a0a0a' : '#2ecc71'};
+                               color:${r.recebido ? '#0a0a0a' : '#5fe08a'};
                                font-size:0.62em;font-weight:800;
                                font-family:inherit;letter-spacing:0.5px;
                                white-space:nowrap;transition:all 0.15s ease;">
@@ -4507,7 +4507,7 @@
                 <td class="rec-valor ${r.recebido?'valor-positivo':'valor-pendente'}">${formatarMoeda(r.valor)}</td>
                 <td class="rec-badge-td" onclick="event.stopPropagation()">${recBadge}</td>
                 <td class="rec-acoes" onclick="event.stopPropagation()">
-                    <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(201,168,76,0.7);">
+                    <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(70,240,210,0.7);">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
                     <button class="acc-delete-btn" onclick="deletarReceita(${r.id},${r.modeloId||'null'},${!!r.recorrente})" title="Excluir">
@@ -4527,10 +4527,10 @@
             return `<tr class="rec-row${r.recebido?' rec-row-ok':''}">
                 <td class="rec-check-td">
                     <button onclick="toggleRecebido(${r.id}, this)" title="${r.recebido ? 'Desmarcar' : 'Marcar recebido'}"
-                        style="background:${r.recebido ? '#2ecc71' : 'transparent'};
-                               border:1.5px solid #2ecc71;border-radius:6px;
+                        style="background:${r.recebido ? '#5fe08a' : 'transparent'};
+                               border:1.5px solid #5fe08a;border-radius:6px;
                                padding:3px 8px;cursor:pointer;
-                               color:${r.recebido ? '#0a0a0a' : '#2ecc71'};
+                               color:${r.recebido ? '#0a0a0a' : '#5fe08a'};
                                font-size:0.62em;font-weight:800;
                                font-family:inherit;letter-spacing:0.5px;
                                white-space:nowrap;transition:all 0.15s ease;">
@@ -4543,7 +4543,7 @@
                 <td class="rec-valor ${r.recebido?'valor-positivo':'valor-pendente'}">${formatarMoeda(r.valor)}</td>
                 <td class="rec-badge-td" onclick="event.stopPropagation()">${recBadge}</td>
                 <td class="rec-acoes" onclick="event.stopPropagation()">
-                    <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(201,168,76,0.7);">
+                    <button class="acc-delete-btn" onclick="editarReceita(${r.id})" title="Editar" style="color:rgba(70,240,210,0.7);">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
                     <button class="acc-delete-btn" onclick="deletarReceita(${r.id})" title="Excluir">
@@ -4635,10 +4635,10 @@
                     : '';
 
                 const acoes = `
-                    ${atual ? `<button class="acc-delete-btn" onclick="editarValorInstancia(${atual.id},'fixa')" title="Editar valor deste mês" style="color:rgba(46,204,113,0.6);">
+                    ${atual ? `<button class="acc-delete-btn" onclick="editarValorInstancia(${atual.id},'fixa')" title="Editar valor deste mês" style="color:rgba(95,224,138,0.6);">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                     </button>` : ''}
-                    <button class="acc-delete-btn" onclick="editarDespesaFixaModelo(${ref.modeloId})" title="Editar modelo" style="color:rgba(201,168,76,0.6);">
+                    <button class="acc-delete-btn" onclick="editarDespesaFixaModelo(${ref.modeloId})" title="Editar modelo" style="color:rgba(70,240,210,0.6);">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
                     <button class="acc-delete-btn" onclick="encerrarDespesaFixa(${ref.modeloId})" title="Encerrar">
@@ -4658,7 +4658,7 @@
                                 <div style="display:flex;align-items:center;gap:6px;">
                                     <div class="parcela-valor-txt">${formatarMoeda(d.valor)}</div>
                                     ${!d.pago ? `<button onclick="event.stopPropagation();adiarDespesaAtrasada('${d.id}','${mesOrig}')" title="Adiar para o próximo mês"
-                                        style="background:rgba(52,152,219,0.12);border:1px solid rgba(52,152,219,0.3);border-radius:6px;color:#5dade2;padding:3px 6px;cursor:pointer;font-size:0.7em;font-weight:700;display:flex;align-items:center;gap:3px;white-space:nowrap;">
+                                        style="background:rgba(90,169,240,0.12);border:1px solid rgba(90,169,240,0.3);border-radius:6px;color:#5dade2;padding:3px 6px;cursor:pointer;font-size:0.7em;font-weight:700;display:flex;align-items:center;gap:3px;white-space:nowrap;">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;"><polyline points="9 18 15 12 9 6"/><polyline points="15 18 21 12 15 6"/></svg>
                                         Adiar
                                     </button>` : ''}
@@ -4801,7 +4801,7 @@
                     <td class="acc-descricao" style="cursor:pointer;" onclick="toggleAccordion('${detailId}')">
                         ${primeiraParcela.descricao}
                         ${estaPausado ? '<span class="badge pausado" style="margin-left:6px;">⏸</span>' : ''}
-                        ${atrasadasDoGrupo.length > 0 ? `<span style="margin-left:6px;background:rgba(231,76,60,0.15);color:#e74c3c;padding:2px 7px;border-radius:8px;font-size:0.72em;font-weight:600;">${atrasadasDoGrupo.length} em atraso</span>` : ''}
+                        ${atrasadasDoGrupo.length > 0 ? `<span style="margin-left:6px;background:rgba(255,107,91,0.15);color:#ff6b5b;padding:2px 7px;border-radius:8px;font-size:0.72em;font-weight:600;">${atrasadasDoGrupo.length} em atraso</span>` : ''}
                     </td>
                     <td class="acc-condicao acc-mobile-meta">${condicao}</td>
                     <td class="acc-mobile-meta">
@@ -4813,7 +4813,7 @@
                     <td class="acc-valor-total acc-mobile-valor" style="text-align:right;">${formatarMoeda(valorTotal)}</td>
                     <td>
                         <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
-                            <button class="acc-delete-btn" onclick="editarDespesaParcelada(${primeiraParcela.grupoParcelaId || primeiraParcela.id})" title="Editar descrição/categoria (todas as parcelas)" style="color:rgba(184,151,46,0.6);">
+                            <button class="acc-delete-btn" onclick="editarDespesaParcelada(${primeiraParcela.grupoParcelaId || primeiraParcela.id})" title="Editar descrição/categoria (todas as parcelas)" style="color:rgba(47,199,173,0.6);">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             </button>
                             <button class="acc-delete-btn" onclick="deletarTodasParcelas(${primeiraParcela.id})" title="Excluir">
@@ -4835,10 +4835,10 @@
                                     return `
                                         <div class="parcela-item${isPago ? ' pago' : ''}${isVencida ? ' vencida' : ''}">
                                             <button onclick="event.stopPropagation();togglePagoVariavel(${p.id}, this)"
-                                                style="background:${isPago ? '#2ecc71' : 'transparent'};
-                                                       border:1.5px solid ${isVencida && !isPago ? '#e74c3c' : '#2ecc71'};
+                                                style="background:${isPago ? '#5fe08a' : 'transparent'};
+                                                       border:1.5px solid ${isVencida && !isPago ? '#ff6b5b' : '#5fe08a'};
                                                        border-radius:6px;padding:3px 8px;cursor:pointer;
-                                                       color:${isPago ? '#0a0a0a' : isVencida ? '#e74c3c' : '#2ecc71'};
+                                                       color:${isPago ? '#0a0a0a' : isVencida ? '#ff6b5b' : '#5fe08a'};
                                                        font-size:0.60em;font-weight:800;font-family:inherit;
                                                        letter-spacing:0.5px;white-space:nowrap;flex-shrink:0;
                                                        transition:all 0.15s ease;">
@@ -4937,10 +4937,10 @@
                             const isV=dP&&dP<hj&&!isPago;
                             return `<div class="parcela-item${isPago?' pago':''}${isV?' vencida':''}" style="display:flex;align-items:center;gap:10px;">
                                 <button onclick="event.stopPropagation();togglePagoVariavel(${p.id}, this)"
-                                    style="background:${isPago ? '#2ecc71' : 'transparent'};
-                                           border:1.5px solid ${isV && !isPago ? '#e74c3c' : '#2ecc71'};
+                                    style="background:${isPago ? '#5fe08a' : 'transparent'};
+                                           border:1.5px solid ${isV && !isPago ? '#ff6b5b' : '#5fe08a'};
                                            border-radius:6px;padding:3px 8px;cursor:pointer;
-                                           color:${isPago ? '#0a0a0a' : isV ? '#e74c3c' : '#2ecc71'};
+                                           color:${isPago ? '#0a0a0a' : isV ? '#ff6b5b' : '#5fe08a'};
                                            font-size:0.60em;font-weight:800;font-family:inherit;
                                            letter-spacing:0.5px;white-space:nowrap;flex-shrink:0;">
                                     ${isPago ? 'PAGO' : 'PAGAR'}
@@ -4951,7 +4951,7 @@
                         }).join('')}
                     </div>
                     <div class="desp-card-acoes">
-                        <button class="acc-delete-btn" onclick="editarDespesaParcelada(${prim.grupoParcelaId||prim.id})" style="color:rgba(201,168,76,0.8);" title="Editar">
+                        <button class="acc-delete-btn" onclick="editarDespesaParcelada(${prim.grupoParcelaId||prim.id})" style="color:rgba(70,240,210,0.8);" title="Editar">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
                         <button class="acc-delete-btn" onclick="deletarTodasParcelas(${prim.id})" title="Excluir">
@@ -4981,13 +4981,13 @@
             const [ano, mes] = d.data.substring(0,7).split('-');
             const nomesMes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             const mesNome = nomesMes[parseInt(mes)-1] || mes;
-            return `<tr style="background:rgba(231,76,60,0.06);border-left:3px solid #e74c3c;">
+            return `<tr style="background:rgba(255,107,91,0.06);border-left:3px solid #ff6b5b;">
                 <td>
                     <button onclick="marcarPagoAvulsa(${d.id}, this)" title="${d.pago ? 'Desmarcar pagamento' : 'Marcar como pago'}"
-                        style="background:${d.pago ? '#2ecc71' : 'transparent'};
-                               border:1.5px solid #2ecc71;
+                        style="background:${d.pago ? '#5fe08a' : 'transparent'};
+                               border:1.5px solid #5fe08a;
                                border-radius:6px;padding:4px 10px;cursor:pointer;
-                               color:${d.pago ? '#0a0a0a' : '#2ecc71'};
+                               color:${d.pago ? '#0a0a0a' : '#5fe08a'};
                                font-size:0.65em;font-weight:800;
                                font-family:inherit;letter-spacing:0.5px;">
                         ${d.pago ? 'PAGO' : 'PAGAR'}
@@ -4995,12 +4995,12 @@
                 </td>
                 <td class="acc-descricao">
                     ${d.descricao}
-                    <span style="margin-left:6px;font-size:0.62em;font-weight:700;color:#e74c3c;background:rgba(231,76,60,0.12);padding:1px 6px;border-radius:4px;">${mesNome}/${ano}</span>
+                    <span style="margin-left:6px;font-size:0.62em;font-weight:700;color:#ff6b5b;background:rgba(255,107,91,0.12);padding:1px 6px;border-radius:4px;">${mesNome}/${ano}</span>
                 </td>
                 <td>${d.categoria||'—'}</td>
                 <td>${formatarData(d.data)}</td>
-                <td><span style="color:#e74c3c;font-size:0.78em;font-weight:600;">⚠ Atrasada</span></td>
-                <td style="text-align:right;color:#e74c3c;">${formatarMoeda(d.valor)}</td>
+                <td><span style="color:#ff6b5b;font-size:0.78em;font-weight:600;">⚠ Atrasada</span></td>
+                <td style="text-align:right;color:#ff6b5b;">${formatarMoeda(d.valor)}</td>
                 <td>
                     <button class="acc-delete-btn" onclick="deletarDespesaAvulsa(${d.id})" title="Excluir">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -5014,18 +5014,18 @@
             const dv = d.data ? new Date(d.data + 'T00:00:00') : null;
             const vencida = dv && dv < hoje && !d.pago;
             const badgeSt = d.pago
-                ? '<span style="color:#2ecc71;font-size:0.78em;font-weight:500;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Pago</span>'
+                ? '<span style="color:#5fe08a;font-size:0.78em;font-weight:500;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><polyline points="20 6 9 12 4 12"/><polyline points="20 6 9 20 4 12"/></svg> Pago</span>'
                 : vencida
-                    ? '<span style="color:#e74c3c;font-size:0.78em;font-weight:600;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Vencido</span>'
+                    ? '<span style="color:#ff6b5b;font-size:0.78em;font-weight:600;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Vencido</span>'
                     : '<span style="background:rgba(26,26,26,0.07);color:#888;font-size:0.75em;padding:2px 8px;border-radius:8px;font-weight:500;">Pendente</span>';
             return `
                 <tr>
                     <td>
                         <button onclick="togglePagoAvulsa(${d.id}, this)" title="${d.pago ? 'Desmarcar' : 'Marcar como pago'}"
-                            style="background:${d.pago ? '#2ecc71' : 'transparent'};
-                                   border:1.5px solid #2ecc71;border-radius:6px;
+                            style="background:${d.pago ? '#5fe08a' : 'transparent'};
+                                   border:1.5px solid #5fe08a;border-radius:6px;
                                    padding:3px 8px;cursor:pointer;
-                                   color:${d.pago ? '#0a0a0a' : '#2ecc71'};
+                                   color:${d.pago ? '#0a0a0a' : '#5fe08a'};
                                    font-size:0.62em;font-weight:800;
                                    font-family:inherit;letter-spacing:0.5px;
                                    white-space:nowrap;">
@@ -5069,23 +5069,23 @@
                 resumoEl.innerHTML = `
                     <div class="emp-resumo-item">
                         <span class="emp-resumo-label">Total Devido</span>
-                        <span class="emp-resumo-valor negativo">${formatarMoeda(totalDevido)}</span>
+                        <span class="emp-resumo-valor">${formatarMoeda(totalDevido)}</span>
                     </div>
                     <div class="emp-resumo-item">
                         <span class="emp-resumo-label">Custo de Juros/Mês</span>
-                        <span class="emp-resumo-valor ${custoJurosMensal > 0 ? 'negativo' : ''}">${formatarMoeda(custoJurosMensal)}</span>
+                        <span class="emp-resumo-valor ${custoJurosMensal > 0 ? 'atencao' : ''}">${formatarMoeda(custoJurosMensal)}</span>
                     </div>
                     <div class="emp-resumo-item">
                         <span class="emp-resumo-label">Maior Taxa</span>
-                        <span class="emp-resumo-valor ${maiorTaxa >= 5 ? 'negativo' : maiorTaxa > 0 ? 'atencao' : ''}">${maiorTaxa}% a.m.</span>
+                        <span class="emp-resumo-valor ${maiorTaxa >= 10 ? 'negativo' : maiorTaxa >= 5 ? 'atencao' : ''}">${maiorTaxa}% a.m.</span>
                     </div>
                     <div class="emp-resumo-item">
                         <span class="emp-resumo-label">Juros Acumulados</span>
-                        <span class="emp-resumo-valor ${totalJurosAcum > 0 ? 'negativo' : ''}">${formatarMoeda(totalJurosAcum)}</span>
+                        <span class="emp-resumo-valor ${totalJurosAcum > 0 ? 'atencao' : ''}">${formatarMoeda(totalJurosAcum)}</span>
                     </div>
                     ${totalParcelasMes > 0 ? `<div class="emp-resumo-item">
                         <span class="emp-resumo-label">Parcelas/Mês</span>
-                        <span class="emp-resumo-valor atencao">${formatarMoeda(totalParcelasMes)}</span>
+                        <span class="emp-resumo-valor">${formatarMoeda(totalParcelasMes)}</span>
                     </div>` : ''}
                     <div class="emp-resumo-item">
                         <span class="emp-resumo-label">Contratos Ativos</span>
@@ -5127,7 +5127,7 @@
             if (parcAtrasada) alertas.push(`<span class="emp-alert vencida"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Parcela atrasada</span>`);
             if (parcProxima && !parcAtrasada) alertas.push(`<span class="emp-alert proxima"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Vence em breve</span>`);
             if (temJurosPendentes) alertas.push(`<span class="emp-alert juros">$ Juros pendentes</span>`);
-            if ((e.taxaJuros || 0) >= 10) alertas.push(`<span class="emp-alert taxa-alta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:10px;height:10px;vertical-align:-1px"><circle cx="12" cy="12" r="10" fill="rgba(231,76,60,0.8)" stroke="none"/></svg> Taxa alta</span>`);
+            if ((e.taxaJuros || 0) >= 10) alertas.push(`<span class="emp-alert taxa-alta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:10px;height:10px;vertical-align:-1px"><circle cx="12" cy="12" r="10" fill="rgba(255,107,91,0.8)" stroke="none"/></svg> Taxa alta</span>`);
 
             // ── 4. GRÁFICO SPARKLINE do histórico de saldo ──
             let sparklineHtml = '';
@@ -5145,8 +5145,8 @@
                     return `${x},${y}`;
                 }).join(' ');
                 sparklineHtml = `<svg viewBox="0 0 100 44" class="emp-sparkline" preserveAspectRatio="none">
-                    <polyline points="${pts}" fill="none" stroke="rgba(231,76,60,.6)" stroke-width="1.5" stroke-linejoin="round"/>
-                    <polyline points="${pts} 100,44 0,44" fill="rgba(231,76,60,.08)" stroke="none"/>
+                    <polyline points="${pts}" fill="none" stroke="rgba(255,107,91,.6)" stroke-width="1.5" stroke-linejoin="round"/>
+                    <polyline points="${pts} 100,44 0,44" fill="rgba(255,107,91,.08)" stroke="none"/>
                 </svg>`;
             }
 
@@ -5185,7 +5185,7 @@
                           </span>`;
 
                     const saldoApos = isJurosGer && h.saldoJurosApos !== undefined
-                        ? `<span class="emp-hist-saldo">Juros acumulados: <strong style="color:#e74c3c">${formatarMoeda(h.saldoJurosApos)}</strong></span>`
+                        ? `<span class="emp-hist-saldo">Juros acumulados: <strong style="color:#ff6b5b">${formatarMoeda(h.saldoJurosApos)}</strong></span>`
                         : h.saldoApos !== undefined
                         ? `<span class="emp-hist-saldo">Saldo após: <strong>${formatarMoeda(h.saldoApos)}</strong></span>`
                         : '';
@@ -5199,7 +5199,7 @@
                         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
                             <span class="emp-hist-valor ${isJurosGer ? 'emp-hist-valor-pend' : isJuros ? 'emp-hist-valor-juros' : 'emp-hist-valor-amort'}">${formatarMoeda(h.valor)}</span>
                             ${isJurosGer ? `
-                            <button class="emp-hist-del" onclick="event.stopPropagation();editarDataJuros('${e.id}',${e.historicoPagamentos.length - 1 - i},'${h.data}')" title="Editar data" style="color:#c9a84c;">
+                            <button class="emp-hist-del" onclick="event.stopPropagation();editarDataJuros('${e.id}',${e.historicoPagamentos.length - 1 - i},'${h.data}')" title="Editar data" style="color:#46f0d2;">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                             </button>` : ''}
                             <button class="emp-hist-del" onclick="event.stopPropagation();removerHistorico('${e.id}',${e.historicoPagamentos.length - 1 - i})" title="Remover esta entrada">
@@ -5238,7 +5238,7 @@
                     </td>
                     <td>
                         <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
-                            <button class="acc-delete-btn" onclick="editarEmprestimo(${e.id})" title="Editar" style="color:rgba(184,151,46,0.6);">
+                            <button class="acc-delete-btn" onclick="editarEmprestimo(${e.id})" title="Editar" style="color:rgba(47,199,173,0.6);">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             </button>
                             <button class="acc-delete-btn" onclick="deletarEmprestimo(${e.id})" title="Excluir">
@@ -5249,17 +5249,17 @@
                         <div class="emp-quick-btns">
                             ${(e.taxaJuros || 0) > 0 && e.principal > 0 ? `
                             <button onclick="event.stopPropagation();gerarJurosMes('${e.id}')"
-                                style="background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.35);
+                                style="background:rgba(70,240,210,0.12);border:1px solid rgba(70,240,210,0.35);
                                        border-radius:8px;padding:6px 12px;cursor:pointer;
-                                       color:#c9a84c;font-size:0.68em;font-weight:700;
+                                       color:#46f0d2;font-size:0.68em;font-weight:700;
                                        font-family:inherit;letter-spacing:0.5px;">
                                 $ Gerar Juros
                             </button>` : ''}
                             ${(e.jurosAcumulados || 0) > 0 ? `
                             <button onclick="event.stopPropagation();abrirModalPagarJuros('${e.id}')"
-                                style="background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.35);
+                                style="background:rgba(255,107,91,0.12);border:1px solid rgba(255,107,91,0.35);
                                        border-radius:8px;padding:6px 12px;cursor:pointer;
-                                       color:#e74c3c;font-size:0.68em;font-weight:700;
+                                       color:#ff6b5b;font-size:0.68em;font-weight:700;
                                        font-family:inherit;letter-spacing:0.5px;">
                                 Pagar Juros (${formatarMoeda(e.jurosAcumulados)})
                             </button>` : ''}
@@ -6308,7 +6308,7 @@
         nota -= plano.extra <= 0 ? 20 : 0;            // -20 se não tem extra para pagar
         nota = Math.max(0, Math.min(100, Math.round(nota)));
 
-        const notaCor  = nota >= 70 ? '#2ecc71' : nota >= 40 ? '#f39c12' : '#e74c3c';
+        const notaCor  = nota >= 70 ? '#5fe08a' : nota >= 40 ? '#fbe2b4' : '#ff6b5b';
         const notaLabel= nota >= 70 ? 'Controlado' : nota >= 40 ? 'Atenção' : 'Crítico';
         const notaFrase= nota >= 70
             ? 'Sua situação está sob controle. Continue pagando em dia e acelerando a quitação.'
@@ -6509,7 +6509,7 @@
         </div>`;
 
         // ── Timeline ──
-        const cores = ['#c9a84c','#e8c96a','#a07828','#d4a843','#f0c040','#8b6914'];
+        const cores = ['#46f0d2','#e8c96a','#a07828','#d4a843','#f0c040','#8b6914'];
         const totalM = sim.meses || 1;
         const timelineHtml = sim.convergiu && sim.meses <= 240 ? `
         <div class="pq-timeline">
@@ -6550,7 +6550,7 @@
                 },
                 {
                     id: 'bolaDeNeve', nome: 'Bola de Neve', desc: 'Motivação e vitórias rápidas', sim: bn,
-                    cor: '#3498db',
+                    cor: '#5aa9f0',
                     icone: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:11px;height:11px;vertical-align:-1px;margin-right:4px"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 7l-5-5-5 5"/><path d="M7 17l5 5 5-5"/><line x1="2" y1="12" x2="22" y2="12"/></svg>`,
                     explicacao: 'Ataca a dívida com menor saldo primeiro. Cada dívida quitada libera dinheiro e gera motivação para continuar.'
                 }
@@ -6619,7 +6619,7 @@
                     ${sim.cronograma.map(e => `<div class="pq-crono-linha">
                         <span class="pq-crono-mes">${pa_nomeMes(e.mes)}</span>
                         <span class="pq-crono-ev">${e.quitadas.map(q => `<strong>${q.descricao}</strong> quitada`).join(' · ')}</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2.5" style="width:11px;height:11px;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#5fe08a" stroke-width="2.5" style="width:11px;height:11px;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
                     </div>`).join('')}
                 </div>
             </div>`;
@@ -6970,14 +6970,14 @@
   .relatorio-tabela th { background: #f5f0e8; color: #7a5c10; font-weight: 700; padding: 6px 8px; text-align: left; border-bottom: 2px solid #d4a84340; }
   .relatorio-tabela td { padding: 5px 8px; border-bottom: 1px solid #f0f0f0; }
   .relatorio-tabela td:last-child, .relatorio-tabela th:last-child { text-align: right; }
-  .relatorio-intro, .relatorio-analise, .relatorio-recomendacao { background: #fdf8ef; border-left: 3px solid #b8972e; padding: 8px 10px; font-size: 11px; color: #555; margin: 6px 0; }
-  .relatorio-ascii-bar { font-family: monospace; font-size: 12px; background: #fdf8ef; padding: 8px 10px; color: #b8972e; white-space: pre; }
-  .relatorio-positivo { color: #27ae60 !important; }
-  .relatorio-negativo { color: #e74c3c !important; }
+  .relatorio-intro, .relatorio-analise, .relatorio-recomendacao { background: #fdf8ef; border-left: 3px solid #2fc7ad; padding: 8px 10px; font-size: 11px; color: #555; margin: 6px 0; }
+  .relatorio-ascii-bar { font-family: monospace; font-size: 12px; background: #fdf8ef; padding: 8px 10px; color: #2fc7ad; white-space: pre; }
+  .relatorio-positivo { color: #4bc978 !important; }
+  .relatorio-negativo { color: #ff6b5b !important; }
   .relatorio-vazio { color: #999; font-style: italic; font-size: 11px; }
   .relatorio-sabedoria li { margin-bottom: 6px; color: #444; font-size: 11px; }
   .relatorio-cronograma li { margin-bottom: 3px; }
-  .relatorio-final { color: #27ae60; font-weight: 700; }
+  .relatorio-final { color: #4bc978; font-weight: 700; }
   ul, ol { padding-left: 18px; }
   @media print {
     body { padding: 20px; }
