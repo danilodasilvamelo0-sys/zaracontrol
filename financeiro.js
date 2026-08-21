@@ -661,7 +661,6 @@
                     { id: 'receitaVariavelDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Freelance, Bônus' },
                     { id: 'receitaVariavelValor', label: 'Valor', type: 'number', step: '0.01' },
                     { id: 'receitaVariavelCategoria', label: 'Categoria', type: 'select', categoriaKey: 'receitaVariavel' },
-                    { id: 'receitaVariavelConta', label: 'Conta', type: 'conta' },
                     { id: 'receitaVariavelData', label: 'Data', type: 'date' }
                 ]
             },
@@ -701,7 +700,6 @@
                     { id: 'despesaAvulsaDescricao', label: 'Descrição', type: 'text', placeholder: 'Ex: Farmácia, Uber, etc.' },
                     { id: 'despesaAvulsaValor', label: 'Valor', type: 'number', step: '0.01' },
                     { id: 'despesaAvulsaCategoria', label: 'Categoria', type: 'select', categoriaKey: 'despesaAvulsa' },
-                    { id: 'despesaAvulsaConta', label: 'Conta', type: 'conta' },
                     { id: 'despesaAvulsaData', label: 'Data', type: 'date' }
                 ]
             },
@@ -736,17 +734,7 @@
                     html += `<button type="button" class="btn-edit-categorias" onclick="abrirEditarCategorias('${campo.categoriaKey}')" title="Editar categorias"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> editar</button>`;
                 }
                 html += `</label>`;
-                if (campo.type === 'conta') {
-                    try { migrarContas(); } catch(e) {}
-                    const _cs = (financeiro.contas || []).filter(c => !c.arquivada);
-                    const _pad = (typeof contaPadrao === 'function') ? contaPadrao() : null;
-                    html += `<select id="${campo.id}" class="select-conta">`;
-                    _cs.forEach(c => {
-                        const sel = (_pad && c.id === _pad.id) ? ' selected' : '';
-                        html += `<option value="${c.id}"${sel}>${c.nome}</option>`;
-                    });
-                    html += '</select>';
-                } else if (campo.type === 'select' && campo.categoriaKey) {
+                if (campo.type === 'select' && campo.categoriaKey) {
                     const opts = getCategorias(campo.categoriaKey);
                     html += `<select id="${campo.id}"><option value="">Selecione...</option>`;
                     opts.forEach(opt => html += `<option value="${opt}">${opt}</option>`);
@@ -1128,8 +1116,7 @@
             valor: valor,
             categoria: cat,
             data: data,
-            recebido: false,
-            contaId: valorSelectConta('receitaVariavelConta')
+            recebido: false
         });
         
         salvarDados();
@@ -2837,8 +2824,7 @@
             data: data,
             pago: false,
             dataPagamento: null,
-            comprovante: null,
-            contaId: valorSelectConta('despesaAvulsaConta')
+            comprovante: null
         });
 
         salvarDados();
@@ -4105,7 +4091,6 @@
 
 
     function renderizar() {
-        try { renderContas(); preencherSelectsConta(); } catch(e) { console.error('contas:', e); }
         if (viewMode === 'arquivados') {
             renderizarArquivados();
             return;
@@ -7088,370 +7073,3 @@ function editarDataJuros(empId, histIdx, dataAtual) {
     renderizar();
     mostrarStatus('Data atualizada!', 'success');
 }
-
-
-/* ==========================================================
-   CONTAS — saldo real, por onde o dinheiro passa
-   Fluxo (entra/sai) já existia. Isto adiciona ESTOQUE (onde está).
-   ========================================================== */
-
-const CONTA_TIPOS = {
-    corrente: { label: 'Conta corrente', icone: '<svg class="conta-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V10"/><path d="M19 21V10"/><path d="M9 21v-6h6v6"/><path d="M2 10l10-7 10 7z"/></svg>' },
-    poupanca: { label: 'Poupança', icone: '<svg class="conta-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M4 11a8 8 0 0 1 16 0v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M9 19v2"/><path d="M15 19v2"/><circle cx="15.5" cy="11" r="1"/></svg>' },
-    dinheiro: { label: 'Dinheiro', icone: '<svg class="conta-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01"/><path d="M18 12h.01"/></svg>' },
-    cartao: { label: 'Cartão', icone: '<svg class="conta-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>' }
-};
-
-/* Cria a estrutura na primeira execução e adota os lançamentos antigos.
-   Nunca sobrescreve contas existentes. */
-function migrarContas() {
-    if (!Array.isArray(financeiro.contas)) financeiro.contas = [];
-
-    if (financeiro.contas.length === 0) {
-        financeiro.contas.push({
-            id: gerarId(),
-            nome: 'Carteira',
-            tipo: 'dinheiro',
-            saldoInicial: 0,
-            padrao: true,
-            arquivada: false,
-            ultimaConciliacao: null
-        });
-        salvarDados();
-    }
-    if (!financeiro.contas.some(c => c.padrao && !c.arquivada)) {
-        const primeira = financeiro.contas.find(c => !c.arquivada);
-        if (primeira) primeira.padrao = true;
-    }
-}
-
-function contaPadrao() {
-    return financeiro.contas?.find(c => c.padrao && !c.arquivada)
-        || financeiro.contas?.find(c => !c.arquivada)
-        || null;
-}
-
-function getConta(id) {
-    return (financeiro.contas || []).find(c => c.id === id) || null;
-}
-
-/* Lançamento sem conta definida pertence à conta padrão.
-   É o que permite ligar a funcionalidade sem migrar registro por registro. */
-function contaDoLancamento(lanc) {
-    if (lanc && lanc.contaId) return lanc.contaId;
-    const p = contaPadrao();
-    return p ? p.id : null;
-}
-
-/* Todo dinheiro que de fato entrou (recebido = true), de todos os meses */
-function todasEntradasLiquidadas() {
-    const out = [];
-    (financeiro.receitasAvulsas || []).forEach(r => { if (r.recebido) out.push(r); });
-    Object.values(financeiro.receitasMes || {}).forEach(arr => {
-        (arr || []).forEach(r => { if (r.recebido) out.push(r); });
-    });
-    return out;
-}
-
-/* Todo dinheiro que de fato saiu (pago = true), de todos os meses */
-function todasSaidasLiquidadas() {
-    const out = [];
-    (financeiro.despesasAvulsas || []).forEach(d => { if (d.pago) out.push(d); });
-    (financeiro.despesasVariaveis || []).forEach(d => { if (d.pago) out.push(d); });
-    Object.values(financeiro.despesasFixasMes || {}).forEach(arr => {
-        (arr || []).forEach(d => { if (d.pago) out.push(d); });
-    });
-    return out;
-}
-
-/* Saldo = saldo inicial + entradas liquidadas − saídas liquidadas.
-   Pendências NÃO entram: elas são previsão, não dinheiro. */
-function saldoConta(contaId) {
-    const c = getConta(contaId);
-    if (!c) return 0;
-    let saldo = Number(c.saldoInicial) || 0;
-    todasEntradasLiquidadas().forEach(r => {
-        if (contaDoLancamento(r) === contaId) saldo += Number(r.valor) || 0;
-    });
-    todasSaidasLiquidadas().forEach(d => {
-        if (contaDoLancamento(d) === contaId) saldo -= Number(d.valor) || 0;
-    });
-    return saldo;
-}
-
-/* Cartão é passivo: não soma ao patrimônio disponível */
-function saldoTotalDisponivel() {
-    return (financeiro.contas || [])
-        .filter(c => !c.arquivada && c.tipo !== 'cartao')
-        .reduce((s, c) => s + saldoConta(c.id), 0);
-}
-
-function totalEmCartoes() {
-    return (financeiro.contas || [])
-        .filter(c => !c.arquivada && c.tipo === 'cartao')
-        .reduce((s, c) => s + saldoConta(c.id), 0);
-}
-
-/* ---------- Render ---------- */
-function renderContas() {
-    const box = document.getElementById('contasLista');
-    if (!box) return;
-    migrarContas();
-
-    const contas = (financeiro.contas || []).filter(c => !c.arquivada);
-    if (!contas.length) {
-        box.innerHTML = '<div class="contas-vazio">Nenhuma conta cadastrada.</div>';
-        return;
-    }
-
-    let html = '';
-    contas.forEach(c => {
-        const saldo = saldoConta(c.id);
-        const t = CONTA_TIPOS[c.tipo] || CONTA_TIPOS.corrente;
-        const neg = saldo < 0;
-        const conc = c.ultimaConciliacao;
-        let selo = '<span class="conta-selo pend">nunca conciliada</span>';
-        if (conc) {
-            const dif = saldo - Number(conc.saldoReal || 0);
-            const d = new Date(conc.data);
-            const dstr = isNaN(d) ? '' : d.toLocaleDateString('pt-BR');
-            selo = Math.abs(dif) < 0.01
-                ? `<span class="conta-selo ok">conferida ${dstr}</span>`
-                : `<span class="conta-selo dif">difere ${formatarMoeda(dif)}</span>`;
-        }
-
-        html += `
-        <div class="conta-card${c.tipo === 'cartao' ? ' cartao' : ''}">
-            <div class="conta-top">
-                <div class="conta-id">
-                    <span class="conta-icone">${t.icone}</span>
-                    <div>
-                        <div class="conta-nome">${c.nome}${c.padrao ? ' <span class="conta-padrao">padrão</span>' : ''}</div>
-                        <div class="conta-tipo">${t.label}</div>
-                    </div>
-                </div>
-                <div class="conta-acoes">
-                    <button class="conta-btn" onclick="abrirModalConta('${c.id}')" title="Editar">✎</button>
-                    <button class="conta-btn" onclick="removerConta('${c.id}')" title="Arquivar">🗑</button>
-                </div>
-            </div>
-            <div class="conta-saldo ${neg ? 'neg' : 'pos'}">${formatarMoeda(saldo)}</div>
-            <div class="conta-rodape">
-                ${selo}
-                <button class="conta-conciliar" onclick="conciliarConta('${c.id}')">Conciliar</button>
-            </div>
-        </div>`;
-    });
-    box.innerHTML = html;
-
-    const elD = document.getElementById('contasTotalDisponivel');
-    if (elD) elD.textContent = formatarMoeda(saldoTotalDisponivel());
-    const elC = document.getElementById('contasTotalCartao');
-    if (elC) {
-        const tc = totalEmCartoes();
-        elC.textContent = formatarMoeda(tc);
-        const wrap = document.getElementById('contasCartaoWrap');
-        if (wrap) wrap.style.display = tc === 0 ? 'none' : '';
-    }
-}
-
-/* ---------- Criar / editar ---------- */
-function abrirModalConta(id) {
-    const c = id ? getConta(id) : null;
-    const m = document.getElementById('modalConta');
-    if (!m) return;
-    document.getElementById('modalContaTitulo').textContent = c ? 'Editar conta' : 'Nova conta';
-    document.getElementById('contaEditId').value = c ? c.id : '';
-    document.getElementById('contaNome').value = c ? c.nome : '';
-    document.getElementById('contaTipo').value = c ? c.tipo : 'corrente';
-    document.getElementById('contaSaldoInicial').value = c ? c.saldoInicial : '';
-    document.getElementById('contaPadraoChk').checked = c ? !!c.padrao : false;
-    m.classList.add('active');
-}
-
-function fecharModalConta() {
-    document.getElementById('modalConta')?.classList.remove('active');
-}
-
-function salvarConta() {
-    const id = document.getElementById('contaEditId').value;
-    const nome = (document.getElementById('contaNome').value || '').trim();
-    const tipo = document.getElementById('contaTipo').value;
-    const ini = parseFloat(document.getElementById('contaSaldoInicial').value) || 0;
-    const padrao = document.getElementById('contaPadraoChk').checked;
-
-    if (!nome) { mostrarStatus('Dê um nome à conta', 'error'); return; }
-    if (!Array.isArray(financeiro.contas)) financeiro.contas = [];
-
-    if (padrao) financeiro.contas.forEach(c => c.padrao = false);
-
-    if (id) {
-        const c = getConta(id);
-        if (c) { c.nome = nome; c.tipo = tipo; c.saldoInicial = ini; c.padrao = padrao; }
-    } else {
-        financeiro.contas.push({
-            id: gerarId(), nome, tipo, saldoInicial: ini,
-            padrao, arquivada: false, ultimaConciliacao: null
-        });
-    }
-    if (!financeiro.contas.some(c => c.padrao && !c.arquivada)) {
-        const p = financeiro.contas.find(c => !c.arquivada);
-        if (p) p.padrao = true;
-    }
-    salvarDados();
-    fecharModalConta();
-    renderContas();
-    preencherSelectsConta();
-    mostrarStatus('Conta salva', 'success');
-}
-
-/* Arquiva em vez de apagar — lançamentos antigos continuam apontando para ela */
-function removerConta(id) {
-    const c = getConta(id);
-    if (!c) return;
-    const ativas = (financeiro.contas || []).filter(x => !x.arquivada);
-    if (ativas.length <= 1) { mostrarStatus('Mantenha ao menos uma conta', 'error'); return; }
-    if (!confirm(`Arquivar "${c.nome}"?\n\nO histórico é preservado.`)) return;
-    c.arquivada = true;
-    c.padrao = false;
-    if (!financeiro.contas.some(x => x.padrao && !x.arquivada)) {
-        const p = financeiro.contas.find(x => !x.arquivada);
-        if (p) p.padrao = true;
-    }
-    salvarDados();
-    renderContas();
-    preencherSelectsConta();
-}
-
-/* ---------- Conciliação ---------- */
-function conciliarConta(id) {
-    const c = getConta(id);
-    if (!c) return;
-    const calc = saldoConta(id);
-    const txt = prompt(
-        `${c.nome}\n\nSaldo no ZARA: ${formatarMoeda(calc)}\n\n` +
-        `Digite o saldo real do extrato:`,
-        calc.toFixed(2)
-    );
-    if (txt === null) return;
-    const real = parseFloat(String(txt).replace(',', '.'));
-    if (isNaN(real)) { mostrarStatus('Valor inválido', 'error'); return; }
-
-    const dif = real - calc;
-    c.ultimaConciliacao = { data: new Date().toISOString(), saldoReal: real };
-
-    if (Math.abs(dif) < 0.01) {
-        salvarDados();
-        renderContas();
-        mostrarStatus('Conta conferida — bate certinho', 'success');
-        return;
-    }
-
-    const acao = confirm(
-        `Diferença de ${formatarMoeda(dif)}.\n\n` +
-        `OK = lançar ajuste para igualar ao extrato\n` +
-        `Cancelar = só registrar a conferência`
-    );
-    if (acao) {
-        const hoje = new Date().toISOString().split('T')[0];
-        const base = {
-            id: gerarId(),
-            descricao: 'Ajuste de conciliação — ' + c.nome,
-            valor: Math.abs(dif),
-            categoria: 'Ajuste',
-            data: hoje,
-            contaId: c.id
-        };
-        if (dif > 0) {
-            financeiro.receitasAvulsas = financeiro.receitasAvulsas || [];
-            financeiro.receitasAvulsas.push({ ...base, recebido: true });
-        } else {
-            financeiro.despesasAvulsas = financeiro.despesasAvulsas || [];
-            financeiro.despesasAvulsas.push({ ...base, pago: true, dataPagamento: hoje, comprovante: null });
-        }
-        mostrarStatus('Ajuste lançado', 'success');
-    } else {
-        mostrarStatus('Conferência registrada', 'success');
-    }
-    salvarDados();
-    renderContas();
-    if (typeof renderizar === 'function') renderizar();
-}
-
-/* ---------- Selects nos formulários ---------- */
-function preencherSelectsConta() {
-    migrarContas();
-    const padrao = contaPadrao();
-    document.querySelectorAll('select.select-conta').forEach(sel => {
-        const atual = sel.value;
-        sel.innerHTML = (financeiro.contas || [])
-            .filter(c => !c.arquivada)
-            .map(c => `<option value="${c.id}">${c.nome}</option>`)
-            .join('');
-        if (atual && getConta(atual)) sel.value = atual;
-        else if (padrao) sel.value = padrao.id;
-    });
-}
-
-function valorSelectConta(elId) {
-    const el = document.getElementById(elId);
-    if (el && el.value) return el.value;
-    const p = contaPadrao();
-    return p ? p.id : null;
-}
-
-/* Garante que a seção Contas seja desenhada mesmo se renderizar()
-   rodar antes do módulo estar pronto ou antes dos dados chegarem. */
-window.addEventListener('load', function () {
-    var tentativas = 0;
-    var t = setInterval(function () {
-        tentativas++;
-        try {
-            var box = document.getElementById('contasLista');
-            if (box) {
-                renderContas();
-                preencherSelectsConta();
-                if (box.children.length > 0) { clearInterval(t); return; }
-            }
-        } catch (e) { console.error('contas:', e); }
-        if (tentativas > 12) clearInterval(t);
-    }, 500);
-});
-
-/* Remoção única da conta "Carteira" criada automaticamente.
-   Antes de apagar, carimba os lançamentos sem conta na conta que fica,
-   para que nada mude de lugar sem registro. */
-(function removerCarteiraAuto() {
-    if (!financeiro || financeiro._carteiraRemovida) return;
-    if (!Array.isArray(financeiro.contas)) return;
-
-    const carteira = financeiro.contas.find(c => c.nome === 'Carteira' && c.tipo === 'dinheiro');
-    const destino  = financeiro.contas.find(c => c !== carteira && !c.arquivada);
-    if (!carteira) { financeiro._carteiraRemovida = true; return; }
-    if (!destino)  return;   // seria a única conta — não remove
-
-    const idAntigo = carteira.id;
-    let migrados = 0;
-
-    function carimbar(lista) {
-        (lista || []).forEach(l => {
-            if (!l.contaId || l.contaId === idAntigo) { l.contaId = destino.id; migrados++; }
-        });
-    }
-    carimbar(financeiro.receitasAvulsas);
-    carimbar(financeiro.despesasAvulsas);
-    carimbar(financeiro.despesasVariaveis);
-    Object.values(financeiro.receitasMes || {}).forEach(carimbar);
-    Object.values(financeiro.despesasFixasMes || {}).forEach(carimbar);
-
-    // o saldo inicial da Carteira não se perde: soma ao destino
-    destino.saldoInicial = (Number(destino.saldoInicial) || 0) + (Number(carteira.saldoInicial) || 0);
-    destino.padrao = true;
-
-    financeiro.contas = financeiro.contas.filter(c => c.id !== idAntigo);
-    financeiro._carteiraRemovida = true;
-
-    salvarDados();
-    try { renderContas(); } catch (e) {}
-    console.log('Carteira removida. Lançamentos migrados:', migrados, '→', destino.nome);
-})();
