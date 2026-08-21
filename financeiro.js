@@ -3944,6 +3944,16 @@
         return '<span class="desp-badge pendente">Pendente</span>';
     }
 
+
+    /* Botão de comprovante — só renderiza se o lançamento tiver anexo */
+    function btnComprovante(fn, id) {
+        return `<button class="acc-delete-btn btn-comprovante" onclick="event.stopPropagation();${fn}('${id}')" title="Ver comprovante" style="color:rgba(70,240,210,0.75);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+            </svg>
+        </button>`;
+    }
+
     function buildDespCard(opts) {
         // Gera tanto a linha de tabela (desktop) quanto o card (mobile)
         // opts: { id, descricao, categoria, data, pago, vencido, valor, extra, acoes, detailId, detailBody, onclick, progresso }
@@ -4641,6 +4651,7 @@
                     <button class="acc-delete-btn" onclick="editarDespesaFixaModelo(${ref.modeloId})" title="Editar modelo" style="color:rgba(70,240,210,0.6);">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
+                    ${atual && atual.comprovante ? btnComprovante('verComprovanteFixa', atual.id) : ''}
                     <button class="acc-delete-btn" onclick="encerrarDespesaFixa(${ref.modeloId})" title="Encerrar">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:15px;height:15px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </button>`;
@@ -5039,6 +5050,7 @@
                     <td style="text-align:right;" class="${d.pago ? 'valor-positivo' : 'valor-negativo'} acc-mobile-valor">${formatarMoeda(d.valor)}</td>
                     <td>
                         <div style="display:flex;gap:4px;">
+                            ${d.comprovante ? btnComprovante('verComprovanteAvulsa', d.id) : ''}
                             <button class="acc-delete-btn" onclick="editarDespesaAvulsa(${d.id})" title="Editar" style="color:rgba(212,175,125,0.5);">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             </button>
