@@ -10,7 +10,7 @@
     <title>ZARA | Financeiro</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="financeiro.css?v=1787220180">
+<link rel="stylesheet" href="financeiro.css?v=1787271523">
 
 </head>
 <body>
@@ -198,29 +198,6 @@
 
 <!-- RECEITAS: FIXAS + VARIÁVEIS EMPILHADAS -->
 <div>
-<!-- SEÇÃO: CONTAS -->
-<div class="section" id="sectionContas">
-    <div class="section-header">
-        <h2>Contas <span class="subtotal" id="contasTotalDisponivel"></span></h2>
-        <div style="display:flex;gap:8px;align-items:center;">
-            <button class="btn-add-novo" onclick="abrirModalConta('')" title="Nova conta">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:#fff;">
-                    <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg><span class="btn-label">Adicionar</span>
-            </button>
-            <button class="btn-collapse-section" onclick="toggleSection('sectionContas')" title="Recolher seção">
-                <svg class="icon-collapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-            </button>
-        </div>
-    </div>
-    <div class="section-content">
-        <div id="contasLista" class="contas-grid"></div>
-        <div id="contasCartaoWrap" class="contas-cartao-linha">
-            <span>Em cartões</span><strong id="contasTotalCartao"></strong>
-        </div>
-    </div>
-</div>
-
 <!-- SEÇÃO: RECEITAS FIXAS -->
 <div class="section" id="sectionReceitasFixas">
     <div class="section-header">
@@ -650,7 +627,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="financeiro.js?v=1787220180"></script>
+<script src="financeiro.js?v=1787271523"></script>
 
 <script>
 // ── PATCH v1785104432 — sobrescreve funções independente do cache ──
@@ -753,50 +730,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 500);
 });
 </script>
-
-
-
-
-<!-- MODAL: CONTA -->
-<div class="modal" id="modalConta">
-    <div class="modal-content" style="max-width:420px;">
-        <div class="modal-header">
-            <h3 id="modalContaTitulo">Nova conta</h3>
-            <button class="modal-close" onclick="fecharModalConta()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" id="contaEditId">
-            <div class="form-group">
-                <label>Nome</label>
-                <input type="text" id="contaNome" placeholder="Ex: Nubank, Caixa, Dinheiro">
-            </div>
-            <div class="form-group">
-                <label>Tipo</label>
-                <select id="contaTipo">
-                    <option value="corrente">Conta corrente</option>
-                    <option value="poupanca">Poupança</option>
-                    <option value="dinheiro">Dinheiro</option>
-                    <option value="cartao">Cartão de crédito</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Saldo inicial</label>
-                <input type="number" step="0.01" id="contaSaldoInicial" placeholder="0.00">
-                <small class="form-hint">Quanto havia nessa conta quando você começou a registrar.</small>
-            </div>
-            <div class="form-group form-group-checkbox">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="contaPadraoChk">
-                    <span>Usar como conta padrão</span>
-                </label>
-            </div>
-            <div style="display:flex;gap:10px;margin-top:6px;">
-                <button class="btn-salvar" style="flex:1;" onclick="salvarConta()">Salvar</button>
-                <button class="btn-cancelar" style="flex:1;" onclick="fecharModalConta()">Cancelar</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 </body>
 </html>
