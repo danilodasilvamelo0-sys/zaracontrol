@@ -47,8 +47,8 @@ async function syncLoad() {
         // Mesclar dados preservando estrutura do gym
         const carregado = data.dados;
         if (carregado.treinos)      gym.treinos      = carregado.treinos;
-        if (carregado.dieta)        gym.dieta        = carregado.dieta;
-        if (carregado.medicamentos) gym.medicamentos  = carregado.medicamentos;
+        if (carregado.refeicoes)    gym.refeicoes    = carregado.refeicoes;
+        if (carregado.meds)         gym.meds         = carregado.meds;
         if (carregado.metas)        gym.metas        = carregado.metas;
         if (carregado.observacoes)  gym.observacoes  = carregado.observacoes;
         localStorage.setItem(GYM_KEY, JSON.stringify(gym));
