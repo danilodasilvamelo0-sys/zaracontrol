@@ -319,12 +319,50 @@
         });
     }
 
+    /* Comprovantes vêm direto da câmera do celular — 2-4MB por foto sem isso.
+       Redimensiona para no máximo 1600px no lado maior e recomprime em JPEG,
+       o que costuma cair pra ~150-300KB sem perder legibilidade do papel.
+       PDFs passam direto (canvas não lê PDF). */
+    async function fileParaBase64Comprimido(file, maxLado = 1600, qualidade = 0.72) {
+        if (!file) return null;
+        if (file.type === 'application/pdf') return fileToBase64(file);
+        if (!file.type.startsWith('image/')) return fileToBase64(file);
+
+        const original = await fileToBase64(file);
+        try {
+            const img = await new Promise((res, rej) => {
+                const im = new Image();
+                im.onload = () => res(im);
+                im.onerror = rej;
+                im.src = original;
+            });
+
+            let { width, height } = img;
+            if (width > maxLado || height > maxLado) {
+                if (width > height) { height = Math.round(height * (maxLado / width)); width = maxLado; }
+                else { width = Math.round(width * (maxLado / height)); height = maxLado; }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+
+            const comprimido = canvas.toDataURL('image/jpeg', qualidade);
+            // Só usa o resultado comprimido se ele for realmente menor
+            return (comprimido.length < original.length) ? comprimido : original;
+        } catch (e) {
+            console.warn('Compressão de comprovante falhou, usando original:', e);
+            return original;
+        }
+    }
+
     // Criar objeto de comprovante com metadados
     async function criarComprovante(fileInput, tipo, valor, descricao) {
         const file = fileInput?.files?.[0];
         if (!file) return null;
         
-        const base64 = await fileToBase64(file);
+        const base64 = await fileParaBase64Comprimido(file);
         return {
             arquivo: base64,
             nomeArquivo: file.name,
@@ -5544,12 +5582,14 @@
             });
             if (error) {
                 console.error('Erro Supabase:', error);
-                mostrarStatus('Erro ao sincronizar', 'error');
+                const msg = error.message || error.hint || error.code || 'motivo desconhecido';
+                mostrarStatus('Erro ao sincronizar: ' + msg, 'error');
             } else {
                 mostrarStatus('Sincronizado', 'success');
             }
         } catch (e) {
             console.error('Exceção Supabase:', e);
+            mostrarStatus('Erro ao sincronizar: ' + (e.message || 'sem conexão'), 'error');
         }
     }
 
