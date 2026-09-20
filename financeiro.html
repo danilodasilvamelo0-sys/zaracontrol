@@ -10,7 +10,7 @@
     <title>ZARA | Financeiro</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="financeiro.css?v=1789948153">
+<link rel="stylesheet" href="financeiro.css?v=1789948564">
 
 </head>
 <body>
@@ -628,7 +628,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="financeiro.js?v=1789948153"></script>
+<script src="financeiro.js?v=1789948564"></script>
 
 <script>
 // ── PATCH v1785104432 — sobrescreve funções independente do cache ──
@@ -732,6 +732,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+
+<!-- Badge do log de erros (funcionalidade ja existia no JS, faltava isto) -->
+<div id="zara-err-badge" onclick="abrirLogErros()" style="display:none;position:fixed;bottom:88px;right:14px;z-index:99998;
+    background:#ff6b5b;color:#0e0e0e;font-weight:800;font-size:0.78em;
+    width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;
+    box-shadow:0 4px 14px rgba(255,107,91,0.4);cursor:pointer;"></div>
 </body>
 </html>
 
