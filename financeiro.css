@@ -6865,3 +6865,44 @@ font-size: 1.1em;
     justify-content: center !important;
     flex-wrap: wrap;
 }
+
+/* ══════════ MAIOR SANGRIA FINANCEIRA ══════════ */
+#empSangriaCard {
+    background: linear-gradient(150deg, rgba(255,107,91,0.14) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.02) 70%, rgba(255,107,91,0.06) 100%);
+    backdrop-filter: blur(30px) saturate(150%);
+    -webkit-backdrop-filter: blur(30px) saturate(150%);
+    border: 1px solid rgba(255,107,91,0.28);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.20), 0 6px 20px rgba(0,0,0,0.4);
+}
+.sangria-header {
+    display: flex; align-items: center; gap: 8px;
+    color: #ff6b5b; font-size: 0.72em; font-weight: 800;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.sangria-nome { font-size: 1.15em; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.sangria-linha {
+    display: flex; justify-content: space-between; align-items: baseline;
+    flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+}
+.sangria-valor { font-size: 1.4em; font-weight: 800; color: #ff6b5b; }
+.sangria-valor small { font-size: 0.5em; font-weight: 600; color: var(--text-dim); margin-left: 4px; }
+.sangria-pct { font-size: 0.72em; color: var(--text-dim); }
+.sangria-barra {
+    height: 6px; border-radius: 4px; background: rgba(255,255,255,0.08);
+    overflow: hidden; margin-bottom: 6px;
+}
+.sangria-barra-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, #46f0d2, #5fe08a);
+    transition: width 0.4s ease;
+}
+.sangria-progresso-label { font-size: 0.65em; color: var(--text-dim); margin-bottom: 12px; }
+.sangria-projecao {
+    font-size: 0.82em; line-height: 1.5; color: var(--text-sub);
+    border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;
+}
+.sangria-projecao strong { color: #5fe08a; }
