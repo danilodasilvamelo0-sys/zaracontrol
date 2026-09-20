@@ -7170,3 +7170,50 @@ function editarDataJuros(empId, histIdx, dataAtual) {
     renderizar();
     mostrarStatus('Data atualizada!', 'success');
 }
+
+/* ===== DEBUG TEMPORÁRIO — CARD DE SANGRIA ===== */
+window.addEventListener('load', function () {
+    setTimeout(function () {
+        var L = [];
+        function chk(nome, fn) {
+            try { L.push([nome, String(fn())]); }
+            catch (e) { L.push([nome, 'ERRO: ' + e.message]); }
+        }
+        chk('#empSangriaCard existe', () => !!document.getElementById('empSangriaCard'));
+        chk('display atual do card', () => {
+            var el = document.getElementById('empSangriaCard');
+            return el ? getComputedStyle(el).display + ' | inline=' + el.style.display : 'sem elemento';
+        });
+        chk('emprestimos total (financeiro.emprestimos)', () => (financeiro.emprestimos || []).length);
+        chk('emprestimos ativos (nao arquivados)', () => (financeiro.emprestimos || []).filter(e => !e.arquivado).length);
+        chk('detalhe de cada emprestimo', () => JSON.stringify(
+            (financeiro.emprestimos || []).map(e => ({
+                nome: e.descricao, arquivado: e.arquivado,
+                principal: e.principal, taxa: e.taxaJuros
+            }))
+        ));
+        chk('erros JS capturados desde o load', () => {
+            try { return _erros.length + ' erro(s) — clique no bolinha vermelha no canto pra ver'; }
+            catch(e) { return 'variavel _erros nao acessivel aqui'; }
+        });
+        chk('roda renderizar() de novo', () => { try { renderizar(); return 'ok, sem travar'; } catch(e) { return 'ERRO: ' + e.message; } });
+        chk('display APOS renderizar()', () => {
+            var el = document.getElementById('empSangriaCard');
+            return el ? getComputedStyle(el).display : 'sem elemento';
+        });
+
+        var d = document.createElement('div');
+        d.style.cssText = 'position:fixed;left:8px;right:8px;bottom:90px;z-index:99999;' +
+            'background:#0b0f14;border:2px solid #ff6b5b;border-radius:10px;padding:12px;' +
+            'font:11px/1.45 monospace;color:#dfe;max-height:60vh;overflow:auto;';
+        var html = '<b style="color:#ff6b5b">DEBUG SANGRIA</b>' +
+            '<button onclick="this.parentNode.remove()" style="float:right;background:#ff6b5b;' +
+            'border:0;border-radius:5px;padding:2px 9px;font-weight:700;color:#0e0e0e;">fechar</button><br><br>';
+        L.forEach(function (r) {
+            var cor = /ERRO|false|nao acessivel/.test(r[1]) ? '#ff6b5b' : '#5fe08a';
+            html += '<span style="color:#8fa">' + r[0] + ':</span> <span style="color:' + cor + ';word-break:break-all;">' + r[1] + '</span><br><br>';
+        });
+        d.innerHTML = html;
+        document.body.appendChild(d);
+    }, 1200);
+});
