@@ -5145,6 +5145,51 @@
             }
         }
 
+        // ── 1.5 MAIOR SANGRIA — qual dívida mais drena dinheiro por mês em juros puros ──
+        const sangriaEl = document.getElementById('empSangriaCard');
+        if (sangriaEl) {
+            const candidatos = emprestimosAtivos
+                .map(e => ({
+                    emp: e,
+                    custoMensal: (e.principal || 0) * ((e.taxaJuros || 0) / 100)
+                }))
+                .filter(c => c.custoMensal > 0)
+                .sort((a, b) => b.custoMensal - a.custoMensal);
+
+            if (candidatos.length === 0 || custoJurosMensal <= 0) {
+                sangriaEl.style.display = 'none';
+            } else {
+                const pior = candidatos[0];
+                const pct = custoJurosMensal > 0 ? (pior.custoMensal / custoJurosMensal) * 100 : 0;
+                const economiaAnual = pior.custoMensal * 12;
+                const progresso = pior.emp.principalOriginal > 0
+                    ? Math.min(100, ((pior.emp.totalAmortizado || 0) / pior.emp.principalOriginal) * 100)
+                    : 0;
+
+                sangriaEl.style.display = 'block';
+                sangriaEl.innerHTML = `
+                    <div class="sangria-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;">
+                            <path d="M12 2C12 2 5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13z"></path>
+                        </svg>
+                        <span>Maior sangria financeira</span>
+                    </div>
+                    <div class="sangria-nome">${pior.emp.descricao}</div>
+                    <div class="sangria-linha">
+                        <span class="sangria-valor">${formatarMoeda(pior.custoMensal)}<small>/mês só em juros</small></span>
+                        <span class="sangria-pct">${pct.toFixed(0)}% do que você paga de juros hoje</span>
+                    </div>
+                    <div class="sangria-barra">
+                        <div class="sangria-barra-fill" style="width:${progresso.toFixed(0)}%"></div>
+                    </div>
+                    <div class="sangria-progresso-label">${progresso.toFixed(0)}% já amortizado</div>
+                    <div class="sangria-projecao">
+                        Quitando esta dívida, você recupera <strong>${formatarMoeda(economiaAnual)}/ano</strong> que hoje viram juros — sem fazer nada além de parar de pagar essa taxa.
+                    </div>
+                `;
+            }
+        }
+
         // ── 2. ORDENAÇÃO POR PRIORIDADE ──
         // 1º) parcela atrasada, 2º) juros acumulados, 3º) maior taxa, 4º) maior saldo
         const hoje = new Date().toISOString().split('T')[0];
