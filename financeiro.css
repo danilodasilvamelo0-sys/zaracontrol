@@ -6906,3 +6906,12 @@ font-size: 1.1em;
     border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;
 }
 .sangria-projecao strong { color: #5fe08a; }
+
+/* Botão de marcar manualmente a dívida "que está sangrando" */
+.btn-sangria { color: rgba(255,107,91,0.45) !important; }
+.btn-sangria:hover { color: rgba(255,107,91,0.85) !important; }
+.btn-sangria.ativo {
+    color: #ff6b5b !important;
+    background: rgba(255,107,91,0.12) !important;
+    border-color: rgba(255,107,91,0.4) !important;
+}
