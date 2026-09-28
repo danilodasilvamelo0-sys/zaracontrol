@@ -5145,25 +5145,34 @@
             }
         }
 
-        // ── 1.5 MAIOR SANGRIA — qual dívida mais drena dinheiro por mês em juros puros ──
+    /* Marcação manual: o próprio usuário decide qual dívida "está sangrando".
+       Só uma por vez — marcar outra desmarca a anterior. */
+    function toggleSangria(id) {
+        const alvo = (financeiro.emprestimos || []).find(e => String(e.id) === String(id));
+        if (!alvo) return;
+        const ligar = !alvo.sangria;
+        (financeiro.emprestimos || []).forEach(e => { e.sangria = false; });
+        alvo.sangria = ligar;
+        salvarDados();
+        renderizar();
+        mostrarStatus(ligar ? 'Marcada como a que está sangrando' : 'Desmarcada', 'success');
+    }
+    window.toggleSangria = toggleSangria;
+
+        // ── 1.5 MAIOR SANGRIA — a dívida marcada manualmente pelo usuário ──
         const sangriaEl = document.getElementById('empSangriaCard');
         if (sangriaEl) {
-            const candidatos = emprestimosAtivos
-                .map(e => ({
-                    emp: e,
-                    custoMensal: (e.principal || 0) * ((e.taxaJuros || 0) / 100)
-                }))
-                .filter(c => c.custoMensal > 0)
-                .sort((a, b) => b.custoMensal - a.custoMensal);
+            const marcada = emprestimosAtivos.find(e => e.sangria);
 
-            if (candidatos.length === 0 || custoJurosMensal <= 0) {
+            if (!marcada) {
                 sangriaEl.style.display = 'none';
             } else {
-                const pior = candidatos[0];
-                const pct = custoJurosMensal > 0 ? (pior.custoMensal / custoJurosMensal) * 100 : 0;
-                const economiaAnual = pior.custoMensal * 12;
-                const progresso = pior.emp.principalOriginal > 0
-                    ? Math.min(100, ((pior.emp.totalAmortizado || 0) / pior.emp.principalOriginal) * 100)
+                const custoMensal = (marcada.principal || 0) * ((marcada.taxaJuros || 0) / 100);
+                const temJuros = custoMensal > 0;
+                const pct = (temJuros && custoJurosMensal > 0) ? (custoMensal / custoJurosMensal) * 100 : 0;
+                const economiaAnual = custoMensal * 12;
+                const progresso = marcada.principalOriginal > 0
+                    ? Math.min(100, ((marcada.totalAmortizado || 0) / marcada.principalOriginal) * 100)
                     : 0;
 
                 sangriaEl.style.display = 'block';
@@ -5172,19 +5181,26 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;">
                             <path d="M12 2C12 2 5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13z"></path>
                         </svg>
-                        <span>Maior sangria financeira</span>
+                        <span>Marcada como sangria</span>
                     </div>
-                    <div class="sangria-nome">${pior.emp.descricao}</div>
+                    <div class="sangria-nome">${marcada.descricao}</div>
                     <div class="sangria-linha">
-                        <span class="sangria-valor">${formatarMoeda(pior.custoMensal)}<small>/mês só em juros</small></span>
+                        ${temJuros ? `
+                        <span class="sangria-valor">${formatarMoeda(custoMensal)}<small>/mês só em juros</small></span>
                         <span class="sangria-pct">${pct.toFixed(0)}% do que você paga de juros hoje</span>
+                        ` : `
+                        <span class="sangria-valor">${formatarMoeda(marcada.principal)}<small>saldo devedor</small></span>
+                        <span class="sangria-pct">sem juros — só pesa no saldo</span>
+                        `}
                     </div>
                     <div class="sangria-barra">
                         <div class="sangria-barra-fill" style="width:${progresso.toFixed(0)}%"></div>
                     </div>
                     <div class="sangria-progresso-label">${progresso.toFixed(0)}% já amortizado</div>
                     <div class="sangria-projecao">
-                        Quitando esta dívida, você recupera <strong>${formatarMoeda(economiaAnual)}/ano</strong> que hoje viram juros — sem fazer nada além de parar de pagar essa taxa.
+                        ${temJuros
+                            ? `Quitando esta dívida, você recupera <strong>${formatarMoeda(economiaAnual)}/ano</strong> que hoje viram juros.`
+                            : `Sem taxa de juros, mas quitar libera <strong>${formatarMoeda(marcada.principal)}</strong> do seu saldo devedor total.`}
                     </div>
                 `;
             }
@@ -5333,6 +5349,9 @@
                     </td>
                     <td>
                         <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
+                            <button class="acc-delete-btn btn-sangria${e.sangria ? ' ativo' : ''}" onclick="toggleSangria('${e.id}')" title="${e.sangria ? 'Desmarcar como sangria' : 'Marcar como a que está sangrando'}">
+                                <svg viewBox="0 0 24 24" fill="${e.sangria ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M12 2C12 2 5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13z"></path></svg>
+                            </button>
                             <button class="acc-delete-btn" onclick="editarEmprestimo(${e.id})" title="Editar" style="color:rgba(47,199,173,0.6);">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             </button>
@@ -7170,50 +7189,3 @@ function editarDataJuros(empId, histIdx, dataAtual) {
     renderizar();
     mostrarStatus('Data atualizada!', 'success');
 }
-
-/* ===== DEBUG TEMPORÁRIO — CARD DE SANGRIA ===== */
-window.addEventListener('load', function () {
-    setTimeout(function () {
-        var L = [];
-        function chk(nome, fn) {
-            try { L.push([nome, String(fn())]); }
-            catch (e) { L.push([nome, 'ERRO: ' + e.message]); }
-        }
-        chk('#empSangriaCard existe', () => !!document.getElementById('empSangriaCard'));
-        chk('display atual do card', () => {
-            var el = document.getElementById('empSangriaCard');
-            return el ? getComputedStyle(el).display + ' | inline=' + el.style.display : 'sem elemento';
-        });
-        chk('emprestimos total (financeiro.emprestimos)', () => (financeiro.emprestimos || []).length);
-        chk('emprestimos ativos (nao arquivados)', () => (financeiro.emprestimos || []).filter(e => !e.arquivado).length);
-        chk('detalhe de cada emprestimo', () => JSON.stringify(
-            (financeiro.emprestimos || []).map(e => ({
-                nome: e.descricao, arquivado: e.arquivado,
-                principal: e.principal, taxa: e.taxaJuros
-            }))
-        ));
-        chk('erros JS capturados desde o load', () => {
-            try { return _erros.length + ' erro(s) — clique no bolinha vermelha no canto pra ver'; }
-            catch(e) { return 'variavel _erros nao acessivel aqui'; }
-        });
-        chk('roda renderizar() de novo', () => { try { renderizar(); return 'ok, sem travar'; } catch(e) { return 'ERRO: ' + e.message; } });
-        chk('display APOS renderizar()', () => {
-            var el = document.getElementById('empSangriaCard');
-            return el ? getComputedStyle(el).display : 'sem elemento';
-        });
-
-        var d = document.createElement('div');
-        d.style.cssText = 'position:fixed;left:8px;right:8px;bottom:90px;z-index:99999;' +
-            'background:#0b0f14;border:2px solid #ff6b5b;border-radius:10px;padding:12px;' +
-            'font:11px/1.45 monospace;color:#dfe;max-height:60vh;overflow:auto;';
-        var html = '<b style="color:#ff6b5b">DEBUG SANGRIA</b>' +
-            '<button onclick="this.parentNode.remove()" style="float:right;background:#ff6b5b;' +
-            'border:0;border-radius:5px;padding:2px 9px;font-weight:700;color:#0e0e0e;">fechar</button><br><br>';
-        L.forEach(function (r) {
-            var cor = /ERRO|false|nao acessivel/.test(r[1]) ? '#ff6b5b' : '#5fe08a';
-            html += '<span style="color:#8fa">' + r[0] + ':</span> <span style="color:' + cor + ';word-break:break-all;">' + r[1] + '</span><br><br>';
-        });
-        d.innerHTML = html;
-        document.body.appendChild(d);
-    }, 1200);
-});
