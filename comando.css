@@ -287,9 +287,9 @@ body.war-mode #warBanner{transform:translateY(0)}
 .add-task-btn svg{width:14px;height:14px}
 .cat-opt{padding:6px 14px;background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-family:'Montserrat',sans-serif;font-size:.65em;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .2s;text-transform:uppercase;border-radius:2px}
 .cat-opt.active{border-color:rgba(212,168,67,.4);color:#7ff7e2;background:rgba(212,168,67,.08)}
-.dyn-task-actions{display:flex;gap:4px;flex-shrink:0;opacity:0;transition:opacity .2s}
+.dyn-task-actions{display:flex;gap:4px;flex-shrink:0;opacity:.55;transition:opacity .2s}
 .check-row:hover .dyn-task-actions{opacity:1}
-.task-act-btn{background:transparent;border:none;cursor:pointer;padding:4px;color:rgba(255,255,255,.3);transition:color .2s;display:flex;align-items:center}
+.task-act-btn{background:transparent;border:none;cursor:pointer;padding:8px;color:rgba(255,255,255,.4);transition:color .2s;display:flex;align-items:center;justify-content:center;min-width:30px;min-height:30px}
 .task-act-btn:hover{color:rgba(255,255,255,.7)}
 .task-act-btn.del:hover{color:#ff4444}
 .task-act-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
