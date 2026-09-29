@@ -3200,14 +3200,51 @@
             jurosRestantes: emp.jurosAcumulados
         });
 
-        // Adicionar ao histórico de pagamentos para exibição
+        // ── Quitar os "Juros gerados — NÃO PAGOS" existentes, em vez de criar
+        //    um card verde separado deixando o vermelho esquecido pra sempre.
+        //    Vai do mais antigo pendente pro mais novo até acabar o valor pago. ──
         if (!emp.historicoPagamentos) emp.historicoPagamentos = [];
-        emp.historicoPagamentos.push({
-            tipo: 'juros',
-            valor: valor,
-            data: data,
-            saldoApos: emp.principal
-        });
+        let restante = valor;
+        let ultimoTocado = null;
+
+        for (const h of emp.historicoPagamentos) {
+            if (restante <= 0.005) break;
+            if (h.tipo !== 'juros_gerado') continue;
+
+            if (h.valor <= restante + 0.005) {
+                // Este pendente é quitado por inteiro — vira "Juros pagos".
+                restante -= h.valor;
+                h.tipo = 'juros';
+                h.dataPagamento = data;
+                h.saldoApos = emp.principal;
+                ultimoTocado = h;
+            } else {
+                // Pagamento parcial: separa o que foi pago do que ainda falta.
+                h.valor -= restante;
+                emp.historicoPagamentos.push({
+                    tipo: 'juros',
+                    valor: restante,
+                    data: data,
+                    saldoApos: emp.principal
+                });
+                ultimoTocado = emp.historicoPagamentos[emp.historicoPagamentos.length - 1];
+                restante = 0;
+            }
+        }
+
+        // Sobrou valor pago sem um "gerado" pendente correspondente
+        // (ex.: pagamento espontâneo, sem nunca ter clicado em "Gerar Juros").
+        if (restante > 0.005) {
+            emp.historicoPagamentos.push({
+                tipo: 'juros',
+                valor: restante,
+                data: data,
+                saldoApos: emp.principal
+            });
+            ultimoTocado = emp.historicoPagamentos[emp.historicoPagamentos.length - 1];
+        }
+
+        if (ultimoTocado && comprovante) ultimoTocado.comprovante = comprovante;
 
         salvarDados();
         fecharModal('modalPagarJuros');
