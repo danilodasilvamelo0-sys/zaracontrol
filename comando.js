@@ -110,7 +110,7 @@ function archiveDay(k){
 }
 function updateStreaks(k){
   const th=S.toji.history[k]||{};
-  const allT=TOJI_POS.every(x=>th.checks&&th.checks[x]);
+  const allT=tojiPosAtivas().every(x=>th.checks&&th.checks[x]);
   const noFT=!th.checks?.porno;
   S.toji.streak=allT&&noFT?(S.toji.streak||0)+1:0;
   const thm=S.thomas.history[k]||{};
@@ -118,7 +118,7 @@ function updateStreaks(k){
   const noFTH=!thm.checks?.aposta;
   S.thomas.streak=allTH&&noFTH?(S.thomas.streak||0)+1:0;
 }
-function tojiScore(){return TOJI_POS.filter(k=>S.toji.checks[k]).length;}
+function tojiScore(){return tojiPosAtivas().filter(k=>S.toji.checks[k]).length;}
 function thomasScore(){return THOMAS_POS.filter(k=>S.thomas.checks[k]).length;}
 
 // ========= HANDLERS =========
@@ -371,7 +371,24 @@ let selectedCat='FÍSICO';
 
 function getTasks(){
   if(!S.toji.customTasks) S.toji.customTasks=[];
-  return [...DEFAULT_TOJI_TASKS,...S.toji.customTasks];
+  if(!S.toji.taskOverrides) S.toji.taskOverrides={};
+  if(!S.toji.deletedFixedTasks) S.toji.deletedFixedTasks=[];
+
+  const fixas = DEFAULT_TOJI_TASKS
+    .filter(t => !S.toji.deletedFixedTasks.includes(t.id))
+    .map(t => {
+      const ov = S.toji.taskOverrides[t.id];
+      return ov ? {...t, ...ov} : t;
+    });
+
+  return [...fixas, ...S.toji.customTasks];
+}
+
+// Posições fixas ainda ativas (exclui as que o usuário apagou) —
+// usado no score e na checagem de "dia perfeito" pra não travar pra sempre.
+function tojiPosAtivas(){
+  if(!S.toji.deletedFixedTasks) S.toji.deletedFixedTasks=[];
+  return TOJI_POS.filter(id => !S.toji.deletedFixedTasks.includes(id));
 }
 
 function tojiScoreDynamic(){
@@ -395,7 +412,6 @@ function renderDynamicChecklist(){
   if(!c)return;
   c.innerHTML=tasks.map(task=>{
     const checked=!!S.toji.checks[task.id];
-    const isCustom=!task.fixed;
     return `<div class="check-row${checked?' done':''}" id="row-${task.id}" style="display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.025);transition:background .2s;position:relative">
       <div class="cbx" onclick="toggleDynTask('${task.id}')">
         <input type="checkbox" ${checked?'checked':''} style="position:absolute;opacity:0;width:0;height:0">
@@ -412,9 +428,9 @@ function renderDynamicChecklist(){
         <button class="task-act-btn" onclick="openEditTask('${task.id}')" title="Editar">
           <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
-        ${isCustom?`<button class="task-act-btn del" onclick="deleteTask('${task.id}')" title="Excluir">
+        <button class="task-act-btn del" onclick="deleteTask('${task.id}')" title="Excluir">
           <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        </button>`:''}
+        </button>
       </div>
     </div>`;
   }).join('');
@@ -485,8 +501,17 @@ function saveTask(){
 }
 
 function deleteTask(id){
-  if(!S.toji.customTasks)return;
-  S.toji.customTasks=S.toji.customTasks.filter(t=>t.id!==id);
+  const ehFixaOriginal = DEFAULT_TOJI_TASKS.some(t=>t.id===id);
+
+  if(ehFixaOriginal){
+    if(!S.toji.deletedFixedTasks) S.toji.deletedFixedTasks=[];
+    if(!S.toji.deletedFixedTasks.includes(id)) S.toji.deletedFixedTasks.push(id);
+    if(S.toji.taskOverrides) delete S.toji.taskOverrides[id];
+  } else {
+    if(!S.toji.customTasks)return;
+    S.toji.customTasks=S.toji.customTasks.filter(t=>t.id!==id);
+  }
+
   delete S.toji.checks[id];
   saveState();
   renderDynamicChecklist();
