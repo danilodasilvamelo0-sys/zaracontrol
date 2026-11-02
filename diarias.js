@@ -347,7 +347,7 @@ function barChart(items, hl) {
   const W = 640, H = 210, pt = 22, pb = 28, n = items.length, id = 'g' + (++cid);
   const max = Math.max.apply(null, items.map(i => i.value).concat([1]));
   const bw = (W - 16) / n, w = Math.min(bw * 0.68, 46), step = Math.ceil(n / 10);
-  let s = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#38bdf8" stop-opacity=".55"/></linearGradient></defs>';
+  let s = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#46f0d2"/><stop offset="1" stop-color="#2fc7ad" stop-opacity=".55"/></linearGradient></defs>';
   s += '<line x1="8" x2="' + (W - 8) + '" y1="' + (H - pb) + '" y2="' + (H - pb) + '" stroke="rgba(255,255,255,.12)"/>';
   items.forEach((it, i) => {
     const h = it.value > 0 ? Math.max(3, it.value / max * (H - pt - pb)) : 0, x = 8 + i * bw + (bw - w) / 2, y = H - pb - h;
@@ -356,7 +356,7 @@ function barChart(items, hl) {
     if (h) s += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="4" fill="url(#' + id + ')" ' + (on ? '' : 'opacity=".78"') + '/>';
     else s += '<rect x="' + x.toFixed(1) + '" y="' + (H - pb - 2) + '" width="' + w.toFixed(1) + '" height="2" rx="1" fill="rgba(255,255,255,.14)"/>';
     if (n <= 10 && it.value > 0 && !state.settings.hideValues) s += '<text class="vl" x="' + (x + w / 2).toFixed(1) + '" y="' + (y - 5).toFixed(1) + '" text-anchor="middle">' + Math.round(it.value) + '</text>';
-    if (i % step === 0 || i === n - 1 && step === 1) s += '<text x="' + (x + w / 2).toFixed(1) + '" y="' + (H - 9) + '" text-anchor="middle" ' + (on ? 'style="fill:#2dd4bf;font-weight:700"' : '') + '>' + esc(it.label) + '</text>';
+    if (i % step === 0 || i === n - 1 && step === 1) s += '<text x="' + (x + w / 2).toFixed(1) + '" y="' + (H - 9) + '" text-anchor="middle" ' + (on ? 'style="fill:#46f0d2;font-weight:700"' : '') + '>' + esc(it.label) + '</text>';
     s += '</g>';
   });
   return s + '</svg>';

@@ -138,3 +138,108 @@ tfoot td{font-weight:700;border-bottom:0}
 .zsync[data-s="off"] i,.zsync[data-s="err"] i{background:var(--bad);box-shadow:0 0 0 3px rgba(248,113,113,.15)}
 @media(max-width:620px){.zsync span{display:none}}
 @media(min-width:900px){nav.nav{top:52px;height:calc(100vh - 52px)}}
+
+
+/* ════════════════════════════════════════════════════════════
+   TEMA FINANCEIRO — mesmo visual (turquesa / marinho / vidro)
+   Só aparência: estrutura e menu inferior continuam iguais.
+   ════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#0e0e1a;--bg2:#131321;
+  --card:rgba(255,255,255,.05);--card2:rgba(255,255,255,.09);
+  --line:rgba(255,255,255,.08);--bd:rgba(46,200,190,.22);
+  --txt:#ffffff;--mut:rgba(255,255,255,.65);
+  --acc:#46f0d2;--acc2:#2fc7ad;
+  --warn:#ffc857;--bad:#ff6b5b;--good:#5fe08a;
+  --glass:linear-gradient(150deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.05) 40%,rgba(255,255,255,.03) 70%,rgba(255,255,255,.10) 100%);
+  --rim:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.45);
+  --font:'Montserrat',system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+body{
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(ellipse 55% 45% at 12% 8%,rgba(70,240,210,.24) 0%,transparent 62%),
+    radial-gradient(ellipse 55% 45% at 92% 22%,rgba(46,200,190,.22) 0%,transparent 62%),
+    radial-gradient(ellipse 55% 45% at 18% 66%,rgba(70,240,210,.18) 0%,transparent 62%),
+    radial-gradient(ellipse 55% 45% at 88% 88%,rgba(46,200,190,.20) 0%,transparent 62%),
+    linear-gradient(rgba(70,240,210,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(70,240,210,.03) 1px,transparent 1px);
+  background-attachment:fixed,fixed,fixed,fixed,scroll,scroll;
+  background-repeat:no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat;
+  background-size:100% 100%,100% 100%,100% 100%,100% 100%,72px 72px,72px 72px;
+  -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;
+}
+body::before,body::after{content:'';position:fixed;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#2fc7ad,transparent);z-index:9999;pointer-events:none}
+body::before{top:0}body::after{bottom:0}
+
+/* Cabeçalho centralizado, como no Financeiro */
+main>.row:first-child{flex-direction:column;align-items:center;text-align:center;gap:0;margin-bottom:22px;padding-bottom:20px;border-bottom:1px solid var(--bd)}
+main>.row:first-child>.sp{flex:none;width:100%}
+h1{font-weight:200;text-transform:uppercase;font-size:clamp(20px,6.4vw,28px);letter-spacing:clamp(3px,1.7vw,8px);line-height:1.1;margin:0}
+.sub{text-transform:uppercase;font-size:11px;font-weight:600;letter-spacing:3px;margin:10px 0 0}
+h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.6px}
+
+/* Cards de vidro */
+.card{background:var(--glass);border:1px solid var(--bd);border-radius:20px;backdrop-filter:blur(30px) saturate(150%);-webkit-backdrop-filter:blur(30px) saturate(150%);box-shadow:var(--rim)}
+.stat .l{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.6px}
+.stat .v{font-weight:700;letter-spacing:-.3px}
+.stat.hero{background:linear-gradient(150deg,rgba(70,240,210,.22) 0%,rgba(255,255,255,.05) 45%,rgba(255,255,255,.03) 70%,rgba(70,240,210,.10) 100%);border-color:rgba(70,240,210,.40)}
+.stat.hero .v{color:var(--good)}
+.stat.accent .v{color:var(--acc)}
+
+/* Botões */
+.btn{background:rgba(255,255,255,.05);border:1px solid rgba(70,240,210,.25);color:var(--txt);border-radius:12px;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;box-shadow:inset 0 1px 0 rgba(255,255,255,.10)}
+.btn:hover{border-color:rgba(70,240,210,.6);background:rgba(70,240,210,.08)}
+.btn.pri{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#05201c;border:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 18px rgba(70,240,210,.25)}
+.btn.dng{color:var(--bad);border-color:rgba(255,107,91,.45)}
+.btn.ghost{background:none;box-shadow:none}
+.icon-btn{border-radius:10px}
+.fab{box-shadow:0 10px 30px rgba(70,240,210,.35)}
+.seg{background:rgba(255,255,255,.05);border:1px solid rgba(70,240,210,.18)}
+.seg button{font-weight:600}
+.seg button.on{background:rgba(70,240,210,.14);color:var(--acc)}
+
+/* Campos */
+label.f{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px}
+input,select,textarea{background:rgba(14,14,26,.65);border:1px solid rgba(70,240,210,.18);border-radius:12px}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(70,240,210,.12)}
+.step button{background:rgba(70,240,210,.08);border-color:rgba(70,240,210,.25);color:var(--acc)}
+details{border-color:rgba(70,240,210,.18)}
+.prev{background:linear-gradient(150deg,rgba(70,240,210,.16),rgba(70,240,210,.05));border-color:rgba(70,240,210,.35)}
+
+/* Menu inferior (mesmo formato de antes, só o visual igual ao do Financeiro) */
+nav.nav{background:linear-gradient(180deg,rgba(26,30,46,.82) 0%,rgba(14,14,26,.9) 100%);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-top:1px solid rgba(46,200,190,.22);box-shadow:0 -4px 20px rgba(0,0,0,.5)}
+nav.nav button{color:rgba(245,240,232,.45);font-weight:600;letter-spacing:.3px}
+nav.nav button.on{color:var(--acc);background:rgba(70,240,210,.10);box-shadow:inset 0 1px 0 rgba(170,255,240,.12)}
+@media(min-width:900px){nav.nav{border-top:0;border-right:1px solid rgba(46,200,190,.22);box-shadow:4px 0 20px rgba(0,0,0,.35)}nav.nav button.on{background:rgba(70,240,210,.10)}}
+.brand i{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#05201c}
+
+/* Barra de links do topo */
+.zbar{background:linear-gradient(180deg,rgba(26,30,46,.78) 0%,rgba(14,14,26,.86) 100%);border-bottom:1px solid rgba(46,200,190,.22)}
+.zhome{border-color:rgba(70,240,210,.45);background:rgba(70,240,210,.08);font-weight:300}
+.zlinks a{border-color:rgba(70,240,210,.16);font-weight:600;letter-spacing:.3px}
+.zlinks a.cur{color:var(--acc);border-color:rgba(70,240,210,.5);background:rgba(70,240,210,.10)}
+
+/* Janelas, avisos, tabela, calendário */
+.back{background:rgba(5,6,14,.72)}
+.modal{background:linear-gradient(180deg,rgba(30,34,52,.96) 0%,rgba(14,14,26,.98) 100%);border:1px solid var(--bd);box-shadow:0 -10px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(30px) saturate(150%);-webkit-backdrop-filter:blur(30px) saturate(150%)}
+.modal h2{font-size:15px;letter-spacing:1.6px}
+.toast{background:linear-gradient(180deg,rgba(30,34,52,.96),rgba(14,14,26,.98));border-color:rgba(70,240,210,.45);box-shadow:var(--rim)}
+.warn{background:rgba(255,200,87,.10);border-color:rgba(255,200,87,.38);color:#ffe0a0}
+th{font-size:11px;letter-spacing:1.2px;text-transform:uppercase}
+td.tt{color:var(--acc)}
+.cal button{background:rgba(255,255,255,.04)}
+.cal button.has{background:rgba(70,240,210,.18);border-color:rgba(70,240,210,.45);color:#fff}
+.cal button.td{outline-color:var(--acc)}
+@media(max-width:699px){tr{background:var(--glass);border-color:var(--bd);box-shadow:var(--rim)}tfoot tr{background:linear-gradient(150deg,rgba(70,240,210,.16),rgba(70,240,210,.05))}}
+.pos{color:var(--good)}.neg{color:var(--bad)}
+.chart text{fill:rgba(255,255,255,.6)}
+
+/* Ajustes de encaixe (evita vazar para a direita no celular) */
+.shell{grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.shell{grid-template-columns:230px minmax(0,1fr)}}
+input,select,textarea{min-width:0}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g3:has(input[type=date]){grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3:has(input[type=date])>div[style*="span 3"]{grid-column:1/-1!important}
+@media(min-width:900px){nav.nav button{color:rgba(255,255,255,.6)}nav.nav button.on{color:var(--acc)}}
