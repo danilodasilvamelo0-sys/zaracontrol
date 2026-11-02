@@ -323,7 +323,7 @@
        Redimensiona para no máximo 1600px no lado maior e recomprime em JPEG,
        o que costuma cair pra ~150-300KB sem perder legibilidade do papel.
        PDFs passam direto (canvas não lê PDF). */
-    async function fileParaBase64Comprimido(file, maxLado = 1600, qualidade = 0.72) {
+    async function fileParaBase64Comprimido(file, maxLado = 1280, qualidade = 0.65) {
         if (!file) return null;
         if (file.type === 'application/pdf') return fileToBase64(file);
         if (!file.type.startsWith('image/')) return fileToBase64(file);
@@ -5671,26 +5671,137 @@
         salvarSupabase();
     }
 
+    // Sincronização com fila (um envio por vez), tentativas automáticas e
+    // reenvio quando a conexão volta. Os dados SEMPRE ficam salvos no aparelho.
+    let _syncEmAndamento = false;
+    let _syncPendente = false;
+    let _syncFalhou = false;
+    let _syncRetryTimer = null;
+
+    function ehErroDeRede(e) {
+        const m = String((e && (e.message || e.details)) || e || '');
+        return /load failed|failed to fetch|networkerror|network request failed|network connection|timed? ?out|aborted/i.test(m);
+    }
+
     async function salvarSupabase() {
         if (!useSupabase) return;
+        // Se já há um envio em andamento, apenas marca que precisa reenviar o dado mais novo
+        if (_syncEmAndamento) { _syncPendente = true; return; }
+        _syncEmAndamento = true;
         try {
-            const _ts = financeiro._localUpdatedAt || new Date().toISOString();
-            const { error } = await supabaseClient.from('financeiro').upsert({
-                id: USER_ID,
-                user_id: USER_ID,
-                dados: financeiro,
-                updated_at: _ts
-            });
-            if (error) {
-                console.error('Erro Supabase:', error);
-                const msg = error.message || error.hint || error.code || 'motivo desconhecido';
-                mostrarStatus('Erro ao sincronizar: ' + msg, 'error');
-            } else {
-                mostrarStatus('Sincronizado', 'success');
+            do {
+                _syncPendente = false;
+                await enviarSupabaseComRetry();
+            } while (_syncPendente);
+        } finally {
+            _syncEmAndamento = false;
+        }
+    }
+
+    async function enviarSupabaseComRetry() {
+        const esperas = [0, 1500, 4000];
+        let ultimoErro = null;
+        for (let i = 0; i < esperas.length; i++) {
+            if (esperas[i]) await new Promise(r => setTimeout(r, esperas[i]));
+            try {
+                const _ts = financeiro._localUpdatedAt || new Date().toISOString();
+                const { error } = await supabaseClient.from('financeiro').upsert({
+                    id: USER_ID,
+                    user_id: USER_ID,
+                    dados: financeiro,
+                    updated_at: _ts
+                });
+                if (!error) {
+                    _syncFalhou = false;
+                    clearTimeout(_syncRetryTimer);
+                    mostrarStatus('Sincronizado', 'success');
+                    return true;
+                }
+                ultimoErro = error;
+                if (!ehErroDeRede(error)) break; // erro do servidor (permissão etc.) — repetir não adianta
+            } catch (e) {
+                ultimoErro = e;
+                if (!ehErroDeRede(e)) break;
             }
-        } catch (e) {
-            console.error('Exceção Supabase:', e);
-            mostrarStatus('Erro ao sincronizar: ' + (e.message || 'sem conexão'), 'error');
+        }
+
+        console.error('Falha ao sincronizar:', ultimoErro);
+        _syncFalhou = true;
+        const msg = (ultimoErro && (ultimoErro.message || ultimoErro.hint || ultimoErro.code)) || 'motivo desconhecido';
+        if (ehErroDeRede(ultimoErro)) {
+            let kb = 0;
+            try { kb = Math.round(JSON.stringify(financeiro).length / 1024); } catch (_) {}
+            mostrarStatus('Sem conexão com o servidor — salvo neste aparelho, vou tentar de novo' + (kb > 3000 ? ' (dados grandes: ' + (kb / 1024).toFixed(1) + ' MB)' : ''), 'info');
+            clearTimeout(_syncRetryTimer);
+            _syncRetryTimer = setTimeout(() => { if (_syncFalhou) salvarSupabase(); }, 30000);
+        } else {
+            mostrarStatus('Erro ao sincronizar: ' + msg, 'error');
+        }
+        return false;
+    }
+
+    // Reenvia assim que a internet volta ou o app volta para a tela
+    window.addEventListener('online', () => { if (_syncFalhou) salvarSupabase(); });
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && _syncFalhou) salvarSupabase();
+    });
+
+    // Recomprime comprovantes (imagens) já salvos que ficaram pesados — roda uma vez por aparelho
+    async function recomprimirDataUrl(dataUrl, maxLado = 1200, qualidade = 0.6) {
+        const img = await new Promise((res, rej) => {
+            const im = new Image();
+            im.onload = () => res(im);
+            im.onerror = rej;
+            im.src = dataUrl;
+        });
+        let { width, height } = img;
+        if (width > maxLado || height > maxLado) {
+            if (width > height) { height = Math.round(height * (maxLado / width)); width = maxLado; }
+            else { width = Math.round(width * (maxLado / height)); height = maxLado; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+        return canvas.toDataURL('image/jpeg', qualidade);
+    }
+
+    async function otimizarComprovantesExistentes() {
+        const FLAG = 'fin_comprovantes_otimizados_v1';
+        try { if (localStorage.getItem(FLAG)) return; } catch (_) {}
+        const LIMITE = 180 * 1024; // só mexe em imagens acima de ~180 KB
+        let alterados = 0;
+        const tarefas = [];
+
+        (function varrer(no) {
+            if (!no || typeof no !== 'object') return;
+            for (const k of Object.keys(no)) {
+                const v = no[k];
+                if (typeof v === 'string' && (k === 'arquivo' || k === 'comprovante') &&
+                    v.startsWith('data:image') && v.length > LIMITE) {
+                    tarefas.push(async () => {
+                        try {
+                            const novo = await recomprimirDataUrl(v);
+                            if (novo.length < v.length * 0.85) {
+                                no[k] = novo;
+                                if (k === 'arquivo' && no.tipoArquivo) no.tipoArquivo = 'image/jpeg';
+                                alterados++;
+                            }
+                        } catch (e) { console.warn('Falha ao recomprimir um comprovante:', e); }
+                    });
+                } else if (v && typeof v === 'object') {
+                    varrer(v);
+                }
+            }
+        })(financeiro);
+
+        for (const t of tarefas) await t();
+        try { localStorage.setItem(FLAG, '1'); } catch (_) {}
+        if (alterados > 0) {
+            console.log('Comprovantes otimizados:', alterados);
+            salvarDados();
         }
     }
 
@@ -5985,6 +6096,9 @@
         
         // Renderizar interface
         renderizar();
+
+        // Em segundo plano: reduz comprovantes pesados que travam o envio no celular
+        setTimeout(() => { otimizarComprovantesExistentes().catch(e => console.warn(e)); }, 1500);
     }
 
     // Conectar Plano de Quitação ao renderizar
