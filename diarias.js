@@ -266,7 +266,8 @@ function syncInfoHTML() {
     (sync.detail ? '<div class="warn" style="word-break:break-word">Detalhe técnico: ' + esc(sync.detail) + '</div>' : '') +
     '<div class="kv"><span>Neste aparelho</span><b>' + state.records.length + ' dia(s)</b></div>';
 }
-const isNetErr = e => /load failed|failed to fetch|networkerror|network request failed|network connection|timed? ?out|aborted/i.test(String((e && (e.message || e.details)) || e || ''));
+const isNetErr = e => /load failed|failed to fetch|networkerror|network request failed|network connection|timed? ?out|aborted|schema cache|retrying|service unavailable|bad gateway|gateway time/i.test(String((e && (e.message || e.details)) || e || '')) || (!!e && (e.code === 'PGRST002' || e.status === 503));
+const isSchemaLoading = e => !!e && (e.code === 'PGRST002' || /schema cache/i.test(String(e.message || '')));
 const isMissingTable = e => !!e && (e.code === 'PGRST205' || e.code === '42P01' || /could not find the table|does not exist/i.test(String(e.message || '')));
 const ts = v => { const n = Date.parse(v || ''); return isNaN(n) ? 0 : n; };
 
@@ -276,8 +277,8 @@ function syncError(e) {
   sync.detail = [e && e.code, e && e.message, e && e.hint, e && e.details].filter(Boolean).join(' · ') || String(e);
   if (isMissingTable(e)) { setSync('err', 'Tabela “diarias” não existe no Supabase'); return; }
   if (isNetErr(e)) {
-    setSync('off', 'Sem conexão — salvo neste aparelho');
-    clearTimeout(sync.timer); sync.timer = setTimeout(() => { if (sync.failed) syncSave(); }, 30000);
+    setSync('off', isSchemaLoading(e) ? 'Supabase ainda carregando a tabela — tentando de novo' : 'Sem conexão — salvo neste aparelho');
+    clearTimeout(sync.timer); sync.timer = setTimeout(() => { if (sync.failed) syncLoad(); }, isSchemaLoading(e) ? 15000 : 30000);
     return;
   }
   setSync('err', 'Erro ao sincronizar: ' + ((e && (e.message || e.code)) || 'desconhecido'));
@@ -291,7 +292,7 @@ async function syncSave() {
     do {
       sync.pending = false;
       setSync('syncing', 'Sincronizando…');
-      const waits = [0, 1500, 4000]; let last = null, done = false;
+      const waits = [0, 1500, 4000, 8000]; let last = null, done = false;
       for (let i = 0; i < waits.length && !done; i++) {
         if (waits[i]) await new Promise(r => setTimeout(r, waits[i]));
         try {
