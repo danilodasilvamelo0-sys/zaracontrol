@@ -246,12 +246,25 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const SB_TABLE = 'diarias', SB_USER = 'default_user';
 let sb = null;
 try { sb = window.supabase.createClient(SB_URL, SB_KEY); } catch (e) { sb = null; }
-const sync = { busy: false, pending: false, failed: false, timer: null, status: 'off', msg: '' };
+const sync = { busy: false, pending: false, failed: false, timer: null, status: 'off', msg: '', detail: '', last: '' };
 
 function setSync(kind, msg) {
   sync.status = kind; sync.msg = msg;
+  if (kind === 'ok') {
+    sync.detail = ''; sync.last = new Date().toLocaleTimeString('pt-BR');
+    if (!state._synced) { state._synced = true; try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  }
   const el = document.getElementById('syncDot');
   if (el) { el.dataset.s = kind; el.querySelector('span').textContent = msg; }
+  const info = document.getElementById('syncInfo');
+  if (info) info.innerHTML = syncInfoHTML();
+}
+function syncInfoHTML() {
+  const cor = { ok: 'var(--good)', syncing: 'var(--warn)', off: 'var(--bad)', err: 'var(--bad)' }[sync.status] || 'var(--mut)';
+  return '<div class="kv"><span>Estado</span><b style="color:' + cor + '">' + esc(sync.msg || '—') + '</b></div>' +
+    (sync.last ? '<div class="kv"><span>Última sincronização</span><b>' + esc(sync.last) + '</b></div>' : '') +
+    (sync.detail ? '<div class="warn" style="word-break:break-word">Detalhe técnico: ' + esc(sync.detail) + '</div>' : '') +
+    '<div class="kv"><span>Neste aparelho</span><b>' + state.records.length + ' dia(s)</b></div>';
 }
 const isNetErr = e => /load failed|failed to fetch|networkerror|network request failed|network connection|timed? ?out|aborted/i.test(String((e && (e.message || e.details)) || e || ''));
 const isMissingTable = e => !!e && (e.code === 'PGRST205' || e.code === '42P01' || /could not find the table|does not exist/i.test(String(e.message || '')));
@@ -260,6 +273,7 @@ const ts = v => { const n = Date.parse(v || ''); return isNaN(n) ? 0 : n; };
 function syncError(e) {
   console.error('Sincronização:', e);
   sync.failed = true;
+  sync.detail = [e && e.code, e && e.message, e && e.hint, e && e.details].filter(Boolean).join(' · ') || String(e);
   if (isMissingTable(e)) { setSync('err', 'Tabela “diarias” não existe no Supabase'); return; }
   if (isNetErr(e)) {
     setSync('off', 'Sem conexão — salvo neste aparelho');
@@ -292,8 +306,9 @@ async function syncSave() {
   } finally { sync.busy = false; }
 }
 
-async function syncLoad() {
-  if (!sb || sync.busy) return;
+async function syncLoad(mode) {
+  // mode: undefined = normal | 'pull' = baixar da nuvem (sobrescreve) | 'merge' = juntar os dois
+  if (!sb || (sync.busy && !mode)) return;
   try {
     setSync('syncing', 'Sincronizando…');
     const r = await sb.from(SB_TABLE).select('dados,updated_at').eq('user_id', SB_USER).maybeSingle();
@@ -304,13 +319,24 @@ async function syncLoad() {
       sync.failed = false; return setSync('ok', 'Sincronizado');
     }
     const remote = ts(r.data.updated_at || d._localUpdatedAt), local = ts(state._localUpdatedAt);
-    if (remote > local) {
+    const primeiraVez = !state._synced && state.records.length && (d.records || []).length;
+    if (mode === 'merge' || primeiraVez) {
       const by = {};
       (d.records || []).forEach(x => { const n = C.normalizeRecord(x); if (n) by[n.date] = n; });
-      state = { records: Object.keys(by).map(k => by[k]), settings: Object.assign({}, DEFAULTS, d.settings || {}), _localUpdatedAt: new Date(remote).toISOString() };
+      state.records.forEach(x => { by[x.date] = x; }); // no mesmo dia vale o deste aparelho
+      state.records = Object.keys(by).map(k => by[k]);
+      state.settings = Object.assign({}, DEFAULTS, d.settings || {}, state.settings);
+      save(); render(); toast((primeiraVez && !mode ? 'Dados deste aparelho e da nuvem foram juntados: ' : 'Dados juntados: ') + state.records.length + ' dia(s)');
+      return;
+    }
+    if (remote > local || mode === 'pull') {
+      const by = {};
+      (d.records || []).forEach(x => { const n = C.normalizeRecord(x); if (n) by[n.date] = n; });
+      state = { records: Object.keys(by).map(k => by[k]), settings: Object.assign({}, DEFAULTS, d.settings || {}), _localUpdatedAt: new Date(remote).toISOString(), _synced: true };
       try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
       sync.failed = false; setSync('ok', 'Sincronizado');
       if (!document.querySelector('#modal .modal')) render();
+      if (mode === 'pull') toast('Baixado da nuvem: ' + state.records.length + ' dia(s)');
     } else if (local > remote) {
       return syncSave();
     } else { sync.failed = false; setSync('ok', 'Sincronizado'); }
@@ -495,6 +521,10 @@ function viewConfig() {
     '<label class="sw"><span>Ocultar valores na tela<br><span class="note">Mostra R$ •••• (privacidade)</span></span><input type="checkbox" data-pref="hideValues"' + (s.hideValues ? ' checked' : '') + '></label>' +
     '<label class="sw"><span>Mostrar observações na tabela</span><input type="checkbox" data-pref="showNotes"' + (s.showNotes ? ' checked' : '') + '></label>' +
     '<div class="sw"><span>Período do gráfico do painel</span><div class="seg">' + [7, 14, 30].map(n => '<button data-act="cdays" data-n="' + n + '" class="' + (s.chartDays === n ? 'on' : '') + '">' + n + '</button>').join('') + '</div></div></div>' +
+    '<div class="card mt"><h2>Sincronização</h2><div id="syncInfo">' + syncInfoHTML() + '</div>' +
+    '<div class="row mt"><button class="btn" data-act="syncnow">Sincronizar agora</button><button class="btn" data-act="syncmerge">Juntar com a nuvem</button></div>' +
+    '<div class="row mt"><button class="btn sm ghost" data-act="syncpull">Baixar da nuvem (substitui este aparelho)</button><button class="btn sm ghost" data-act="syncpush">Enviar este aparelho (substitui a nuvem)</button></div>' +
+    '<p class="note">Se o PC e o celular têm dias diferentes, use “Juntar com a nuvem” em um deles: os dias dos dois aparelhos ficam, e depois o outro aparelho recebe tudo.</p></div>' +
     '<div class="card mt"><h2>Dados e backup</h2><p class="note" style="margin-top:-6px">' + state.records.length + ' registro(s) salvo(s) e sincronizado(s) entre seus aparelhos.</p>' +
     '<div class="row"><button class="btn" data-act="csv">' + ic('down') + 'Exportar CSV</button><button class="btn" data-act="backup">' + ic('down') + 'Baixar backup</button><button class="btn" data-act="restore">' + ic('up') + 'Restaurar backup</button></div>' +
     '<div class="row mt"><button class="btn sm ghost" data-act="copycsv">Copiar CSV como texto</button><button class="btn sm ghost" data-act="copybackup">Copiar backup como texto</button><button class="btn sm ghost" data-act="pastebackup">Restaurar de texto</button></div>' +
@@ -650,6 +680,10 @@ document.addEventListener('click', async e => {
     case 'copycsv': if (!state.records.length) return toast('Não há registros para exportar'); copyText(C.toCSV(state.records).replace(/^\uFEFF/, ''), 'CSV (texto)'); break;
     case 'pastebackup': pasteDialog(); break;
     case 'dopaste': { const v = document.getElementById('pasteArea').value; closeModal(); restoreText(v); break; }
+    case 'syncnow': if (!sb) { toast('Biblioteca de sincronização não carregou. Recarregue a página.'); break; } toast('Sincronizando…'); if (sync.failed) await syncSave(); else await syncLoad(); break;
+    case 'syncmerge': if (!sb) { toast('Biblioteca de sincronização não carregou.'); break; } await syncLoad('merge'); break;
+    case 'syncpull': if (!sb) { toast('Biblioteca de sincronização não carregou.'); break; } await syncLoad('pull'); break;
+    case 'syncpush': if (!sb) { toast('Biblioteca de sincronização não carregou.'); break; } save(); toast('Enviando este aparelho…'); break;
     case 'wipe': {
       const x = await choice({ title: 'Apagar todos os dados?', text: 'Todos os ' + state.records.length + ' registros serão removidos deste aparelho. Baixe um backup antes se tiver dúvida.' }, [{ v: 'y', l: 'Apagar tudo', cls: 'dng' }]);
       if (x === 'y') { state.records = []; save(); toast('Dados apagados'); render(); }
