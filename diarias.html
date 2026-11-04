@@ -8,6 +8,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#060f1c">
 <title>ZARA | Diárias</title>
+<link rel="manifest" href="diarias.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/diarias-192.png">
+<link rel="apple-touch-icon" href="icons/diarias-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Diárias">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="diarias.css?v=1793666720">
 </head>
@@ -31,5 +38,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="diarias.js?v=1793666720"></script>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw-diarias.js').catch(function () {});
+    });
+}
+</script>
 </body>
 </html>
