@@ -513,12 +513,16 @@ function viewPainel() {
   const last = recs.slice().sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 5);
   return head('Painel', cap(wdFull(t)) + ', ' + brDate(t)) +
     (setup ? '<div class="warn" style="margin:0 0 14px">Comece definindo seus valores padrão de diária, meia-diária e entrega. <button class="btn sm" data-act="nav" data-v="config">Abrir configurações</button></div>' : '') +
+    '<div class="grid cards" style="margin-bottom:12px">' +
+    '<div class="card stat hero"><div class="l">Recebido na semana</div><div class="v">' + money(wk.received) + '</div><div class="s">' +
+      'de ' + money(wk.total) + ' ganhos na semana' + (wk.pending > 0 ? ' · <b style="color:var(--warn)">a receber ' + money(wk.pending) + '</b>' : ' · tudo recebido') + '</div>' +
+      '<div class="s">Hoje: ' + money(day.total) + ' · ' + (C.findByDate(recs, t) ? 'lançamento de hoje registrado' : 'sem lançamento hoje · <a href="#" data-act="new" data-d="' + t + '" style="color:var(--acc)">lançar agora</a>') + '</div></div>' +
+    '</div>' +
     (function () { const all = C.summarize(recs); return '<div class="card" style="margin-bottom:12px"><div class="row"><h2 class="sp" style="margin:0">A receber</h2><button class="btn sm pri" data-act="payopen">Lançar pagamento</button></div>' +
       '<div class="grid cards mt" style="grid-template-columns:repeat(2,1fr)">' + stat('Diárias a receber', money(all.pendWk), all.pendWkDays + ' dia(s) pendente(s)', 'pend') + stat('Entregas a receber', money(all.pendDl), all.pendDlDays + ' dia(s) pendente(s)', 'pend') + '</div>' +
       '<div class="kv"><span>Total já recebido</span><b class="pos">' + money(all.received) + '</b></div></div>'; })() +
     '<div class="grid cards">' +
-    '<div class="card stat hero"><div class="l">Ganhos de hoje</div><div class="v">' + money(day.total) + '</div><div class="s">' +
-      (C.findByDate(recs, t) ? 'Lançamento de hoje registrado' : 'Nenhum lançamento hoje · <a href="#" data-act="new" data-d="' + t + '" style="color:var(--acc)">lançar agora</a>') + '</div></div>' +
+
     stat('Semana atual', money(wk.total), wk.days + ' dia(s) trabalhado(s)') +
     stat('Mês atual', money(mo.total), mo.days + ' dia(s) trabalhado(s)') +
     stat('Diárias no mês', String(mo.fullQty), 'completas') +
