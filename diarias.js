@@ -52,6 +52,21 @@
     const extra = R2(r.extra || 0);
     return { full: full, half: half, del: del, extra: extra, total: R2(full + half + del + extra) };
   }
+  /* ---------- pagamento: diárias (+meias+extras) e entregas, cada um pago ou a receber ---------- */
+  function pay(r) {
+    const c = calc(r), wk = R2(c.full + c.half + c.extra), dl = c.del;
+    const wkDue = wk > 0, dlDue = dl > 0, wkPaid = wkDue && !!r.paidWork, dlPaid = dlDue && !!r.paidDel;
+    const recWk = wkPaid ? wk : 0, recDl = dlPaid ? dl : 0, pendWk = wkDue && !wkPaid ? wk : 0, pendDl = dlDue && !dlPaid ? dl : 0;
+    return { wk: wk, dl: dl, wkDue: wkDue, dlDue: dlDue, wkPaid: wkPaid, dlPaid: dlPaid,
+      recWk: recWk, recDl: recDl, pendWk: pendWk, pendDl: pendDl, received: R2(recWk + recDl), pending: R2(pendWk + pendDl) };
+  }
+  function normalizePayment(p) {
+    if (!p || typeof p !== 'object' || !p.id) return null;
+    return { id: String(p.id), date: parseISO(p.date) ? p.date : today(), kind: ['work', 'del', 'both'].indexOf(p.kind) >= 0 ? p.kind : 'both',
+      total: R2(+p.total || 0), note: String(p.note || '').slice(0, 200),
+      items: (Array.isArray(p.items) ? p.items : []).filter(function (i) { return i && i.id && (i.k === 'work' || i.k === 'del'); })
+        .map(function (i) { return { id: String(i.id), k: i.k }; }) };
+  }
   function isWorked(r) { return r.fullQty + r.halfQty + r.delQty > 0 || calc(r).total > 0; }
 
   /* ---------- validação ---------- */
@@ -68,6 +83,10 @@
       else rec[p[0]] = val;
     });
     if (Object.keys(errors).length) return { ok: false, errors: errors };
+    const tb = function (v) { return v === true || v === '1' || v === 1 || v === 'true'; };
+    rec.paidWork = tb(input.paidWork); rec.paidDel = tb(input.paidDel);
+    rec.paidWorkAt = rec.paidWork && parseISO(String(input.paidWorkAt || '')) ? String(input.paidWorkAt) : '';
+    rec.paidDelAt = rec.paidDel && parseISO(String(input.paidDelAt || '')) ? String(input.paidDelAt) : '';
     if (rec.delRate > 0) rec.delManual = 0; // evita duplicar valor de entregas
     if (rec.fullQty + rec.halfQty + rec.delQty === 0 && calc(rec).total === 0)
       return { ok: false, errors: { _: 'Informe ao menos uma diária, entrega ou valor.' } };
@@ -78,7 +97,8 @@
     const v = validate({
       date: raw.date, fullQty: raw.fullQty, halfQty: raw.halfQty, delQty: raw.delQty,
       fullRate: raw.fullRate, halfRate: raw.halfRate, delRate: raw.delRate,
-      delManual: raw.delManual, extra: raw.extra, notes: raw.notes
+      delManual: raw.delManual, extra: raw.extra, notes: raw.notes,
+      paidWork: raw.paidWork, paidDel: raw.paidDel, paidWorkAt: raw.paidWorkAt, paidDelAt: raw.paidDelAt
     });
     if (!v.ok) return null;
     v.record.id = typeof raw.id === 'string' && raw.id ? raw.id : newId();
@@ -91,14 +111,17 @@
 
   /* ---------- totais ---------- */
   function summarize(list) {
-    const s = { full: 0, half: 0, del: 0, extra: 0, total: 0, fullQty: 0, halfQty: 0, delQty: 0, days: 0, avg: 0 };
+    const s = { full: 0, half: 0, del: 0, extra: 0, total: 0, fullQty: 0, halfQty: 0, delQty: 0, days: 0, avg: 0,
+      received: 0, pending: 0, recWk: 0, recDl: 0, pendWk: 0, pendDl: 0, pendWkDays: 0, pendDlDays: 0 };
     list.forEach(function (r) {
-      const c = calc(r);
+      const c = calc(r), pp = pay(r);
+      s.received += pp.received; s.pending += pp.pending; s.recWk += pp.recWk; s.recDl += pp.recDl; s.pendWk += pp.pendWk; s.pendDl += pp.pendDl;
+      if (pp.pendWk > 0) s.pendWkDays++; if (pp.pendDl > 0) s.pendDlDays++;
       s.full += c.full; s.half += c.half; s.del += c.del; s.extra += c.extra; s.total += c.total;
       s.fullQty += r.fullQty; s.halfQty += r.halfQty; s.delQty += r.delQty;
       if (isWorked(r)) s.days++;
     });
-    ['full', 'half', 'del', 'extra', 'total'].forEach(function (k) { s[k] = R2(s[k]); });
+    ['full', 'half', 'del', 'extra', 'total', 'received', 'pending', 'recWk', 'recDl', 'pendWk', 'pendDl'].forEach(function (k) { s[k] = R2(s[k]); });
     s.avg = s.days ? R2(s.total / s.days) : 0;
     return s;
   }
@@ -152,17 +175,18 @@
   function toCSV(records) {
     const head = ['Data', 'Diárias', 'Meias-diárias', 'Valor da diária', 'Valor da meia-diária', 'Entregas',
       'Valor por entrega', 'Ganho com diárias', 'Ganho com meias-diárias', 'Ganho com entregas', 'Extras',
-      'Total do dia', 'Observações'];
+      'Total do dia', 'Diárias pagas', 'Data pgto diárias', 'Entregas pagas', 'Data pgto entregas', 'Observações'];
     const rows = records.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).map(function (r) {
-      const c = calc(r), p = r.date.split('-');
+      const c = calc(r), p = r.date.split('-'), pp = pay(r), bd = function (x) { return x ? x.slice(8) + '/' + x.slice(5, 7) + '/' + x.slice(0, 4) : ''; };
       return [p[2] + '/' + p[1] + '/' + p[0], r.fullQty, r.halfQty, num(r.fullRate), num(r.halfRate), r.delQty,
-        num(r.delRate), num(c.full), num(c.half), num(c.del), num(c.extra), num(c.total), q(r.notes)].join(';');
+        num(r.delRate), num(c.full), num(c.half), num(c.del), num(c.extra), num(c.total),
+        pp.wkDue ? (pp.wkPaid ? 'Sim' : 'Não') : '—', pp.wkPaid ? bd(r.paidWorkAt) : '', pp.dlDue ? (pp.dlPaid ? 'Sim' : 'Não') : '—', pp.dlPaid ? bd(r.paidDelAt) : '', q(r.notes)].join(';');
     });
     return '\uFEFF' + [head.join(';')].concat(rows).join('\r\n');
   }
   function buildBackup(state) {
     return JSON.stringify({ app: 'controle-diarias', version: 1, exportedAt: new Date().toISOString(),
-      settings: state.settings, records: state.records }, null, 2);
+      settings: state.settings, records: state.records, payments: state.payments || [] }, null, 2);
   }
   function parseBackup(text) {
     let data;
@@ -174,13 +198,14 @@
       const r = normalizeRecord(raw);
       if (r) byDate[r.date] = r; else skipped++;
     });
-    return { ok: true, records: Object.keys(byDate).map(function (k) { return byDate[k]; }), settings: data.settings || {}, skipped: skipped };
+    return { ok: true, records: Object.keys(byDate).map(function (k) { return byDate[k]; }), settings: data.settings || {}, skipped: skipped,
+      payments: (Array.isArray(data.payments) ? data.payments : []).map(normalizePayment).filter(Boolean) };
   }
 
   g.Core = {
     R2: R2, toISO: toISO, parseISO: parseISO, addDays: addDays, weekStart: weekStart, monthKey: monthKey,
     addMonths: addMonths, daysInMonth: daysInMonth, today: today, parseMoney: parseMoney, parseQty: parseQty,
-    calc: calc, isWorked: isWorked, validate: validate, normalizeRecord: normalizeRecord, newId: newId,
+    calc: calc, pay: pay, normalizePayment: normalizePayment, isWorked: isWorked, validate: validate, normalizeRecord: normalizeRecord, newId: newId,
     findByDate: findByDate, summarize: summarize, inRange: inRange, weekRecords: weekRecords,
     monthRecords: monthRecords, weekDays: weekDays, monthCompare: monthCompare, dailySeries: dailySeries,
     monthDaySeries: monthDaySeries, monthlySeries: monthlySeries, toCSV: toCSV, buildBackup: buildBackup,
@@ -217,7 +242,7 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&a
 /* ---------- estado e persistência ---------- */
 let storageOk = true;
 function load() {
-  const st = { records: [], settings: Object.assign({}, DEFAULTS) };
+  const st = { records: [], payments: [], settings: Object.assign({}, DEFAULTS) };
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) {
@@ -227,6 +252,7 @@ function load() {
       const by = {};
       (d.records || []).forEach(r => { const n = C.normalizeRecord(r); if (n) by[n.date] = n; });
       st.records = Object.keys(by).map(k => by[k]);
+      st.payments = (d.payments || []).map(C.normalizePayment).filter(Boolean);
     }
   } catch (e) { storageOk = false; }
   return st;
@@ -326,6 +352,8 @@ async function syncLoad(mode) {
       (d.records || []).forEach(x => { const n = C.normalizeRecord(x); if (n) by[n.date] = n; });
       state.records.forEach(x => { by[x.date] = x; }); // no mesmo dia vale o deste aparelho
       state.records = Object.keys(by).map(k => by[k]);
+      const pm = {}; (d.payments || []).map(C.normalizePayment).filter(Boolean).concat(state.payments || []).forEach(x => { pm[x.id] = x; });
+      state.payments = Object.keys(pm).map(k => pm[k]);
       state.settings = Object.assign({}, DEFAULTS, d.settings || {}, state.settings);
       save(); render(); toast((primeiraVez && !mode ? 'Dados deste aparelho e da nuvem foram juntados: ' : 'Dados juntados: ') + state.records.length + ' dia(s)');
       return;
@@ -333,7 +361,7 @@ async function syncLoad(mode) {
     if (remote > local || mode === 'pull') {
       const by = {};
       (d.records || []).forEach(x => { const n = C.normalizeRecord(x); if (n) by[n.date] = n; });
-      state = { records: Object.keys(by).map(k => by[k]), settings: Object.assign({}, DEFAULTS, d.settings || {}), _localUpdatedAt: new Date(remote).toISOString(), _synced: true };
+      state = { records: Object.keys(by).map(k => by[k]), payments: (d.payments || []).map(C.normalizePayment).filter(Boolean), settings: Object.assign({}, DEFAULTS, d.settings || {}), _localUpdatedAt: new Date(remote).toISOString(), _synced: true };
       try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
       sync.failed = false; setSync('ok', 'Sincronizado');
       if (!document.querySelector('#modal .modal')) render();
@@ -354,7 +382,7 @@ function syncStart() {
   if (dot) dot.addEventListener('click', () => { toast(sync.msg || 'Sincronização'); (sync.failed ? syncSave() : syncLoad()); });
 }
 
-const ui = { view: 'painel', week: C.today(), month: C.monthKey(C.today()), cal: C.monthKey(C.today()), f: { from: '', to: '', q: '' } };
+const ui = { view: 'painel', week: C.today(), month: C.monthKey(C.today()), cal: C.monthKey(C.today()), f: { from: '', to: '', q: '', pay: '' } };
 
 /* ---------- formatadores ---------- */
 const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -390,12 +418,83 @@ function barChart(items, hl) {
 }
 const dayItems = (series, hlDate) => series.map(x => ({ label: x.date.slice(8), title: brDate(x.date), value: x.value, hl: x.date === hlDate }));
 
+/* ---------- pagamento (chips, lista, janelas) ---------- */
+function payChips(r) {
+  const p = C.pay(r), o = [];
+  if (p.wkDue) o.push('<button type="button" class="pb ' + (p.wkPaid ? 'ok' : 'pend') + '" data-act="togglepay" data-id="' + r.id + '" data-k="work" title="Toque para alternar">' + (p.wkPaid ? 'Diária paga' : 'Diária a receber') + '</button>');
+  if (p.dlDue) o.push('<button type="button" class="pb ' + (p.dlPaid ? 'ok' : 'pend') + '" data-act="togglepay" data-id="' + r.id + '" data-k="del" title="Toque para alternar">' + (p.dlPaid ? 'Entrega paga' : 'Entrega a receber') + '</button>');
+  return o.length ? '<div class="pbs">' + o.join('') + '</div>' : '';
+}
+const payKindLabel = k => k === 'work' ? 'Diárias' : k === 'del' ? 'Entregas' : 'Diárias e entregas';
+function payHistory() {
+  const list = (state.payments || []).slice().sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
+  return '<div class="card mt"><div class="row"><h2 class="sp" style="margin:0">Pagamentos lançados</h2><button class="btn sm pri" data-act="payopen">Lançar pagamento</button></div>' +
+    (list.length ? '<div class="mt">' + list.map(p => '<div class="day"><div class="d"><b>' + shortDate(p.date) + '</b><span>' + p.date.slice(0, 4) + '</span></div><div class="m">' + payKindLabel(p.kind) + ' · ' + p.items.length + ' item(ns)' + (p.note ? '<br>' + esc(p.note) : '') + '</div><div class="t pos">' + money(p.total) + '</div><button class="btn sm icon-btn dng" title="Desfazer pagamento" data-act="payundo" data-id="' + p.id + '">' + ic('trash') + '</button></div>').join('') + '</div>'
+      : '<div class="empty">Nenhum pagamento lançado ainda. Use “Lançar pagamento” quando receber, ou toque nos botões de cada dia.</div>') + '</div>';
+}
+function pendingItems() {
+  const items = [];
+  state.records.slice().sort((a, b) => a.date < b.date ? -1 : 1).forEach(r => {
+    const p = C.pay(r);
+    if (p.wkDue && !p.wkPaid) items.push({ id: r.id, k: 'work', date: r.date, amt: p.wk });
+    if (p.dlDue && !p.dlPaid) items.push({ id: r.id, k: 'del', date: r.date, amt: p.dl });
+  });
+  return items;
+}
+function openPay() {
+  const items = pendingItems();
+  if (!items.length) { toast('Nada a receber: tudo está pago'); return; }
+  const hasW = items.some(i => i.k === 'work'), hasD = items.some(i => i.k === 'del');
+  dialog('<form id="pf" novalidate><div class="row" style="margin-bottom:12px"><h2 class="sp">Lançar pagamento</h2><button type="button" class="btn sm icon-btn" data-act="close" aria-label="Fechar">' + ic('x') + '</button></div>' +
+    '<div class="g2"><div class="fld"><label class="f">Data do pagamento</label><input type="date" name="payDate" value="' + C.today() + '"></div>' +
+    '<div class="fld"><label class="f">O que foi pago</label><select name="payKind"><option value="all">Diárias e entregas</option>' + (hasW ? '<option value="work">Só diárias</option>' : '') + (hasD ? '<option value="del">Só entregas</option>' : '') + '</select></div></div>' +
+    '<div class="row" style="margin-bottom:6px"><span class="note sp">Marque o que você recebeu:</span><button type="button" class="btn sm ghost" id="paySel">Marcar / desmarcar tudo</button></div>' +
+    '<div id="payList" style="max-height:38vh;overflow:auto"></div>' +
+    '<div class="prev mt"><div class="ln"><span id="payN"></span></div><div class="tot" id="payTot">R$ 0,00</div></div>' +
+    '<div class="fld"><label class="f">Observação (opcional)</label><input name="payNote" maxlength="200" placeholder="Ex.: pago em dinheiro pelo Seu João"></div>' +
+    '<div class="row" style="justify-content:flex-end"><button type="button" class="btn" data-act="close">Cancelar</button><button type="submit" class="btn pri">Confirmar pagamento</button></div></form>',
+    root => {
+      const f = root.querySelector('#pf'), listEl = root.querySelector('#payList');
+      const sum = () => { let t = 0, n = 0; listEl.querySelectorAll('[data-pi]:checked').forEach(c => { t += items[+c.dataset.pi].amt; n++; });
+        root.querySelector('#payTot').textContent = money(C.R2(t)); root.querySelector('#payN').textContent = n + ' item(ns) selecionado(s)'; };
+      const draw = () => {
+        const kind = f.elements.payKind.value, vis = items.map((it, i) => ({ it: it, i: i })).filter(x => kind === 'all' || x.it.k === kind);
+        listEl.innerHTML = vis.length ? vis.map(x => '<label class="sw"><span>' + shortDate(x.it.date) + ' · ' + (x.it.k === 'work' ? 'Diárias' : 'Entregas') + ' <span class="note">' + wdName(x.it.date) + '</span></span><b>' + money(x.it.amt) + '</b><input type="checkbox" data-pi="' + x.i + '" checked></label>').join('') : '<div class="empty">Nada pendente nesta categoria.</div>';
+        sum();
+      };
+      f.elements.payKind.addEventListener('change', draw);
+      listEl.addEventListener('change', sum);
+      root.querySelector('#paySel').onclick = () => { const all = Array.prototype.slice.call(listEl.querySelectorAll('[data-pi]')), on = all.every(c => c.checked); all.forEach(c => c.checked = !on); sum(); };
+      f.addEventListener('submit', e => {
+        e.preventDefault();
+        const chosen = Array.prototype.slice.call(listEl.querySelectorAll('[data-pi]:checked')).map(c => items[+c.dataset.pi]);
+        if (!chosen.length) { toast('Selecione ao menos um item'); return; }
+        const date = f.elements.payDate.value; if (!C.parseISO(date)) { toast('Escolha a data do pagamento'); return; }
+        chosen.forEach(it => { const r = state.records.find(x => x.id === it.id); if (!r) return; if (it.k === 'work') { r.paidWork = true; r.paidWorkAt = date; } else { r.paidDel = true; r.paidDelAt = date; } });
+        const kinds = {}; chosen.forEach(i => kinds[i.k] = 1); const ks = Object.keys(kinds), total = C.R2(chosen.reduce((a, i) => a + i.amt, 0));
+        (state.payments = state.payments || []).push({ id: C.newId(), date: date, kind: ks.length > 1 ? 'both' : ks[0], total: total, note: f.elements.payNote.value.trim().slice(0, 200), items: chosen.map(i => ({ id: i.id, k: i.k })) });
+        save(); closeModal(); toast('Pagamento lançado: ' + money(total)); render();
+      });
+      draw();
+    });
+}
+async function payUndo(id) {
+  const p = (state.payments || []).find(x => x.id === id); if (!p) return;
+  const a = await choice({ title: 'Desfazer pagamento?', text: 'O pagamento de ' + money(p.total) + ' (' + brDate(p.date) + ') será removido e os ' + p.items.length + ' item(ns) voltam para “a receber”.' }, [{ v: 'y', l: 'Desfazer', cls: 'dng' }]);
+  if (a !== 'y') return;
+  p.items.forEach(it => { const r = state.records.find(x => x.id === it.id); if (!r) return; if (it.k === 'work') { r.paidWork = false; r.paidWorkAt = ''; } else { r.paidDel = false; r.paidDelAt = ''; } });
+  state.payments = state.payments.filter(x => x.id !== id); save(); toast('Pagamento desfeito'); render();
+}
+
 /* ---------- blocos de visão ---------- */
 const stat = (l, v, s, cls) => '<div class="card stat ' + (cls || '') + '"><div class="l">' + l + '</div><div class="v">' + v + '</div>' + (s ? '<div class="s">' + s + '</div>' : '') + '</div>';
 const head = (t, sub, extra) => '<div class="row"><div class="sp"><h1>' + t + '</h1><p class="sub">' + sub + '</p></div>' + (extra || '') + '</div>';
 
 function sumCards(s) {
-  return '<div class="grid cards">' +
+  return '<div class="grid cards" style="margin-bottom:12px">' +
+    stat('Recebido', money(s.received), 'diárias ' + money(s.recWk) + ' · entregas ' + money(s.recDl), 'hero') +
+    stat('A receber', money(s.pending), 'diárias ' + money(s.pendWk) + ' · entregas ' + money(s.pendDl), 'hero pend') + '</div>' +
+    '<div class="grid cards">' +
     stat('Diárias completas', money(s.full), s.fullQty + (s.fullQty === 1 ? ' diária' : ' diárias')) +
     stat('Meias-diárias', money(s.half), s.halfQty + (s.halfQty === 1 ? ' meia' : ' meias')) +
     stat('Entregas', money(s.del), s.delQty + (s.delQty === 1 ? ' entrega' : ' entregas')) +
@@ -414,6 +513,9 @@ function viewPainel() {
   const last = recs.slice().sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 5);
   return head('Painel', cap(wdFull(t)) + ', ' + brDate(t)) +
     (setup ? '<div class="warn" style="margin:0 0 14px">Comece definindo seus valores padrão de diária, meia-diária e entrega. <button class="btn sm" data-act="nav" data-v="config">Abrir configurações</button></div>' : '') +
+    (function () { const all = C.summarize(recs); return '<div class="card" style="margin-bottom:12px"><div class="row"><h2 class="sp" style="margin:0">A receber</h2><button class="btn sm pri" data-act="payopen">Lançar pagamento</button></div>' +
+      '<div class="grid cards mt" style="grid-template-columns:repeat(2,1fr)">' + stat('Diárias a receber', money(all.pendWk), all.pendWkDays + ' dia(s) pendente(s)', 'pend') + stat('Entregas a receber', money(all.pendDl), all.pendDlDays + ' dia(s) pendente(s)', 'pend') + '</div>' +
+      '<div class="kv"><span>Total já recebido</span><b class="pos">' + money(all.received) + '</b></div></div>'; })() +
     '<div class="grid cards">' +
     '<div class="card stat hero"><div class="l">Ganhos de hoje</div><div class="v">' + money(day.total) + '</div><div class="s">' +
       (C.findByDate(recs, t) ? 'Lançamento de hoje registrado' : 'Nenhum lançamento hoje · <a href="#" data-act="new" data-d="' + t + '" style="color:var(--acc)">lançar agora</a>') + '</div></div>' +
@@ -435,14 +537,14 @@ function dayRow(r) {
   if (r.halfQty) bits.push(r.halfQty + ' meia' + (r.halfQty > 1 ? 's' : ''));
   if (r.delQty) bits.push(r.delQty + ' entrega' + (r.delQty > 1 ? 's' : ''));
   if (c.extra) bits.push('extra');
-  return '<div class="day" data-act="detail" data-id="' + r.id + '" style="cursor:pointer"><div class="d"><b>' + shortDate(r.date) + '</b><span>' + wdName(r.date) + '</span></div><div class="m">' + (bits.join(' · ') || '—') + '</div><div class="t">' + money(c.total) + '</div></div>';
+  return '<div class="day" data-act="detail" data-id="' + r.id + '" style="cursor:pointer"><div class="d"><b>' + shortDate(r.date) + '</b><span>' + wdName(r.date) + '</span></div><div class="m">' + (bits.join(' · ') || '—') + payChips(r) + '</div><div class="t">' + money(c.total) + '</div></div>';
 }
 
 /* Lançamentos */
 function filtered() {
   const f = ui.f, q = f.q.trim().toLowerCase();
   return state.records.filter(r => (!f.from || r.date >= f.from) && (!f.to || r.date <= f.to) &&
-    (!q || brDate(r.date).includes(q) || r.date.includes(q) || (r.notes || '').toLowerCase().includes(q)))
+    (!f.pay || (f.pay === 'pend' ? C.pay(r).pending > 0 : C.pay(r).pending === 0)) && (!q || brDate(r.date).includes(q) || r.date.includes(q) || (r.notes || '').toLowerCase().includes(q)))
     .sort((a, b) => a.date < b.date ? 1 : -1);
 }
 function histTable() {
@@ -455,10 +557,11 @@ function histTable() {
       '<td data-l="Diárias">' + r.fullQty + '</td><td data-l="Meias-diárias">' + r.halfQty + '</td><td data-l="Entregas">' + r.delQty + '</td>' +
       '<td data-l="Ganho com diárias">' + money(c.full + c.half) + '</td><td data-l="Ganho com entregas">' + money(c.del) + '</td><td data-l="Extras">' + money(c.extra) + '</td>' +
       '<td class="tt" data-l="Total do dia">' + money(c.total) + '</td>' +
+      '<td data-l="Pagamento">' + (payChips(r) || '<span class="note">—</span>') + '</td>' +
       '<td class="acts-c"><div class="acts"><button class="btn sm icon-btn" title="Detalhes" data-act="detail" data-id="' + r.id + '">' + ic('eye') + '</button><button class="btn sm icon-btn" title="Editar" data-act="edit" data-id="' + r.id + '">' + ic('edit') + '</button><button class="btn sm icon-btn dng" title="Excluir" data-act="del" data-id="' + r.id + '">' + ic('trash') + '</button></div></td></tr>';
   }).join('');
-  return '<table><thead><tr><th>Data</th><th>Diárias</th><th>Meias-diárias</th><th>Entregas</th><th>Ganho com diárias</th><th>Ganho com entregas</th><th>Extras</th><th>Total do dia</th><th>Ações</th></tr></thead><tbody>' + rows + '</tbody>' +
-    '<tfoot><tr><td data-l="Totais (' + list.length + ' dias)">Totais</td><td data-l="Diárias">' + s.fullQty + '</td><td data-l="Meias-diárias">' + s.halfQty + '</td><td data-l="Entregas">' + s.delQty + '</td><td data-l="Ganho com diárias">' + money(s.full + s.half) + '</td><td data-l="Ganho com entregas">' + money(s.del) + '</td><td data-l="Extras">' + money(s.extra) + '</td><td class="tt" data-l="Total">' + money(s.total) + '</td><td></td></tr></tfoot></table>';
+  return '<table><thead><tr><th>Data</th><th>Diárias</th><th>Meias-diárias</th><th>Entregas</th><th>Ganho com diárias</th><th>Ganho com entregas</th><th>Extras</th><th>Total do dia</th><th>Pagamento</th><th>Ações</th></tr></thead><tbody>' + rows + '</tbody>' +
+    '<tfoot><tr><td data-l="Totais (' + list.length + ' dias)">Totais</td><td data-l="Diárias">' + s.fullQty + '</td><td data-l="Meias-diárias">' + s.halfQty + '</td><td data-l="Entregas">' + s.delQty + '</td><td data-l="Ganho com diárias">' + money(s.full + s.half) + '</td><td data-l="Ganho com entregas">' + money(s.del) + '</td><td data-l="Extras">' + money(s.extra) + '</td><td class="tt" data-l="Total">' + money(s.total) + '</td><td data-l="Recebido / A receber"><span class="pos">' + money(s.received) + '</span> · <span class="pendtxt">' + money(s.pending) + '</span></td><td></td></tr></tfoot></table>';
 }
 function calendar() {
   const k = ui.cal, first = C.parseISO(k + '-01'), off = (first.getDay() + 6) % 7, n = C.daysInMonth(k), t = C.today();
@@ -474,10 +577,10 @@ function calendar() {
 function viewLanc() {
   const f = ui.f;
   return head('Lançamentos', 'Histórico de todos os dias registrados.') +
-    '<div class="card"><div class="g3"><div><label class="f">De</label><input type="date" data-filter="from" value="' + f.from + '"></div><div><label class="f">Até</label><input type="date" data-filter="to" value="' + f.to + '"></div><div style="grid-column:span 3"><label class="f">Pesquisar por data ou observação</label><input type="search" data-filter="q" placeholder="Ex.: 15/10 ou 2026-10" value="' + esc(f.q) + '"></div></div>' +
-    '<div class="row mt"><button class="btn sm" data-act="clearf">Limpar filtros</button></div></div>' +
+    '<div class="card"><div class="g3"><div><label class="f">De</label><input type="date" data-filter="from" value="' + f.from + '"></div><div><label class="f">Até</label><input type="date" data-filter="to" value="' + f.to + '"></div><div style="grid-column:span 3"><label class="f">Pagamento</label><select data-filter="pay"><option value="">Todos</option><option value="pend"' + (f.pay === 'pend' ? ' selected' : '') + '>A receber</option><option value="paid"' + (f.pay === 'paid' ? ' selected' : '') + '>Pagos</option></select></div><div style="grid-column:span 3"><label class="f">Pesquisar por data ou observação</label><input type="search" data-filter="q" placeholder="Ex.: 15/10 ou 2026-10" value="' + esc(f.q) + '"></div></div>' +
+    '<div class="row mt"><button class="btn sm" data-act="clearf">Limpar filtros</button><button class="btn sm pri" data-act="payopen">Lançar pagamento</button></div></div>' +
     '<div class="grid mt" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card" id="calWrap">' + calendar() + '</div></div>' +
-    '<div class="mt" id="histWrap">' + histTable() + '</div>';
+    '<div class="mt" id="histWrap">' + histTable() + '</div>' + payHistory();
 }
 
 /* Semanal */
@@ -574,6 +677,7 @@ function detail(id) {
     '<div class="kv"><span>Meias-diárias (' + r.halfQty + ' × ' + money(r.halfRate) + ')</span><b>' + money(c.half) + '</b></div>' +
     '<div class="kv"><span>Entregas (' + delLine + ')</span><b>' + money(c.del) + '</b></div>' +
     '<div class="kv"><span>Extras</span><b>' + money(c.extra) + '</b></div>' +
+    (payChips(r) ? '<div class="kv"><span>Pagamento <span class="note">(toque para alternar)</span></span><span>' + payChips(r) + '</span></div>' : '') +
     (r.notes ? '<div class="kv"><span>Observações</span><b style="text-align:right;max-width:60%;font-weight:500">' + esc(r.notes) + '</b></div>' : '') +
     '<div class="row mt" style="justify-content:flex-end"><button class="btn dng" data-act="del" data-id="' + r.id + '">' + ic('trash') + 'Excluir</button><button class="btn pri" data-act="edit" data-id="' + r.id + '">' + ic('edit') + 'Editar</button></div>');
 }
@@ -591,13 +695,16 @@ function openForm(opt) {
     '<div id="manualWrap" class="hidden">' + money_f('delManual', 'Total ganho com as entregas (R$)') + '</div>' +
     money_f('extra', 'Valor extra (opcional)') +
     '<details' + (openRates ? ' open' : '') + '><summary>Valores deste dia (alterar só aqui)</summary><div class="g3">' + money_f('fullRate', 'Diária') + money_f('halfRate', 'Meia') + money_f('delRate', 'Por entrega') + '</div><p class="note" style="margin:0 0 10px">Deixe “por entrega” zerado se as entregas não são pagas individualmente.</p></details>' +
+    '<div id="payBox" style="margin-bottom:12px"><label class="f">Pagamento</label>' +
+    '<label class="sw" id="rowW"><span>Diárias / meias / extras já pagas</span><input type="checkbox" name="paidWork" value="1"' + (v.paidWork ? ' checked' : '') + '></label>' +
+    '<label class="sw" id="rowD"><span>Entregas já pagas</span><input type="checkbox" name="paidDel" value="1"' + (v.paidDel ? ' checked' : '') + '></label></div>' +
     '<div class="fld"><label class="f">Observações (opcional)</label><textarea name="notes" rows="2" maxlength="500">' + esc(v.notes) + '</textarea></div>' +
     '<div class="prev"><div class="ln"><span>Total do dia</span></div><div class="tot" id="pTot">R$ 0,00</div><div id="pLn"></div></div>' +
     '<div class="emsg" data-e="_" style="margin-bottom:8px"></div>' +
     '<div class="row" style="justify-content:flex-end"><button type="button" class="btn" data-act="close">Cancelar</button><button type="submit" class="btn pri">' + (ex ? 'Salvar alterações' : 'Salvar dia') + '</button></div></form>',
     root => {
       const f = root.querySelector('#f');
-      const raw = () => { const o = {}; Array.prototype.forEach.call(f.elements, e => { if (e.name) o[e.name] = e.value; }); return o; };
+      const raw = () => { const o = {}; Array.prototype.forEach.call(f.elements, e => { if (e.name) o[e.name] = e.type === 'checkbox' ? (e.checked ? '1' : '') : e.value; }); return o; };
       const soft = o => ({ date: o.date, notes: '', fullQty: C.parseQty(o.fullQty) || 0, halfQty: C.parseQty(o.halfQty) || 0, delQty: C.parseQty(o.delQty) || 0,
         fullRate: C.parseMoney(o.fullRate) || 0, halfRate: C.parseMoney(o.halfRate) || 0, delRate: C.parseMoney(o.delRate) || 0, delManual: C.parseMoney(o.delManual) || 0, extra: C.parseMoney(o.extra) || 0 });
       const dupCheck = () => {
@@ -609,6 +716,8 @@ function openForm(opt) {
       const refresh = () => {
         const o = soft(raw()), c = C.calc(o);
         root.querySelector('#manualWrap').classList.toggle('hidden', !(o.delRate === 0 && o.delQty > 0));
+        root.querySelector('#rowW').classList.toggle('hidden', !((c.full + c.half + c.extra) > 0));
+        root.querySelector('#rowD').classList.toggle('hidden', !(c.del > 0));
         root.querySelector('#pTot').textContent = money(c.total);
         root.querySelector('#pLn').innerHTML = [['Diárias', c.full], ['Meias-diárias', c.half], ['Entregas', c.del], ['Extras', c.extra]].map(x => '<div class="ln"><span>' + x[0] + '</span><span>' + money(x[1]) + '</span></div>').join('');
       };
@@ -628,7 +737,9 @@ function openForm(opt) {
           return;
         }
         if (dupCheck()) { root.querySelector('#dup').scrollIntoView({ block: 'center' }); return; }
-        const rec = res.record;
+        const rec = res.record, hoje = C.today();
+        rec.paidWorkAt = rec.paidWork ? ((ex && ex.paidWork && ex.paidWorkAt) || hoje) : '';
+        rec.paidDelAt = rec.paidDel ? ((ex && ex.paidDel && ex.paidDelAt) || hoje) : '';
         if (ex) { rec.id = ex.id; state.records = state.records.map(r => r.id === ex.id ? rec : r); }
         else { rec.id = C.newId(); state.records.push(rec); }
         save(); closeModal(); toast(ex ? 'Registro atualizado' : 'Dia salvo: ' + money(C.calc(rec).total));
@@ -673,7 +784,7 @@ document.addEventListener('click', async e => {
     case 'mo': ui.month = C.addMonths(ui.month, +d.n); render(); break;
     case 'mo0': ui.month = C.monthKey(C.today()); render(); break;
     case 'calnav': ui.cal = C.addMonths(ui.cal, +d.n); document.getElementById('calWrap').innerHTML = calendar(); break;
-    case 'clearf': ui.f = { from: '', to: '', q: '' }; render(); break;
+    case 'clearf': ui.f = { from: '', to: '', q: '', pay: '' }; render(); break;
     case 'csv': if (!state.records.length) return toast('Não há registros para exportar'); download('diarias-' + stamp() + '.csv', C.toCSV(state.records), 'text/csv;charset=utf-8'); break;
     case 'backup': download('backup-diarias-' + stamp() + '.json', C.buildBackup(state), 'application/json'); toast('Backup baixado'); break;
     case 'restore': document.getElementById('restoreFile').click(); break;
@@ -681,13 +792,23 @@ document.addEventListener('click', async e => {
     case 'copycsv': if (!state.records.length) return toast('Não há registros para exportar'); copyText(C.toCSV(state.records).replace(/^\uFEFF/, ''), 'CSV (texto)'); break;
     case 'pastebackup': pasteDialog(); break;
     case 'dopaste': { const v = document.getElementById('pasteArea').value; closeModal(); restoreText(v); break; }
+    case 'togglepay': {
+      const r = state.records.find(x => x.id === d.id); if (!r) break;
+      const hoje = C.today(), inModal = !!el.closest('#modal');
+      if (d.k === 'work') { r.paidWork = !r.paidWork; r.paidWorkAt = r.paidWork ? hoje : ''; } else { r.paidDel = !r.paidDel; r.paidDelAt = r.paidDel ? hoje : ''; }
+      save(); render(); if (inModal) detail(r.id);
+      toast((d.k === 'work' ? 'Diária ' : 'Entrega ') + ((d.k === 'work' ? r.paidWork : r.paidDel) ? 'marcada como paga' : 'voltou para a receber'));
+      break;
+    }
+    case 'payopen': closeModal(); openPay(); break;
+    case 'payundo': payUndo(d.id); break;
     case 'syncnow': if (!sb) { toast('Biblioteca de sincronização não carregou. Recarregue a página.'); break; } toast('Sincronizando…'); if (sync.failed) await syncSave(); else await syncLoad(); break;
     case 'syncmerge': if (!sb) { toast('Biblioteca de sincronização não carregou.'); break; } await syncLoad('merge'); break;
     case 'syncpull': if (!sb) { toast('Biblioteca de sincronização não carregou.'); break; } await syncLoad('pull'); break;
     case 'syncpush': if (!sb) { toast('Biblioteca de sincronização não carregou.'); break; } save(); toast('Enviando este aparelho…'); break;
     case 'wipe': {
       const x = await choice({ title: 'Apagar todos os dados?', text: 'Todos os ' + state.records.length + ' registros serão removidos deste aparelho. Baixe um backup antes se tiver dúvida.' }, [{ v: 'y', l: 'Apagar tudo', cls: 'dng' }]);
-      if (x === 'y') { state.records = []; save(); toast('Dados apagados'); render(); }
+      if (x === 'y') { state.records = []; state.payments = []; save(); toast('Dados apagados'); render(); }
       break;
     }
   }

@@ -1,6 +1,6 @@
 /* Service worker do Controle de Diárias: sempre tenta a rede primeiro (não fica com versão velha)
    e só usa a cópia guardada quando está sem internet. */
-const CACHE = 'diarias-v1';
+const CACHE = 'diarias-v2';
 const SHELL = ['diarias.html', 'diarias.css', 'diarias.js', 'icons/diarias-192.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(u => new Request(u, { cache: 'reload' })))).catch(() => {}));

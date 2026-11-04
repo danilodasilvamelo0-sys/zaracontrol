@@ -243,3 +243,18 @@ input,select,textarea{min-width:0}
 .g3:has(input[type=date]){grid-template-columns:repeat(2,minmax(0,1fr))}
 .g3:has(input[type=date])>div[style*="span 3"]{grid-column:1/-1!important}
 @media(min-width:900px){nav.nav button{color:rgba(255,255,255,.6)}nav.nav button.on{color:var(--acc)}}
+
+/* ===== Pagamentos: etiquetas Pago / A receber ===== */
+.pbs{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+td .pbs{justify-content:flex-end;margin-top:0}
+.pb{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-family:inherit;font-size:11px;font-weight:700;letter-spacing:.3px;cursor:pointer;border:1px solid;line-height:1.2;text-transform:none}
+.pb::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.pb.ok{color:var(--good);border-color:rgba(95,224,138,.5);background:rgba(95,224,138,.10)}
+.pb.pend{color:var(--warn);border-color:rgba(255,200,87,.5);background:rgba(255,200,87,.10)}
+.stat.pend .v{color:var(--warn)}
+.stat.hero.pend{background:linear-gradient(150deg,rgba(255,200,87,.20) 0%,rgba(255,255,255,.05) 45%,rgba(255,255,255,.03) 70%,rgba(255,200,87,.08) 100%);border-color:rgba(255,200,87,.42)}
+.pendtxt{color:var(--warn)}
+.day .m .pbs{margin-top:6px}
+#payList .sw b{font-variant-numeric:tabular-nums;white-space:nowrap}
+#payList .sw{border-bottom:1px solid var(--line)}
+.sw input[type=checkbox]{width:22px;height:22px;flex:none}
